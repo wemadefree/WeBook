@@ -1,0 +1,101 @@
+{% load static i18n %}
+<div class="modal" tabindex="-1" role="dialog" id="orderServiceDialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title text-center"><i class="fas fa-dollar-sign"></i>&nbsp; {% trans "Order service" %}</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" onclick="$('#editEventDialog').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form id="orderServiceForm">
+                    <div class="alert alert-light">
+                        <strong>Obs!</strong><br>
+                        Tjenester du bestiller i denne fasen av planleggingen er til dels abstrakte. Det vil bety at du anmerker
+                        denne hendelsen med det som praktisk sett blir et notat om at tjeneste av type X må bestilles. Du kan gjennomføre 
+                        bestillingen praktisk under <strong class="small">Kvitteringer & Bestillinger</strong> fanen.
+                    </div>
+
+                    <div class="form-group p-4 pt-1">
+                        <label class="d-block fw-bold">{% trans "Tjenestetype" %}</label>
+
+                        <select class="select mb-2" name="service_type" data-mdb-filter="true" data-mdb-container="#orderServiceDialog" id="serviceTypesSelect">
+                        </select>
+
+                        <label class="d-block fw-bold">{% trans "Comment" %}</label>
+                        <textarea placeholder="Kommentar..." name="comment" class="form-control"></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#orderServiceDialog').modal('hide')">{% trans "Cancel" %}</button>
+                <button type="button" class="btn btn-primary" onclick="submit();$('#orderServiceDialog').modal('hide')">{% trans "Save" %}</button>
+              </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js" integrity="sha512-foIijUdV0fR0Zew7vmw98E6mOWd9gkGWQBWaoA1EOFAx+pY+N8FmmtIYAVj64R98KeD2wzZh1aHK0JSpKmRH8w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script>
+
+    $(document).ready(function () {
+        let serviceTypeSelect = new ExtendedSelect({
+            jqElement: $('#serviceTypesSelect'),
+            getUrl: '{% url "arrangement:servicetype_search" %}',
+            extraHeaders: {
+                'X-CSRFToken': '{{csrf_token}}',
+            },
+            dataParser: function (item) {
+                return {
+                    value: item.pk,
+                    text: item.fields.name,
+                    secondary_text:"",
+                }
+            },
+        });
+    });
+
+    function submit() {
+        let formData = new FormData(document.getElementById('orderServiceForm'));
+
+        let events = [];
+        let selectedNodes = document.querySelectorAll(".ds-selected");
+        for (let i = 0; i < selectedNodes.length; i++) {
+            var uuid = getUuidFromEventDomNode(selectedNodes[i])
+            var event = planner.local_context.events.get(uuid);
+            console.log(planner.synchronizer.uuid_to_id_map.get(uuid));
+            events.push(planner.local_context.events.get(uuid));
+        }
+
+        console.log(events)
+        // TODO: Rewrite this to follow the patterns of other allocation dialogs. This is not a good long-term solution.
+        
+        // planner.local_context
+
+        let eventIds = events.map(a => planner.synchronizer.uuid_to_id_map.get(a.id)).join(",")
+
+        formData.append("events", eventIds)
+        formData.append("csrfmiddlewaretoken", "{{ csrf_token }}")
+
+        fetch("{% url 'arrangement:plan_order_service' %}", {
+            method: 'POST',
+            body: formData, 
+            credentials: 'same-origin',
+        });
+    }
+
+    function openOrderServiceDialog(eventId) {
+        $('#orderServiceDialog').modal('show');
+    }
+
+
+    function orderService() {
+        console.log(" >> Order Service triggered ")
+    }
+</script>

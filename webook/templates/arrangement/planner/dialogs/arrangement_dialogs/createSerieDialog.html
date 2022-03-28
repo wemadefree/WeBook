@@ -1,0 +1,125 @@
+<div id="newTimePlanDialog" title="Ny tidsplan">
+    <div class='bg-white p-2 border border-1'>
+    <fieldset>
+    <legend>Pattern for recurring area</legend>
+    <div class="row">
+    <div class="col-3 border-end border-1">
+        <form id="patternMockForm">
+        <input type="submit" style="display:none;" />
+
+        <div>
+            <input type="radio" name="pattern" value="1" checked required/><label>&nbsp; Daily</label>
+        </div>
+        <div>
+            <input type="radio" name="pattern" value="2"/><label>&nbsp; Weekly</label>
+        </div>
+        <div>
+            <input type="radio" name="pattern" value="3"/><label>&nbsp; Monthly</label>
+        </div>
+        <div>
+            <input type="radio" name="pattern" value="4"/><label>&nbsp; Yearly</label>
+        </div>
+        </form>
+    </div>
+
+    <div class="col-9">
+        <div id="patternRoute_daily">
+        <div>
+            <input type="radio" name="pattern_daily_subroute" value="0" required/>
+            <label>Every <input type="number" min="1" id="every_x_day__interval" required/> day</label>
+        </div>
+        
+        <div>
+            <input type="radio" name="pattern_daily_subroute" value="1"/>
+            <label>Every weekday</label>
+        </div>
+        </div>
+
+        <div id="patternRoute_weekly" style="display: none;">
+        <div><label>Skjer hver <input type="number" min="1" id="week_interval" name="repeat_every_x_week" style="width: 40px" required/> week at:</label></div>
+        <span id="day_checkbox_wrapper">
+            <input type="checkbox" id="monday"> <label>Monday</label>
+            <input type="checkbox" id="tuesday"> <label>Tuesday</label>
+            <input type="checkbox" id="wednesday"> <label>Wednesday</label>
+            <input type="checkbox" id="thursday"> <label>Thursday</label>
+            <input type="checkbox" id="friday"> <label>Friday</label>
+            <input type="checkbox" id="saturday"> <label>Saturday</label>
+            <input type="checkbox" id="sunday"> <label>Sunday</label>
+        </span>
+        </div>
+
+        <div id="patternRoute_monthly" style="display: none;">
+        <div>
+            <input type="radio" name="pattern_monthly_subroute" value="0" required /> 
+            Day <input type="number" min="1" required id="every_x_day_every_y_month__day_of_month" style="width: 40px"> every <input type="number" required min="1" id="every_x_day_every_y_month__month_interval" style="width: 40px;"> month
+        </div>
+        <div>
+            <input type="radio" name="pattern_monthly_subroute" value="1" /> The
+            <select id="every_dynamic_date_of_month__arbitrator" required>
+            </select>
+            <select id="every_dynamic_date_of_month__weekday" required>
+            </select>
+            every <input type="number" required min="1" id="every_dynamic_date_of_month__month_interval" style="width:40px"> months
+        </div>
+        </div>
+
+        <div id="patternRoute_yearly" style="display: none;">
+        <div>
+            Happens every <input type="number" min="1" required id="pattern_yearly_const__year_interval" style="width: 40px" /> year
+        </div>
+        <div>
+            <input type="radio" name="pattern_yearly_subroute" value="0" required> Dato:
+            <input type="number" min="1" required id="every_x_of_month__date" style="width: 40px" />
+            <select id="every_x_of_month__month" required>
+            </select>
+        </div>
+
+        <div>
+            <input type="radio" name="pattern_yearly_subroute" value="1"> Every:
+            <select id="every_arbitrary_weekday_in_month__arbitrator" required>
+            </select>
+            <select id="every_arbitrary_weekday_in_month__weekday" required>
+            </select>
+            in
+            <select id="every_arbitrary_weekday_in_month__month" required>
+            </select>
+        </div>
+        </div>
+    </div>
+    </div>
+</fieldset>
+
+<fieldset>
+    <legend>Area of recurrence</legend>
+    <div class="row">
+    <div class="col-3">
+        <label>Start Date</label>
+        <input type="date" id="area_start_date" required>
+    </div>
+    <div class="col-9" id="area_methods_wrapper">
+        <div>
+        <input type="radio" name="timeAreaMethod" value="1">
+        Stop within: <input type="date" id="area_stopWithin" required>
+        </div>
+
+        <div>
+        <input type="radio" name="timeAreaMethod" value="2">
+        <fieldset>
+            Stop after: <input type="number" min="1" id="area_stopAfterXInstances" required /> occurences
+        </fieldset>
+        </div>
+
+        <div>
+        <input type="radio" name="timeAreaMethod" value="3">
+        No stop date
+        | Project <input type="number" min="1" required style="width:50px" id="area_noStop_projectXMonths"> months into the future
+        </div>
+    </div>
+    </div>
+</fieldset>
+
+    <fieldset>
+        <button>Lagre</button>
+    </fieldset>
+    </div>
+</div>

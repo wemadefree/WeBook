@@ -1,0 +1,56 @@
+<h3>Kvitteringer på personressurser</h3>
+
+<div class="alert alert-light p-0">
+    <em class="small">
+        Merk at før en person skal bli rekvirert så må du igangsette rekvireringen. Her ser 
+        du aktive rekvireringer, mens i tabellen nedenfor har du mulighet til å starte rekvirering.
+    </em>
+</div>
+
+{% if object_list is None or object_list|length == 0 %}
+
+<h6>Ingen aktive kvitteringer</h6>
+
+{% else %}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="fw-bold">Status</th>
+            <th class="fw-bold">Mottager</th>
+            <th class="fw-bold">Sendt</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for item in object_list.all %}
+            <tr>
+                <td>
+                    {% if item.confirmation_receipt.state == "pending" %}
+                        <div class="badge badge-md badge-warning">
+                            {{ item.confirmation_receipt.state }}
+                        </div>
+                    {% elif item.confirmation_receipt.state == "confirmed" %}
+                        <div class="badge badge-md badge-success">
+                            <i class="fas fa-check"></i>
+                            {{ item.confirmation_receipt.state }}
+                        </div>
+                    {% elif item.confirmation_receipt.state == "denied" %}
+                        <div class="badge badge-md badge-danger">
+                            <i class="fas fa-user-times"></i>
+                            {{ item.confirmation_receipt.state }}
+                        </div>
+                    {% endif %}
+                </td>
+                <td>
+                    {{ item.confirmation_receipt.requisition_record.first.person_requisition.email }}
+                </td>
+                <td>
+                    {{item.confirmation_receipt.sent_when}}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+

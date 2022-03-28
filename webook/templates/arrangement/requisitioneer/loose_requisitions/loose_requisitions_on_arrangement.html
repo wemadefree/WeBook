@@ -1,0 +1,58 @@
+
+{% block content %}
+
+    <h3>Planlagte bestillinger</h3>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th><i class="fas fa-comment"></i>&nbsp; Kommentar</th>
+                    <th><i class="fas fa-dollar-sign"></i>&nbsp; Tjenestetype</th>
+                    <th><i class="fas fa-cog"></i>&nbsp; Valg</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for l_requisition in object_list %}
+                    <tr id="{{ l_requisition.pk }}_contentHead">
+                        <td>
+                            <i class="fas fa-chevron-up"></i>
+                        </td>
+                        <td>{{l_requisition.comment}}</td>
+                        <td>
+                            <div class="badge badge-md badge-info">
+                                {{l_requisition.type_to_order}}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-danger btn-sm">Slett rekvireringen</button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr id="{{ l_requisition.pk }}_contentBody">
+                        <td colspan="1"></td>
+                        <td colspan="3">
+                            <ul>
+                                {% for event in l_requisition.events.all %}
+                                    <li>({{event.start}} - {{event.end}}) {{event.title}}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot></tfoot>
+        </table>
+    </div>
+
+    <script>
+
+        let _looseRequisitionsOnArrangement_component = {
+
+        }
+
+    </script>
+{% endblock %}

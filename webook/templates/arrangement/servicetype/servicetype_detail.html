@@ -1,0 +1,22 @@
+{% extends "arrangement/meta_base.html" %}
+
+{% block content %}
+    <h4>{{ object.name }}</h4>
+    <hr>
+    <h5>Tilbys av:</h5>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th class="fw-bolder">Bedrift</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for provider in object.providers.all %}
+                <tr>
+                    <td><a href="{% url 'arrangement:organization_detail' slug=provider.organization.slug %}">{{provider.organization.name}}</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,234 @@
+{% load static i18n %}
+
+<style>
+    .comment {
+        /* border-radius: 10px; */
+        background-color: gold!important;
+        border: solid 1px #5f7f99;
+        box-shadow: 0 1px 15px 1px rgba(62,57,107,.07);
+    }
+
+    .commentWrapperToolbar {
+        border-left: 1px solid;
+        border-top: 1px solid;
+        border-right: 1px solid;
+        overflow: hidden;
+
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+    }
+
+    .commentWrapper {
+        overflow-y: scroll;
+        max-height: 35em;
+    }
+
+    .commentWrapper > div.comment:not(:first-child) {
+        margin-top: 1em;
+    }
+</style>
+
+<!-- <div class="row">
+    <div class="col-5">
+        <i class="fas fa-search"></i>
+        <label>Søk:</label>
+        <input type="search" class="form-control" placeholder="Søk gjennom notatene..." />
+    </div>
+
+    <div class="col-4">
+        <label>
+            <i class="fas fa-users"></i>
+            Forfatter(e):
+        </label>
+        <select class="select" multiple>
+        </select>
+    </div>
+
+    <div class="col-3">
+        <label>
+            <i class="fas fa-filter"></i>
+            Sortering:
+        </label>
+        <select class="select">
+            <option value="0">Nyeste først</option>
+            <option value="1">Eldst først</option>
+        </select>
+    </div>
+</div> -->
+
+
+<div class="commentWrapper mt-4">
+    {% for comment in object_list %}
+    {% endfor %}      
+</div>
+
+
+<h4 class="mt-5">Nytt notat</h4>
+<textarea class="wysiwyg mb-0" id="noteContent" data-mdb-wysiwyg="wysiwyg" style="height: 10em" placeholder="Nytt notat..."></textarea>
+
+
+<div class="clearfix">
+    <button class="btn btn-lg btn-wemade float-end mt-2" id="submitCommentBtn">
+        Lagre notat
+    </button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        notesComponent.setup();
+    });
+
+    var notesComponent = {
+        _entityPk: '{{ENTITY_PK}}',
+        _entityType: '{{ENTITY_TYPE}}',
+        _csrf_token: '{{ csrf_token }}',
+        
+        $commentWrapper: $('.commentWrapper'),
+
+        _notes: new Map(),
+        _notesToBeCreated: new Array(),
+        _notesToBeUpdated: new Array(),
+
+        $contentTextAreaInput: $('#noteContent'),
+        $submitCommentBtn: $('#submitCommentBtn'),
+
+
+        setup: function () {
+            let _this = this;
+            this.fetchNotes();
+            this.$submitCommentBtn.on('click', () => {
+                _this.postComment();
+            });
+        },
+
+        onFocused() {
+            //this.$commentWrapper.children().last()[0].scrollIntoView();
+        },
+
+        hashNoteContent: function (note) {
+            // Many thanks to: https://stackoverflow.com/questions/7616461/generate-a-hash-from-string-in-javascript
+            var hash = 0, i, chr;
+            if (this.length === 0) return hash;
+            for (i = 0; i < this.length; i++) {
+                chr   = this.charCodeAt(i);
+                hash  = ((hash << 5) - hash) + chr;
+                hash |= 0; // Convert to 32bit integer
+            }
+            return hash;
+        },
+
+        _generateNoteHtml: function (note) {
+            return '' +
+            '<div class="comment bg-white p-3">' 
+                    + " <div>" +
+                            // "<span><i class='fas fa-exclamation text-warning'></i>&nbsp;&nbsp;<i class='fas fa-envelope text-info'></i></span>" +
+                            "<i class='fas fa-trash text-danger float-end' onclick='notesComponent.deleteNote(" + note.pk + ")'></i>" +
+                        "</div> " 
+                    + "<div style='overflow:hidden; overflow-wrap:normal;'>" + note.content + "</div>" +
+                '<div class="text-end">' +
+                    '<em class="text-muted small">' + note.postedWhen + ' av <a href="#">' + note.author + '</a></em>' +
+                '</div>' +
+            '</div>' +
+            '';
+        },
+
+        _render: function () {
+            let _this = this;
+            this._notesToBeCreated.forEach(function (pk) {
+                let note = _this._notes.get(pk);
+                _this.$commentWrapper.append(_this._generateNoteHtml(note));
+                note.htmlNode = _this.$commentWrapper.children().last();
+            });
+            this._notesToBeCreated.length = 0; // clear array
+
+            this._notesToBeUpdated.forEach(function (pk) {
+                let note = _this._notes.get(pk);
+                note.htmlNode.html(_this._generateNoteHtml(note));
+            });
+            _this._notesToBeUpdated.length = 0; // clear array
+        },
+
+        _mapNote: function ({ objToBeMapped } = {}) {
+            console.log(objToBeMapped)
+            return {
+                pk: objToBeMapped.pk,
+                author: objToBeMapped.author,
+                content: objToBeMapped.content,
+                postedWhen: new Date(objToBeMapped.created),
+                htmlNode: undefined,
+            };
+        },
+
+        /**
+         * Deals with registering an incoming note
+         * */
+        _handleIncomingNote: function (note) {
+            let hash = this.hashNoteContent(note.content);
+            if (this._notes.has(note.pk)) {
+                // check if hash has changed -- if it has we need to stage this note for a refresh
+                let currentNote = this._notes.get(note.pk);
+                if (currentNote.hash !== hash) {
+                    currentNote.content = note.content;
+                    currentNote.hash = hash;
+                    this._notesToBeUpdated.push(currentNote.pk);
+                }
+                return;
+            }
+
+            let mappedNote = this._mapNote({ objToBeMapped: note });
+            mappedNote.hash = hash;
+            this._notes.set(note.pk, mappedNote);
+            this._notesToBeCreated.push(note.pk);
+            return note.pk;
+        },
+
+        deleteNote: function (pk) {
+            let note = this._notes.get(pk);
+            console.log(note.htmlNode)
+            note.htmlNode[0].remove();
+            fetch('/arrangement/note/delete/' + note.pk, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{csrf_token}}'
+                },
+                credentials: "same-origin"
+            });
+        },
+
+        fetchNotes: function () {
+            let _this = this;
+            return fetch('/arrangement/note/getNotes?entityType=' + this._entityType + "&entityPk=" + this._entityPk)
+                   .then(response => response.json())
+                   .then(json => JSON.parse(json))
+                   .then(obj => { 
+                       obj.forEach(function (note) {
+                           _this._handleIncomingNote(note)
+                       })
+                    })
+                    .then(a => {
+                        this._render();
+                    })
+                    .then(a => {
+                        this.onFocused();
+                        this.$contentTextAreaInput.html("");
+                    })
+        },
+
+        postComment: function () {
+            // let instance = WYSIWYG.getInstance(document.getElementById('noteContent'));
+            // let content = instance.getCode();
+
+            let data = new FormData();
+            data.append("entityPk", this._entityPk);
+            data.append("entityType", this._entityType);
+            data.append("content", this.$contentTextAreaInput[0].value);
+            data.append('csrfmiddlewaretoken', this._csrf_token);
+
+            fetch('{% url "arrangement:post_comment" %}', {
+                method: 'POST',
+                body: data,
+                credentials: 'same-origin',
+            }).then(a => this.fetchNotes())
+        }
+    }
+</script>

@@ -1,0 +1,32 @@
+{% extends "arrangement/meta_base.html" %}
+{% load static i18n %}
+
+{% block content %}
+
+    <div id="visualization"></div>
+
+<script>
+
+
+    // DOM element where the Timeline will be attached
+    var container = document.getElementById('visualization');
+
+    var group = JSON.parse('{{ groups |safe }}')
+
+    // Create a DataSet (allows two way data-binding)
+    var items = new vis.DataSet([
+    // {id: 1, content: 'Arrangement A', className:"bg-info text-white", start: '2022-04-20'},
+    // {id: 2, content: 'Arrangement B', className:"bg-danger text-white", start: '2022-04-14'},
+    // {id: 3, content: 'Arrangement C', start: '2022-04-18', group: 4},
+    // {id: 4, content: 'Arrangement D', start: '2022-04-16', end: '2022-04-19', group: 5},
+    // {id: 5, content: 'Arrangement E', start: '2022-04-25', group: 6, className: "bg-success text-white"},
+    // {id: 6, content: 'Arrangement F', start: '2022-04-27', group: 7, className: "bg-danger text-white"}
+    ]);
+
+    // Configuration for the Timeline
+    var options = {};
+
+    // Create a Timeline
+    var timeline = new vis.Timeline(container, items, group, options);
+    </script>
+{% endblock %}

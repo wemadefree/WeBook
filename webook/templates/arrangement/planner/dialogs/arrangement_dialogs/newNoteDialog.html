@@ -1,0 +1,34 @@
+<div id="newNoteDialog" title="Nytt notat">
+    <div class='bg-white p-2 border border-1'>
+
+        <textarea name="" class="form-control" id="newNoteDialog__content" cols="30" rows="10"
+            placeholder="Tast inn..">
+        </textarea>
+
+        <button class="btn-block" onclick="submitNote()" type="button">
+            Lagre
+        </button>
+    </div>
+</div>
+
+<script>
+    function submitNote() {
+        let data = new FormData();
+        data.append("entityPk", '{{arrangementPk}}');
+        data.append("entityType", 'arrangement');
+        data.append("content", $('#newNoteDialog__content').val());
+        data.append('csrfmiddlewaretoken', "{{ csrf_token }}");
+
+        fetch('{% url "arrangement:post_comment" %}', {
+            method: 'POST',
+            body: data,
+            credentials: 'same-origin',
+        }).then( _ => { 
+            document.dispatchEvent(
+                new CustomEvent("arrangementPlannerDialogs.hasBeenUpdated", {'detail': {
+                    dialog: "newNoteDialog",
+                }})
+            )
+        });
+    }
+</script>

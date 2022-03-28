@@ -1,0 +1,61 @@
+{% load static i18n %}
+
+<div class="modal" tabindex="-1" role="dialog" id="addPlannerDialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title text-center"><i class="fas fa-user"></i>&nbsp; {% trans "Add planner" %}</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" onclick="$('#addPlannerDialog').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <select class="select form-control" data-mdb-filter="true" id="addPlannerDialog_plannerSelect"></select>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#addPlannerDialog').modal('hide')">{% trans "Cancel" %}</button>
+                <button type="button" class="btn btn-primary" onclick="addPlannerDialog.save();$('#addPlannerDialog').modal('hide')">{% trans "Save" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        addPlannerDialog.init();
+    })
+
+    let addPlannerDialog = {
+        $modalEl: $('#addPlannerDialog'),
+        $plannerSelectEl: $('#addPlannerDialog_plannerSelect'),
+        plannerExtendedSelect: undefined,
+
+        init: function () {
+            plannerExtendedSelect = new ExtendedSelect({
+                jqElement: $('#addPlannerDialog_plannerSelect'),
+                getUrl: '{% url "arrangement:search_people_ajax_view" %}',
+                extraHeaders: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                dataParser: function (item) {
+                    return {
+                        value: item.pk,
+                        text: [item.fields.first_name, item.fields.middle_name, item.fields.last_name].join(" "),
+                        secondary_text: item.fields.personal_email
+                    }
+                }
+            });
+        },
+
+        open: function () {
+            this.$modalEl.modal('show');
+        },
+
+        save: function () { 
+        }
+    }
+</script>

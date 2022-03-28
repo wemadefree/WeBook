@@ -1,0 +1,58 @@
+{% load static i18n %}
+
+{% block content %}
+
+<div class="modal" tabindex="-1" role="dialog" id="requisitioningDialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{% trans "Requisitioning" %}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#requisitioningDialog').modal('hide')">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+          
+          <h2 class="text-center text-warning">
+            <i class="fas fa-exclamation"></i>
+          </h2>
+          <h4 class="fw-bolder text-center">Obs</h4>
+
+
+          <p>
+            Du er nå i ferd med å endre stadiet på dette arrangementet til rekvireringssfasen.
+            Dette vil medføre at en del ting skjer;
+          </p>
+          <ul>
+            <li>Hendelser låses</li>
+            <li>Hendelser vil bli lagt inn i <abbr title="I praktisk effekt">produksjonskalenderen</abbr></li>
+            <li>Rekvireringer og forespørsler sendes ut til allokerte personer, slik at de kan bekrefte oppmøte</li>
+            <li>Muligheten for å bestille tjenester som har blitt annotert i planleggingen vil nå være mulig</li>
+          </ul>
+          <p>
+            Det er viktig at man er sikker på at man er ferdig med planleggingen før man bytter fase. Det er mulig å gå tilbake 
+            og endre på hendelser - men dette vil være til dels utrygt. Dette vil kreve at du manuelt opphever låser satt på hendelsene.
+          </p>
+          <p>
+            Før du kan igangsette rekvireringen må du kjøre en kollisjonsanalyse og ta en stilling til resultatene.
+          </p>
+        </div>
+        <div class="modal-footer">
+            <!-- <button id="" class="btn btn-danger">Cancel</button> -->
+            <!-- <button id="form-example-prev-step" class="btn btn-dark">Previous step</button>
+            <button id="form-example-next-step" class="btn btn-success">Next step</button> -->
+            <button type="button" class="btn btn-secondary" onclick="$('#requisitioningDialog').modal('hide')">{% trans "Cancel" %}</button>
+            <button type="button" class="btn btn-primary" onclick="">{% trans "Save" %}</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  var requisitioningDialog = {
+    open: function () {
+      $('#requisitioningDialog').modal('show');
+    },
+  }
+</script>
+{% endblock %}

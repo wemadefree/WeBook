@@ -1,9 +1,12 @@
-{% load static i18n %}<!DOCTYPE html>
+{% load static i18n %}
+{% load crumbinator_filters %}
+
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>{% block title %}WeBook{% endblock title %}</title>
+    <title>{% block title %} {{ APP_TITLE }} {% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -17,70 +20,245 @@
 
     {% block css %}
     <!-- Third-party CSS libraries go here -->
-    <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet">
+    <!-- <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet"> -->
+    <link href="{{ ASSET_SERVER_URL }}mdb/css/mdb.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ ASSET_SERVER_URL }}mdb/plugins/css/color-picker.min.css">
+    <link rel="stylesheet" href="{{ ASSET_SERVER_URL }}mdb/plugins/css/wysiwyg.min.css">
+    <link rel="stylesheet" href="{% static 'vis-timeline/styles/vis-timeline-graph2d.min.css' %}" />
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'fullcalendar-scheduler/main.min.css' %}">
+    <link rel="stylesheet" href="{% static '@fonticonpicker/fonticonpicker/dist/css/base/jquery.fonticonpicker.min.css' %}">
+    <link rel="stylesheet" href="{% static '@fonticonpicker/fonticonpicker/dist/css/themes/bootstrap-theme/jquery.fonticonpicker.bootstrap.min.css' %}">
+    
+    <script src="{{ ASSET_SERVER_URL }}mdb/plugins/js/wysiwyg.min.js"></script>
 
     <!-- This file stores project-specific CSS -->
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
+
+
+    <script
+    src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    crossorigin="anonymous"></script>	
+    <script src="{% static 'js/mdbSelectExt.js' %}"></script>
+    <script src="{% static 'vis-timeline/standalone/umd/vis-timeline-graph2d.js' %}"></script>
+    <script src="https://kit.fontawesome.com/db5ee7e46d.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     {% endblock %}
 
   </head>
 
   <body>
-
-    <div class="mb-4">
-      <nav class="navbar navbar-expand-md navbar-light bg-light container-fluid">
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <a class="navbar-brand" href="{% url 'home' %}">WeBook</a>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'about' %}">About</a>
-            </li>
-            {% if request.user.is_authenticated %}
-              <li class="nav-item">
-                {# URL provided by django-allauth/account/urls.py #}
-                <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>
-              </li>
-              <li class="nav-item">
-                {# URL provided by django-allauth/account/urls.py #}
-                <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Sign Out" %}</a>
-              </li>
-            {% else %}
-              <li class="nav-item">
-                {# URL provided by django-allauth/account/urls.py #}
-                <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
-              </li>
-              <li class="nav-item">
-                {# URL provided by django-allauth/account/urls.py #}
-                <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
-              </li>
-            {% endif %}
-          </ul>
+    <header>
+      <!-- Sidenav -->
+      <nav id="sidenav-1" style="background-color: #21384B; color:white" class="sidenav ps sidenav-primary sidenav-dark" data-mdb-mode="side" data-mdb-hidden="false" data-mdb-accordion="true" style="width: 240px; height: 100vh; position: fixed; transition: all 0.3s linear 0s; ">
+        <a class="ripple d-flex justify-content-center py-4" href="#!" data-mdb-ripple-color="primary">
+          <img id="app-logo" src="/{{ APP_LOGO }}" alt="App Logo" width="150px" draggable="false">
+        </a>
+  
+        <div class="text-center p-2 fw-bold h3">
+          {{ APP_TITLE }}
         </div>
-      </nav>
+  
+        <ul class="sidenav-menu">
+          <li class="sidenav-item">
+            <a class="sidenav-link ripple-surface" href="{% url 'users:detail' request.user.slug %}" tabindex="-1">
+              <i class="fa fa-chart-area fa-fw me-3" aria-hidden="true"></i><span>{% trans "My Page" %}</span></a>
+          </li>
 
-    </div>
+          <li class="sidenav-item">
+            <a class="sidenav-link ripple-surface" href="{% url "arrangement:sample_overview" %}" tabindex="-1">
+              <i class="fa fa-calendar fa-fw me-3" aria-hidden="true"></i><span>{% trans "Calendars" %}</span></a>
+          </li>
+
+
+          <!-- <li class="sidenav-item">
+            <a class="sidenav-link ripple-surface" href="{% url "arrangement:drill_calendar" %}" tabindex="-1">
+              <i class="fa fa-calendar fa-fw me-3" aria-hidden="true"></i><span>{% trans "Universal Calendar" %}</span></a>
+          </li> -->
+
+          <li>
+            <a class="sidenav-link ripple-surface" href="{% url "arrangement:arrangement_list" %}" tabindex="-1">
+              <i class="fa fa-suitcase fa-fw me-3" aria-hidden="true"></i><span>{% trans "Arrangements" %}</span></a>
+          </li>
+
+          <li>
+            <a class="sidenav-link ripple-surface" href="{% url "arrangement:planner_calendar" %}" tabindex="-1">
+              <i class="fa fa-suitcase fa-fw me-3" aria-hidden="true"></i><span>{% trans "Planner" %}</span></a>
+          </li>
+
+          <li>
+            <a class="sidenav-link ripple-surface" href="{% url "arrangement:location_list" %}" tabindex="-1">
+              <i class="fa fa-building fa-fw me-3" aria-hidden="true"></i><span>{% trans "Rooms & Locations" %}</span></a>
+          </li>
+
+          <li>
+            <a class="sidenav-link ripple-surface" href="{% url "arrangement:organization_list" %}" tabindex="-1">
+              <i class="fa fa-dollar-sign fa-fw me-3" aria-hidden="true"></i><span>{% trans "Organizations" %}</span></a>
+          </li>
+
+          <li>
+            <a class="sidenav-link ripple-surface" href="{% url "arrangement:global_timeline" %}" tabindex="-1">
+              <i class="fa fa-globe-europe fa-fw me-3" aria-hidden="true"></i><span>{% trans "Timeline" %}</span></a>
+          </li>
+
+          <li>
+            <a class="sidenav-link ripple-surface" href="{% url "arrangement:person_list" %}" tabindex="-1">
+              <i class="fa fa-users fa-fw me-3" aria-hidden="true"></i><span>{% trans "People" %}</span></a>
+          </li>
+          <li class="sidenav-item">
+            <a class="sidenav-link ripple-surface" data-mdb-toggle="collapse" href="#sidenav-collapse-1-0-1" role="button" tabindex="-1" aria-expanded="false">
+              <i class="fa fa-cog fa-fw me-3" aria-hidden="true"></i>
+              <span>{% trans "Types" %}</span>
+              <i class="fa fa-angle-down rotate-icon" aria-hidden="true"></i>
+            </a>
+            <ul class="sidenav-collapse collapse" id="sidenav-collapse-1-0-1">
+              <li class="sidenav-item">
+                <a class="sidenav-link ripple-surface" href="{% url 'arrangement:servicetype_list' %}" tabindex="-1">{% trans "Service Types" %}</a>
+              </li>
+              <li class="sidenav-item">
+                <a class="sidenav-link ripple-surface" href="{% url 'arrangement:organizationtype_list' %}" tabindex="-1">{% trans "Organization Types" %}</a>
+              </li>
+              <li class="sidenav-item">
+                <a class="sidenav-link ripple-surface" href="{% url 'arrangement:audience_list' %}" tabindex="-1">{% trans "Audience Types" %}</a>
+              </li>
+              <li class="sidenav-item">
+                <a class="sidenav-link ripple-surface" href="{% url 'arrangement:arrangement_type_list' %}" tabindex="-1">{% trans "Arrangement Types" %}</a>
+              </li>
+            </ul>
+          </li>
+          <div class="container-fluid">
+            <hr>
+          </div>
+  
+          <li class="sidenav-item">
+            <a class="sidenav-link ripple-surface" href="{% url 'account_logout' %}" tabindex="-1">
+              <i class="fas fa-door-closed fa-fw me-3"></i><span>{% trans "Sign Out" %}</span>
+            </a>
+          </li>
+
+          <!-- <em class="text-center fw-bold d-block mt-4 text-uppercase">VERSION</em> -->
+        </ul>
+        <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div><div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></nav>
+        <!-- Sidenav -->
+  
+      <!-- Navbar -->
+      <nav id="main-navbar" class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #386080;">
+        <!-- Container wrapper -->
+        <div class="container-fluid">
+          <!-- Toggler -->
+          <button data-mdb-toggle="sidenav" data-mdb-target="#sidenav-1" class="btn shadow-0 p-0 me-3 d-block text-white" aria-controls="#sidenav-1" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-bars fa-lg" aria-hidden="true"></i>
+          </button>
+  
+          <!-- Search form -->
+          <form class="d-none d-md-flex input-group w-auto my-auto">
+            <input autocomplete="off" type="search" class="form-control rounded" placeholder="{% blocktrans %}Search (ctrl + &quot;/&quot; to focus){% endblocktrans %}" style="min-width: 225px">
+            <span class="input-group-text border-0"><i class="fas fa-search text-white" aria-hidden="true"></i></span>
+          </form>
+  
+          <!-- Right links -->
+          <ul class="navbar-nav ms-auto d-flex flex-row">
+            <!-- Notification dropdown -->
+            <li class="nav-item dropdown">
+              <a class="nav-link me-4 me-lg-0 dropdown-toggle hidden-arrow" href="#" id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-bell" aria-hidden="true"></i>
+                <span class="badge rounded-pill badge-notification bg-danger">1</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                <li><a class="dropdown-item" href="#">Some news</a></li>
+                <li><a class="dropdown-item" href="#">Another news</a></li>
+                <li>
+                  <a class="dropdown-item" href="#">Something else here</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          {% if request.user.is_authenticated %}
+            <div class="btn-group shadow-0">
+              <button
+                type="button"
+                class="btn ms-3 btn-primary text-white fw-bold dropdown-toggle"
+                style="border-radius: 0px; background-color: #21384a;"
+                data-mdb-toggle="dropdown"
+                aria-expanded="false"
+              >
+              <i class="fa fa-user"></i>&nbsp; 
+                {% trans "Hi" %}, {{ request.user.person.first_name }}
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href=""><i class="la la-user"></i>&nbsp; {% trans "My Profile" %}</a></li>
+                <li>
+                  <hr class="dropdown-divider" />
+                </li>
+                <li><a class="dropdown-item" href="{% url 'account_logout' %}"><i class="la la-times-circle"></i>&nbsp; {% trans "Sign Out" %}</a></li>
+              </ul>
+            </div>
+          {% else %}
+            <a id="log-in-link" class="btn btn-success" href="{% url 'account_login' %}"><i class="la la-lock-open"></i> {% trans "Sign In" %}</a>
+            <a id="sign-up-link" class="btn btn-info ms-2" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
+          {% endif %}
+        </div>
+        <!-- Container wrapper -->
+      </nav>
+      <!-- Navbar -->
+    </header>
+
+      <style>
+      @media (min-width: 1400px) {
+        main,
+        header,
+        #main-navbar {
+          padding-left: 240px;
+        }
+      }
+      INPUT:-webkit-autofill,SELECT:-webkit-autofill,TEXTAREA:-webkit-autofill{animation-name:onautofillstart}INPUT:not(:-webkit-autofill),SELECT:not(:-webkit-autofill),TEXTAREA:not(:-webkit-autofill){animation-name:onautofillcancel}@keyframes onautofillstart{from{}}@keyframes onautofillcancel{from{}}
+  </style>
+
+    {% block superheader %}
+    <div style="margin-top:100px"></div>
+    {% endblock %}
 
     <div class="container">
+      {% block noheader %}
 
+      <section class="bg-white">
+        <h1 class="h1 fw-bolder">
+          <i class="{% block section_icon_class %}{% endblock %}"></i>
+          
+          {% block section_title %}
+          {% endblock section_title%} 
+          | <small class="text-muted h4">{% block section_subtitle %}{% endblock %}</small>
+        </h1>
+        {% if CRUMBS  %}
+          {{ CRUMBS|crumbinator }}
+        {% endif %}
+      </section>
+      <div class="mt-1">
+        {% block beneath_breadcrumbs_block %}
+        {% endblock %}
+      </div>
+      <hr>
+      {% endblock %}
+
+      <div class="mb-4"></div>
       {% if messages %}
           {% for message in messages %}
               <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
           {% endfor %}
       {% endif %}
+    </section>
 
-      {% block content %}
-        <p>Flexible booking and event management solution. This text is inherited on other pages!</p>
-      {% endblock content %}
+
+    <div class="mb-4"></div>
+
+    {% block content %}
+    {% endblock %}
 
     </div> <!-- /container -->
-
+    
     {% block modal %}{% endblock modal %}
 
     <!-- Le javascript
@@ -88,15 +266,78 @@
     <!-- Placed at the end of the document so the pages load faster -->
     {% block javascript %}
 
-      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script> -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.min.js" integrity="sha512-kvg/Lknti7OoAw0GqMBP8B+7cGHvp4M9O9V6nAYG91FZVDMW3Xkkq5qrdMhrXiawahqU7IZ5CNsY/wWy1PpGTQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 
       <!-- Your stuff: Third-party javascript libraries go here -->
-      <script src="{% static 'js/mdb.min.js' %}"></script>
+      <!-- <script src="{% static 'js/mdb.min.js' %}"></script> -->
 
+      <script src="{{ ASSET_SERVER_URL }}mdb/js/mdb.min.js"></script>
+      <script src="{{ ASSET_SERVER_URL }}mdb/plugins/js/color-picker.min.js"></script>
+
+      <script src="{% static 'js/bootbox.min.js' %}"></script>
+      <script src="{% static 'js/bootbox.locales.min.js' %}"></script>
+
+      <script src="{% static 'fullcalendar-scheduler/main.min.js' %}"></script>
+      <script src="{% static 'fullcalendar-scheduler/locales-all.min.js' %}"></script>
       <!-- place project specific Javascript in this file -->
+      <script src="{% static 'js/entityMeta.js' %}"></script>
       <script src="{% static 'js/project.js' %}"></script>
+      <script src="https://unpkg.com/hotkeys-js/dist/hotkeys.min.js"></script>
+      <script src="{% static '@fonticonpicker/fonticonpicker/dist/js/jquery.fonticonpicker.min.js' %}"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+
+
+            <!-- Handle window resizing, and automatic hiding/showing of the sidenav to correspond. -->
+      <script>
+          const sidenav = document.getElementById("sidenav-1");
+          const instance = mdb.Sidenav.getInstance(sidenav);
+
+          let innerWidth = null;
+
+          const setMode = (e) => {
+            // Check necessary for Android devices
+            if (window.innerWidth === innerWidth) {
+              return;
+            }
+
+            innerWidth = window.innerWidth;
+
+            if (window.innerWidth < 1400) {
+              instance.changeMode("over");
+              instance.hide();
+            } else {
+              instance.changeMode("side");
+              instance.show();
+            }
+          };
+
+          setMode();
+
+          // Event listeners
+          window.addEventListener("resize", setMode);
+
+          toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": false,
+            "positionClass": "toast-bottom-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+          }
+      </script>
     {% endblock javascript %}
   </body>
 </html>
-

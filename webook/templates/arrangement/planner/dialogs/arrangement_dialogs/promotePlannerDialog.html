@@ -1,0 +1,43 @@
+<div id="promotePlannerDialog" title="Endre hovedplanlegger...">
+    <div class='bg-white p-2 border border-1'>
+        Velg planleggeren som skal være hovedplanlegger for dette arrangement...
+
+        <div>
+            <input type="radio"  data-toggle="tooltip" title="Nåværende hovedplanlegger - kan ikke velges" disabled /> 
+            <label class="text-muted" data-toggle="tooltip" title="Nåværende hovedplanlegger">{{ main_planner }}</label>
+        </div>
+
+        {% for planner in planners %}
+            <div>
+                <input type="radio" name="plannerToPromoteRadio" value="{{planner.pk}}" /> <label>{{planner}}</label>
+            </div>
+        {% endfor %}
+
+        <button onclick="promotePlanner()">
+            Gjør valgt planlegger til hovedplanlegger
+        </button>
+    </div>
+</div>
+
+<script>
+    function promotePlanner() {
+        console.log($("input[name='plannerToPromoteRadio']:checked").val());
+        let formData = new FormData();
+        formData.append("arrangement_id", "{{arrangementPk}}");
+        formData.append("promotee", $("input[name='plannerToPromoteRadio']:checked").val())
+        
+        fetch("{% url 'arrangement:arrangement_promote_planner_to_main' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            credentials: 'same-origin'
+        }).then(_ => { document.dispatchEvent(
+                new CustomEvent("arrangementPlannerDialogs.hasBeenUpdated", { "detail": {
+                    dialog: "promotePlannerDialog",
+                }})
+            )}
+        )
+    }
+</script>

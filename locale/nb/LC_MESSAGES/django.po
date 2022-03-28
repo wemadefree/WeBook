@@ -1,0 +1,1389 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-09 12:56+0100\n"
+"PO-Revision-Date: 2021-12-09 13:29+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: nb\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0\n"
+
+#: .\config\settings\base.py:41
+msgid "English"
+msgstr "Engelsk"
+
+#: .\config\settings\base.py:42
+msgid "Norwegian"
+msgstr "Norsk"
+
+#: .\webook\arrangement\models.py:17 .\webook\arrangement\models.py:63
+#: .\webook\arrangement\models.py:97 .\webook\arrangement\models.py:128
+#: .\webook\arrangement\models.py:149 .\webook\arrangement\models.py:164
+#: .\webook\arrangement\models.py:202 .\webook\arrangement\models.py:259
+#: .\webook\templates\arrangement\organization\organization_form.html:68
+#: .\webook\templates\arrangement\person\partials\_organization_member_list.html:7
+#: .\webook\templates\arrangement\person\person_form.html:41
+#: .\webook\templates\arrangement\room\partials\_location_room_list.html:7
+msgid "Name"
+msgstr "Navn"
+
+#: .\webook\arrangement\models.py:18
+msgid "Icon Class"
+msgstr "Ikon Klasse"
+
+#: .\webook\arrangement\models.py:65
+#: .\webook\arrangement\views\audience_views.py:18
+msgid "Audience"
+msgstr "Målgruppe"
+
+#: .\webook\arrangement\models.py:67
+msgid "Starts"
+msgstr "Starter"
+
+#: .\webook\arrangement\models.py:68
+msgid "Ends"
+msgstr "Slutter"
+
+#: .\webook\arrangement\models.py:70
+msgid "Timeline Events"
+msgstr "Tidslinje Hendelser"
+
+#: .\webook\arrangement\models.py:72
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:263
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:300
+msgid "Responsible"
+msgstr "Ansvarlig"
+
+#: .\webook\arrangement\models.py:73
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:52
+msgid "Owners"
+msgstr "Eiere"
+
+#: .\webook\arrangement\models.py:75
+msgid "People Participants"
+msgstr "Persondeltakere"
+
+#: .\webook\arrangement\models.py:76
+msgid "Organization Participants"
+msgstr "Organisasjondeltakere"
+
+#: .\webook\arrangement\models.py:123
+#: .\webook\templates\arrangement\location\location_detail.html:5
+#: .\webook\templates\arrangement\location\location_detail.html:71
+#: .\webook\templates\arrangement\location\location_form.html:6
+#: .\webook\templates\arrangement\location\location_list.html:28
+#: .\webook\templates\arrangement\room\room_detail.html:5
+#: .\webook\templates\arrangement\room\room_detail.html:32
+msgid "Location"
+msgstr "Lokasjon"
+
+#: .\webook\arrangement\models.py:188 .\webook\arrangement\models.py:289
+msgid "Content"
+msgstr "Innhold"
+
+#: .\webook\arrangement\models.py:189
+msgid "Stamp"
+msgstr "Stempel"
+
+#: .\webook\arrangement\models.py:228
+msgid "Start Of Business Hours"
+msgstr "Start av arbeidstider"
+
+#: .\webook\arrangement\models.py:229
+msgid "End Of Business Hours"
+msgstr "Slutt av arbeidstider"
+
+#: .\webook\arrangement\models.py:257
+msgid "Owner"
+msgstr "Eier"
+
+#: .\webook\arrangement\models.py:260
+msgid "Is Personal"
+msgstr "Er Personlig"
+
+#: .\webook\arrangement\models.py:262
+msgid "People Resources"
+msgstr "Personressurser"
+
+#: .\webook\arrangement\models.py:263
+msgid "Room Resources"
+msgstr "Romressurser"
+
+#: .\webook\arrangement\models.py:291
+msgid "Confirmation Receipt"
+msgstr "Bekreftelseskvittering"
+
+#: .\webook\arrangement\models.py:322
+msgid "Guid"
+msgstr "Guid"
+
+#: .\webook\arrangement\models.py:323
+msgid "Requested By"
+msgstr "Forespurt Av"
+
+#: .\webook\arrangement\models.py:324
+msgid "SentTo"
+msgstr "Sendt Til"
+
+#: .\webook\arrangement\models.py:325
+msgid "Confirmed"
+msgstr "Bekreftet"
+
+#: .\webook\arrangement\models.py:326
+msgid "SentWhen"
+msgstr "Sendt Når"
+
+#: .\webook\arrangement\models.py:327
+msgid "ConfirmedWhen"
+msgstr "Bekreftet Når"
+
+#: .\webook\arrangement\models.py:358
+msgid "Personal Email"
+msgstr "Personlig E-Post"
+
+#: .\webook\arrangement\models.py:359
+#: .\webook\templates\arrangement\person\person_form.html:46
+msgid "First Name"
+msgstr "Fornavn"
+
+#: .\webook\arrangement\models.py:360
+#: .\webook\templates\arrangement\person\person_form.html:60
+msgid "Middle Name"
+msgstr "Mellomnavn"
+
+#: .\webook\arrangement\models.py:361
+#: .\webook\templates\arrangement\person\person_form.html:71
+msgid "Last Name"
+msgstr "Etternavn"
+
+#: .\webook\arrangement\models.py:362
+msgid "Birth Date"
+msgstr "Fødselsdato"
+
+#: .\webook\arrangement\models.py:364
+msgid "Business Hours"
+msgstr "Arbeidstider"
+
+#: .\webook\arrangement\models.py:401
+msgid "Organization Number"
+msgstr "Organisasjonsnummer"
+
+#: .\webook\arrangement\models.py:403
+msgid "Organization Type"
+msgstr "Organisasjonstype"
+
+#: .\webook\arrangement\models.py:405 .\webook\arrangement\models.py:492
+#: .\webook\arrangement\models.py:525
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:78
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:251
+msgid "Notes"
+msgstr "Notater"
+
+#: .\webook\arrangement\models.py:406
+msgid "Members"
+msgstr "Medlemmer"
+
+#: .\webook\arrangement\models.py:435
+msgid "ServiceName"
+msgstr "Tjenestenavn"
+
+#: .\webook\arrangement\models.py:436
+msgid "Service Type"
+msgstr "Tjenestetype"
+
+#: .\webook\arrangement\models.py:437
+#: .\webook\templates\arrangement\organization\organization_detail.html:5
+#: .\webook\templates\arrangement\organization\organization_form.html:6
+#: .\webook\templates\arrangement\organization\organization_list.html:28
+msgid "Organization"
+msgstr "Organisasjon"
+
+#: .\webook\arrangement\models.py:482
+msgid "Title"
+msgstr "Tittel"
+
+#: .\webook\arrangement\models.py:483
+msgid "Start"
+msgstr "Start"
+
+#: .\webook\arrangement\models.py:484
+msgid "End"
+msgstr "Slutt"
+
+#: .\webook\arrangement\models.py:485
+msgid "AllDay"
+msgstr "Hele dagen"
+
+#: .\webook\arrangement\models.py:486
+msgid "SequenceGuid"
+msgstr "Sekvens GUID"
+
+#: .\webook\arrangement\models.py:488
+#: .\webook\templates\arrangement\arrangement\arrangement_list.html:16
+#: .\webook\templates\arrangement\calendar\arrangement_calendar.html:14
+msgid "Arrangement"
+msgstr "Arrangement"
+
+#: .\webook\arrangement\models.py:489
+#: .\webook\arrangement\views\person_views.py:22
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:261
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:281
+#: .\webook\templates\arrangement\calendar\arrangement_calendar.html:39
+#: .\webook\templates\arrangement\person\person_form.html:6
+#: .\webook\templates\arrangement\person\person_section_base.html:9
+#: .\webook\templates\base.html:79
+msgid "People"
+msgstr "Personer"
+
+#: .\webook\arrangement\models.py:490
+#: .\webook\arrangement\views\room_views.py:20
+#: .\webook\templates\arrangement\location\location_detail.html:27
+#: .\webook\templates\arrangement\room\room_list.html:5
+#: .\webook\templates\arrangement\room\room_section_base.html:9
+msgid "Rooms"
+msgstr "Rom"
+
+#: .\webook\arrangement\models.py:491
+msgid "Articles"
+msgstr "Artikler"
+
+#: .\webook\arrangement\models.py:522
+msgid "Receipt"
+msgstr "Kvittering"
+
+#: .\webook\arrangement\models.py:523
+msgid "Event"
+msgstr "Hendelse"
+
+#: .\webook\arrangement\models.py:524
+msgid "Service Provider"
+msgstr "Tjenestetilbyder"
+
+#: .\webook\arrangement\models.py:526
+msgid "Associated People"
+msgstr "Assosierte Personer"
+
+#: .\webook\arrangement\views\arrangement_views.py:19
+#: .\webook\templates\arrangement\audience\audience_detail.html:19
+#: .\webook\templates\base.html:59
+msgid "Arrangements"
+msgstr "Arrangementer"
+
+#: .\webook\arrangement\views\arrangement_views.py:44
+#: .\webook\templates\arrangement\arrangement\arrangement_list.html:6
+msgid "All Arrangements"
+msgstr "Alle Arrangementer"
+
+#: .\webook\arrangement\views\arrangement_views.py:58
+#: .\webook\arrangement\views\arrangement_views.py:59
+msgid "Create Arrangement"
+msgstr "Opprett Arrangement"
+
+#: .\webook\arrangement\views\arrangement_views.py:75
+#: .\webook\arrangement\views\arrangement_views.py:76
+#: .\webook\arrangement\views\arrangement_views.py:86
+msgid "Edit Arrangement"
+msgstr "Rediger Arrangement"
+
+#: .\webook\arrangement\views\arrangement_views.py:85
+msgid "Delete Arrangement"
+msgstr "Slett Arrangement"
+
+#: .\webook\arrangement\views\audience_views.py:27
+#: .\webook\arrangement\views\audience_views.py:28
+msgid "All Audiences"
+msgstr "Alle Målgrupper"
+
+#: .\webook\arrangement\views\audience_views.py:52
+#: .\webook\arrangement\views\audience_views.py:53
+msgid "Create Audience"
+msgstr "Opprett Målgruppe"
+
+#: .\webook\arrangement\views\calendar_views.py:17
+#: .\webook\templates\base.html:54
+msgid "Calendars"
+msgstr "Kalendere"
+
+#: .\webook\arrangement\views\calendar_views.py:25
+#: .\webook\arrangement\views\calendar_views.py:26
+msgid "Calendar Samples"
+msgstr "Eksempel kalendere"
+
+#: .\webook\arrangement\views\calendar_views.py:34
+#: .\webook\arrangement\views\calendar_views.py:35
+#: .\webook\templates\arrangement\calendar\calendars_list.html:7
+msgid "Arrangement Calendar"
+msgstr "Arrangementskalender"
+
+#: .\webook\arrangement\views\dashboard_views.py:18
+msgid "Dashboard"
+msgstr "Dashbord"
+
+#: .\webook\arrangement\views\dashboard_views.py:27
+msgid "Welcome back!"
+msgstr "Velkommen tilbake!"
+
+#: .\webook\arrangement\views\insights_views.py:19
+msgid "Insight"
+msgstr "Innsikt"
+
+#: .\webook\arrangement\views\insights_views.py:27
+#: .\webook\arrangement\views\insights_views.py:28
+msgid "Global Timeline"
+msgstr "Global Tidslinje"
+
+#: .\webook\arrangement\views\location_views.py:19
+#: .\webook\templates\arrangement\calendar\arrangement_calendar.html:21
+#: .\webook\templates\arrangement\location\location_list.html:5
+#: .\webook\templates\arrangement\location\location_section_base.html:9
+msgid "Locations"
+msgstr "Lokasjoner"
+
+#: .\webook\arrangement\views\location_views.py:93
+#: .\webook\arrangement\views\organization_views.py:80
+#: .\webook\arrangement\views\organizationtype_views.py:85
+#: .\webook\arrangement\views\person_views.py:97
+#: .\webook\arrangement\views\room_views.py:83
+#: .\webook\arrangement\views\servicetype_views.py:85
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:11
+#: .\webook\templates\arrangement\arrangement\arrangement_list.html:48
+#: .\webook\templates\arrangement\delete_view.html:13
+#: .\webook\templates\arrangement\location\location_detail.html:21
+#: .\webook\templates\arrangement\location\location_list.html:60
+#: .\webook\templates\arrangement\organization\organization_list.html:60
+#: .\webook\templates\arrangement\organizationtype\organizationtype_list.html:48
+#: .\webook\templates\arrangement\person\person_list.html:50
+#: .\webook\templates\arrangement\room\partials\_location_room_list.html:32
+#: .\webook\templates\arrangement\room\room_detail.html:22
+#: .\webook\templates\arrangement\room\room_list.html:60
+#: .\webook\templates\arrangement\servicetype\servicetype_list.html:48
+msgid "Delete"
+msgstr "Slett"
+
+#: .\webook\arrangement\views\organization_views.py:17
+#: .\webook\templates\arrangement\organization\organization_list.html:5
+#: .\webook\templates\arrangement\organization\organization_section_base.html:9
+#: .\webook\templates\arrangement\organizationtype\organizationtype_detail.html:9
+#: .\webook\templates\base.html:69
+msgid "Organizations"
+msgstr "Organisasjoner"
+
+#: .\webook\arrangement\views\organizationtype_views.py:18
+#: .\webook\templates\base.html:92
+msgid "Organization Types"
+msgstr "Organisasjonstyper"
+
+#: .\webook\arrangement\views\organizationtype_views.py:28
+#: .\webook\arrangement\views\organizationtype_views.py:29
+#: .\webook\templates\arrangement\organizationtype\organizationtype_list.html:6
+msgid "All Organization Types"
+msgstr "Alle Organisasjonstyper"
+
+#: .\webook\arrangement\views\organizationtype_views.py:66
+#: .\webook\templates\arrangement\organizationtype\organizationtype_form.html:7
+#: .\webook\templates\arrangement\organizationtype\organizationtype_form.html:14
+#: .\webook\templates\arrangement\organizationtype\organizationtype_list.html:9
+msgid "New Organization Type"
+msgstr "Opprett Organisasjonstype"
+
+#: .\webook\arrangement\views\person_views.py:31
+#: .\webook\arrangement\views\person_views.py:32
+#: .\webook\templates\arrangement\person\person_list.html:8
+msgid "All People"
+msgstr "Alle Mennesker"
+
+#: .\webook\arrangement\views\servicetype_views.py:18
+#: .\webook\templates\base.html:89
+msgid "Service Types"
+msgstr "Tjenestetyper"
+
+#: .\webook\arrangement\views\servicetype_views.py:28
+#: .\webook\arrangement\views\servicetype_views.py:29
+#: .\webook\templates\arrangement\servicetype\servicetype_list.html:6
+msgid "All Service Types"
+msgstr "Alle Tjenestetyper"
+
+#: .\webook\arrangement\views\servicetype_views.py:54
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:7
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:314
+#: .\webook\templates\arrangement\arrangement\arrangement_list.html:43
+#: .\webook\templates\arrangement\location\location_detail.html:17
+#: .\webook\templates\arrangement\location\location_list.html:55
+#: .\webook\templates\arrangement\organization\organization_list.html:55
+#: .\webook\templates\arrangement\organizationtype\organizationtype_list.html:43
+#: .\webook\templates\arrangement\person\person_list.html:45
+#: .\webook\templates\arrangement\room\partials\_location_room_list.html:27
+#: .\webook\templates\arrangement\room\room_detail.html:19
+#: .\webook\templates\arrangement\room\room_list.html:55
+#: .\webook\templates\arrangement\servicetype\servicetype_list.html:43
+msgid "Edit"
+msgstr "Rediger"
+
+#: .\webook\arrangement\views\servicetype_views.py:66
+msgid "New Servicetype"
+msgstr "Opprett Tjenestetype"
+
+#: .\webook\arrangement\views\statistics_views.py:17
+msgid "Statistics"
+msgstr "Statistikk"
+
+#: .\webook\templates\403.html:4 .\webook\templates\403.html:7
+msgid "Forbidden"
+msgstr "Forbudt"
+
+#: .\webook\templates\403.html:9
+msgid "CSRF verification failed. Request aborted."
+msgstr "CSRF verifikasjon feilet. Forespørsel avbrutt."
+
+#: .\webook\templates\404.html:4 .\webook\templates\404.html:7
+msgid "Page not found"
+msgstr "Fant ikke siden."
+
+#: .\webook\templates\404.html:9
+msgid ""
+"Sorry, this page doesn't exist or has been removed. Are you sure the URL is "
+"correct? If you believe this to be an error then please report this to us "
+"via the channels below."
+msgstr ""
+"Beklager, denne siden eksisterer ikke eller har blitt fjernet. Er du sikker "
+"på at denne adressen er riktig? Hvis du tenker at dette er en feil så "
+"vennligst rapporter det til oss via kanalene under."
+
+#: .\webook\templates\500.html:4
+msgid "Server Error"
+msgstr "Serverfeil"
+
+#: .\webook\templates\500.html:9
+msgid "Looks like something went wrong!"
+msgstr "Ser ut som at noe gikk galt!"
+
+#: .\webook\templates\500.html:11
+msgid ""
+"We track these errors automatically, but if the problem persists feel free "
+"to contact us through the channels listed beneath. In the meantime, try "
+"refreshing."
+msgstr ""
+"Vi sporer og loggfører disse feilene automatisk, men hvis problemet vedvarer "
+"så kontakt oss gjerne via de kanalene listet opp under. I mellomtiden kan du "
+"prøve å laste siden inn på nytt."
+
+#: .\webook\templates\account\account_inactive.html:5
+#: .\webook\templates\account\account_inactive.html:8
+msgid "Account Inactive"
+msgstr "Konto er inaktiv"
+
+#: .\webook\templates\account\account_inactive.html:10
+msgid "This account is inactive."
+msgstr "Denne kontoen er inaktiv."
+
+#: .\webook\templates\account\email.html:7
+#: .\webook\templates\account\email.html:8
+msgid "Email"
+msgstr "E-Post"
+
+#: .\webook\templates\account\email.html:13
+msgid "The following e-mail addresses are associated with your account:"
+msgstr "De følgende epost adressene er assosiert med din konto:"
+
+#: .\webook\templates\account\email.html:27
+msgid "Verified"
+msgstr "Verifisert"
+
+#: .\webook\templates\account\email.html:29
+msgid "Unverified"
+msgstr "Uverifisert"
+
+#: .\webook\templates\account\email.html:31
+msgid "Primary"
+msgstr "Primær"
+
+#: .\webook\templates\account\email.html:37
+msgid "Make Primary"
+msgstr "Gjør til primær"
+
+#: .\webook\templates\account\email.html:38
+msgid "Re-send Verification"
+msgstr "Send verifikasjon på nytt"
+
+#: .\webook\templates\account\email.html:39
+msgid "Remove"
+msgstr "Fjern"
+
+#: .\webook\templates\account\email.html:46
+msgid "Warning:"
+msgstr "Advarsel:"
+
+#: .\webook\templates\account\email.html:46
+msgid ""
+"You currently do not have any e-mail address set up. You should really add "
+"an e-mail address so you can receive notifications, reset your password, etc."
+msgstr ""
+"Du har ikke satt opp noen epost adresse ennå. Du burde legge til en epost "
+"adresse slik at du kan motta notifikasjoner, resette passord, osv."
+
+#: .\webook\templates\account\email.html:50
+msgid "Add E-mail Address"
+msgstr "Legg til en epost adresse"
+
+#: .\webook\templates\account\email.html:56
+msgid "Add E-mail"
+msgstr "Legg til epost"
+
+#: .\webook\templates\account\email.html:66
+msgid "Do you really want to remove the selected e-mail address?"
+msgstr "Ønsker du virkelig å fjerne den valgte epost adressen?"
+
+#: .\webook\templates\account\email_confirm.html:6
+msgid "Confirm E-mail Address"
+msgstr "Bekreft epost adresse"
+
+#: .\webook\templates\account\email_confirm.html:15
+#, python-format
+msgid ""
+"Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail "
+"address for user %(user_display)s."
+msgstr ""
+"Vennligst bekreft at <a href=\"mailto:%(email)s\">%(email)s</a> er en epost "
+"adresse for %(user_display)s."
+
+#: .\webook\templates\account\email_confirm.html:19
+msgid "Confirm"
+msgstr "Bekreft"
+
+#: .\webook\templates\account\email_confirm.html:26
+#, python-format
+msgid ""
+"This e-mail confirmation link expired or is invalid. Please <a href="
+"\"%(email_url)s\">issue a new e-mail confirmation request</a>."
+msgstr ""
+"Denne bekreftelseslinken har ekspirert, eller er ugyldig. Vennligst <a href="
+"\"%(email_url)s\">forespør en ny bekreftelseslink for å bekrefte din epost</"
+"a>."
+
+#: .\webook\templates\account\login.html:7
+#: .\webook\templates\account\login.html:51
+#: .\webook\templates\account\verification_sent.html:12
+#: .\webook\templates\base.html:189
+msgid "Sign In"
+msgstr "Logg inn"
+
+#: .\webook\templates\account\login.html:14
+#, python-format
+msgid ""
+"Please sign in with one\n"
+"of your existing third party accounts. Or, <a href=\"%(signup_url)s\">sign "
+"up</a>\n"
+"for a %(site_name)s account and sign in below:"
+msgstr ""
+"Vennligst logg in med en\n"
+"av dine eksisterende tredjepartskontoer. Eller, <a href=\"%(signup_url)s"
+"\">registrer</a>\n"
+"for en %(site_name)s konto og logg inn under:"
+
+#: .\webook\templates\account\login.html:24
+msgid "or"
+msgstr "eller"
+
+#: .\webook\templates\account\login.html:31
+#, python-format
+msgid ""
+"If you have not created an account yet, then please\n"
+"<a href=\"%(signup_url)s\">sign up</a> first."
+msgstr ""
+"Hvis du ikke har opprettet en konto ennå, så vennligst\n"
+"<a href=\"%(signup_url)s\">registrer</a> deg først."
+
+#: .\webook\templates\account\login.html:43
+msgid "Forgot Password?"
+msgstr "Glemt passord?"
+
+#: .\webook\templates\account\logout.html:5
+#: .\webook\templates\account\logout.html:11
+#: .\webook\templates\account\logout.html:20 .\webook\templates\base.html:126
+#: .\webook\templates\base.html:185
+msgid "Sign Out"
+msgstr "Logg ut"
+
+#: .\webook\templates\account\logout.html:13
+msgid "Are you sure you want to sign out?"
+msgstr "Er du sikker på at du vil logge ut?"
+
+#: .\webook\templates\account\password_change.html:6
+#: .\webook\templates\account\password_change.html:12
+#: .\webook\templates\account\password_reset_from_key.html:5
+#: .\webook\templates\account\password_reset_from_key_done.html:4
+msgid "Change Password"
+msgstr "Endre passord"
+
+#: .\webook\templates\account\password_reset.html:7
+#: .\webook\templates\account\password_reset.html:8
+#: .\webook\templates\account\password_reset_done.html:6
+msgid "Password Reset"
+msgstr "Gjenopprett Passord"
+
+#: .\webook\templates\account\password_reset.html:15
+msgid ""
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail allowing you to reset it."
+msgstr ""
+"Glemt passordet ditt? Skriv inn epost adressen din under, og så sender vi "
+"deg en epost som vil hjelpe deg med å resette passordet ditt."
+
+#: .\webook\templates\account\password_reset.html:23
+msgid "Reset My Password"
+msgstr "Gjenopprett mitt passord"
+
+#: .\webook\templates\account\password_reset.html:28
+msgid "Please contact us if you have any trouble resetting your password."
+msgstr ""
+"Vennligst kontakt oss om du har problemer med å gjenopprette passordet."
+
+#: .\webook\templates\account\password_reset_done.html:14
+msgid ""
+"We have sent you an e-mail. Please contact us if you do not receive it "
+"within a few minutes."
+msgstr ""
+"Vi har sent deg en epost. Vennligst kontakt oss om du ikke mottar den innen "
+"et par minutter."
+
+#: .\webook\templates\account\password_reset_from_key.html:8
+msgid "Bad Token"
+msgstr "Dårlig Token"
+
+#: .\webook\templates\account\password_reset_from_key.html:15
+#, python-format
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
+msgstr ""
+"Linken for gjenoppretting av passord var ugyldig, Muligens fordi den "
+"allerede har blitt brukt.  Vennligst forespør en <a href="
+"\"%(passwd_reset_url)s\">ny gjenoppretting av passord</a>."
+
+#: .\webook\templates\account\password_reset_from_key.html:23
+msgid "change password"
+msgstr "endre passord"
+
+#: .\webook\templates\account\password_reset_from_key.html:26
+#: .\webook\templates\account\password_reset_from_key_done.html:10
+msgid "Your password is now changed."
+msgstr "Ditt passord har nå blitt endret."
+
+#: .\webook\templates\account\password_reset_from_key_done.html:13
+msgid "sign in"
+msgstr "logg inn"
+
+#: .\webook\templates\account\password_set.html:6
+#: .\webook\templates\account\password_set.html:13
+msgid "Set Password"
+msgstr "Sett passord"
+
+#: .\webook\templates\account\signup.html:6
+msgid "Signup"
+msgstr "Registrer"
+
+#: .\webook\templates\account\signup.html:10
+#, python-format
+msgid ""
+"Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+"Har du allerde en konto? Hvis så, <a href=\"%(login_url)s\">logg inn</a>."
+
+#: .\webook\templates\account\signup.html:20 .\webook\templates\base.html:190
+msgid "Sign Up"
+msgstr "Registrer"
+
+#: .\webook\templates\account\signup_closed.html:5
+#: .\webook\templates\account\signup_closed.html:8
+msgid "Sign Up Closed"
+msgstr "Registrering er stengt"
+
+#: .\webook\templates\account\signup_closed.html:10
+msgid "We are sorry, but the sign up is currently closed."
+msgstr "Beklager, registrering har blitt deaktivert."
+
+#: .\webook\templates\account\verification_sent.html:5
+#: .\webook\templates\account\verified_email_required.html:5
+#: .\webook\templates\account\verified_email_required.html:8
+msgid "Verify Your E-mail Address"
+msgstr "Bekreft epost adressen din"
+
+#: .\webook\templates\account\verification_sent.html:9
+msgid ""
+"We have sent an e-mail to you for verification. Follow the link provided to "
+"finalize the signup process. Please contact us if you do not receive it "
+"within a few minutes."
+msgstr ""
+"Vi har sendt en epost til deg for verifikasjon. Vennligst følg linken gitt "
+"for å fullføre registreringsprosessen. Vennligst kontakt oss om du ikke "
+"mottar eposten innen et par minutter."
+
+#: .\webook\templates\account\verified_email_required.html:12
+msgid ""
+"This part of the site requires us to verify that\n"
+"you are who you claim to be. For this purpose, we require that you\n"
+"verify ownership of your e-mail address. "
+msgstr ""
+"Denne delen av siden krever at du bekrefter at\n"
+"du er den du utgir deg for å være. For denne hensikt, så krever vi at du\n"
+"bekrefter eierskap av epost adressen din. "
+
+#: .\webook\templates\account\verified_email_required.html:16
+msgid ""
+"We have sent an e-mail to you for\n"
+"verification. Please click on the link inside this e-mail. Please\n"
+"contact us if you do not receive it within a few minutes."
+msgstr ""
+"Vi har sendt en epost til deg for\n"
+"verifikasjon. Vennligst klikk linken i denne eposten. Vennligst\n"
+"kontakt oss om du ikke mottar den innen et par minutter."
+
+#: .\webook\templates\account\verified_email_required.html:20
+#, python-format
+msgid ""
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your e-"
+"mail address</a>."
+msgstr ""
+"<strong>Merk:</strong> du kan fortsatt <a href=\"%(email_url)s\">endre epost "
+"adressen din</a>."
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:15
+msgid "Requisitioning"
+msgstr "Rekvirering"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:39
+msgid "General"
+msgstr "Generelt"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:65
+msgid "Calendar"
+msgstr "Kalender"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:92
+msgid "System Messages"
+msgstr "Systemvarsler"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:106
+msgid "Resource Confirmation Receipts"
+msgstr "Kvitteringer på ressursrekvisisjon"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:136
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:145
+msgid "GO TO"
+msgstr "GÅ TIL"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:165
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:360
+msgid "Color Legend"
+msgstr "Fargelegende"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:172
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:425
+msgid "Icon Legend"
+msgstr "Ikonlegende"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:180
+msgid "Status in short"
+msgstr "Status i korte trekk"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:184
+#, python-format
+msgid "Resource Attendance Confirmation (%%)"
+msgstr "Bekreftelse på oppmøte (%%)"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:200
+msgid "Who's missing?"
+msgstr "Hvem mangler?"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:207
+msgid "Progress"
+msgstr "Fremgang"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:223
+msgid "Where are we?"
+msgstr "Hvor er vi?"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:265
+msgid "Change Responsible"
+msgstr "Endre Ansvarlig"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:268
+msgid ""
+"Here you can administer the people that are allowed to edit and work on this "
+"arrangement. People added here will automatically be given the watcher "
+"status, and will receive notifications, as well as be able to view and make "
+"changes according to the authorization level given to them by the "
+"arrangement responsible or an administrator."
+msgstr ""
+"Her kan du administrere personene som har tillatelse til å redigere og "
+"arbeide med dette arrangementet. Personer lagt til her vil automatisk bli "
+"gitt overvåker status, og vil motta notifikasjoner, samt kunne se og gjøre "
+"forandringer i henhold til de autorisasjonene som har blitt gitt de av "
+"arrangementets ansvarlige person eller en administrator."
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:271
+msgid ""
+"Note that the responsible is considered the 'owner' of the event. Only the "
+"responsible (and administrators) can authorize new people to access and edit "
+"this arrangement."
+msgstr ""
+"Merk at den ansvarlige personen er ansett som 'eieren' av arrangementet. "
+"Bare ansvarlige (og administratorer) kan gi ut tilgang til dette "
+"arrangementet til andre personer."
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:284
+msgid "Add person to this arrangement"
+msgstr "Legg en person til på dette arrangementet"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:289
+#: .\webook\templates\arrangement\person\person_detail.html:5
+#: .\webook\templates\arrangement\person\person_list.html:18
+#: .\webook\templates\arrangement\person\person_section_base.html:16
+msgid "Person"
+msgstr "Person"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:290
+msgid "Authorization Level"
+msgstr "Autorisasjonsnivå"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:291
+#: .\webook\templates\arrangement\arrangement\arrangement_list.html:20
+#: .\webook\templates\arrangement\location\location_list.html:32
+#: .\webook\templates\arrangement\organization\organization_list.html:32
+#: .\webook\templates\arrangement\organizationtype\organizationtype_list.html:20
+#: .\webook\templates\arrangement\person\partials\_organization_member_list.html:15
+#: .\webook\templates\arrangement\person\person_list.html:22
+#: .\webook\templates\arrangement\room\partials\_location_room_list.html:9
+#: .\webook\templates\arrangement\room\room_list.html:32
+#: .\webook\templates\arrangement\servicetype\servicetype_list.html:20
+msgid "Options"
+msgstr "Valgmuligheter"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:305
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:322
+msgid "Change"
+msgstr "Endre"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:317
+msgid "View"
+msgstr "Vis"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:325
+msgid "Authorizations"
+msgstr "Autorisasjoner"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:342
+#: .\webook\templates\base.html:74
+msgid "Timeline"
+msgstr "Tidslinje"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:372
+msgid "Color"
+msgstr "Farge"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:373
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:438
+msgid "Explanation"
+msgstr "Forklaring"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:382
+msgid "All resources have accepted invitations"
+msgstr "All ressurser har akseptert invitasjoner"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:390
+msgid "There are resources that have not accepted invitations"
+msgstr "Det er ressurser som ikke har akseptert invitasjoner"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:398
+msgid "There are resource(s) that have denied invitations"
+msgstr "Det er ressurser som har svart nei på invitasjon"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:406
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:463
+msgid "Close"
+msgstr "Lukk"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:437
+msgid "Icon"
+msgstr "Ikon"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:447
+msgid "Based on the system rules this event is configured fully"
+msgstr ""
+"Basert på de gjeldende reglementet så er dette arrangementet "
+"ferdigkonfigurert"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_detail.html:455
+msgid ""
+"An alert has been triggered on this event. You should check the notification"
+msgstr ""
+"En varsling har blitt trigget på denne hendelsen. Du burde sjekke "
+"notifikasjonen"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_form.html:15
+#: .\webook\templates\arrangement\arrangement\arrangement_form.html:38
+#: .\webook\templates\arrangement\arrangement\arrangement_form.html:81
+#: .\webook\templates\arrangement\location\location_form.html:44
+#: .\webook\templates\arrangement\organization\organization_form.html:43
+#: .\webook\templates\arrangement\organization\organization_form.html:59
+#: .\webook\templates\arrangement\organization\organization_form.html:75
+#: .\webook\templates\arrangement\person\person_form.html:89
+#: .\webook\templates\arrangement\room\room_form.html:47
+#: .\webook\templates\arrangement\room\room_form.html:64
+msgid "This field is mandatory"
+msgstr "Dette feltet er påkrevd"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_form.html:17
+#: .\webook\templates\arrangement\location\location_form.html:46
+#: .\webook\templates\arrangement\organization\organization_form.html:45
+#: .\webook\templates\arrangement\organization\organization_form.html:61
+#: .\webook\templates\arrangement\organization\organization_form.html:77
+#: .\webook\templates\arrangement\person\person_form.html:91
+#: .\webook\templates\arrangement\person\person_form.html:106
+#: .\webook\templates\arrangement\room\room_form.html:49
+#: .\webook\templates\arrangement\room\room_form.html:66
+msgid "This field expects text"
+msgstr "Dette feltet forventer tekst"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_form.html:23
+msgid ""
+"What should this arrangement be known as? This will be the name shown "
+"primarily to identify this arrangement."
+msgstr "Hva skal dette arrangementet hete?"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_form.html:30
+msgid "Name of the arrangement"
+msgstr "Arrangementets navn"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_form.html:41
+msgid "This is a reference to the Audience entity"
+msgstr "Dette er en referanse til en målgruppe"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_form.html:45
+msgid "Go to audiences in a new tab"
+msgstr "Åpne målgrupper i en ny fane"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_form.html:51
+msgid "Which audience is this arrangement targeted towards?"
+msgstr "Hvilken målgruppe er dette arrangementet rettet mot?"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_form.html:68
+msgid "When does this arrangement start?"
+msgstr "Når starter dette arrangementet?"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_form.html:88
+msgid "When does this arrangement end?"
+msgstr "Når slutter dette arrangementet?"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_form.html:100
+#: .\webook\templates\arrangement\audience\audience_form.html:13
+#: .\webook\templates\arrangement\location\location_form.html:67
+#: .\webook\templates\arrangement\organization\organization_form.html:90
+#: .\webook\templates\arrangement\organizationtype\organizationtype_form.html:27
+#: .\webook\templates\arrangement\person\person_form.html:119
+#: .\webook\templates\arrangement\room\room_form.html:79
+#: .\webook\templates\arrangement\servicetype\servicetype_form.html:13
+msgid "Save"
+msgstr "Lagre"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_form.html:104
+#: .\webook\templates\arrangement\delete_view.html:14
+#: .\webook\templates\arrangement\location\location_detail.html:90
+#: .\webook\templates\arrangement\location\location_form.html:71
+#: .\webook\templates\arrangement\organization\organization_form.html:94
+#: .\webook\templates\arrangement\person\person_form.html:123
+#: .\webook\templates\arrangement\room\room_form.html:82
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_form.html:108
+#: .\webook\templates\arrangement\location\location_form.html:75
+#: .\webook\templates\arrangement\organization\organization_form.html:98
+#: .\webook\templates\arrangement\person\person_form.html:127
+#: .\webook\templates\arrangement\room\room_form.html:86
+msgid "Reset Form"
+msgstr "Reset Skjema"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_list.html:9
+msgid "New arrangement"
+msgstr "Opprett arrangement"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_list.html:37
+#: .\webook\templates\arrangement\calendar\calendars_list.html:12
+#: .\webook\templates\arrangement\location\location_list.html:49
+#: .\webook\templates\arrangement\organization\organization_list.html:49
+#: .\webook\templates\arrangement\organizationtype\organizationtype_list.html:37
+#: .\webook\templates\arrangement\person\person_list.html:39
+#: .\webook\templates\arrangement\room\room_list.html:49
+#: .\webook\templates\arrangement\servicetype\servicetype_list.html:37
+msgid "Open"
+msgstr "Åpne"
+
+#: .\webook\templates\arrangement\arrangement\arrangement_list.html:57
+#: .\webook\templates\arrangement\audience\audience_list.html:55
+#: .\webook\templates\arrangement\location\location_list.html:69
+#: .\webook\templates\arrangement\organization\organization_list.html:68
+#: .\webook\templates\arrangement\organizationtype\organizationtype_list.html:57
+#: .\webook\templates\arrangement\person\person_list.html:59
+#: .\webook\templates\arrangement\room\room_list.html:68
+#: .\webook\templates\arrangement\servicetype\servicetype_list.html:57
+msgid "elements"
+msgstr "elementer"
+
+#: .\webook\templates\arrangement\audience\audience_detail.html:39
+msgid ""
+"There are no arrangements registered of this type. You can select this type "
+"when creating a new arrangement, and it will appear here."
+msgstr ""
+"Det er ingen arrangementer registrert med denne typen. Du kan velge denne "
+"typen når du oppretter nytt arrangement, og arrangementet vil etter "
+"opprettelse vises her."
+
+#: .\webook\templates\arrangement\calendar\arrangement_calendar.html:8
+msgid "Legend"
+msgstr "Legende"
+
+#: .\webook\templates\arrangement\calendar\arrangement_calendar.html:12
+msgid "Dimension"
+msgstr "Dimensjon"
+
+#: .\webook\templates\arrangement\calendar\arrangement_calendar.html:24
+#: .\webook\templates\arrangement\calendar\arrangement_calendar.html:42
+msgid "Include"
+msgstr "Inkluder"
+
+#: .\webook\templates\arrangement\calendar\arrangement_calendar.html:24
+#: .\webook\templates\arrangement\calendar\arrangement_calendar.html:42
+msgid "only"
+msgstr "bare"
+
+#: .\webook\templates\arrangement\calendar\arrangement_calendar.html:24
+msgid "the checked locations"
+msgstr "de avkryssede lokasjonene"
+
+#: .\webook\templates\arrangement\calendar\arrangement_calendar.html:42
+msgid "the checked people"
+msgstr "de avkryssede personene"
+
+#: .\webook\templates\arrangement\calendar\arrangement_calendar.html:57
+msgid "Update"
+msgstr "Oppdater"
+
+#: .\webook\templates\arrangement\calendar\arrangement_calendar.html:60
+msgid "Reset"
+msgstr "Reset"
+
+#: .\webook\templates\arrangement\calendar\calendars_list.html:9
+msgid ""
+"Example of a calendar concerning itself primarily with displaying "
+"arrangements across the board"
+msgstr "Eksempel på en kalender rettet mot å vise alle arrangementer"
+
+#: .\webook\templates\arrangement\crumb_base.html:5
+msgid "Entity"
+msgstr "Entitet"
+
+#: .\webook\templates\arrangement\delete_view.html:8
+msgid "Are you sure?"
+msgstr "Er du sikker?"
+
+#: .\webook\templates\arrangement\delete_view.html:10
+msgid "Are you sure you want to delete"
+msgstr "Er du sikker på at du vil slette"
+
+#: .\webook\templates\arrangement\delete_view.html:11
+msgid "This action can not be reversed."
+msgstr "Denne handlingen kan ikke reverseres."
+
+#: .\webook\templates\arrangement\location\location_detail.html:32
+#: .\webook\templates\arrangement\room\room_form.html:7
+#: .\webook\templates\arrangement\room\room_form.html:15
+#: .\webook\templates\arrangement\room\room_form.html:23
+#: .\webook\templates\arrangement\room\room_list.html:21
+msgid "New Room"
+msgstr "Nytt Rom"
+
+#: .\webook\templates\arrangement\location\location_detail.html:40
+msgid "Location Calendar"
+msgstr "Lokasjonskalender"
+
+#: .\webook\templates\arrangement\location\location_detail.html:58
+msgid "New room"
+msgstr "Nytt rom"
+
+#: .\webook\templates\arrangement\location\location_detail.html:76
+msgid "Maximum Occupancy"
+msgstr "Maks Antall Mennesker"
+
+#: .\webook\templates\arrangement\location\location_detail.html:81
+msgid "Room Name"
+msgstr "Rommets Navn"
+
+#: .\webook\templates\arrangement\location\location_detail.html:87
+msgid "Create room"
+msgstr "Opprett rom"
+
+#: .\webook\templates\arrangement\location\location_detail.html:88
+msgid "Create room, and new"
+msgstr "Opprett rom, og ny"
+
+#: .\webook\templates\arrangement\location\location_form.html:11
+#: .\webook\templates\arrangement\location\location_form.html:19
+#: .\webook\templates\arrangement\location\location_form.html:27
+#: .\webook\templates\arrangement\location\location_list.html:21
+msgid "New Location"
+msgstr "Opprett Lokasjon"
+
+#: .\webook\templates\arrangement\location\location_form.html:13
+#: .\webook\templates\arrangement\location\location_form.html:21
+#: .\webook\templates\arrangement\location\location_form.html:29
+msgid "Edit Location"
+msgstr "Rediger Lokasjon"
+
+#: .\webook\templates\arrangement\location\location_form.html:52
+msgid "What is the name of the location we are creating?"
+msgstr "Hva er navnet på lokasjonen vi oppretter?"
+
+#: .\webook\templates\arrangement\location\location_form.html:59
+#: .\webook\templates\arrangement\person\person_form.html:113
+msgid "Name of the location"
+msgstr "Lokasjonens navn"
+
+#: .\webook\templates\arrangement\location\location_list.html:13
+#: .\webook\templates\arrangement\location\location_list.html:18
+msgid "All Locations"
+msgstr "Alle Lokasjoner"
+
+#: .\webook\templates\arrangement\organization\organization_form.html:11
+#: .\webook\templates\arrangement\organization\organization_form.html:19
+#: .\webook\templates\arrangement\organization\organization_form.html:27
+#: .\webook\templates\arrangement\organization\organization_list.html:21
+msgid "New Organization"
+msgstr "Opprett Organisasjon"
+
+#: .\webook\templates\arrangement\organization\organization_form.html:13
+#: .\webook\templates\arrangement\organization\organization_form.html:21
+#: .\webook\templates\arrangement\organization\organization_form.html:29
+msgid "Edit Organization"
+msgstr "Rediger Organisasjon"
+
+#: .\webook\templates\arrangement\organization\organization_form.html:81
+msgid "Go to organization types in a new tab"
+msgstr "Åpne organisasjonstypene i en ny fane"
+
+#: .\webook\templates\arrangement\organization\organization_list.html:9
+#: .\webook\templates\arrangement\organization\organization_list.html:13
+#: .\webook\templates\arrangement\organization\organization_list.html:18
+msgid "All Organizations"
+msgstr "Alle Organisasjoner"
+
+#: .\webook\templates\arrangement\organizationtype\organizationtype_detail.html:29
+msgid ""
+"There are no organizations registered of this type. You can select this type "
+"when creating a new organization, and it will appear here."
+msgstr ""
+"Det er ingen organisasjoner registrert av denne typen. Du kan velge denne "
+"typen når du oppretter en organisasjon, og organisasjonen vil så vises her."
+
+#: .\webook\templates\arrangement\organizationtype\organizationtype_form.html:9
+#: .\webook\templates\arrangement\organizationtype\organizationtype_form.html:16
+msgid "Edit Organization Type"
+msgstr "Rediger Organisasjonstype"
+
+#: .\webook\templates\arrangement\organizationtype\organizationtype_list.html:16
+#: .\webook\templates\arrangement\servicetype\servicetype_list.html:16
+msgid "Type"
+msgstr "Type"
+
+#: .\webook\templates\arrangement\person\partials\_organization_member_list.html:10
+msgid "Has associated user?"
+msgstr "Har tilkoblet bruker?"
+
+#: .\webook\templates\arrangement\person\partials\_organization_member_list.html:12
+msgid "Does this person have an associated user in this application?"
+msgstr "Har denne personen en tilkoblet bruker i denne applikasjonen?"
+
+#: .\webook\templates\arrangement\person\partials\_organization_member_list.html:29
+msgid "Go to this persons page"
+msgstr "Gå til denne personens side"
+
+#: .\webook\templates\arrangement\person\partials\_organization_member_list.html:33
+msgid ""
+"Remove this person from this organization. This does not delete the person."
+msgstr ""
+"Fjern denne personen fra organisasjonen. Dette vil ikke slette personen fra "
+"systemet."
+
+#: .\webook\templates\arrangement\person\partials\_organization_member_list.html:37
+msgid ""
+"Anonymize this person, removing all PII while retaining relational integrity."
+msgstr ""
+"Anonymiser denne personen, fjern all personlig identifiserbar informasjon "
+"men ivareta relasjonell integritet."
+
+#: .\webook\templates\arrangement\person\person_detail.html:123
+msgid "This person is not a member of any organizations"
+msgstr "Denne personen er ikke medlem av noen organisasjoner"
+
+#: .\webook\templates\arrangement\person\person_form.html:11
+#: .\webook\templates\arrangement\person\person_form.html:19
+#: .\webook\templates\arrangement\person\person_form.html:27
+#: .\webook\templates\arrangement\person\person_list.html:11
+msgid "New Person"
+msgstr "Opprett Person"
+
+#: .\webook\templates\arrangement\person\person_form.html:13
+#: .\webook\templates\arrangement\person\person_form.html:21
+#: .\webook\templates\arrangement\person\person_form.html:29
+msgid "Edit Person"
+msgstr "Rediger Person"
+
+#: .\webook\templates\arrangement\person\person_form.html:54
+msgid "First name"
+msgstr "Fornavn"
+
+#: .\webook\templates\arrangement\person\person_form.html:67
+msgid "Middle name"
+msgstr "Mellomnavn"
+
+#: .\webook\templates\arrangement\person\person_form.html:67
+msgid "Optional"
+msgstr "Valgfritt"
+
+#: .\webook\templates\arrangement\person\person_form.html:79
+msgid "Last name"
+msgstr "Etternavn"
+
+#: .\webook\templates\arrangement\room\partials\_location_room_list.html:8
+msgid "Maximum Occupants"
+msgstr "Maks Antall Mennesker"
+
+#: .\webook\templates\arrangement\room\partials\_location_room_list.html:22
+msgid "Show"
+msgstr "Vis"
+
+#: .\webook\templates\arrangement\room\room_detail.html:36
+msgid "Go To"
+msgstr "Gå til"
+
+#: .\webook\templates\arrangement\room\room_detail.html:42
+msgid "Max Occupants"
+msgstr "Maks Antall Mennesker"
+
+#: .\webook\templates\arrangement\room\room_form.html:9
+#: .\webook\templates\arrangement\room\room_form.html:17
+#: .\webook\templates\arrangement\room\room_form.html:25
+msgid "Edit Room"
+msgstr "Rediger Rom"
+
+#: .\webook\templates\arrangement\room\room_form.html:57
+#: .\webook\templates\arrangement\room\room_form.html:74
+#: .\webook\templates\arrangement\room\room_list.html:28
+#: .\webook\templates\arrangement\room\room_section_base.html:16
+msgid "Room"
+msgstr "Rom"
+
+#: .\webook\templates\arrangement\room\room_list.html:9
+#: .\webook\templates\arrangement\room\room_list.html:13
+#: .\webook\templates\arrangement\room\room_list.html:18
+msgid "All Rooms"
+msgstr "Alle Rom"
+
+#: .\webook\templates\arrangement\servicetype\servicetype_list.html:9
+msgid "New Service Type"
+msgstr "Ny Tjenestetype"
+
+#: .\webook\templates\base.html:49 .\webook\templates\base.html:110
+#: .\webook\templates\users\users_base.html:76
+msgid "My Page"
+msgstr "Min Side"
+
+#: .\webook\templates\base.html:64
+msgid "Rooms & Locations"
+msgstr "Rom & Lokasjoner"
+
+#: .\webook\templates\base.html:84
+msgid "Types"
+msgstr "Typer"
+
+#: .\webook\templates\base.html:95
+msgid "Audience Types"
+msgstr "Målgruppe Typer"
+
+#: .\webook\templates\base.html:105 .\webook\templates\base.html:181
+msgid "My Profile"
+msgstr "Min profil"
+
+#: .\webook\templates\base.html:113 .\webook\templates\users\user_form.html:7
+#: .\webook\templates\users\users_base.html:85
+#: .\webook\templates\users\users_base.html:154
+msgid "My Info"
+msgstr "Min Info"
+
+#: .\webook\templates\base.html:116 .\webook\templates\users\users_base.html:94
+#: .\webook\templates\users\users_base.html:162
+msgid "E-Mail"
+msgstr "E-Post"
+
+#: .\webook\templates\base.html:119
+#: .\webook\templates\users\users_base.html:103
+#: .\webook\templates\users\users_base.html:169
+msgid "Reset Password"
+msgstr "Gjenopprett Passord"
+
+#: .\webook\templates\base.html:178
+msgid "Hi"
+msgstr "Hei"
+
+#: .\webook\templates\error_contact.html:8
+msgid ""
+"Please raise an error in our <a href='https://github.com/wemadefree/"
+"webook'><strong>GitHub repository</strong></a> if you believe this error to "
+"be a bug in the application."
+msgstr ""
+"Vennligst rapporter feilen om du mener at dette er en feil i applikasjonen."
+
+#: .\webook\templates\users\users_base.html:112
+msgid "My Organizations"
+msgstr "Mine Organisasjoner"
+
+#: .\webook\templates\users\users_base.html:122
+msgid "Flags"
+msgstr "Flagg"
+
+#: .\webook\templates\users\users_base.html:145
+msgid "Overview"
+msgstr "Oversikt"
+
+#: .\webook\users\apps.py:7
+msgid "Users"
+msgstr "Brukere"
+
+#: .\webook\users\forms.py:19
+msgid "This username has already been taken."
+msgstr "Dette brukernavnet har allerede blitt tatt."
+
+#: .\webook\users\models.py:12
+msgid "Name of User"
+msgstr "Brukerens navn"
+
+#: .\webook\users\models.py:17
+msgid "Profile Picture"
+msgstr "Profilbilde"
+
+#~ msgid "Account"
+#~ msgstr "Konto"
+
+#~ msgid "E-mail Addresses"
+#~ msgstr "Epost Adresse"

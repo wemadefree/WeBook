@@ -1,0 +1,88 @@
+{% extends "arrangement/meta_base.html" %}
+{% load static i18n %}
+
+{% block content %}
+
+    <div class="row">
+      <div class="col-3">
+        <h3 class="text-uppercase fw-bold">{% trans "Legend" %}</h3>
+        <hr>
+
+        <div class="mt-3">
+          <h5>{% trans "Dimension" %}</h5>
+          <select class="form-control">
+            <option>{% trans "Arrangement" %}</option>
+          </select>
+        </div>
+
+        <div class="mt-3">
+          <h5>
+            <i class="fas fa-building"></i>&nbsp;
+            {% trans "Locations" %}
+          </h5>
+          <div class="alert alert-sm alert-light mb-1 mt-1 p-0">
+            {% trans "Include" %} <strong>{% trans "only" %}</strong> {% trans "the checked locations" %}
+          </div>
+
+          {% for loc in locations %}
+          <div class="badge badge-info">
+            <input type="checkbox" />
+            {{ loc.name }}
+            <i class="fas fa-times text-danger"></i>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="mt-3">
+          <h5>
+            <i class="fas fa-users"></i>&nbsp;
+            {% trans "People" %}
+          </h5>
+          <div class="alert alert-sm alert-light mb-1 mt-1 p-0">
+            {% trans "Include" %} <strong>{% trans "only" %}</strong> {% trans "the checked people" %}
+          </div>
+
+          {% for person in people %}
+          <div class="badge badge-light">
+            <input type="checkbox" />
+            {{ person.full_name }}
+            <i class="fas fa-times text-danger"></i>
+          </div>
+          {% endfor %}
+        </div>
+
+
+        <button class="btn btn-outline-success mt-3 float-end">
+          <i class="fas fa-check"></i>&nbsp; 
+          {% trans "Update" %}
+        </button>
+        <button class="btn btn-outline-warning mt-3 me-2 float-end">
+          {% trans "Reset" %}
+        </button>
+      </div>
+
+      <div class="col-9">
+        <div id="arrangement_calendar"></div>
+
+      </div>
+    </div>
+
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          var calendarEl = document.getElementById('arrangement_calendar');
+          var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            navLinks:true,
+            initialView: 'dayGridMonth',
+            locale: 'nb',
+            headerToolbar: {
+              left: 'prev,next today',
+              center: 'title',
+              right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            } 
+          });
+          calendar.render();
+        });
+  </script>
+{% endblock %}

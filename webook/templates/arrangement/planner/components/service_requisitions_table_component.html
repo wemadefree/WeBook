@@ -1,0 +1,162 @@
+<h3>Bestillinger</h3>
+<div class="alert alert-light p-0">
+    <em class="small">
+        <!-- Merk at når du gjennomfører en bestilling så settes det en lås på de hendelsene det gjelder!
+        For at denne låsen skal heves må bestillingen kanselleres. -->
+    </em>
+</div>
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th></th>
+            <th class="fw-bold">Status</th>
+            <th class="fw-bold">Tjenestetype</th>
+            <th class="fw-bold">Kommentar</th>
+            <th class="fw-bold">Valg</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for object in object_list %}
+            <tr>
+                <td>
+                </td>
+                <td>
+                    {% if object.generated_requisition_record is None %}
+                        <span class="badge badge-light"
+                                data-toggle="tooltip"
+                                title="Denne bestillingen er løs, det vil si at den ikke er gjennomført, bare satt opp">
+                            Løs bestilling
+                        </span>
+                    {% elif object.generated_requisition_record.confirmation_receipt.state == "confirmed" %}
+                        <span class="badge badge-success"
+                                data-toggle="tooltip"
+                                title="Bestillingen har blitt rekvirert og akseptert av mottager">
+                            Akseptert
+                        </span>
+                    {% elif object.generated_requisition_record.confirmation_receipt.state == "denied" %}
+                        <span class="badge badge-danger"
+                                data-toggle="tooltip"
+                                title="Mottagende bedrift har avslått denne bestillingen">
+                            Avslått
+                        </span>
+                    {% elif object.generated_requisition_record.confirmation_receipt.state == "pending" %}
+                        <span class="badge badge-warning"
+                                data-toggle="tooltip"
+                                title="Kontakten for denne bedriften har ennå ikke svart på denne bestillingen">
+                            Venter svar
+                        </span>
+                    {% elif object.generated_requisition_record.confirmation_receipt.state == "cancelled" %}
+                        <span class="badge badge-warning"
+                                data-toggle="tooltip"
+                                title="Bestillingen har blitt kansellert av en planlegger">
+                            Kansellert
+                        </span>
+                    {% else %}
+                        {{object.generated_requisition_record.confirmation_receipt.state}}
+                    {% endif %}
+
+                </td>
+                <td>{{ object.type_to_order.name }}</td>
+                <td>{{ object.comment }}</td>
+                <td>
+                    <div class="dropdown">
+                        <button
+                            class="btn btn-link dropdown-toggle" style="box-shadow: none;"
+                            type="button"
+                            id="dropdownMenuButton"
+                            data-mdb-toggle="dropdown"
+                            aria-expanded="false">
+                            
+                            Valg
+
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            {% if object.generated_requisition_record is None %}
+                                <li>
+                                    <a class="dropdown-item requisitionServiceBtn" value="{{object.pk}}">
+                                        <i class="fas fa-envelope"></i>&nbsp;
+                                        Utfør bestilling
+                                    </a>
+                                </li>
+                                <!-- <li>
+                                    <a href="" class="dropdown-item" onclick="deleteServiceRequisition( {{object.pk}} )">
+                                        <i class="fas fa-trash"></i>&nbsp;
+                                        Slett bestilling
+                                    </a>
+                                </li> -->
+                            {% else %}
+
+                                <li>
+                                    <a class="dropdown-item requisitionServiceBtn" value="{{object.pk}}"
+                                        data-mdb-toggle="tooltip" title="Vis bestillingen i ny side">
+                                        <i class="fas fa-eye"></i>&nbsp;
+                                        Åpne bestilling
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="" onclick="resetServiceRequisition( {{object.pk}} )"
+                                        data-mdb-toggle="tooltip" title="Dette vil kansellere den nåværende forespørselen, og tillate deg å forespørre en ny tilbydder eller gjøre endringer.">
+                                        <i class="fas fa-recycle"></i>&nbsp;
+                                        Åpne for ny gjennomførelse
+                                    </a>
+                                </li>
+
+                                {% if object.generated_requisition_record.confirmation_receipt.state != "cancelled" and object.generated_requisition_record.confirmation_receipt.state != "denied" %}
+                                    <li> 
+                                        <button class="dropdown-item" onclick="cancelServiceRequisition( {{object.pk}} )">
+                                            <i class="fas fa-times"></i>&nbsp;
+                                            Kanseller
+                                        </button> 
+                                    </li>
+                                {% endif %}
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <!-- <button class="btn btn-sm btn-success requisitionServiceBtn" value="{{object.pk}}">Utfør</button> -->
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+
+    function resetServiceRequisition(id) {
+        let formData = new FormData();
+        formData.append("loose_service_requisition_id", id)
+
+        fetch('{% url "arrangement:reset_requisition_form" %}', {
+            method: 'POST',
+            headers: {
+                "X-CSRFToken": '{{ csrf_token }}',
+            },
+            body: formData,
+        }).then(() => location.reload());
+    }
+
+    function cancelServiceRequisition(id) {
+        let formData = new FormData();
+        formData.append("loose_service_requisition_id", id)
+
+        fetch('{% url "arrangement:cancel_requisition_form" %}', {
+            method: 'POST',
+            headers: {
+                "X-CSRFToken": '{{ csrf_token }}'
+            },
+            body: formData
+        }).then(() => location.reload());
+    }
+
+    function deleteServiceRequisition(id) {
+        fetch('/arrangement/requisition/delete_service_requisition/' + id, {
+            method: 'DELETE',
+            headers: {
+                "X-CSRFToken": '{{ csrf_token }}'
+            },
+            credentials: "same-origin"
+        });
+    }
+
+</script>

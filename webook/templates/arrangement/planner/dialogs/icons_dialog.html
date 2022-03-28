@@ -1,0 +1,62 @@
+{% load static i18n %}
+
+<div class="modal" tabindex="-1" role="dialog" id="iconsDialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title text-center"><i class="fas fa-palette"></i>&nbsp; {% trans "Icons" %}</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" onclick="$('#iconsDialog').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Icon" %}</th>
+                                <th>{% trans "Explanation" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td> <i class="fas fa-link"></i> </td>
+                                <td>
+                                    {% blocktrans %} Indicates that the event is a part of a serie. {% endblocktrans %}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td> <i class="fas fa-building"></i> </td>
+                                <td>
+                                    {% blocktrans %} Indicates that the event has one or more room resources assigned {% endblocktrans %}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td> <i class="fas fa-user"></i> </td>
+                                <td>
+                                    {% blocktrans %} Indicates that the event has one or more person resources assigned {% endblocktrans %}
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot></tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#iconsDialog').modal('hide')">{% trans "Close" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let iconsDialog = {
+        open: function () {
+            $('#iconsDialog').modal('show');
+        }
+    }
+</script>

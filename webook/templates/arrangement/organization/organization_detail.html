@@ -1,0 +1,299 @@
+{% extends "arrangement/meta_base.html" %}
+{% load static i18n %}
+
+
+{% block beneath_breadcrumbs_block %}
+    <a class="btn btn-danger">
+        <i class="fa fa-trash"></i>&nbsp; {% trans "Delete" %}
+    </a>
+    <a class="btn btn-success"
+        href="{% url 'arrangement:organization_edit' object.slug %}">
+        <i class="fa fa-edit"></i>&nbsp; {% trans "Edit" %}
+    </a>
+{% endblock %}
+
+{% block content %}
+
+<section>
+    <div class="row">
+        <div class="col-3">
+            <div class="border">
+                <div class="p-3">
+                    <div>
+                        <h5 class="fw-bold">
+                            {% trans "Organization Number" %}
+                        </h5>
+                        <span class=" d-block">{{ object.organization_number }}</span>
+                    </div>
+
+                    <div class="mt-3">
+                        <h5 class="fw-bold">
+                            {% trans "Name" %}
+                        </h5>
+                        <span class=" d-block">{{ object.name }}</span>
+                    </div>
+
+                    <div class="mt-3">
+                        <h5 class="fw-bold">
+                            {% trans "Organization Type" %}
+                        </h5>
+                        <span class=" d-block">
+                            <span class="badge badge-md badge-success">
+                                <a href="{% url 'arrangement:organizationtype_detail' object.organization_type.slug %}">
+                                    {{ object.organization_type }} 
+                                    <i class="fas fa-link"></i>
+                                </a>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-9">
+            
+            <h4>
+                <i class="fas fa-users"></i>
+                {% trans "Members" %}
+            </h4>
+            
+            <div class="clearfix">
+                <div class="btn-group float-end" style="box-shadow:none!important;">
+                    <a class="btn btn-wemade"
+                            data-mdb-toggle="modal"
+                            data-mdb-target="#registerMemberModal">
+                        <i class="fas fa-user-plus"></i>&nbsp; 
+                        {% trans "Register a new member" %}
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <span id="personTableLoaderWrapper">
+                </span>
+            </div>
+
+            <div class="mt-5">
+                <h4><i class="fas fa-dollar-sign"></i>&nbsp; Services</h4>
+                <div class="alert alert-info">
+                    Hvilke tjenester kan denne organisasjonen tilby?
+                </div>
+                <div class="clearfix">
+                    <div class="btn-group float-end" style="box-shadow:none!important;">
+                        <a class="btn btn-wemade"
+                                data-mdb-toggle="modal"
+                                data-mdb-target="#registerServiceModal">
+                            <i class="fas fa-plus"></i>&nbsp; 
+                            {% trans "Register services this organization can provide" %}
+                        </a>
+                    </div>
+                </div>
+ 
+                <span id="servicesTableLoaderWrapper">
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div 
+    class="modal fade"
+    id="registerServiceModal"
+    tabindex="-1"
+    aria-labelledby="registerServiceModal"
+    aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                
+                <h5 class="modal-title">
+                    <i class="fa fa-dollar-sign"></i>
+                    {% trans "Which services can this organization provide?" %}
+                </h5>
+                
+            </div>
+            <div class="modal-body">
+                <table class="table table-sm">
+                    <form id="registerNewServiceProvidableForm">
+                        <input type="hidden" name="organization_slug" value="{{object.slug}}" />
+                        
+                        <div class="form-group">
+                            <label class="fw-bold">Tjenestetype</label>
+                            <select class="select" id="serviceTypeSelect" data-mdb-filter="true">
+                            </select>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label class="fw-bold">Forespørsler sendes til</label>
+                            <div class="alert alert-light">
+                                Denne E-Post adressen vil motta forespørsler ved rekvireringer.
+                            </div>
+                        </div>
+                        <input type="email" name="contact_email" class="form-control" placeholder="recipient@email.com" />
+                    </form>
+                </table>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-light">Cancel</button>
+                <button class="btn btn-success" onclick="registerANewServiceProvidable(true)">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div
+    class="modal fade"
+    id="registerMemberModal"
+    tabindex="-1"
+    aria-labelledby="registerMemberModal"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <span class="badge badge-success">
+                        <i class="fas fa-user-plus"></i>
+                    </span>
+                    {% trans "Register Member" %}
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-mdb-dismiss="modal"
+                    aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="registerNewMemberDialogForm">
+                    <input type="hidden" name="organization" value="{{ object.id }}" />
+
+                    <div class="form-group">
+                        <label>{% trans "First Name" %}</label>
+                        <input type="text" class="form-control" name="first_name"/>
+                    </div>
+                    <div class="form-group mt-3">
+                            <label>{% trans "Middle Name" %}</label>
+                            <input type="text" class="form-control" name="middle_name"/>
+                    </div>
+                    <div class="form-group mt-3">
+                            <label>{% trans "Last Name" %}</label>
+                            <input type="text" class="form-control" name="last_name"/>
+                    </div>
+
+                    <div class="form-group mt-3">
+                            <label>{% trans "Personal Email" %}</label>
+                            <input type="email" class="form-control" name="personal_email"/>
+                    </div>
+
+                    <div class="form-group mt-3">
+                            <label>{% trans "Birth Date" %}</label>
+                            <input type="date" class="form-control" name="birth_date"/>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="registerANewOrganizationMember()">{% trans "Register" %}</button>
+                <button type="button" class="btn btn-success" onclick="registerANewOrganizationMember(false /* dont close after save*/)">{% trans "Register, and new" %}</button>
+                <button type="button" class="btn btn-danger" data-mdb-dismiss="modal">
+                    <i class="fa fas-times"></i>&nbsp; {% trans "Cancel" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadMembersTableForOrganization()
+        loadServicesTableForOrganization();
+
+        new ExtendedSelect({
+            jqElement: $('#serviceTypeSelect'),
+            getUrl: '{% url "arrangement:servicetype_search" %}',
+            extraHeaders: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            dataParser: function (item) {
+                return {
+                    value: item.pk,
+                    text: item.fields.name,
+                    secondary_text: "",
+                }
+            }
+        });
+    });
+
+    function loadMembersTableForOrganization () {
+        $('#personTableLoaderWrapper').load('{% url "arrangement:organizationmemberlist" object.id %}?organization={{object.id}}')
+    }
+
+    function loadServicesTableForOrganization () {
+        $('#servicesTableLoaderWrapper').load('{% url "arrangement:organization_services_providable" slug=object.slug %}')
+    }
+
+    async function registerANewServiceProvidable (closeModalOnDone=true) {
+        let dataForm = new FormData(document.getElementById('registerNewServiceProvidableForm'));
+        dataForm.append("service_type", $('#serviceTypeSelect').val())
+        dataForm.forEach(function (key, value) {
+            console.log(key + " -> " + value)
+        })
+        let url = "{% url 'arrangement:organization_register_service_providable' slug=object.slug %}";
+
+        fetch(url,  {
+            method: 'POST',
+            body: dataForm,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        }).then(function (response) {
+            if (response.ok) {
+                loadServicesTableForOrganization();
+            }
+            else {
+                throw "Not OK response after registering service providable."
+            }
+        }).catch(function (err) {
+            console.log(err)
+        }).then(function (response) {
+            $('#registerNewServiceDialogForm').trigger("reset");
+            if (closeModalOnDone) {
+                $('#registerServiceModal').modal('hide');
+            }
+        })
+    }
+
+    async function registerANewOrganizationMember (closeModalOnDone=true) {
+        let dataForm = new FormData(document.getElementById("registerNewMemberDialogForm"))
+        let url = "{% url 'arrangement:person_create' %}"
+
+        fetch(url, {
+            method: 'POST',
+            body: dataForm,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        }).then(function(response) {
+            console.log(response);
+            if (response.ok) {
+                console.log("Response after member register is OK")
+                loadMembersTableForOrganization() // refresh rooms table to include our newly created member
+            }
+            else {
+                throw "Not OK response after creating member."
+            }
+        }).catch(function(err) {
+            console.log(err)
+        }).then(function(response) {
+            $('#registerNewMemberDialogForm').trigger("reset");
+            if (closeModalOnDone) {
+                $('#registerMemberModal').modal('hide');
+            }
+        })
+    }
+</script>
+
+{% endblock %}

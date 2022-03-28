@@ -1,0 +1,18 @@
+.loadingHint {
+    background-color: whitesmoke;
+    /* color:white; */
+    border: solid 1px;
+    
+    padding: 0.3em;
+    padding-left: 0.8em;
+    padding-right: 0.8em;
+
+    bottom:0em;
+    right: 0em;
+    position:fixed;
+
+    z-index:150;
+    _position:absolute;
+    _top:expression(eval(document.documentElement.scrollTop+
+        (document.documentElement.clientHeight-this.offsetHeight)));
+}

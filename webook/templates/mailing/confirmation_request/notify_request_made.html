@@ -1,0 +1,17 @@
+{% load static i18n %}
+
+<html>
+    <body>
+        
+        Hi {{ recipient }}!
+        <br><br>
+
+        A request has been made that we would like you to answer.
+
+        <a href="{{URL}}">Click here</a> to view the request.
+
+        Best regards,
+        {{ORIGINATOR_FRIENDLY_NAME}}
+
+    </body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "webook",
+  "version": "1.0.0",
+  "description": "Booking and planning arrangements",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wemadefree/WeBook.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wemadefree/WeBook/issues"
+  },
+  "homepage": "https://github.com/wemadefree/WeBook#readme",
+  "dependencies": {
+    "@fonticonpicker/fonticonpicker": "^3.1.1",
+    "@fullcalendar/core": "^5.10.1",
+    "@fullcalendar/resource-timeline": "^5.10.1",
+    "color": "^4.2.0",
+    "fullcalendar": "^5.10.1",
+    "fullcalendar-scheduler": "^5.10.1",
+    "jquery.repeater": "^1.2.1",
+    "mustache": "^4.2.0",
+    "vis-timeline": "^7.5.0"
+  }
+}

@@ -1,0 +1,32 @@
+{% extends "blank_base.html" %}
+{% load static i18n %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="token" value="{{TOKEN}}" />
+
+            <h1 class="text-center">
+                <i class="fas fa-times text-danger"></i>
+            </h1>
+            <h2 class="text-center">{% trans "Ok" %}!</h2>
+
+            <h4 class="text-center">{% trans "Is there anything that the planners should know?" %}</h4>
+            <textarea class="form-control" placeholder="Type here..." name="reasoning"></textarea>
+
+            <div>
+                <button class="btn rounded-0 rounded-top btn-block btn-lg btn-danger mt-3 mb-0" type="submit">
+                    {% trans "Submit and deny request" %}
+                </button>
+                <a class="btn btn-block btn-lg btn-secondary mt-0 rounded-0 rounded-bottom" href="{% url 'arrangement:view_confirmation_request' %}?token={{TOKEN}}">
+                    {% trans "Cancel" %}
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

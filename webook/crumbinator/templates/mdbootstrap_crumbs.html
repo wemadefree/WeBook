@@ -1,0 +1,37 @@
+<section class="text-center">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        {% for crumb in tree %}
+            {% if not crumb.skip_render %}
+                {% if crumb.siblings|length == 0 %}
+                <li class="breadcrumb-item">
+                    {{ crumb.as_html | safe }}
+                </li>
+                {% else %}
+
+                <li class="breadcrumb-item">
+                    <a
+                        href="{{crumb.url}} {{crumb.joined_html_class}}"
+                        class="dropdown-toggle"
+                        data-mdb-toggle="dropdown"
+                        aria-expanded="false">
+                        {{ crumb.icon_html | safe }}
+                        {{ crumb.title }}
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for sibling in crumb.siblings %}
+                            <li>
+                                <a class="dropdown-item {{crumb.joined_html_class}}" href="{{sibling.url}}">
+                                    {{ sibling.icon_html | safe}}
+                                    {{sibling.title}}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+      </ol>
+    </nav>
+  </section>

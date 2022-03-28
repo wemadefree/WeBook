@@ -1,0 +1,36 @@
+{% extends "blank_base.html" %}
+{% load static i18n %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+        <h1 class="text-center">
+            <i class="fas fa-check text-success"></i>
+        </h1>
+        <h2 class="text-center">{% trans "Thanks" %}!</h2>
+
+        <h4 class="text-center">
+            The request has now been marked as
+            {% if ACTION_DONE == 'accepted' %}
+                {% trans "accepted" %}
+            {% elif ACTION_DONE == 'denied' %}
+                {% trans "denied" %}
+            {% else %}
+                <span class="text-danger">
+                    NO_ACTION_CODE
+                </span>
+            {% endif %}
+        </h4>
+
+        <div>
+            <div class="d-flex btn-group justify-content-center mt-3" >
+                <a class="btn btn-lg  btn-success" href="{% url 'account_login' %}">
+                    <i class="fas fa-arrow-right"></i>&nbsp; {% trans "Go to login" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

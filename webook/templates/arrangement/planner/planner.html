@@ -1,0 +1,22 @@
+
+{% extends "arrangement/meta_base.html" %}
+{% load static i18n %}
+
+{% block content %}
+
+<div>
+<h4>I fokus: Arrangementsnavn</h4>
+<button class="float-right btn btn-success">Bytt arrangement</button>
+</div>
+
+<div class="col-3">
+    <label>Arrangement</label>
+    <select class="form-control">
+
+    </select>
+</div>
+
+{% include 'arrangement/planner/plan_arrangement.html' %}
+
+
+{% endblock %}

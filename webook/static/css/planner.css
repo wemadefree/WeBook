@@ -1,0 +1,122 @@
+#designerCalendar .fc-day-sun, #designerCalendar .fc-day-sat {
+    background-color: #f4f5d7;
+}
+* { user-select: none; }
+
+  .shadow-event {
+    pointer-events: none;
+  }
+
+  .stepper {
+    border: solid 1px;
+  }
+
+  .stepper-active .stepper-head-icon {
+    background-color: green;
+  }
+
+  .stepper-completed {
+    background-color: lightgreen;
+  }
+
+  .stepper-active {
+    background-color: whitesmoke;
+  }
+
+  .stepper-active#last_step {
+    background-color: lightgreen;
+  }
+
+  .focused-cell {
+    border: solid 1px blue!important;
+    background-color: ghostwhite;
+    color:black
+  }
+
+  .collision_analysis_shadow_event {
+    color: red;
+    background-color: smokewhite;
+    border: dotted 3px red!important;
+  }
+
+  .popover {
+    border: solid 1px black;
+  }
+
+  .cut-highlight-daygrid-event {
+    border: dotted 1px red!important;
+    background-color: ghostwhite!important;
+    color: black!important;;
+  }
+
+
+
+
+
+   /* menu header */
+   .css-title:before {
+        content: "some CSS title";
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        background: #DDD;
+        padding: 2px;
+
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 11px;
+        font-weight: bold;
+    }
+    .css-title :first-child {
+        margin-top: 20px;
+    }
+
+    .ds-selected * {
+      /* position: absolute!important; */
+      pointer-events: none;
+    }
+
+    /* menu header via data attribute */
+    .data-title:before {
+        content: attr(data-menutitle);
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        background: #DDD;
+        padding: 2px;
+
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 11px;
+        font-weight: bold;
+    }
+    .data-title :first-child {
+        margin-top: 20px;
+    }
+
+    .wemade-tabs > .nav-item {
+    background-color: #21384B;
+    width: 100%;
+  }
+
+  .wemade-tabs > .nav-item > .nav-link {
+    color:white;
+  }
+  .wemade-tabs > .nav-item > .active {
+    background-color:#386080;;
+  }
+
+  .stageIsDone {
+    color:white;
+  }
+
+  #plannerTab > li.nav-item > button.nav-link {
+    padding: 0.8rem;
+    /* border: initial; */
+  }
+  #plannerTab > li.nav-item > button.nav-link.active {
+    padding: 0.8rem;
+    /* border: initial; */
+  }

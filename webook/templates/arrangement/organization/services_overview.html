@@ -1,0 +1,29 @@
+
+
+<div class="table-responsive">
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Tjeneste</th>
+                <th>Valg</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for service in services_providable.all %}
+                <tr>
+                    <td><a href="{% url 'arrangement:servicetype_detail' slug=service.service_type.slug %}">{{ service.service_type.name }}</a></td>
+                    <td>
+                        <button class="btn btn-sm btn-danger">Fjern fra sortiment</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    var servicesOverviewComponent = {
+
+    }
+</script>

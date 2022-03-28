@@ -1,0 +1,49 @@
+<div id="addPlannerDialog" title="Add planners">
+    <div class='bg-white p-2 border border-1'>
+
+        <div>
+            <select id="addPlannersDialog_plannersSelect" multiple>
+                {% for person in people %}
+                    {% if person.is_already_planner == True %}
+                        <option value="{{person.pk}}" disabled>{{person}}</option>
+                    {% else %}
+                        <option value="{{person.pk}}">{{person}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div><label class="text-muted small">Føringer i grå er personer som allerede er planleggere.</label></div>
+
+        <button
+            type="button"
+            onclick="addPlannerDialog__addPlanners()">
+            Add chosen planners
+        </button>
+    </div>
+</div>
+
+<script>
+    function addPlannerDialog__addPlanners() {
+        console.log($('#addPlannersDialog_plannersSelect').val());
+
+        var planners = $('#addPlannersDialog_plannersSelect').val().join(",");
+        console.log(planners)
+        var formData = new FormData()
+        formData.append("planner_ids", planners);
+        formData.append("arrangement_slug", "{{arrangement.slug}}")
+
+        fetch('{% url "arrangement:arrangement_add_planners_form" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                "X-CSRFToken": '{{csrf_token}}'
+            }
+        }).then(_ => {
+            document.dispatchEvent(
+                new CustomEvent("arrangementPlannerDialogs.hasBeenUpdated", {'detail': {
+                    dialog: "addPlannerDialog",
+                }})
+            )
+        })
+    }
+</script>

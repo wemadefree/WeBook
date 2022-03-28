@@ -1,0 +1,51 @@
+{% extends "arrangement/meta_base.html" %}
+{% load static i18n %}
+
+{% block content %}
+
+
+<button class="btn btn-lg btn-wemade">
+    Last inn mal
+</button>
+
+
+<div class="mb-3 mt-3 col-6">
+    <label for="" class="fw-bold">Romlig Dimensjon</label>
+    <select name="" class="select" id="dimensionFilter">
+        <option value="">Arrangement</option>
+        <option value="">Hendelser</option>
+        <option value="">Location</option>
+        <option value="">Room</option>
+        <option value="">Person</option>
+    </select>
+</div>
+
+<div id="arrangement_filterSet">
+    <label for="">
+        Inkluderte siloer
+    </label>
+    <select name="" class="select" id="" multiple>
+        <option value="">Aktive</option>
+        <option value="">Under planlegging</option>
+        <option value="">Aktive rekvireringer</option>
+        <option value="">Ferdig</option>
+    </select>
+</div>
+
+<span id="drillCalendar"></span>
+
+<script src="{% static 'js/drillCalendar.js' %}"></script>
+
+<script>
+
+    $(document).ready(function () {
+        var drillCalendarEl = document.getElementById('drillCalendar');
+        var calendar = new FullCalendar.Calendar(drillCalendarEl, {
+            initialView: 'dayGridMonth'
+        });
+        calendar.render();
+    })
+
+</script>
+
+{% endblock %}

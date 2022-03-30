@@ -17,3 +17,6 @@ django-extensions
 sphinx
 django-npm
 anytree
+
+
+psycopg2==2.8.6 --no-binary psycopg2  # https://github.com/psycopg/psycopg2

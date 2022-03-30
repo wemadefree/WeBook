@@ -1,6 +1,7 @@
+from enum import Enum
 from django.urls.base import reverse
 from django.utils.translation import gettext_lazy as _
-from enum import Enum
+
 
 from webook.crumbinator.crumb_node import CrumbNode
 
@@ -20,12 +21,11 @@ class SectionCrudlPathMap:
 
 
 class SectionManifest:
-	def __init__(self, 
+	def __init__(self,
 		section_title: str,
 		section_icon: str,
 		section_crumb_url: str,
 		crudl_map=None):
-		
 		self.section_title = section_title
 		self.section_icon = section_icon
 		self.section_crumb_url = section_crumb_url
@@ -52,7 +52,6 @@ class ViewMeta:
 		entity_name_attribute:str=None,
 		subtitle_mode: SUBTITLE_MODE = SUBTITLE_MODE.TITLE_AS_SUBTITLE,
 		subtitle_prefix: str=None):
-					
 		self.subtitle = subtitle
 		self.subtitle_prefix = subtitle_prefix
 		self.current_crumb_icon = current_crumb_icon
@@ -71,7 +70,7 @@ class ViewMeta:
 	class Preset:
 		@staticmethod
 		def _sanity_check_entity_class(entity_class):
-			""" 
+			"""
 				Runs a sanity check on the entity class, and asserts if it is proper
 			"""
 			assert getattr(entity_class, "entity_name_plural")
@@ -101,8 +100,7 @@ class ViewMeta:
 		def create(entity_class):
 			"""
 				Get a view meta preset for the create view, using application standards.
-				Please note that the model must implement the plurality/naming mixin
-				
+				Please note that the model must implement the plurality/naming mixin			
 				:param entity_class: The class of the model the view is concerned with
 				:type entity_class: The model.
 			"""

@@ -69,6 +69,10 @@ ENV/
 
 # For security reasons, the .env file should never be included in git
 .env
+.env.prod
+.env.dev
+.env.prod.db
+.end.dev.db
 
 # Rope project settings
 .ropeproject

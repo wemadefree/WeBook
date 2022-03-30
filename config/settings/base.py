@@ -49,10 +49,14 @@ LOCALE_PATHS = [str(BASE_DIR / "locale")]
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    "default": env.db(
-        "DATABASE_URL",
-        default=f"sqlite:///{str(BASE_DIR / 'webook.db')}",
-    )
+    "default": {
+        "ENGINE": env("SQL_ENGINE", default="django.db.backends.sqlite3"),
+        "NAME": env("SQL_DATABASE", default=str(BASE_DIR / "db.sqlite3")),
+        "USER": env("SQL_USER", default="user"),
+        "PASSWORD": env("SQL_PASSWORD", default="password"),
+        "HOST": env("SQL_HOST", default="localhost"),
+        "PORT": env("SQL_PORT", default="5432"),
+    }
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 

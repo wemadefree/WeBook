@@ -1,0 +1,104 @@
+{% extends "arrangement/meta_base.html" %}
+{% load static i18n %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <div>
+                <h5>{% trans "Name" %}</h5>
+
+                <div class="row">
+                    <div class="col-lg-4 col-sm-12">
+                        <label class="d-block">
+                            {% trans "First Name" %}
+                            <i class="fas fa-asterisk text-warning float-end"></i>
+                            <i class="fas fa-quote-right text-secondary me-2 float-end"></i>
+                        </label>
+                        <input type="text" class="form-control form-control-lg" 
+                            id="{{ form.first_name.id_for_label }}"
+                            name="{{ form.first_name.name }}"
+                            value="{{ form.first_name.value|default:'' }}"
+                            placeholder="{% trans 'First name' %}..." />
+
+                        {{ form.first_name.errors }}
+                    </div>
+                    <div class="col-lg-4 col-sm-12 mt-lg-0 mt-sm-2">
+                        <label class="d-block">
+                            {% trans "Middle Name" %}
+                            <i class="fas fa-quote-right text-secondary float-end"></i>
+                        </label>
+                        <input type="text" class="form-control form-control-lg"
+                            id="{{ form.middle_name.id_for_label }}"
+                            name="{{ form.middle_name.name }}"
+                            value="{{ form.middle_name.value|default:'' }}"
+                            placeholder="{% trans 'Middle name' %}... ({% trans 'Optional' %})" />
+                    </div>
+                    <div class="col-lg-4 col-sm-12 mt-lg-0 mt-sm-2">
+                        <label class="d-block">
+                            {% trans 'Last Name' %}
+                            <i class="fas fa-asterisk text-warning float-end"></i>
+                            <i class="fas fa-quote-right text-secondary me-2 float-end"></i>
+                        </label>
+                        <input type="text" class="form-control form-control-lg"
+                            id="{{ form.last_name.id_for_label }}"
+                            name="{{ form.last_name.name }}"
+                            value="{{ form.last_name.value|default:'' }}"
+                            placeholder="{% trans 'Last name' %}..." />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group mt-2 pt-3 pb-2">
+            <label for="{{ form.personal_email.id_for_label }}" class="h5 d-block">
+                {{ form.personal_email.label }}
+                <i class="fas fa-asterisk float-end text-warning me-2"
+                    data-toggle="tooltip" title="* {% trans 'This field is mandatory' %}"></i>
+                <i class="fas fa-at float-end text-secondary me-2"
+                    data-toggle="tooltip" title="* {% trans 'This field expects text' %}"></i>
+            </label>
+
+            <input type="text" class="form-control form-control-lg"
+                id="{{ form.personal_email.id_for_label }}" 
+                value="{{ form.personal_email.value|default:'' }}"
+                name="{{ form.personal_email.name }}"
+                placeholder="example@example.com"/>
+        </div>
+
+        <div class="form-group mt-2 pt-3 pb-2">
+            <label for="{{ form.birth_date.id_for_label }}" class="h5 d-block">
+                {{ form.birth_date.label }}
+                <i class="fas fa-calendar float-end text-secondary me-2"
+                    data-toggle="tooltip" title="* {% trans 'This field expects text' %}"></i>
+            </label>
+
+            <input type="date" class="form-control form-control-lg" 
+                id="{{ form.birth_date.id_for_label }}" 
+                value="{{ form.birth_date.value|default:'' }}"
+                name="{{ form.birth_date.name }}"
+                placeholder="{% trans 'Name of the location' %}..."/>
+        </div>
+        
+        <div class="mt-3">
+            <button type="reset" class="btn btn-lg btn-warning">
+                {% trans "Reset Form" %}
+            </button>
+
+            <div class="float-end">
+                <button type="submit" class="btn btn-lg btn-success">
+                    <i class="fas fa-save"></i>&nbsp; 
+                    {% trans "Save" %}
+                </button>
+                <a class="btn btn-lg btn-danger" href="{% url 'arrangement:person_list' %}">
+                    <i class="fas fa-times"></i>&nbsp; 
+                    {% trans "Cancel" %}
+                </a>
+            </div>
+
+        </div>
+    </form>
+{% endblock %}

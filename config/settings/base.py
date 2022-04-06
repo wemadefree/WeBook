@@ -3,7 +3,7 @@ Base settings to build other settings files upon.
 """
 
 from pathlib import Path
-
+from django.utils.translation import ugettext_lazy as _
 import environ
 
 # webook/
@@ -36,6 +36,12 @@ USE_I18N = True
 USE_L10N = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = True
+
+LANGUAGES = [
+    ('en', _('English')),
+    ('nb', _('Norwegian'))
+]
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
 LOCALE_PATHS = [str(BASE_DIR / "locale")]
 
@@ -80,7 +86,8 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "webook.users.apps.UsersConfig",
     # Your stuff: custom apps go here
-    "webook.arrangement.apps.ArrangementConfig"
+    "webook.arrangement.apps.ArrangementConfig",
+    "webook.crumbinator.apps.CrumbinatorConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -101,6 +108,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "users.User"
+# To comply with AllAuth
+USER_MODEL_USERNAME_FIELD = "email"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
 LOGIN_REDIRECT_URL = "users:redirect"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
@@ -160,6 +169,7 @@ STATICFILES_DIRS = [str(APPS_DIR / "static")]
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "npm.finders.NpmFinder",
 ]
 
 # MEDIA
@@ -205,7 +215,7 @@ TEMPLATES = [
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
-CRISPY_TEMPLATE_PACK = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "form_layout_material"
 
 # FIXTURES
 # ------------------------------------------------------------------------------
@@ -272,13 +282,19 @@ ACCOUNT_ALLOW_REGISTRATION = env.bool(
     "DJANGO_ACCOUNT_ALLOW_REGISTRATION", True
 )
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_AUTHENTICATION_METHOD = "username"
+ACCOUNT_AUTHENTICATION_METHOD = "email"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_ADAPTER = "webook.users.adapters.AccountAdapter"
+ACCOUNT_FORMS = {
+    'signup': 'webook.users.forms.UserCreationForm'
+}
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USERNAME_REQUIRED = False
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_ADAPTER = (
     "webook.users.adapters.SocialAccountAdapter"
@@ -286,3 +302,22 @@ SOCIALACCOUNT_ADAPTER = (
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+APP_LOGO = env(
+    "APP_LOGO",
+    default="static/images/wemade_logo.jpg"
+)
+
+APP_TITLE = env(
+    "APP_TITLE",
+    default="WeBook"
+)
+
+FULLCALENDAR_LICENSE_KEY = env(
+    "FULLCALENDAR_LICENSE_KEY",
+    default="CC-Attribution-NonCommercial-NoDerivatives"
+)
+
+ASSET_SERVER_URL = env(
+    "ASSET_SERVER_URL",
+    default="localhost/static"
+)

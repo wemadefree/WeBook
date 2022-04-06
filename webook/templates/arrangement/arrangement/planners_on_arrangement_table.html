@@ -1,0 +1,35 @@
+<div class="alert alert-info">
+    Under ser du en oversikt over planleggere som er delaktige i dette arrangementet.
+    Disse kan redigere og arbeide på dette arrangementet.
+</div>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="h5">Planlegger</th>
+                <th class="h5">Valg</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><div class="badge badge-info">Hovedplanlegger</div> {{ RESPONSIBLE_PLANNER.full_name }}</td>
+                <td>
+                </td>
+            </tr>
+
+            {% for planner in object_list.all %}
+                <tr id="{{planner.pk}}">
+                    <td>{{planner.full_name}}</td>
+                    <td>
+                        <div class="btn-group" style="box-shadow: none;">
+                            <button class="btn btn-warning" onclick="plannersOnArrangement.promoteToMainPlanner({{planner.pk}})">Gjør til hovedplanlegger</button>
+                            <button class="btn btn-danger" onclick="plannersOnArrangement.removePlanner({{planner.pk}})"><i class="fas fa-trash"></i>&nbsp; Fjern</button>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot></tfoot>
+    </table>
+</div>

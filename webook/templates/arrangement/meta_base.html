@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}
+    {% trans "Entity" %} {{ object.name }}
+{% endblock %}
+{% block section_title %}
+    {{ SECTION_TITLE }}
+{% endblock %}
+{% block section_subtitle %}
+    {{ SECTION_SUBTITLE }}
+{% endblock %}
+{% block section_crumb_url %}
+    {{ SECTION_CRUMB_URL }}
+{% endblock %}
+{% block section_crumb_icon %}
+    <i class='{{ SECTION_CRUMB_ICON }}'></i>
+{% endblock %}

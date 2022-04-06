@@ -11,3 +11,104 @@
   background-color: #f2dede;
   border-color: #eed3d7;
 }
+
+/*
+  Fix close button existing on the left side of the modal due to inconsistencies
+  between mdbootstrap and bootbox.js. The button can exist in two states - one with a title present, and one
+  without. The issue with placement only occur when title is not present (hence div.modal-body >, if a title is
+  used then bootbox-close-button will be placed in modal-header wrapper along with the title.
+*/
+div.modal-body > .bootbox-close-button {
+  display: block!important;
+  width: 100%;
+  text-align: right;
+}
+
+/*
+  Needed to resolve the same issue as above (div.modal-body > .bootbox-close-button).
+  This ensures that in alerts with 'X' close buttons, that they will be positioned correctly to the right.
+ */
+.close {
+  float:right;
+}
+
+
+.status_overlay {
+  background-color: ghostwhite;
+  text-align: center;
+  /* color:white; */
+  position: absolute !important;; 
+  padding: 10px;
+  width: 500px;
+  border-left: solid 3px black;
+  border-top: solid 3px black;
+  bottom:0; 
+  right:0; 
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+}
+
+.btn-wemade {
+  background-color: #5f7f99;
+  color:white
+}
+
+.btn-wemade:hover {
+  background-color: #386080;
+  color: white;
+}
+
+.light-tabs {
+  /* background-color: aqua; */
+}
+
+.light-tabs .nav-link.active {
+  background-color: #386080;
+  border: none;
+  color:white;
+}
+
+.noBoxShadow {
+  box-shadow: none;
+}
+
+.sidenav-primary .sidenav-link.active {
+  color:#5f7f99;
+  background-color: white;
+}
+
+.sidenav-primary .sidenav-link#hover {
+  color:#5f7f99;
+  background-color: white;
+}
+
+.fc-tabs {
+  border-radius: 10px!important;
+}
+
+.fc-tabs .nav-link {
+  background-color: #2C3E50;
+  border:none;
+  color:white;
+}
+
+.fc-tabs .nav-link:hover {
+  background-color: #1e2b37;
+  border:none;
+  color:white;
+}
+
+.fc-tabs .nav-link.active {
+  background-color: #1e2b37;
+  border:none;
+  color:white;
+}
+
+/* .context-menu-root {
+  background-color: #386080!important;
+}
+
+.context-menu-item {
+  background-color: #5f7f99!important;
+  color: white!important;
+} */

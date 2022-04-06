@@ -1,9 +1,15 @@
-{% extends "base.html" %}
+{% extends request.user.is_authenticated|yesno:"base.html,public_base.html" %}
 
-{% block title %}Page not found{% endblock %}
+{% load static i18n %}
+
+{% block title %}{% trans "Page not found" %}{% endblock %}
 
 {% block content %}
-<h1>Page not found</h1>
+<h1>{% trans "Page not found" %}</h1>
 
-<p>This is not the page you were looking for.</p>
+<p>{% trans "Sorry, this page doesn't exist or has been removed. Are you sure the URL is correct? If you believe this to be an error then please report this to us via the channels below." %}</p>
+
+<br>
+{% include 'error_contact.html' %}
+
 {% endblock content %}

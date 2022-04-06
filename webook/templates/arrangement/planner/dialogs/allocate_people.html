@@ -1,0 +1,52 @@
+{% load static i18n %}
+
+<div class="modal" tabindex="-1" role="dialog" id="allocatePeopleDialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title text-center"><i class="fas fa-user"></i>&nbsp; {% trans "Allocate people" %}</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" onclick="$('#allocatePeopleDialog').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>{% trans "People" %}</label>
+                    <select class="select" data-mdb-filter="true" id="allocatePeopleSelect" name="allocatePeopleSelect" multiple>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#allocatePeopleDialog').modal('hide')">{% trans "Cancel" %}</button>
+                <button type="button" class="btn btn-primary" onclick="calendarManager.allocate_people_to_selection($('#allocatePeopleSelect').val());$('#allocatePeopleDialog').modal('hide')">{% trans "Save" %}</button>
+              </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadAllocatePeopleDialog() {
+        $('#allocatePeopleDialog').modal('show')
+    }
+
+    $(document).ready(function () {
+        $('#allocatePeopleDialog').on("show.bs.modal", function () {
+            new ExtendedSelect({
+                jqElement: $('#allocatePeopleSelect'),
+                getUrl: '{% url "arrangement:search_people_ajax_view" %}',
+                extraHeaders: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                dataParser: function (item) {
+                    return {
+                        value: item.pk,
+                        text: [item.fields.first_name, item.fields.middle_name, item.fields.last_name].join(" "),
+                        secondary_text: item.fields.personal_email
+                    }
+                }
+            });
+        });
+    });
+</script>

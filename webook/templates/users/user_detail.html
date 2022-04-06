@@ -1,36 +1,58 @@
-{% extends "base.html" %}
+{% extends "users/users_base.html" %}
 {% load static %}
+{% load static i18n %}
 
-{% block title %}User: {{ object.username }}{% endblock %}
+{% block title %}User: {{ object.get_representative_name }}{% endblock %}
 
-{% block content %}
-<div class="container">
+{% block inner %}
 
-  <div class="row">
-    <div class="col-sm-12">
+    <div id="day_calendar" class="mb-4"></div>
+    
+    <script>
+        var events=[ 
+            {
+                id: "make-coffee-01",
+                title: "Forelesning",
+                start: "2021-12-09T09:00:00",
+                end: "2021-12-09T14:00:00",
+                display:"auto",
+                backgroundColor:'pink',
+            },
+            {
+                id: "drink-some-tasty-coffee",
+                title: "Studier",
+                start: "2021-12-09T14:00:00",
+                end: "2021-12-09T16:00:00",
+                display:"auto",
+                backgroundColor:'green',
+            },
+            {
+                id: "nap",
+                title: "Fritid",
+                start: "2021-12-09T16:00:00",
+                end: "2021-12-09T23:00:00",
+                display:"auto",
+                backgroundColor:'orange',
+                textColor: "red",
+            }
+        ];
 
-      <h2>{{ object.username }}</h2>
-      {% if object.name %}
-        <p>{{ object.name }}</p>
-      {% endif %}
-    </div>
-  </div>
-
-{% if object == request.user %}
-<!-- Action buttons -->
-<div class="row">
-
-  <div class="col-sm-12">
-    <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
-    <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
-    <!-- Your Stuff: Custom user template urls -->
-  </div>
-
-</div>
-<!-- End Action buttons -->
-{% endif %}
-
-
-</div>
-{% endblock content %}
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('day_calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'listDay',
+                height: 600,
+                navLinks:true,
+                events: events,
+                locale: 'nb',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listDay'
+                } 
+            });
+            calendar.render();
+          });
+      </script>
+{% endblock inner %}
 

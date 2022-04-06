@@ -1,0 +1,53 @@
+{% extends "blank_base.html" %}
+{% load static i18n %}
+
+{% block content %}
+
+    <div class="card">
+        <div class="card-body">
+            <h1 class="text-center">
+                <i class="fas fa-question-circle text-info"></i>
+            </h1>
+            <h2 class="text-center fw-bold">{% trans "Service Order" %}</h2>
+    
+       
+            <h4 class="text-center">{% trans "A service has been requested" %}</h4>
+            <hr>
+
+            <h4 class="text-center mt-5">
+                <i class="fas fa-comment"></i>
+                {% trans "Events this request concerns:" %}
+            </h4>
+            <div class="border-3 border-info mb-3 p-3" style="background-color: whitesmoke;">
+                <ul>
+                    {% for ev in AFFECTED_EVENTS.all %}
+                        <li>
+                            <strong>{{ev.title}}</strong> - <em class="small">{{ev.start}} - {{ev.end}}</em>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            {% if ORDER_INFORMATION %}
+                <h4 class="text-center mt-5">
+                    <i class="fas fa-comment"></i>
+                    {% trans "Order information" %}
+                </h4>
+                <div class="border-3 border-info mb-3 p-3" style="background-color: whitesmoke;">
+                    {{ORDER_INFORMATION|safe}}
+                </div>
+            {% endif %}
+
+            <hr>
+            <a class="btn btn-success mb-0 box-shadow-0 rounded-0 rounded-top btn-block btn-lg" href="{% url 'arrangement:accept_confirmation_request' %}?token={{TOKEN}}">
+                <i class="fas fa-check"></i>
+                {% trans "Accept request" %}
+            </a>
+            <a class="btn btn-danger mt-0 box-shadow-0 rounded-0 rounded-bottom btn-block btn-lg" href="{% url 'arrangement:deny_confirmation_request' %}?token={{TOKEN}}">
+                <i class="fas fa-times"></i>
+                {% trans "Deny request" %}
+            </a>
+        </div>
+    </div>
+
+{% endblock %}

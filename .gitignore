@@ -330,3 +330,4 @@ webook/media/
 
 # ignore pycharm meta files
 .idea/
+.azure/

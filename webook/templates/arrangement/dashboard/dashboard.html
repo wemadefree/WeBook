@@ -1,0 +1,71 @@
+{% extends "arrangement/meta_base.html" %}
+{% load static i18n %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-5">
+            <h4 class="fw-bold"><i class="fas fa-tasks" aria-hidden="true"></i>&nbsp; My Agenda</h4>
+            <div id="agenda_calendar">
+            </div>
+        </div>
+
+        <div class="col-7">
+            <h4 class="fw-bold"><i class="fas fa-tasks" aria-hidden="true"></i>&nbsp; My Week</h4>
+            <div id="workweek_calendar">
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+
+        var events=[ 
+            {
+                id: "make-coffee-01",
+                title: "Make Coffee",
+                start: "2021-12-03T09:00:00",
+                end: "2021-12-03T14:00:00",
+                display:"auto",
+                backgroundColor:'pink',
+            },
+            {
+                id: "drink-some-tasty-coffee",
+                title: "Drink the tasty coffee",
+                start: "2021-12-03T14:00:00",
+                end: "2021-12-03T16:00:00",
+                display:"auto",
+                backgroundColor:'green',
+            },
+            {
+                id: "nap",
+                title: "Nap",
+                start: "2021-12-03T16:00:00",
+                end: "2021-12-03T23:00:00",
+                display:"auto",
+                backgroundColor:'orange',
+                textColor: "red",
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('agenda_calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+              initialView: 'list',
+              height: 600,
+              events: events
+            });
+            calendar.render();
+          });
+
+          document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('workweek_calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+              initialView: 'dayGridWeek',
+              height: 600,
+              events: events
+            });
+            calendar.render();
+          });
+      </script>
+
+{% endblock %}

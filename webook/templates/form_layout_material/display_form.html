@@ -1,0 +1,9 @@
+{% if form.form_html %}
+    {% if include_media %}{{ form.media }}{% endif %}
+    {% if form_show_errors %}
+        {% include "form_layout_material/errors.html" %}
+    {% endif %}
+    {{ form.form_html }}
+{% else %}
+    {% include "form_layout_material/uni_form.html" %}
+{% endif %}

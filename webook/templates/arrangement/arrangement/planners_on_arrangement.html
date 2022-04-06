@@ -1,0 +1,89 @@
+<div class="clearfix">
+    <div class="btn-group  float-end mb-2">
+        <button class="btn btn-wemade btn-lg " onclick="plannersOnArrangement.openAddPlannerDialog()">
+            <i class="fas fa-plus"></i>
+            Legg til ny planlegger
+        </button>
+    </div>
+</div>
+
+<span id="plannersTableWrapper">
+</span>
+
+{% include "arrangement/arrangement/dialogs/add_planner_dialog.html" %}
+
+<script>
+    $(document).ready(function () {
+        plannersOnArrangement.loadTable();
+        plannersOnArrangement.dialog = addPlannerDialog;
+        plannersOnArrangement.dialog.save = plannersOnArrangement.savePlanner;
+        plannersOnArrangement.dialog.afterSave = plannersOnArrangement.loadTable;
+    })
+
+    let plannersOnArrangement = {
+
+        dialog: addPlannerDialog,
+        
+        loadTable: function () {
+            $('#plannersTableWrapper').load('{% url "arrangement:arrangement_planners_table" %}?arrangementId={{ARRANGEMENT_ID}}')
+        },
+
+        openAddPlannerDialog: function () {
+            addPlannerDialog.open();
+        },
+
+        savePlanner: function (personId) {
+            let formData = new FormData();
+            formData.append("arrangement_id", '{{ARRANGEMENT_ID}}')
+            formData.append("planner_person_id", this.$plannerSelectEl.val());
+            let _loadTable = this.loadTable;
+
+            fetch('{% url "arrangement:arrangement_add_planner" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{csrf_token}}'
+                },
+                body: formData,
+                credentials: 'same-origin',
+            }).then(a => plannersOnArrangement.loadTable());
+        },     
+
+        removePlanner: function (personId) {
+            let formData = new FormData();
+            formData.append("arrangement_id", "{{ARRANGEMENT_ID}}");
+            formData.append("planner_person_id", personId);
+            let _loadTable = this.loadTable;
+
+            fetch("{% url 'arrangement:arrangement_remove_planner' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{csrf_token}}'
+                },
+                credentials: 'same-origin',
+            }).then(a => 
+                _loadTable()
+            );
+        },
+
+        promoteToMainPlanner: function (personId) {
+            let formData = new FormData();
+            formData.append("arrangement_id", "{{ARRANGEMENT_ID}}");
+            formData.append("promotee", personId)
+            let _loadTable = this.loadTable;
+
+            
+            fetch("{% url 'arrangement:arrangement_promote_planner_to_main' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{csrf_token}}'
+                },
+                credentials: 'same-origin'
+                
+            }).then(a => 
+                _loadTable()
+            );
+        },
+    }
+</script>

@@ -1,0 +1,340 @@
+{% load static i18n %}
+
+<div id="calendarFormDialog" class='bg-white p-2 border border-1'
+    title="{{object.name}} kalender">
+<!-- <div class="clearfix">
+    <div class="float-end">
+        <div class="mb-1 mt-1">
+        <div>
+            <button class="" onclick="planner.collision_analyzer.requestCollisionAnalysis()" style="box-shadow: none;">
+            <i class="fas fa-flask"></i>&nbsp;
+            Kjør kollisjonsanalyse
+            </button>
+        </div>
+        </div>
+    </div>
+</div> -->
+<!-- <div class="btn-group float-start" style="box-shadow: none;">
+    <button class=" mb-2" onclick="iconsDialog.open()"><i class="fas fa-info"></i>&nbsp; {% trans "Icons" %}</button>
+    <button class="  mb-2"><i class="fas fa-info-circle"></i>&nbsp; {% trans "User guide" %}</button>
+</div>
+<div class="clearfix">
+    <div class="btn-group float-end" style="box-shadow: none;">
+        <button class=" mb-2" onclick="newEventDialog()"><i class="fas fa-plus"></i>&nbsp; {% trans "New event" %}</button>
+        <button class=" mb-2" onclick="loadNewSerieDialog()"><i class="fas fa-plus"></i>&nbsp; {% trans "New repeating event" %}</button>
+    </div>
+</div> -->
+
+<div id="collisionAnalysisWrapper" style="display: none;">
+    <div class="mt-2 p-2" style="border: 3px dotted black; background-color: ghostwhite;">
+        <legend class="fw-bolder">Kollisjonsanalyse</legend>
+
+        <div id="collisionAnalysisLoader">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div> Analysis is being calculated...
+        </div>
+
+        <div id="collisionAnalysisBody">
+        </div>
+    </div>
+</div>
+
+<div id="designerCalendar" class="bg-white"></div>
+
+<span class="loadingHint" id="loaderHint" style="display: none;">
+  <div class="spinner-grow text-success hinterSpinner" style="width: 1rem; height: 1rem;" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <em class="small hinterMessage">Laster inn hendelser...</em>
+</span>
+
+
+  <script src="{% static 'fullcalendar-scheduler/main.min.js' %}"></script>
+  <script src="{% static 'fullcalendar-scheduler/locales-all.min.js' %}"></script>
+  <script src="{% static 'js/planner.js' %}"></script>
+  <script src="{% static 'js/loadingHint.js' %}"></script>
+  <script src="{% static 'js/inputGroupManager.js' %}"></script>
+  
+<script>
+    let selectAllow = true;
+    let arrangementAutoComplete = undefined;
+    let optionsTab = undefined;
+
+    function triggerTabClick(tabId) {
+      let element = document.getElementById(tabId);
+      
+      var clickEvent = new MouseEvent("click", {
+        "view": window,
+        "bubbles": true,
+        "cancelable": false,
+      });
+
+      element.dispatchEvent(clickEvent);
+    }
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+      bind_global_hotkeys();
+
+      /** 
+       * This is necessary due to FC losing "itself" on tab navigation and resizes.
+       * **/
+      const plannerTabEl = document.querySelector('#planner-tab');
+      plannerTabEl.addEventListener('shown.mdb.tab', (event) => {
+          calendarManager.redraw();
+      })
+      
+      const receiptsAndOrdersTabEl = document.querySelector('#receipts-tab');
+      receiptsAndOrdersTabEl.addEventListener('shown.mdb.tab', (event) => {
+          planner.loose_requisitions_component.refresh();
+          planner.people_requisitions_component.refresh();
+          planner.people_to_requisition_component.refresh();
+      })
+      
+      arrangementAutoComplete = new ArrangementAutoCompleteSearchComponent($('#arrangementSearch'))
+
+      $('#arrrangementNotesWrapper').load('{% url "arrangement:notes_on_entity_component" %}?entityType=arrangement&entityPk={{object.pk}}');
+      $('#arrangement_ordersWrapper').load('{% url "arrangement:requisitions_on_arrangement" %}?arrangementId={{object.pk}}');
+      $('#arrangement_plannersWrapper').load('{% url "arrangement:planners_on_arrangement" %}?arrangementId={{object.pk}}');
+      // $('#arrangementDetailsWrapper').load('{% url "arrangement:arrangement_edit" slug=object.slug %}')
+    });
+
+    function bind_global_hotkeys() {
+      hotkeys('fn+n, fn+s', function (event, handler) {
+        event.preventDefault();
+        switch (handler.key) {
+          case 'ctrl+z+n': 
+            newEventDialog();
+            break;
+          case 'ctrl+z+s':
+            loadNewSerieDialog();
+            break;
+        }
+      });
+    }
+    
+    class ArrangementAutoCompleteSearchComponent {
+      constructor ($search_element) {
+        this.$search_element = $search_element
+
+        this._arrangementAsyncFilter = async (query) => {
+          const url = `{% url "arrangement:arrangement_search" %}?term=${encodeURI(query)}`;
+          const response = await fetch(url);
+          const data = JSON.parse(await response.json());
+
+          let arrangements = []
+          for (let i = 0; i < data.length; i++) {
+            let arrangement = data[i];
+
+            if (arrangement.fields.slug !== "{{ object.slug }}") {
+              arrangements.push(arrangement);
+            }
+          }
+
+          return arrangements;
+        }
+
+        this._mdbAutocomplete = new mdb.Autocomplete(this.$search_element[0], {
+          filter: this._arrangementAsyncFilter,
+          displayValue: (value) => value.fields.name,
+          customContent: `
+            <div class="autocomplete-custom-content"></div>
+          `
+        });
+
+        this._listen_to_select();
+        this._listen_to_update();
+      }
+
+      _listen_to_update() {
+        this.$search_element[0].addEventListener("update.mdb.autocomplete", (event) => {
+          const resultsLength = event.results.length;
+
+          setTimeout(() => {
+            customContentContainer = document.querySelector('.autocomplete-custom-content');
+            customContentContainer.innerHTML = `Search results: ${resultsLength}`
+          }, 0)
+        })
+      }
+
+      _listen_to_select() {
+          this.$search_element[0].addEventListener('itemSelect.mdb.autocomplete', (event) => {
+            location.href = "/arrangement/arrangement/" + event.value.fields.slug;
+          })
+      }
+    }
+
+    class SelectComponent {
+        constructor (element_id, options) {
+            this.element_id = element_id
+            this.options = options
+        }
+
+        insert_options () {
+            for (let [key, value] of this.options) {
+                let option = document.createElement('option');
+                option.setAttribute("value", key);
+                option.innerText = value;
+                document.getElementById(this.element_id).append(option);
+            }
+        }
+
+        set_selected(value) {
+          $("#" + this.element_id).val(value).change();
+        }
+    }
+
+    class MonthSelectComponent extends SelectComponent {
+        constructor (element_id) {
+            let options = new Map([
+              ["1", '{% trans "january" %}'],
+              ["2", '{% trans "februar" %}'],
+              ["3", '{% trans "march" %}'],
+              ["4", '{% trans "april" %}'],
+              ["5", '{% trans "may" %}'],
+              ["6", '{% trans "june" %}'],
+              ["7", '{% trans "july" %}'],
+              ["8", '{% trans "august" %}'],
+              ["9", '{% trans "september" %}'],
+              ["10", '{% trans "october" %}'],
+              ["11", '{% trans "november" %}'],
+              ["12", '{% trans "december" %}'],
+            ]);
+
+            super(element_id, options)
+
+            this.insert_options();
+        }
+    }
+
+    class YearSelectComponent extends SelectComponent {
+      constructor ({ element_id, breadth, focusYear } = {}) {
+
+        let options = new Map();
+        let years = [];
+
+        for (let i = 0; i < breadth; i++) {
+          years.push((focusYear + i), (focusYear + i));
+          years.push((focusYear - i), (focusYear - 1));
+        }
+
+        years = years.sort();
+        years.forEach( (item) => {
+          options.set(item, item)
+        })
+
+        super(element_id, options);
+        this.insert_options();
+        this.set_selected(focusYear);
+      }
+    }
+
+    function parseDateObjTimeToString (date_obj, separator=":", include_seconds=false) {
+      let hours = String(date_obj.getHours());
+      let minutes = String(date_obj.getMinutes());
+      let seconds = String(date_obj.getSeconds());
+
+      if (hours.length == 1) {
+        hours = "0" + hours;
+      }
+      if (minutes.length == 1) {
+        minutes += "0";
+      }
+      if (seconds.length == 1 && include_seconds === true) {
+        seconds += "0";
+      }
+
+      return hours + separator + minutes + (include_seconds === true ? separator + seconds : "");
+    }
+
+    let translatedTextsMap = new Map([
+      ["create", '{% trans "Create" %}'],
+      ["edit", '{% trans "Edit" %}'],
+      ["delete", '{% trans "Delete" %}'],
+      ["info", '{% trans "Info" %}']
+    ]);
+
+    var planner = new Planner({
+      onClickEditButton: function (eventId) { updateEventDialog(eventId); },
+      onClickOrderServiceButton: function (events) { openOrderServiceDialog(events); },
+      onSelectionCopied: function (clipboard) {
+        let rootNode = $("<span></span>")
+        clipboard.events.forEach(function (event) {
+          rootNode.append($('<p>'+event.title+'</p>'))
+        });
+      },
+      csrf_token: '{% csrf_token %}',
+      csrf_token2: '{{ csrf_token }}',
+      texts: translatedTextsMap,
+      arrangement_id: {{ object.id }},
+      $serviceRequisitionsWrapperEl: $('#serviceRequisitionsWrapper'),
+      $peopleRequisitionsWrapperEl: $('#peopleRequisitionsWrapper'),
+      $peopleToRequisitionWrapperEl: $('#peopleToRequisitionWrapper'),
+    });
+
+    var calendarManager = new CalendarManager(
+      "designerCalendar",
+      {
+        "initialView": "dayGridMonth",
+        "navLinks": true,
+        "locale": 'nb',
+        "weekNumbers": true,
+        "selectable": true,
+        "selectMirror": false,
+        "loading": (isLoading) => {
+          console.log(isLoading)
+        },
+        "editable": true,
+        "unselectAuto": true,
+        "selectMinDistance": 1,
+        "select": function ( selectionInfo ) {
+            eventDialogManager.flush();
+            eventDialogManager.event_id.value = -1;
+
+            eventDialogManager.fromDate.valueAsDate = selectionInfo.start;
+            eventDialogManager.fromTime.value = parseDateObjTimeToString(selectionInfo.start);
+
+            eventDialogManager.toDate.valueAsDate = selectionInfo.end;
+            eventDialogManager.toTime.value = parseDateObjTimeToString(selectionInfo.end);
+
+            eventDialogManager.title.value = "";
+
+            $(eventEditDialog).modal('show');
+        },
+        "datesSet": function (arg) {
+
+          $('.fc-daygrid-day').on('click', function () {
+              calendarManager.cellSel.selectCell($(this));
+          })
+
+          $('.fc-timegrid-col, .fc-timegrid-slot').on('click', function () {
+            calendarManager.cellSel.selectCell($(this));
+          })
+
+          calendarManager.setup_cell_select(arg.view.type);
+
+          $('#monthNavigationSelect').val(arg.view.getCurrentData().currentDate.getMonth() + 1);
+          $('#yearNavigationSelect').val(arg.view.getCurrentData().currentDate.getFullYear())
+
+        },
+        "headerToolbar": {
+          "left": 'prev,next today',
+          "center": 'title',
+          "right": 'dayGridMonth,timeGridWeek,timeGridDay'
+        } 
+      },
+    );
+
+    planner.renderer_manager.add_renderer(calendarManager);
+    planner.init()
+  </script>
+
+  {% include 'arrangement/planner/dialogs/edit_event.html' %}
+  {% include 'arrangement/planner/dialogs/new_serie.html' %}
+  {% include 'arrangement/planner/dialogs/order_service.html' %}
+  {% include 'arrangement/planner/dialogs/allocate_rooms.html' %}
+  {% include 'arrangement/planner/dialogs/allocate_people.html' %}
+  {% include 'arrangement/planner/dialogs/color_selection.html' %}
+  {% include 'arrangement/planner/dialogs/icons_dialog.html' %}
+  {% include 'arrangement/requisitioneer/requisition_dialog.html' %}
+</div>

@@ -1,0 +1,134 @@
+
+{% block content %}
+    <style>
+        ul.coloredDotUl {
+            list-style: none; /* Remove default bullets */
+        }
+
+        ul.coloredDotUl li::before {
+            content: "\2022";  /* Add content: \2022 is the CSS Code/unicode for a bullet */
+            color: inherit; /* Change the color */
+            font-weight: bold; /* If you want it to be bold */
+            display: inline-block; /* Needed to add space between the bullet and the text */
+            width: 1em; /* Also needed for space (tweak if needed) */
+            margin-left: -1em; /* Also needed for space (tweak if needed) */
+        }
+    </style>
+
+    <h3>Bestillinger</h3>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th><i class="fas fa-comment"></i>&nbsp; Kommentar</th>
+                    <th><i class="fas fa-dollar-sign"></i>&nbsp; Tjenestetype</th>
+                    <th><i class="fas fa-cog"></i>&nbsp; Valg</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for l_requisition in object_list %}
+                    <tr id="{{l_requisition.pk}}_headRow">
+                        <td class="text-center"><i class="fas fa-chevron-up" data-toggle="tooltip" title="Ekspander og vis de andre hendelsene" onclick="looseRequisitionsOnEventComponent.handleChevronClick({{l_requisition.pk}}, this)"></i></td>
+                        <td>{{ l_requisition.comment }}</td>
+                        <td>{{ l_requisition.type_to_order }}</td>
+                        <td>
+                            {% if reference_frame == "event" %}
+                                <button class="btn btn-sm btn-danger" onclick="looseRequisitionsOnEventComponent.removeEventFromRequisition({{l_requisition.pk}})"><i class="fas fa-times"></i>&nbsp; Fjern denne hendelsen fra rekvireringen</button>
+                            {% else %}
+                                <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i>&nbsp; Slett bestilling</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <tr id="{{l_requisition.pk}}_contentRow" style="display: none;">
+                        <td colspan="1"></td>
+                        <td colspan="3">
+                            <table>
+                                <tbody>
+                                    <h5>Denne bestillingen gjelder:</h5>
+                                    
+                                    <ul class="coloredDotUl">
+                                        {% for event in l_requisition.events.all %}
+                                            <li style="color:{{event.color}}">
+                                                <span style="color: black; {% if event.pk == eventId %} font-weight: bolder; {% endif %}">
+                                                    <em>({{event.start}} - {{event.end}})</em> {{event.title}} &nbsp;&nbsp;<i class="fa fa-times text-danger removeEventElement" onclick="looseRequisitionsOnEventComponent.removeEventFromRequisition({{event.pk}}, {{l_requisition.pk}}, this)" data-toggle="tooltip" title="Fjern hendelsen fra rekvireringen"></i>
+                                                </span>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+    
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th>Kommentar</th>
+                    <th>Tjenestetype</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            looseRequisitionsOnEventComponent.bindOnHoverOverEventRemove();
+        })
+
+        let looseRequisitionsOnEventComponent = {
+
+            _eventId: '{{ eventId }}',
+
+            bindOnHoverOverEventRemove: function () {
+                $('.removeEventElement').hover(
+                    function () {
+                        $( this ).closest('span').css("text-decoration", "line-through")
+                                                 .css("color", "red")
+                    },
+                    function () {
+                        $( this ).closest('span').css("text-decoration", "")
+                                                  .css("color", "black")
+                    }
+                );
+            },
+
+            handleChevronClick: function (requisitionId, chevronElement) {
+                if ($(chevronElement).hasClass('fa-chevron-up')) {
+                    $('#' + requisitionId + "_contentRow").show();
+                    $(chevronElement).removeClass("fa-chevron-up");
+                    $(chevronElement).addClass("fa-chevron-down");
+                }
+                else {
+                    $('#' + requisitionId + "_contentRow").hide();
+                    $(chevronElement).removeClass("fa-chevron-down");
+                    $(chevronElement).addClass("fa-chevron-up");
+                }
+            },
+            
+            removeEventFromRequisition: function (eventId, requisitionId, el) {
+                let formData = new FormData();
+                formData.append("event_id", eventId);
+                formData.append("requisition_id", requisitionId);
+
+                fetch('{% url "arrangement:remove_event_from_requisition" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                }).then(a => {
+                    console.log(el)
+                    $(el).closest('li').hide();
+                })
+            },
+            
+        }
+    </script>
+{% endblock %}

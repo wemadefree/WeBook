@@ -1,0 +1,119 @@
+{% extends "arrangement/meta_base.html" %}
+{% load static i18n %}
+
+
+{% block beneath_breadcrumbs_block %}
+    <a class="btn btn-danger">
+        <i class="fa fa-trash"></i>&nbsp; {% trans "Delete" %}
+    </a>
+    <a class="btn btn-success"
+        href="{% url 'arrangement:person_edit' object.slug %}">
+        <i class="fa fa-edit"></i>&nbsp; {% trans "Edit" %}
+    </a>
+{% endblock %}
+
+{% block content %}
+
+<section>
+    <div class="row">
+        <div class="col-3">
+            <h4>
+                <i class="fas fa-cogs"></i>
+                {% trans "Actions" %}
+            </h4>
+
+            <section>
+                <h5 class="mt-4">Provision user</h5>
+                <p>{% trans "Provision a user account for this person, that they can use to log in with." %}
+                </p>
+                <button class="btn btn-outline-dark btn-block"">
+                    {% trans "Provision user" %}
+                </button>
+            </section>
+
+            <section>
+                <h5 class="mt-4">{% trans "Associate with user" %}</h5>
+                <p>
+                    {% trans "Associate this person with an existing user account." %}
+                </p>
+                <button class="btn btn-outline-dark btn-block"">
+                    {% trans "Associate with user" %}
+                </button>
+            </section>
+
+            <section>
+                <h5 class="mt-4">{% trans "Associate with organization" %}</h5>
+                <p>
+                    {% trans "Associate this person with an organization." %}
+                </p>
+                <button class="btn btn-outline-dark btn-block">
+                    {% trans "Associate with organization" %}
+                </button>
+            </section>
+        </div>
+        <div class="col-3 ps-5">
+            <h4 class="mb-4">
+                <i class="fas fa-info"></i>&nbsp; 
+                {% trans "Personalia" %}
+            </h4>
+            <div>
+                <h5>
+                    {% trans "Name" %}
+                </h5>
+                <span>{{ object.full_name }}</span>
+            </div>
+
+            <div class="mt-3">
+                <h5>
+                    <i>@</i>
+                    {% trans "Personal Email" %}
+                </h5>
+                <span>{{ object.personal_email }}</span>
+            </div>
+
+            <div class="mt-3">
+                <h5>
+                    <i class="fas fa-calendar"></i>
+                    {% trans "Date of birth" %}
+                </h5>
+                <span>{{ object.birth_date }}</span>
+            </div>
+
+            <div class="mt-3">
+                <h5>
+                    {% trans "Has user?" %}
+                </h5>
+                <span>
+                    <i class="fas fa-times text-danger"></i>
+                </span>
+            </div>
+        </div>
+        <div class="col-6">
+            <h4 class="mb-4">
+                <i class="fas fa-dollar-sign"></i>&nbsp; 
+                {% trans "Organizations" %}
+            </h4>
+
+            {% if object.organizations.all|length %}
+                <em>{% trans "This person is a member of the following organizations:" %}</em>
+                {% for organization in object.organizations.all %}
+                    <ul class="mt-3">
+                        <li>
+                            <a href="{% url 'arrangement:organization_detail' organization.slug %}">
+                                <i class="fa fa-link"></i>
+                                {{organization.name }}
+                            </a>
+                        </li>
+                    </ul>
+                {% endfor %}
+
+            {% else %}
+                <div class="alert alert-warning">
+                    {% trans "This person is not a member of any organizations" %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

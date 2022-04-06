@@ -1,0 +1,259 @@
+{% extends "arrangement/meta_base.html" %}
+
+{% load static i18n %}
+
+
+{% block noheader %}
+<h3><i class="fas fa-dollar-sign"></i>&nbsp; Bestill tjeneste</h3>
+
+<div class="clearfix">
+    <a class="btn btn-link"
+       href="{% url 'arrangement:arrangement_detail' slug=LREQ.arrangement.slug %}">
+        Tilbake til arrangement
+    </a>
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+<div>
+    <form method="post" id="serviceRequisitioningForm" onsubmit="handleQuill()">
+        {% csrf_token %}
+        <input type="hidden" name="loose_requisition_id" value="{{ LREQ.pk }}" />
+        <input type="hidden" name="requisition_record_id" value="{{ REQUISITION_RECORD.pk }}" />
+
+        {% if ORDER is None %}
+            <div class="badge d-block badge-info mb-3"
+                    data-toggle="tooltip"
+                    title="{% trans 'The order has not been set up yet' %}">
+                {% trans "Setting up order" %}
+            </div>
+        {% else %}
+            {% if ORDER.originating_loose_requisition.generated_requisition_record.confirmation_receipt.state == 'pending' %}
+                <div class="badge d-block badge-light rounded-0 rounded-top border border-bottom-0"
+                        data-toggle="tooltip"
+                        title="{% trans 'We are waiting for the provider to respond to the request we have sent to them by mail.' %}">
+                    {% trans "Awaiting response from provider" %}
+                </div>
+                <div class="border border-top-0 text-center small rounded-bottom">
+                    <em>{% trans 'We are waiting for the provider to respond to the request we have sent to them by mail.' %}</em>
+                </div>
+                <!-- <button class="btn d-block mt-4 btn-success"
+                    onclick="resetServiceRequisition({{object.pk}})">
+                    Kanseller forespørsel, og åpne for redigering
+                </button> -->
+            {% elif ORDER.originating_loose_requisition.generated_requisition_record.confirmation_receipt.state  == 'denied' %}
+                <span class="badge d-block badge-danger mb-3"
+                        data-toggle="tooltip"
+                        title="{% trans 'The provider has denied this request.' %}">
+                    {% trans "Denied" %}
+                </span>
+                <div class="border-danger border-top-0 text-center small">
+                    <em>{% trans 'The provider has denied this request.' %}</em>
+                </div>
+                <center>
+                    <!-- <button class="btn mt-4 btn-success"
+                            onclick="resetServiceRequisition({{object.pk}})"
+                            type="button">
+                        <i class="fas fa-edit"></i>
+                        Åpne bestilling for endring
+                    </button> -->
+                </center>
+            {% elif ORDER.originating_loose_requisition.generated_requisition_record.confirmation_receipt.state == 'confirmed' %}
+                <span class="badge d-block badge-success mb-3"
+                        data-toggle="tooltip"
+                        title="{% trans 'The provider has accepted this request' %}">
+                    <i class="fas fa-check"></i>
+                    {% trans 'Accepted' %}
+                </span>
+                <div class="border-successs border-top-0 text-center small">
+                    <em>
+                        {% trans 'The provider has accepted this request' %}
+                    </em>
+                </div>
+                <!-- <button class="btn btn-success"
+                        onclick="resetServiceRequisition({{object.pk}})"
+                        type="button">
+                    <i class="fas fa-edit"></i>
+                    Åpne for redigering
+                </button>
+                <button class="btn d-block mt-2 btn-danger"
+                        onclick="cancelServiceRequisition({{object.pk}})
+                        type="button">
+                    <i class="fas fa-edit"></i>
+                    Kanseller bestilling
+                </button> -->
+            {% elif ORDER.originating_loose_requisition.generated_requisition_record.confirmation_receipt.state == 'cancelled' %}
+                <span class="badge d-block badge-warning mb-3"
+                        data-toggle="tooltip"
+                        title="{% trans 'This order has been cancelled' %}">
+                    {% trans 'Cancelled' %}
+                </span>
+                <div class="border-warning border-top-0 text-center small">
+                    <em>{% trans 'This order has been cancelled' %}</em>
+                </div>
+            {% endif %}
+        {% endif %} 
+
+        <label class="fw-bold mt-4">Arrangement:</label>
+        <div>
+            <a href="{% url 'arrangement:arrangement_detail' slug=LREQ.arrangement.slug %}">{{LREQ.arrangement.name}}</a>
+        </div>
+
+        <label class="fw-bold mt-2">Ønsker tjeneste av type:</label>
+        <div>
+            <span>
+                <a href="{% url 'arrangement:servicetype_detail' slug=LREQ.type_to_order.slug %}">{{LREQ.type_to_order}}</a>
+            </span>
+        </div>
+
+        <label class="fw-bold mt-2">Kommentar fra oppsett av bestilling:</label>
+        <div>
+            <span>
+                {{LREQ.comment}}
+            </span>
+        </div>
+
+        <h5 class="mt-4">Tjenestetilbydere:</h5>
+
+        {% if ORDER is None %}
+            {% if PROVIDERS.all|length == 0 %}
+            <div class="alert alert-light" style="background-color: ghostwhite;">
+                <h3 class="text-center"><i class="fas fa-exclamation"></i></h3>
+                <h4 class="fw-bold text-center">Ingen bedrifter registrert som leverer {{LREQ.type_to_order}}</h4>
+                <h5 class="small text-center">Du må registrere en bedrift som kan tilby {{LREQ.type_to_order}} før bestillingen kan gjennomføres</h5>
+            </div>
+            {% else %}
+                <div class="alert alert-info">
+                    Choose one service provider to order this service from
+                </div>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th class="fw-bold">Bedrift</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for provider in PROVIDERS.all %}
+                            <tr>
+                                <td style="width: 1rem"><input type="radio" name="provider_id" value="{{ provider.pk }}" /></td>
+                                <td><a href='{% url "arrangement:organization_detail" slug=provider.organization.slug %}'>{{provider.organization.name}}</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {{ form.provider_id.errors }}
+            {% endif %}
+        {% else %}
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="fw-bold">Bedrift</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td style="width: 1rem"><input type="radio" name="provider_id" checked  disabled/></td>
+                        <td><a href="{% url 'arrangement:organization_detail' slug=ORDER.provider.organization.slug %}">{{ORDER.provider.organization.name}}</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        {% endif %}
+
+
+        <h5 class="mt-4">Bestillingen gjelder følgende hendelser:</h5>
+        <ul>
+            {% for event in LREQ.events.all %}
+                <li>
+                    <strong>{{event.title}}</strong> - <em class="small">{{event.start}} - {{event.end}}</em>
+                    <ul>
+                        {% for room in event.rooms.all %}
+                            <li><strong>Sted: </strong> <em class="small"> {{room.location.name}} / {{room.name}}</em></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h5 class="mt-4">Ordreinformasjon:</h5>
+        {% if ORDER is None %}
+            <div class="alert alert-info">
+                Beskriv ordren. Denne informasjonen vil sendes videre til tilbydderen i rekvireringen.
+            </div>
+
+            <div id="editor">
+            </div>
+
+            <div class="alert alert-light small">
+                <i class="fas fa-info-circle"></i> <strong>Info</strong> <br>
+                Når du er ferdig, og trykker "opprett bestilling" vil en E-Post sendes til tilbydderen du valgte. De vil se ordreinformasjon, og vil 
+                kunne bekrefte/avbekrefte rekvireringen. De vil også få en oversikt over alle hendelser denne bestillingen gjelder.
+                Velger du å "lagre utkast" så vil forandringene dine bli lagret, men rekvirering vil ikke begynne.
+            </div>
+            
+            <button class="btn btn-success mt-1 mb-5 float-end" type="submit">Opprett bestilling</button>
+        {% else %}
+            {{ORDER.order_information|safe}}
+        {% endif %}
+
+    </form>
+</div>
+
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+var quill = new Quill('#editor', {
+    theme: 'snow'
+  });
+
+  function handleQuill() {
+      $('#serviceRequisitioningForm').append("<input type='hidden' name='order_information' value='" + quill.root.innerHTML + "' />")
+  }
+
+  function resetServiceRequisition(id) {
+        let formData = new FormData();
+        formData.append("loose_service_requisition_id", id)
+
+        fetch('{% url "arrangement:reset_requisition_form" %}', {
+            method: 'POST',
+            headers: {
+                "X-CSRFToken": '{{ csrf_token }}',
+            },
+            body: formData,
+        })
+        // .then(() => location.reload());
+    }
+
+    function cancelServiceRequisition(id) {
+        let formData = new FormData();
+        formData.append("loose_service_requisition_id", id)
+
+        fetch('{% url "arrangement:cancel_requisition_form" %}', {
+            method: 'POST',
+            headers: {
+                "X-CSRFToken": '{{ csrf_token }}'
+            },
+            body: formData
+        })
+        // .then(() => location.reload());
+    }
+
+    function deleteServiceRequisition(id) {
+        fetch('/arrangement/requisition/delete_service_requisition/' + id, {
+            method: 'DELETE',
+            headers: {
+                "X-CSRFToken": '{{ csrf_token }}'
+            },
+            credentials: "same-origin"
+        });
+    }
+</script>
+
+{% endblock %}

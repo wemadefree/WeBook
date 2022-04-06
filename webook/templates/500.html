@@ -1,13 +1,18 @@
-{% extends "base.html" %}
+{% extends request.user.is_authenticated|yesno:"base.html,public_base.html" %}
+{% load static i18n %}
 
-{% block title %}Server Error{% endblock %}
+{% block title %}{% trans "Server Error" %}{% endblock %}
 
 {% block content %}
-<h1>Ooops!!! 500</h1>
+<h1>500</h1>
 
-<h3>Looks like something went wrong!</h3>
+<h3>{% trans "Looks like something went wrong!" %}</h3>
 
-<p>We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.</p>
+<p>{% trans "We track these errors automatically, but if the problem persists feel free to contact us through the channels listed beneath. In the meantime, try refreshing." %}</p>
+
+<br>
+{% include 'error_contact.html' %}
+
 {% endblock content %}
 
 

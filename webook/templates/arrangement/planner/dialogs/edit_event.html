@@ -1,0 +1,467 @@
+{% load static i18n %}
+
+<div class="modal" tabindex="-1" role="dialog" id="editEventDialog">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; {% trans "Edit event" %}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#editEventDialog').modal('hide')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <!-- Tabs navs -->
+          <ul class="nav nav-tabs mb-3" id="editEventDialogTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <a
+                class="nav-link active"
+                id="ex1-tab-1"
+                data-mdb-toggle="tab"
+                href="#ex1-tabs-1"
+                role="tab"
+                aria-controls="ex1-tabs-1"
+                aria-selected="true"
+                ><i class="fas fa-calendar"></i>&nbsp; {% trans "Event Information" %}</a
+              >
+            </li>
+            <li class="nav-item" role="presentation">
+              <a
+                class="nav-link"
+                id="ex1-tab-2"
+                data-mdb-toggle="tab"
+                href="#ex1-tabs-2"
+                role="tab"
+                aria-controls="ex1-tabs-2"
+                aria-selected="false"
+                ><i class="fas fa-comments"></i>&nbsp; {% trans "Notes" %}</a
+              >
+            </li>
+            <li class="nav-item" role="presentation">
+              <a
+                class="nav-link"
+                id="ex1-tab-3"
+                data-mdb-toggle="tab"
+                href="#orders_tab"
+                role="tab"
+                aria-controls="ex1-tabs-3"
+                aria-selected="false"
+                ><i class="fas fa-dollar-sign"></i>&nbsp; {% trans "Orders" %}</a
+              >
+            </li>
+          </ul>
+          <!-- Tabs navs -->
+
+          <!-- Tabs content -->
+          <div class="tab-content" id="ex1-content">
+            <div
+              class="tab-pane fade show active"
+              id="ex1-tabs-1"
+              role="tabpanel"
+              aria-labelledby="ex1-tab-1"
+            >
+            <form id="eventEditMockForm">
+              <input type="submit" style="display:none" />
+              <input type="hidden" id="event_id" code-qualified-name="event_id" />
+              <input type="hidden" id="person_ids" />
+              <input type="hidden" id="room_ids" />
+  
+              <div class="row">
+                <div class="col-4">
+                  <div class="color-picker" style="max-width: 350px;"  data-mdb-color-picker-value="#ffc92b"></div>
+                </div>
+                <div class="col-8">
+                  <div class="form-group">
+                    <label class="d-block">{% trans "Title" %} <small class="text-muted float-end"> * {% trans "Required" %}</small></label>
+                    <input type="text" class="form-control" id="title" code-qualified-name="title" required/>
+                  </div>
+      
+                  <div class="form-group mt-2">
+                    <label class="d-block">{% trans "From" %} <small class="text-muted float-end"> * {% trans "Required" %}</small></label>
+                    <div class="row">
+                      <div class="col-6">
+                        <input type="date" class="form-control" id="fromDate" code-qualified-name="fromDate" required>
+                      </div>
+                      <div class="col-6">
+                        <input type="time" class="form-control" id="fromTime" code-qualified-name="fromTime" required>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="form-group mt-2">
+                    <label class="d-block">{% trans "To" %} <small class="text-muted float-end"> * {% trans "Required" %}</small></label>
+                    <div class="row">
+                      <div class="col-6">
+                        <input type="date" class="form-control" id="toDate" code-qualified-name="toDate" required>
+                      </div>
+                      <div class="col-6">
+                        <input type="time" class="form-control" id="toTime" code-qualified-name="toTime" required>
+                      </div>
+                    </div>
+                  </div>
+  
+                  <div class="row mt-3">
+                    <div class="col-6">
+                      <h4>{% trans "People" %}</h4>
+                      <div class="input-group">               
+                        <div id="personAutocomplete" class="form-outline">
+                          <input type="text" class="form-control" placeholder="Søk etter person...">
+                        </div>       
+                        <div class="input-group-append">
+                          <button class="btn btn-success" style="box-shadow:none;border-top-left-radius: 0;border-bottom-left-radius: 0;"><i class="fas fa-plus"></i></button>
+                        </div>
+                      </div>
+                      <table class="table table-sm">
+                          <thead>
+                            <tr>
+                              <th>{% trans "Name" %}</th>
+                              <th><i class="fas fa-cogs"></i></th>
+                            </tr>
+                          </thead>
+                          <tbody id="peopleTableBody">          
+                          </tbody>
+                      </table>
+                    </div>
+                    <div class="col-6">
+                      <h4>{% trans "Rooms" %}</h4>
+                      <div class="input-group">                      
+                        <div id="roomAutoComplete" class="form-outline">
+                          <input type="text" class="form-control" placeholder="Søk etter rom...">
+                        </div>   
+                        <div class="input-group-append">
+                          <button class="btn btn-success" style="box-shadow:none;border-top-left-radius: 0;border-bottom-left-radius: 0;"><i class="fas fa-plus"></i></button>
+                        </div>
+                      </div>
+                      <table class="table table-sm">
+                          <thead>
+                            <tr>
+                              <th>{% trans "Name" %}</th>
+                              <th><i class="fas fa-cogs"></i></th>
+                            </tr>
+                          </thead>
+                          <tbody id="roomsTableBody">
+                          </tbody>
+                      </table>
+                    </div>
+                  </div>
+  
+                  <div class="alert alert-info">
+                    <i class="fas fa-info text-info"></i>&nbsp; 
+                    Personer og rom vil reserveres i rekvireringsfasen. Personene og rommene definert her vil ikke bli rekvirert og forespurt kvittert før 
+                    du faktisk velger å igangsette rekvirering, så det er ingen innlåsninger eller konsekvenser før den terskelen krysses.
+                  </div>
+  
+                </div>
+              </div>
+            </form>
+            </div>
+            <div class="tab-pane fade" id="ex1-tabs-2" role="tabpanel" aria-labelledby="ex1-tab-2">
+              <span id="notesWrapper"></span>
+            </div>
+            <div class="tab-pane fade" id="orders_tab" role="tabpanel" aria-labelledby="ex1-tab-3">
+              <span id="ordersWrapper"></span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="$(eventEditDialog).modal('hide')">{% trans "Cancel" %}</button>
+          <button type="button" class="btn btn-primary" onclick="saveEvent()">{% trans "Save" %}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+    const default_color = '#0d6efd'
+    const colors = [
+        ['#0d6efd', '#6610f2', '#6f42c1 ', '#b23cfd', '#d63384', '#dc3545', '#fd7e14', '#ffc107'],
+        ['#198754', '#20c997', '#0dcaf0', '#39c0ed', '#757575', '#4f4f4f', '#262626', '#000'],
+    ];
+
+    var personAutocomplete=undefined;
+    const roomAutoComplete=undefined;
+    var pickerInstance=undefined;
+    var pickerEl = undefined;
+    var peopleMap = new Map();
+    var roomsMap = new Map();
+
+    function hideTabs() {
+      $('#editEventDialogTabs').hide()
+    }
+    function showTabs() {
+      $('#editEventDialogTabs').show()
+    }
+
+    function removePerson(el) {
+      console.log(">> remove person")
+      let key = $(el).attr("person-key");
+      peopleMap.delete(parseInt(key));
+      el.remove();
+    }
+
+    function removeRoom(el) {
+      let key = $(el).attr("room-key");
+      roomsMap.delete(parseInt(key));
+      el.remove();
+    }
+
+    $(document).ready(function () {
+      const personAutoCompleteEl = document.querySelector('#personAutocomplete');
+      const roomAutoCompleteEl = document.querySelector('#roomAutoComplete');
+      
+      initColorpicker();
+
+      
+      const personAsyncFilter = async (query) => {
+        const url = `{% url "arrangement:search_people_ajax_view" %}?term=${encodeURI(query)}`;
+        const response = await fetch(url);
+        const data = JSON.parse(await response.json());
+        
+        let people = []
+        for (let i = 0; i < data.length; i++) {
+          let entry = data[i]
+          entry.fields.id = entry.pk;
+          if (peopleMap.has(entry.fields.id) !== true) {
+            people.push(entry.fields)
+          }
+        }
+
+        return people;
+      };
+      const roomAsyncFilter = async (query) => {
+        const url = `{% url "arrangement:search_room_ajax_view" %}?term=${encodeURI(query)}`;
+        const response = await fetch(url);
+        const data = JSON.parse(await response.json());
+
+        let rooms = [];
+        for (let i = 0; i < data.length; i++) {
+          let entry = data[i]
+          entry.fields.id = entry.pk;
+          if (roomsMap.has(entry.fields.id) !== true) {
+            rooms.push(entry.fields);
+          }
+        }
+
+        return rooms;
+      }
+
+      personAutocomplete = new mdb.Autocomplete(personAutoCompleteEl, {
+        filter: personAsyncFilter,
+        displayValue: (value) => [value.first_name, value.middle_name, value.last_name].join(" ")
+      });
+      const roomAutocomplete = new mdb.Autocomplete(roomAutoCompleteEl, {
+        filter: roomAsyncFilter,
+        displayValue: (value) => value.name
+      });
+
+      $(personAutoCompleteEl).on("itemSelect.mdb.autocomplete", function (ev) {
+          peopleMap.set(ev.value.id, ev.value);
+          $('#peopleTableBody').append("<tr person-key='" + ev.value.id  + "'><td>" + [ev.value.first_name, ev.value.middle_name, ev.value.last_name].join(" ") + "</td><td><a href='#' onclick='removePerson(this.parentElement.parentElement)'><i class='fas fa-minus text-danger'></i></td>");
+          personAutoCompleteEl.children[0].value = ""
+      })
+      $(roomAutoCompleteEl).on("itemSelect.mdb.autocomplete", function (ev) {
+          roomsMap.set(ev.value.id, ev.value);
+          $('#roomsTableBody').append("<tr room-key='" + ev.value.id  + "'><td>" + ev.value.name + "</td><td><a href='#' onclick='removeRoom(this.parentElement.parentElement)'><i class='fas fa-minus text-danger'></i></td>");
+      })
+    })
+   
+
+    function bindHotkeys() {
+      hotkeys('alt+enter', function (event, handler) {
+        switch (handler.key) {
+          case 'alt+enter':
+            saveEvent();
+            break;
+        }
+      });
+
+      // needed to make sure hotkeys work when INPUT elements are in focus
+      hotkeys.filter = function(event) { 
+        return true;
+      }
+    }
+
+    function releaseHotkeys() {
+      hotkeys.unbind("alt+enter");
+    }
+
+    let eventEditDialog = document.getElementById('editEventDialog');
+
+    var eventDialogManager = new InputGroupManager(
+        [
+            document.getElementById('event_id'),
+            document.getElementById('title'),
+            document.getElementById('fromDate'),
+            document.getElementById('fromTime'),
+            document.getElementById('toTime'),
+            document.getElementById('toDate'),
+        ]
+    )
+
+    function newEventDialog() {
+        hideTabs();
+
+        eventDialogManager.flush();
+        let eventEditDialog = document.getElementById('editEventDialog');
+        eventDialogManager.event_id.value = -1;
+        
+        initColorpicker(default_color);
+        initNotes();
+        initOrders();
+
+        $('#roomsTableBody')[0].innerHTML = "";
+        $('#peopleTableBody')[0].innerHTML = "";
+        $(eventEditDialog).modal('show');
+    }
+
+    function initNotes (eventId) {
+      $('#notesWrapper').load('{% url "arrangement:notes_on_entity_component" %}?entityType=event&entityPk=' + eventId);
+    }
+
+    function initOrders(eventId) {
+      $('#ordersWrapper').load('{% url "arrangement:requisitions_on_event" %}?eventId=' + eventId)
+    }
+
+    function initColorpicker (color) {
+      if ( color === undefined ) {
+        color = default_color;
+      }
+
+      pickerInstance=undefined;
+      let picker = document.querySelector('.color-picker');
+      picker.innerHTML = "";
+
+      pickerInstance = new ColorPicker(picker, { colorPickerSwatches: colors, colorPickerValue: color });
+    }
+
+    function loadPeople (peopleIds) {
+      fetch ('{% url "arrangement:search_people_ajax_view" %}', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": '{{ csrf_token }}',
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          "search_type": 2,
+          "pks": peopleIds
+        })
+      })
+      .then(response => response.json())
+      .then(json => {
+        $('#peopleTableBody').html("");
+        let people=JSON.parse(json)
+        for (let i = 0; i < people.length; i++) {
+          let person = people[i];
+          person.fields.id = person.pk;
+          peopleMap.set(person.pk, person.fields);
+          $('#peopleTableBody').append("<tr person-key='" + person.pk  + "'><td>" + [person.fields.first_name, person.fields.middle_name, person.fields.last_name].join(" ") + "</td><td><a href='#' onclick='removePerson(this.parentElement.parentElement)'><i class='fas fa-minus text-danger'></i></td>");
+        }
+      })
+      
+    }
+
+    function loadRooms (roomIds) {
+      fetch ('{% url "arrangement:search_room_ajax_view" %}', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": '{{ csrf_token }}',
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          "search_type": 2,
+          "pks": roomIds
+        })
+      })
+      .then(response => response.json())
+      .then(json => {
+        let rooms=JSON.parse(json);
+        for (let i = 0; i < rooms.length; i++) {
+          let room = rooms[i];
+          room.fields.id = room.pk;
+          roomsMap.set(room.pk, room.fields);
+          $('#roomsTableBody').append("<tr room-key='" + room.pk  + "'><td>" + room.fields.name + "</td><td><a href='#' onclick='removeRoom(this.parentElement.parentElement)'><i class='fas fa-minus text-danger'></i></td>");
+        }
+      })
+
+    }
+
+    function updateEventDialog(event_uuid) {
+        showTabs();
+
+        eventDialogManager.flush();
+        console.log("Event Edit::>> " + event_uuid)
+        let event = planner.local_context.events.get(event_uuid);
+        console.log(event);
+        // Write in existing values for this event
+        eventDialogManager.event_id.value = event_uuid;
+        eventDialogManager.title.value = event.title;
+        eventDialogManager.fromDate.valueAsDate = event.from;
+        eventDialogManager.fromTime.value = parseDateObjTimeToString(event.from);
+        eventDialogManager.toDate.valueAsDate = event.to;
+        eventDialogManager.toTime.value = parseDateObjTimeToString(event.to);
+
+        initColorpicker(event.color);
+        initNotes(event.pk)
+        initOrders(event.pk)
+
+        $(pickerEl).attr("data-mdb-color-picker-value", event.color)
+
+        $('#roomsTableBody')[0].innerHTML = "";
+        $('#peopleTableBody')[0].innerHTML = "";
+
+
+        loadPeople(event.people);
+        loadRooms(event.rooms);
+
+        $(eventEditDialog).modal('show');
+    }
+
+    $(eventEditDialog).on('hidden.bs.modal', function (e) {
+      hotkeys.unbind("alt+enter");
+    })
+
+    $(eventEditDialog).on('shown.bs.modal', function (e) {
+      bindHotkeys();
+    });
+
+    function saveEvent() {
+        let mockForm = document.getElementById('eventEditMockForm');
+        let inputs = mockForm.querySelectorAll("input");
+        let is_valid = true;
+        for (let i = 0; i < inputs.length; i++) {
+          if (inputs[i].checkValidity() === false) {
+            $('#eventEditMockForm').find(':submit').click();
+            return;
+          }
+        }
+
+        let event_obj = {
+            title: eventDialogManager.title.value,
+            from: new Date(eventDialogManager.fromDate.value + "T" + eventDialogManager.fromTime.value),
+            to: new Date(eventDialogManager.toDate.value + "T" + eventDialogManager.toTime.value),
+            color: pickerInstance._colors.hex,
+            people: Array.from( peopleMap.keys() ),
+            rooms: Array.from( roomsMap.keys() ),
+        }
+
+        console.log(event_obj)
+
+        let toastrMessage = "";
+        console.log(eventDialogManager.event_id.value);
+        if (eventDialogManager.event_id.value !== "-1") {
+          planner.local_context.update_event(event_obj, eventDialogManager.event_id.value);
+          toastrMessage = '{% trans "Event updated!" %}';
+        }
+        else {
+          planner.local_context.add_event(event_obj);
+          toastrMessage = '{% trans "Event created!" %}'
+        }
+
+        $(eventEditDialog).modal('hide');
+        toastr["success"](toastrMessage);
+
+        releaseHotkeys();
+    }
+</script>

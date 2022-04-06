@@ -1,0 +1,63 @@
+{% load static i18n %}
+
+<div class="modal" tabindex="-1" role="dialog" id="allocateRoomsDialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title text-center"><i class="fas fa-building"></i>&nbsp; {% trans "Allocate rooms" %}</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" onclick="$('#allocateRoomsDialog').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label>{% trans "Rooms" %}</label>
+                            <select class="select" data-mdb-filter="true" id="allocateRoomsSelect" name="allocateRoomsSelect" multiple>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#allocateRoomsDialog').modal('hide')">{% trans "Cancel" %}</button>
+                <button type="button" class="btn btn-primary" onclick="calendarManager.allocate_rooms_to_selection($('#allocateRoomsSelect').val());$('#allocateRoomsDialog').modal('hide')">{% trans "Save" %}</button>
+              </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadAllocateRoomsDialog() {
+        $('#allocateRoomsDialog').modal('show')
+    }
+
+    $(document).ready(function () {
+        $('#allocateRoomsDialog').on("show.bs.modal", function () {
+            new ExtendedSelect({
+                jqElement: $('#allocateRoomsSelect'),
+                getUrl: '{% url "arrangement:search_room_ajax_view" %}',
+                extraHeaders: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                dataParser: function (item) {
+                    return {
+                        value: item.pk,
+                        text: item.fields.name,
+                        secondary_text: "{% trans 'Max Occupancy: ' %}" + item.fields.max_capacity,
+                    }
+                }
+            });
+
+            let selectedNodes = document.querySelectorAll(".ds-selected");
+            for (let i = 0; i < selectedNodes.length; i++) {
+                let event = planner.local_context.events.get(getUuidFromEventDomNode(selectedNodes[i]));
+                $('#allocateRoomsDialog_eventsTbody').append('<tr><td style="background-color: '+event.color+'; color:white;">(' + event.from.toTimeString().split(' ')[0] + '-' + event.to.toTimeString().split(' ')[0] + ')'+event.title+'</td></tr>');
+            }
+        });
+    });
+</script>

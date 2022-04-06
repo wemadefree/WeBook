@@ -1,0 +1,715 @@
+{% load static i18n %}
+
+<div class="modal" tabindex="-1" role="dialog" id="newSerieDialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{% trans "New recurring event" %}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" onclick=" $('#newSerieDialog').modal('hide')">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <fieldset>
+            <form id="headMockForm">
+              <!-- hidden submit to allow submitting form programmatically, while retaining the client-side validation 
+                   formEl.submit() would ignore the attributes settings for validations -->
+              <input type="submit" style="display:none">
+
+              <legend>
+                {% trans "Time" %}
+              </legend>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <label>{% trans "Title" %}</label>
+                    </td>
+                    <td>
+                      <input type="text" id="serie_title" required />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <label>{% trans "Start" %}</label>
+                    </td>
+                    <td>
+                      <input type="time" id="serie_start" required />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <label>{% trans "Slutt" %}</label>
+                    </td>
+                    <td>
+                      <input type="time" id="serie_end" required />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <label>{% trans "Color" %}</label>
+                    </td>
+                    <td>
+                      <input type="color" id="serie_color" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              </form>
+          </fieldset>
+
+          <fieldset>
+            <legend>{% trans "Pattern for recurring area" %}</legend>
+            <div class="row">
+              <div class="col-3 border-end border-1">
+                <form id="patternMockForm">
+                  <input type="submit" style="display:none;" />
+
+                  <div>
+                    <input type="radio" name="pattern" value="1" checked required/><label>&nbsp; {% trans "Daily" %}</label>
+                  </div>
+                  <div>
+                    <input type="radio" name="pattern" value="2"/><label>&nbsp; {% trans "Weekly" %}</label>
+                  </div>
+                  <div>
+                    <input type="radio" name="pattern" value="3"/><label>&nbsp; {% trans "Monthly" %}</label>
+                  </div>
+                  <div>
+                    <input type="radio" name="pattern" value="4"/><label>&nbsp; {% trans "Yearly" %}</label>
+                  </div>
+                </form>
+              </div>
+
+              <div class="col-9">
+                <div id="patternRoute_daily">
+                  <div>
+                    <input type="radio" name="pattern_daily_subroute" value="0" required/>
+                    <label>{% trans "Every" %} <input type="number" min="1" id="every_x_day__interval" required/> {% trans "day" %}</label>
+                  </div>
+                  
+                  <div>
+                    <input type="radio" name="pattern_daily_subroute" value="1"/>
+                    <label>{% trans "Every weekday" %}</label>
+                  </div>
+                </div>
+
+                <div id="patternRoute_weekly" style="display: none;">
+                  <div><label>{% trans "Skjer hver" %} <input type="number" min="1" id="week_interval" name="repeat_every_x_week" style="width: 40px" required/> {% trans "week at" %}:</label></div>
+                  <span id="day_checkbox_wrapper">
+                    <input type="checkbox" id="monday"> <label>{% trans "Monday" %}</label>
+                    <input type="checkbox" id="tuesday"> <label>{% trans "Tuesday" %}</label>
+                    <input type="checkbox" id="wednesday"> <label>{% trans "Wednesday" %}</label>
+                    <input type="checkbox" id="thursday"> <label>{% trans "Thursday" %}</label>
+                    <input type="checkbox" id="friday"> <label>{% trans "Friday" %}</label>
+                    <input type="checkbox" id="saturday"> <label>{% trans "Saturday" %}</label>
+                    <input type="checkbox" id="sunday"> <label>{% trans "Sunday" %}</label>
+                  </span>
+                </div>
+
+                <div id="patternRoute_monthly" style="display: none;">
+                  <div>
+                    <input type="radio" name="pattern_monthly_subroute" value="0" required /> 
+                    {% trans "Day" %} <input type="number" min="1" required id="every_x_day_every_y_month__day_of_month" style="width: 40px"> {% trans "every" %} <input type="number" required min="1" id="every_x_day_every_y_month__month_interval" style="width: 40px;"> {% trans "month" %}
+                  </div>
+                  <div>
+                    <input type="radio" name="pattern_monthly_subroute" value="1" /> {% trans "The" %}
+                    <select id="every_dynamic_date_of_month__arbitrator" required>
+                    </select>
+                    <select id="every_dynamic_date_of_month__weekday" required>
+                    </select>
+                    {% trans "every" %} <input type="number" required min="1" id="every_dynamic_date_of_month__month_interval" style="width:40px"> {% trans "months" %}
+                  </div>
+                </div>
+
+                <div id="patternRoute_yearly" style="display: none;">
+                  <div>
+                    {% trans "Happens every" %} <input type="number" min="1" required id="pattern_yearly_const__year_interval" style="width: 40px" /> {% trans "year" %}
+                  </div>
+                  <div>
+                    <input type="radio" name="pattern_yearly_subroute" value="0" required> {% trans "Dato" %}:
+                    <input type="number" min="1" required id="every_x_of_month__date" style="width: 40px" />
+                    <select id="every_x_of_month__month" required>
+                    </select>
+                  </div>
+
+                  <div>
+                    <input type="radio" name="pattern_yearly_subroute" value="1"> {% trans "Every" %}:
+                    <select id="every_arbitrary_weekday_in_month__arbitrator" required>
+                    </select>
+                    <select id="every_arbitrary_weekday_in_month__weekday" required>
+                    </select>
+                    {% trans "in" %}
+                    <select id="every_arbitrary_weekday_in_month__month" required>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>{% trans "Area of recurrence" %}</legend>
+            <div class="row">
+              <div class="col-3">
+                <label>{% trans "Start Date" %}</label>
+                <input type="date" id="area_start_date" required>
+              </div>
+              <div class="col-9" id="area_methods_wrapper">
+                <div>
+                  <input type="radio" name="timeAreaMethod" value="1">
+                  {% trans "Stop within" %}: <input type="date" id="area_stopWithin" required>
+                </div>
+
+                <div>
+                  <input type="radio" name="timeAreaMethod" value="2">
+                  <fieldset>
+                     {% trans "Stop after" %}: <input type="number" min="1" id="area_stopAfterXInstances" required /> {% trans "occurences" %}
+                  </fieldset>
+                </div>
+
+                <div>
+                  <input type="radio" name="timeAreaMethod" value="3">
+                  {% trans "No stop date" %}
+                  | {% trans "Project" %} <input type="number" min="1" required style="width:50px" id="area_noStop_projectXMonths"> {% trans "months into the future" %}
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$(newSerieDialog).modal('hide')">{% trans "Cancel" %}</button>
+          <button type="button" class="btn btn-primary" onclick="submit_serie()">{% trans "Create recurring event" %}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+
+    let newSerieDialog = $('#newSerieDialog');
+
+    function loadNewSerieDialog() {
+        match_pattern_state_to_radio();
+        match_area_state_to_radio();
+        $(newSerieDialog).modal('show');
+    }
+
+    let patterns = new Map();
+    patterns.set(
+        "1", 
+        { 
+            route_fieldset: $("#patternRoute_daily"),
+            name: "daily",
+            sub_routed_by: 'pattern_daily_subroute',
+            constant_fields: [],
+            sub_routes: [
+                { 
+                    strategy_name: "daily__every_x_day",
+                    route: "pattern_daily_sub__every_x_day",
+                    fields: [
+                        { element_id: 'every_x_day__interval', out_prop_name: "interval" },
+                    ]
+                },
+                {
+                    strategy_name: "daily__every_weekday",
+                    route: "pattern_daily_sub__every_weekday",
+                    fields: []
+                }
+            ]
+        }
+    );
+    patterns.set(
+        "2", 
+        {
+            strategy_name: "weekly__standard",
+            route_fieldset: $("#patternRoute_weekly"),
+            name: "weekly",
+        }
+    );
+    patterns.set(
+        "3", 
+        { 
+            route_fieldset: $("#patternRoute_monthly"),
+            name: "monthly",
+            sub_routed_by: 'pattern_monthly_subroute',
+            constant_fields: [],
+            sub_routes: [
+                {
+                    strategy_name:"month__every_x_day_every_y_month",
+                    route: "pattern_monthly_sub__every_x_day_every_y_month",
+                    fields: [
+                        { element_id: 'every_x_day_every_y_month__day_of_month', out_prop_name: "day_of_month" },
+                        { element_id: 'every_x_day_every_y_month__month_interval', out_prop_name: "interval" },
+                    ],
+                },
+                {
+                    strategy_name: "month__every_arbitrary_date_of_month",
+                    route: "pattern_monthly_sub__every_arbitrary_date_of_month",
+                    fields: [
+                        { element_id: 'every_dynamic_date_of_month__arbitrator', out_prop_name: "arbitrator" },
+                        { element_id: 'every_dynamic_date_of_month__weekday', out_prop_name: "weekday" },
+                        { element_id: 'every_dynamic_date_of_month__month_interval', out_prop_name: "interval" },
+                    ]
+                }
+            ]
+        }
+    );
+    patterns.set(
+        "4", 
+        { 
+            route_fieldset: $("#patternRoute_yearly"),
+            name: "yearly",
+            sub_routed_by: 'pattern_yearly_subroute',
+            constant_fields: [
+                { element_id: 'pattern_yearly_const__year_interval', out_prop_name: "interval" },
+            ],
+            sub_routes: [
+                {
+                    strategy_name:"yearly__every_x_of_month",
+                    route:"pattern_yearly_sub__every_x_of_month",
+                    fields: [
+                        { element_id: 'every_x_of_month__date', out_prop_name: "day_index" },
+                        { element_id: 'every_x_of_month__month', out_prop_name: "month" },
+                    ]
+                },
+                {
+                    strategy_name: "yearly__every_arbitrary_weekday_in_month",
+                    route: "pattern_yearly_sub__every_arbitrary_weekday_in_month",
+                    fields: [
+                        { element_id: 'every_arbitrary_weekday_in_month__arbitrator', out_prop_name: "arbitrator" },
+                        { element_id: 'every_arbitrary_weekday_in_month__weekday', out_prop_name: "weekday" },
+                        { element_id: 'every_arbitrary_weekday_in_month__month', out_prop_name: "month" },
+                    ]
+                }
+            ]
+        }
+    );
+
+    /* Handle user changing active pattern */
+    $('#area_stopWithin').attr("disabled", "");
+    $('#area_stopAfterXInstances').attr("disabled", "");
+    $('#area_noStop_projectXMonths').attr("disabled", "");
+
+    function handle_timearea_radio (active_val) {
+        $('#area_stopWithin').attr("disabled", "");
+        $('#area_stopAfterXInstances').attr("disabled", "");
+        $('#area_noStop_projectXMonths').attr("disabled", "");
+
+        if (active_val === "1") {
+            $('#area_stopWithin').removeAttr("disabled");
+        }
+        if (active_val === "2"){
+            $('#area_stopAfterXInstances').removeAttr("disabled");
+        }
+        if (active_val === "3") {
+            $('#area_noStop_projectXMonths').removeAttr("disabled");
+        }
+    }
+
+    $('input:radio[name="timeAreaMethod"]').change(
+      function() {
+        if ($(this).is(':checked')) {
+          $(this).val();
+          let method = $(this).val()
+          handle_timearea_radio(method);
+        }
+      }
+    )
+
+    /* Handle user changing active pattern */
+    $('input:radio[name="pattern"]').change(
+      function() {
+        if ($(this).is(':checked')) {
+          let pattern = patterns.get($(this).val());
+          patterns.forEach(function (item) {
+            $(item.route_fieldset).hide()
+          })
+          $(pattern.route_fieldset).show();
+        }
+      }
+    )
+
+    ValidatorFunctions = class ValidatorFunctions {
+
+      static __watchInputForValidityChange (element) {
+          element.classList.add("border-danger");
+          
+          element.addEventListener("change", (event) => {
+            if (event.target.checkValidity() === true) {
+              event.target.classList.remove("border-danger");
+              event.target.classList.add("border-success");
+              
+              let alert = document.getElementsByClassName('form_alert')[0];
+              alert.classList.remove('text-danger');
+              alert.classList.add("text-success");
+              alert.innerHTML = "<i class='fas fa-check'></i> " + alert.innerText;
+
+              setTimeout(function () {
+                event.target.classList.remove("border-success");
+                alert.remove();
+              }, 1000);
+            }
+          })
+        }
+
+      /* Validate the "head" component of the form */
+      static validate_head() {
+        let field_elements = [
+          document.getElementById('serie_title'),
+          document.getElementById('serie_start'),
+          document.getElementById('serie_end')
+        ];
+
+        let isInvalid = false;
+
+        for (let i = 0; i < field_elements.length; i++) {
+          if (field_elements[i].checkValidity() === false) {
+            isInvalid = true;
+            break;
+          }
+        }
+
+        if (isInvalid) {
+          $('#headMockForm').find(':submit').click();
+          return false;
+        }
+        
+        return true;
+      }
+
+      static validate_pattern_radio() {
+        let radio = document.querySelector('input[name="pattern"]');
+        
+        if (radio.checkValidity() === false) {
+          $('#patternMockForm').find(':submit').click();
+          return false;
+        }
+
+        return true;
+      }
+
+      static validate_pattern_route(pattern) {
+
+        let is_valid = true;
+
+        let subpattern_radio = document.querySelector("input[name='" + pattern.sub_routed_by + "']")
+        if (subpattern_radio !== null) {
+          if (subpattern_radio.checkValidity() === false) {
+            let alert_div = document.createElement('div');
+            alert_div.innerHTML = "<div class='alert alert-danger form_alert'>Vennligst velg et mønster, ved bruk av avhukningsboksene over.</div>"
+            pattern.route_fieldset.append(alert_div)
+            ValidatorFunctions.__watchInputForValidityChange(subpattern_radio);
+
+            return false;
+          }
+        }
+
+        let active_inputs = pattern.route_fieldset[0].querySelectorAll("input:not(:disabled):not([type='radio']):not([type='submit']), select:not(:disabled)");
+        for(let i = 0; i < active_inputs.length; i++) {
+          let input = active_inputs[i];
+          if (input.checkValidity() === false) {
+            let alertText = document.createElement('div');
+            alertText.innerHTML = "<span class='text-danger form_alert'>" + input.validationMessage + "</span>";
+            ValidatorFunctions.__watchInputForValidityChange(input);
+
+            input.parentNode.parentNode.appendChild(alertText);
+
+            return false;
+          }
+        }
+
+        if (pattern.name === "weekly") {
+          let checked_boxes = document.getElementById('day_checkbox_wrapper').querySelectorAll("input[type='checkbox']:checked");
+          if (checked_boxes.length === 0) {
+            let alert_div = document.createElement('div');
+            alert_div.innerHTML = "<div class='alert alert-danger form_alert'>Vennligst huk av for en eller flere dager.</div>"
+            pattern.route_fieldset.append(alert_div);
+
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      static validate_recurrence_area () {
+        let area_start_date_el = document.getElementById('area_start_date')
+        if (area_start_date_el.checkValidity() === false) {
+          ValidatorFunctions.__watchInputForValidityChange(area_start_date_el);
+          let alertText = document.createElement('div');
+          alertText.innerHTML = "<span class='text-danger form_alert'>" + area_start_date_el.validationMessage + "</span>";
+          area_start_date_el.parentNode.appendChild(alertText);
+          
+          return false;
+        }
+
+        let timearea_method_radio = document.querySelector("input[name='timeAreaMethod']");
+        if (timearea_method_radio !== null) {
+          if (timearea_method_radio.checkValidity() === false) {
+
+            ValidatorFunctions.__watchInputForValidityChange(timearea_method_radio);
+
+            let alert_div = document.createElement('div');
+            alert_div.innerHTML = "<div class='alert alert-danger form_alert'>Vennligst velg en metode for regelmessighet</div>"
+            pattern.route_fieldset.append(alert_div);
+            timearea_method_radio.parentNode.parentNode.appendChild(alert_div)
+
+            return false;
+          }
+        }
+
+        let active_inputs = document.getElementById('area_methods_wrapper').querySelectorAll("input:not(:disabled):not([type='radio']):not([type='submit']), select:not(:disabled)");
+        for(let i = 0; i < active_inputs.length; i++) {
+          let input = active_inputs[i];
+          if (input.checkValidity() === false) {
+            let alertText = document.createElement('div');
+            alertText.innerHTML = "<span class='text-danger form_alert'>" + input.validationMessage + "</span>";
+            ValidatorFunctions.__watchInputForValidityChange(input);
+
+            input.parentNode.parentNode.appendChild(alertText);
+
+            return false;
+          }
+        }
+
+        return true;
+      }
+    }
+
+    function submit_serie() {
+
+        let old_alerts = document.getElementsByClassName('form_alert');
+        old_alerts.forEach(function (elem) {
+          $(elem).remove();
+        })
+
+        time = {
+            title: document.getElementById('serie_title').value,
+            start: document.getElementById('serie_start').value,
+            end: document.getElementById('serie_end').value,
+            color: document.getElementById('serie_color').value,
+        }
+
+        pattern = {}
+        let active_pattern_key = $('input:radio[name="pattern"]:checked').val();
+        let pattern_obj = patterns.get(active_pattern_key);
+
+        let headResult = ValidatorFunctions.validate_head();
+        let patternResult = ValidatorFunctions.validate_pattern_radio();
+        let patternRouteResult = ValidatorFunctions.validate_pattern_route(pattern_obj);
+        let areaRecurrenceResult = ValidatorFunctions.validate_recurrence_area();
+        //let areaResult = 
+
+        if (headResult === false || patternResult === false || patternRouteResult === false || areaRecurrenceResult === false) {
+          return;
+        }
+
+
+        // since weekly doesnt have any subroutings (only one option) we cant use the normal method
+        if (active_pattern_key !== "2") { 
+
+          if (active_pattern_key == "4") {
+            pattern["year_interval"] = $('#pattern_yearly_const__year_interval').val();
+          }
+
+          let active_sub_route_key = $('input:radio[name="' + pattern_obj.sub_routed_by +'"]:checked').val();
+          let sub_route = pattern_obj.sub_routes[active_sub_route_key];
+          pattern.pattern_type = pattern_obj.name;
+          pattern.pattern_routine = sub_route.strategy_name;
+
+          for (let i = 0; i < sub_route.fields.length; i++) {
+              let field = sub_route.fields[i];
+              pattern[field.out_prop_name] = document.getElementById(field.element_id).value;
+          }
+        }
+        else {
+          pattern["week_interval"] = $('#week_interval').val();
+          
+          let days = new Map([
+            [0, $('#sunday').is(':checked')],
+            [1, $('#monday').is(':checked')],
+            [2, $('#tuesday').is(':checked')],
+            [3, $('#wednesday').is(':checked')],
+            [4, $('#thursday').is(':checked')],
+            [5, $('#friday').is(':checked')],
+            [6, $('#saturday').is(':checked')],
+          ]);
+          pattern["days"] = days;
+          pattern["pattern_routine"] = "weekly__standard";
+        }
+
+
+        area = {
+        }
+
+        let area_methods = new Map();
+        area_methods.set(
+            "1", 
+            { 
+                name: "StopWithin",
+                set: function () {
+                    area.stop_within = $('#area_stopWithin').val();
+                }
+            }
+        )
+        area_methods.set("2", 
+        {
+            name: "StopAfterXInstances",
+            set: function () {
+                area.instances = $('#area_stopAfterXInstances').val()
+            }
+        })
+        area_methods.set("3", 
+        {
+            name: "NoStopDate",
+            set: function () {
+                area.projectionDistanceInMonths = $('#area_noStop_projectXMonths').val()
+            }
+        })
+
+        let active_area_method = area_methods.get($('input:radio[name="timeAreaMethod"]:checked').val());
+        active_area_method.set();
+        area.method_name = active_area_method.name;
+        area.start_date = $('#area_start_date').val();
+        
+        let serie = {
+            time: time,
+            pattern: pattern,
+            time_area: area
+        }
+        
+        planner.local_context.add_serie(serie);
+
+        $("#newSerieDialog").modal('hide');
+        toastr["success"]('{% trans "Recurring event created!" %}');
+    }
+
+
+    class DayOfWeekSelectComponent extends SelectComponent {
+        constructor (element_id) {
+            let options = new Map([
+              ["1", '{% trans "monday" %}'],
+              ["2", '{% trans "tuesday" %}'],
+              ["3", '{% trans "wednesday" %}'],
+              ["4", '{% trans "thursday" %}'],
+              ["5", '{% trans "friday" %}'],
+              ["6", '{% trans "saturday" %}'],
+              ["7", '{% trans "sunday" %}'],
+            ]);
+
+            super(element_id, options)
+
+            this.insert_options();
+        }
+    }
+
+    class ArbitratorSelectComponent extends SelectComponent {
+      constructor (element_id) {
+
+        let options = new Map([
+          ["0", '{% trans "first" %}'],
+          ["1", '{% trans "second" %}'],
+          ["2", '{% trans "third" %}'],
+          ["3", '{% trans "fourth" %}'],
+          ["4", '{% trans "last" %}']
+        ]);
+
+        super(element_id, options);
+
+        this.insert_options();
+      }
+    }
+
+
+    new DayOfWeekSelectComponent('every_arbitrary_weekday_in_month__weekday')
+    new MonthSelectComponent('every_arbitrary_weekday_in_month__month')
+    new MonthSelectComponent('every_x_of_month__month')
+    new DayOfWeekSelectComponent('every_dynamic_date_of_month__weekday')
+    new ArbitratorSelectComponent('every_dynamic_date_of_month__arbitrator')
+    new ArbitratorSelectComponent('every_arbitrary_weekday_in_month__arbitrator');
+
+    /* Ensure that the shown pattern matches the selected pattern in the radio menu. This will correct any such mismatches. */
+    function match_pattern_state_to_radio () {
+      let active_pattern_key = $('input:radio[name="pattern"]:checked').val();
+      // Ensure that if the user closes the modal while working with it, they will 
+      // come right back to the same pattern fieldset when re-opening it.
+      if (active_pattern_key !== undefined && active_pattern_key !== "") {
+        for (let i = 0; i < patterns.length; i++) {
+          $(patterns[i].route_fieldset).hide();
+        }
+        $(patterns.get(active_pattern_key).route_fieldset).show();
+      }
+    }
+
+    function match_area_state_to_radio(){
+        let active_area_method = $('input:radio[name="timeAreaMethod"]:checked').val();
+
+        if (active_area_method !== undefined && active_area_method !== "") {
+            handle_timearea_radio(active_area_method);
+        }
+    }
+
+    /* 
+      Resets a patterns field values, and disables it. This affects all sub-routes of the pattern.
+    */
+    function reset_pattern(ptrn) {  
+        if (ptrn.sub_routes !== undefined) {
+            ptrn.sub_routes.forEach(function (sub_route) {
+                deactivate_pattern_subroute(sub_route);
+                sub_route.fields.forEach(function (field_obj) {
+                  let field = document.getElementById(field_obj.element_id);
+                  field.value = "";
+                })
+            })
+        }
+    }
+
+    /* 
+      Activate a sub route of a pattern. In practice removes the disabled attribute from the fields of this
+      sub route.
+    */
+    function activate_pattern_subroute(subroute) {
+        for (let i = 0; i < subroute.fields.length; i++) {
+            let field = document.getElementById(subroute.fields[i].element_id);
+            field.value="";
+            field.removeAttribute("disabled");
+        }
+    }
+
+    /* 
+      Deactivate a sub route of a pattern. In practice this adds the disabled attribute to the fields of this
+      sub route.
+    */
+    function deactivate_pattern_subroute(subroute) {
+        console.log(subroute)
+        for (let i = 0; i < subroute.fields.length; i++) {
+            let field = document.getElementById(subroute.fields[i].element_id);
+            field.setAttribute("disabled", "true");
+        }
+    }
+
+    //set_radio_if_none_set();
+
+    /* Initialization of state */
+    patterns.forEach(function (ptrn) {
+        $('input:radio[name="' + ptrn.sub_routed_by + '"]').change(
+            function () {
+                reset_pattern(ptrn);
+                let sub = ptrn.sub_routes[$(this).val()];
+                activate_pattern_subroute(sub);
+            }
+        );
+
+        if (ptrn.sub_routes !== undefined) {
+            ptrn.sub_routes.forEach(function (sub_route) {
+                deactivate_pattern_subroute(sub_route);
+            })
+        }
+
+        let already_active_radio = $('input:radio[name="' + ptrn.sub_routed_by + '"]:checked').val();
+        if (already_active_radio !== undefined && already_active_radio !== "") {
+          activate_pattern_subroute(ptrn.sub_routes[already_active_radio])
+        }
+    })
+
+</script>

@@ -1,0 +1,41 @@
+{% extends "arrangement/meta_base.html" %}
+{% load crispy_forms_tags %}
+{% load static i18n %}
+
+
+{% block content %}
+    <form method="post">
+        
+        {% csrf_token %}
+
+        <!-- {{ form | crispy }} -->
+        <div class="form-group mb-3">
+            <label for="{{ form.name.id_for_label }}" class="h5 d-block fw-bold">
+                {{ form.name.label }}
+            </label>
+            <input type="text" class="form-control form-control-lg"
+                id="{{ form.name.id_for_label }}"
+                name="{{ form.name.name }}"
+                value="{{ form.name.value|default:'' }}">
+        </div>
+
+        <button type="submit" class="btn btn-success float-end mt-3" type="button">
+            {% trans "Save" %}
+        </button>
+
+    </form>
+
+
+      <script src="{% static '@fonticonpicker/fonticonpicker/dist/js/jquery.fonticonpicker.min.js' %}"></script>
+    <script>
+
+        $(document).ready(function () {
+            el = $('#{{form.icon_class.id_for_label}}').fontIconPicker();
+            
+            fetch('{% static "fontawesome-icon-manifest_no.json" %}')
+                .then(fetchedJson =>  fetchedJson.json())
+                .then(parsedJson => el.setIcons( parsedJson ));
+        })
+
+    </script>
+{% endblock %}

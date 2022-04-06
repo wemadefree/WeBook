@@ -1,0 +1,42 @@
+{% load static i18n %}
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="h5">{% trans "Name" %}</th>
+                <th class="h5">{% trans "Maximum Occupants" %}</th>
+                <th class="h5">{% trans "Options" %}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for item in object_list %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.max_capacity }}</td>
+                    <td>
+                        <a
+                            class="btn btn-link text-info"
+                            href="{% url 'arrangement:room_detail' item.slug %}">
+                            <i class="fas fa-eye"></i>&nbsp;
+                            {% trans "Show" %}
+                        </a>
+                        <a
+                            class="btn btn-link text-success"
+                            href="{% url 'arrangement:room_edit' item.slug %}">
+                            <i class="fas fa-edit"></i>&nbsp;
+                            {% trans "Edit" %}
+                        </a>
+                        <a
+                            class="btn btn-link text-danger"
+                            href="">
+                            <i class="fas fa-trash"></i>&nbsp;
+                            {% trans "Delete" %}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div> 

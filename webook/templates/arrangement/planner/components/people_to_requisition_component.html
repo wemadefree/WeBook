@@ -1,0 +1,26 @@
+
+<h3>Personer for rekvirering</h3>
+<div class="alert alert-light p-0">
+    <em class="small">
+        Trykk på <strong>'Send Forespørsel'</strong> for å sende ut en forespørsel til denne personen.
+    </em>
+</div>
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th class="fw-bold">Person</th>
+            <th class="fw-bold">Valg</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for person in object_list %}
+            <tr>
+                <td>{{ person }}</td>
+                <td>
+                    <button class="initiatePersonRequisitionBtn btn btn-wemade" value="{{ person.pk }}" type="button">Send forespørsel</button>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

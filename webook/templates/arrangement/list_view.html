@@ -1,0 +1,99 @@
+{% extends "arrangement/meta_base.html" %}
+{% load static i18n %}
+
+{% block content %}
+
+<!-- <h4 class="fw-bold"><i class="fas fa-list" aria-hidden="true"></i>&nbsp; {% trans "All" %} {{ENTITY_NAME_PLURAL}}</h4> -->
+{% if SHOW_CREATE_BUTTON %}
+<div class="clearfix">
+    <a class="btn btn-wemade btn-lg mb-2 float-end"
+        href="{% url CRUDL_MAP.create_url %}">
+        <i class="fas fa-plus"></i>&nbsp; 
+        {% trans "Create" %} {{ ENTITY_NAME_SINGULAR }}
+    </a>
+</div>
+{% endif %}
+
+
+
+
+{% if object_list|length == 0 %}
+<div class="alert alert-info">
+    <h4>{% blocktrans %} No <em>{{ENTITY_NAME_PLURAL}}</em> registered yet! {% endblocktrans %}</h4>
+    <p class="mb-0">
+        {% blocktrans %} 
+            After you have begun registering <em>{{ENTITY_NAME_PLURAL}}</em> they will be shown here! None have been registered yet,
+            but you can resolve this by clicking the button above! 
+        {%endblocktrans%}
+    </p>
+</div>
+{% else %}
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                {% for attr_name, column_name, show in COLUMN_DEFINITION %}
+                    {% if show %}
+                        <th class="h5">
+                            {{ column_name }}
+                        </th>
+                    {% endif %}
+                {% endfor %}
+
+                {% if SHOW_OPTIONS and CRUDL_MAP is not None %}
+                    <th class="h5">
+                        {% trans "Options" %}
+                    </th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in LIST %}
+            <tr>
+                {% for key, value in row.items %}
+                    {% if key not in HIDDEN_KEYS %}
+                    <td>
+                        {{ value }}
+                    </td>
+                    {% endif %}
+                {% endfor %}
+
+                {% if SHOW_OPTIONS and CRUDL_MAP is not None %}
+                <td>
+                    {% if CRUDL_MAP.detail_url %}
+                        <a class="btn btn-link text-info noBoxShadow" href="{% url CRUDL_MAP.detail_url row.slug %}">
+                            <i class="fa fa-eye"></i>&nbsp;
+                            {% trans "Show" %}
+                        </a>
+                    {% endif %}
+                    {% if CRUDL_MAP.edit_url %}
+                        <a class="btn btn-link text-success noBoxShadow" href="{% url CRUDL_MAP.edit_url row.slug %}">
+                            <i class="fa fa-edit"></i>&nbsp;
+                            {% trans "Edit" %}
+                        </a>
+                    {% endif %}
+                    {% if CRUDL_MAP.delete_url %}
+                        <a class="btn btn-link text-danger noBoxShadow" href="{% url CRUDL_MAP.delete_url row.slug %}">
+                            <i class="fa fa-trash"></i>&nbsp;
+                            {% trans "Delete" %}
+                        </a>
+                    {% endif %}
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+
+        <tfoot>
+            <td colspan="2">
+                <em class="float-end">{{ object_list|length }} {% trans "elements" %}</em>
+            </td>
+        </tfoot>
+
+    </table>
+</div>
+
+{% endif %}
+
+{% endblock %}

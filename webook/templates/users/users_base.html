@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block section_title %}
+{% endblock %}
+
+{%block noheader%}
+{%endblock%}
+
+{% block superheader %}
+
+{% url "users:detail" request.user.slug as overview_url %}
+{% url "users:update" as my_info_url %}
+{% url "account_email" as emails_url %}
+{% url "account_reset_password" as account_reset_password_url %}
+
+<div style="padding-top: 100px;">
+  <div class="container pb-0 mb-0">
+    {% if request.user.profile_picture %}
+    <div class=" d-inline">
+      <img src="{{ request.user.profile_picture.url }}" class="border border-4 border-light mb-4" style="width:400px">
+    </div>
+    {% endif %}
+  
+
+    <h1 class="fw-bold ps-0 pb-1 pt-1 mb-0">
+      <i class="fa fa-home"></i>&nbsp; {% trans "Welcome" %}, {{ request.user.person.full_name }}
+    </h1>
+    <div class="d-inline-block h5 mb-0">
+    </div>
+
+    <ul class="nav light-tabs text-white nav-tabs mb-3 mt-0 bg-white" id="myTab0" role="tablist">
+      <a class="nav-link {% if request.get_full_path == overview_url %}active{% endif %}"
+          id="v-tabs-overview-tab"
+          href="{% url 'users:detail' request.user.slug  %}"
+          aria-controls="v-tabs-overview"
+          aria-selected="{% if request.get_full_path == overview_url %}true{% else %}false{% endif %}">
+          <i class="fas fa-user"></i>&nbsp; 
+          {% trans "My Page" %}
+      </a>
+      <a
+        class="nav-link {% if request.get_full_path == my_info_url %}active{% endif %}"
+        id="v-tabs-my-info-tab"
+        href="{% url 'users:update' %}"
+        aria-controls="v-tabs-my-info"
+        aria-selected="{% if request.get_full_path == my_info_url %}true{% else %}false{% endif %}">
+        <i class="fas fa-info-circle"></i>&nbsp; 
+        {% trans "My Info" %}
+      </a>
+      <a
+        class="nav-link {% if request.get_full_path == emails_url %}active{% endif %}"
+        id="v-tabs-email-tab"
+        href="{% url 'account_email' %}"
+        aria-controls="v-tabs-email"
+        aria-selected="{% if request.get_full_path == emails_url %}true{% else %}false{% endif %}">
+        <i class="fas fa-at"></i>&nbsp; 
+        {% trans "E-Mail" %}</a>
+
+        <a
+        class="nav-link {% if request.get_full_path == account_reset_password_url %}active{% endif %}"
+        id="v-tabs-reset-password-tab"
+        href="{% url 'account_reset_password' %}"
+        aria-controls="v-tabs-reset-password"
+        aria-selected="{% if request.get_full_path == account_reset_password_url %}true{% else %}false{% endif %}">
+        <i class="fas fa-lock"></i>&nbsp; 
+        {% trans "Reset Password" %}
+      </a>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+    <div class="col-12 mt-sm-4 mt-lg-0">
+      {% block inner %}{% endblock %}
+    </div>
+  </div>
+{% endblock %}

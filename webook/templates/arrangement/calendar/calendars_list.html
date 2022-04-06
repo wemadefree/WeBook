@@ -1,0 +1,15 @@
+{% extends "arrangement/meta_base.html" %}
+{% load static i18n %}
+
+{% block content %}
+
+    <div class=" border border-1 p-3">
+        <h4 class="fw-bold">{% trans "Arrangement Calendar" %}</h4>
+        <em>
+            {% trans "Example of a calendar concerning itself primarily with displaying arrangements across the board" %}
+        </em>
+        <br>
+        <a class="btn btn-success mt-3" href="{% url 'arrangement:arrangement_calendar' %}">{% trans "Open" %}</a>
+    </div>
+
+{% endblock %}

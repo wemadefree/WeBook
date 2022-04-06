@@ -1,0 +1,36 @@
+{% extends "arrangement/meta_base.html" %}
+{% load static i18n %}
+
+{% block content %}
+
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th class="h5 ms-0"> <em>{{ object.name }}</em> {% trans "Arrangements" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if object.arrangements.all|length > 0 %}
+                {% for item in object.arrangements.all %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'arrangement:arrangement_detail' item.slug %}">
+                                <i class="fas fa-link"></i>
+                                {{item.name}}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            
+            {% else %}
+                <tr>
+                    <td>
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-question-circle"></i> {% trans "There are no arrangements registered of this type. You can select this type when creating a new arrangement, and it will appear here." %}
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock %}

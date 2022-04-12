@@ -72,7 +72,8 @@ ENV/
 .env.prod
 .env.dev
 .env.prod.db
-.end.dev.db
+.env.dev.db
+.nginx.env
 
 # Rope project settings
 .ropeproject

@@ -1,4 +1,4 @@
-{% extends "screenshow/meta_base.html" %}
+{% extends "users/meta_base.html" %}
 {% load static i18n %}
 
 {% block content %}
@@ -19,9 +19,11 @@
         {% if SHOW_CREATE_BUTTON %}
         <div class="clearfix">
             <a class="btn  btn-success shadow-0 btn-lg mb-2 float-end"
+               {% if CRUDL_MAP.create_url %}
                 href="{% url CRUDL_MAP.create_url %}">
                 <i class="fas fa-plus"></i>&nbsp;
                 {% trans "Create" %} {{ ENTITY_NAME_SINGULAR }}
+               {% endif %}
             </a>
         </div>
         {% endif %}

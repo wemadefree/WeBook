@@ -1,3 +1,18 @@
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import (
+    DetailView,
+    UpdateView,
+    ListView,
+    CreateView,
+)
+from django.views.generic.edit import DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from webook.screenshow.models import ScreenResource
+from webook.utils.meta_utils.meta_mixin import MetaMixin
+from webook.utils.crudl_utils.view_mixins import GenericListTemplateMixin
+from webook.utils.meta_utils import SectionManifest, ViewMeta, SectionCrudlPathMap
+
 from typing import Any, Dict
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -17,6 +32,20 @@ from webook.users.forms import ComplexUserUpdateForm
 
 
 User = get_user_model()
+
+def get_section_manifest():
+    return SectionManifest(
+        section_title=_("User management"),
+        section_icon="fas fa-user-cog",
+        section_crumb_url="users:user_list",
+        crudl_map=SectionCrudlPathMap(
+            list_url="users:user_list",
+            detail_url=None,
+            create_url="users:user_list",
+            edit_url=None,
+            delete_url=None,
+        )
+    )
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -95,3 +124,44 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 
 user_redirect_view = UserRedirectView.as_view()
+
+
+class UserSectionManifestMixin(UserPassesTestMixin):
+    def __init__(self) -> None:
+        super().__init__()
+        self.section = get_section_manifest()
+
+    def _is_member(self):
+        return self.request.user.is_superuser
+
+    def test_func(self):
+        return self._is_member()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class UserListView(LoginRequiredMixin, UserSectionManifestMixin, MetaMixin, GenericListTemplateMixin, ListView):
+    queryset = User.objects.all()
+    template_name = "users/list_view.html"
+    model = User
+    view_meta = ViewMeta.Preset.table(User)
+
+    show_create_button = False
+
+    """
+    fields = [
+        "items_shown",
+        "is_room_based",
+        "is_active"
+    ]
+    """
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["CRUDL_MAP"] = self.section.crudl_map
+        return context
+
+
+user_list_view = UserListView.as_view()

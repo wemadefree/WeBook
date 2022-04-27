@@ -88,7 +88,7 @@
         <div style="background-color: #6A5DB8; font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;" class="p-1 text-center text-uppercase">
           Nasjonalmuseet
         </div>
-        
+
 
         <ul class="sidenav-menu">
           <li class="sidenav-item">
@@ -159,7 +159,7 @@
           {% if  user.is_superuser or user|has_group:"display_organizer" %}
           <li class="sidenav-item">
             <a class="sidenav-link ripple-surface" data-mdb-toggle="collapse" href="#sidenav-collapse-1-0-1" role="button" tabindex="-1" aria-expanded="false">
-              <i class="fa fa-cog fa-fw me-3" aria-hidden="true"></i>
+              <i class="fa fa-tv fa-fw me-3" aria-hidden="true"></i>
               <span>{% trans "Screen Display" %}</span>
               <i class="fa fa-angle-down rotate-icon" aria-hidden="true"></i>
             </a>
@@ -174,6 +174,12 @@
                 <a class="sidenav-link ripple-surface" href="{% url 'screenshow:layout_list' %}" tabindex="-1">{% trans "Display Layout" %}</a>
               </li>
               </ul>
+          </li>
+        {% endif %}
+          {% if user.is_superuser %}
+            <li>
+            <a class="sidenav-link ripple-surface" href="{% url "users:user_list" %}" tabindex="-1">
+              <i class="fas fa-user-cog fa-fw me-3" aria-hidden="true"></i><span>{% trans "Users" %}</span></a>
           </li>
 
           {% endif %}
@@ -330,7 +336,7 @@
 
       <!-- Your stuff: Third-party javascript libraries go here -->
       <script src="{{ ASSET_SERVER_URL }}mdb/js/mdb.min.js"></script>
-      
+
       <script src="{{ ASSET_SERVER_URL }}mdb/plugins/js/color-picker.min.js"></script>
       <script src="{{ ASSET_SERVER_URL }}mdb/plugins/js/transfer.min.js"></script>
 

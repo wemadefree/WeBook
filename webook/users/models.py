@@ -43,6 +43,7 @@ class CustomUserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+
 class User(AbstractUser):
     username = None
     email = models.EmailField(_('email address'), unique=True)
@@ -62,12 +63,21 @@ class User(AbstractUser):
         blank=True,
     )
 
+    instance_name_attribute_name = "username"
+    entity_name_singular = _("User")
+    entity_name_plural = _("Users")
+
     def get_absolute_url(self):
         return reverse(
             "users:detail", kwargs={"slug": self.slug}
         )
 
-    @property 
+    @property
+    def resolved_name(self):
+        # override template name mixin, as it relies on "name" attribute which is no good in this context. We want to use full_name instead.
+        return self.email
+
+    @property
     def get_representative_name (self) -> str:
         """ Get a 'friendly' representative name which can be used in frontend """
         return self._get_slug
@@ -75,7 +85,7 @@ class User(AbstractUser):
     @property
     def _get_slug (self):
         """
-            Generate slug for this user. We want to, as far as it is possible, generate the slug based on the person associated with this user. 
+            Generate slug for this user. We want to, as far as it is possible, generate the slug based on the person associated with this user.
             But if no person is available we will settle for the first fragment of the users email address.
             If one later attaches a person, one should set slug field to None, and it will regenerate the slug based
             on this method, thus the slug should be now based on the person instance.
@@ -83,7 +93,7 @@ class User(AbstractUser):
         if (self.person is None or self.person.first_name == "" and self.person.last_name == ""):
             return str(self.email).split('@')[0]
         return str(self.person)
-        
+
 
     def __str__(self) -> str:
         return self.email

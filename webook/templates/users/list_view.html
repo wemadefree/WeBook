@@ -1,0 +1,124 @@
+{% extends "screenshow/meta_base.html" %}
+{% load static i18n %}
+
+{% block content %}
+
+
+<!-- <h4 class="fw-bold"><i class="fas fa-list" aria-hidden="true"></i>&nbsp; {% trans "All" %} {{ENTITY_NAME_PLURAL}}</h4> -->
+
+<div class="row mb-3">
+
+    <div class="col-8">
+        <div class="form-outline">
+            <input type="text" class="form-control form-control-lg" id="datatable-search-input">
+            <label for="datatable-search-input" class="form-label">{% trans "Search for " %} {{ENTITY_NAME_PLURAL}}</label>
+        </div>
+    </div>
+
+    <div class="col-4">
+        {% if SHOW_CREATE_BUTTON %}
+        <div class="clearfix">
+            <a class="btn  btn-success shadow-0 btn-lg mb-2 float-end"
+                href="{% url CRUDL_MAP.create_url %}">
+                <i class="fas fa-plus"></i>&nbsp;
+                {% trans "Create" %} {{ ENTITY_NAME_SINGULAR }}
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+
+{% if object_list|length == 0 %}
+<div class="alert alert-info">
+    <h4>{% blocktrans %} No <em>{{ENTITY_NAME_PLURAL}}</em> registered yet! {% endblocktrans %}</h4>
+    <p class="mb-0">
+        {% blocktrans %}
+            After you have begun registering <em>{{ENTITY_NAME_PLURAL}}</em> they will be shown here! None have been registered yet,
+            but you can resolve this by clicking the button above!
+        {% endblocktrans %}
+    </p>
+</div>
+{% else %}
+
+<div>
+    <table id="entitiesTable" class="table table-sm">
+        <thead>
+            <tr>
+                {% for attr_name, column_name, show in COLUMN_DEFINITION %}
+                    {% if show %}
+                        <th class="h5">
+                            {{ column_name }}
+                        </th>
+                    {% endif %}
+                {% endfor %}
+
+                {% if SHOW_OPTIONS and CRUDL_MAP is not None %}
+                    <th class="h5">
+                        {% trans "Actions" %}
+                    </th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for row in LIST %}
+            <tr>
+                {% for key, value in row.items %}
+                    {% if key not in HIDDEN_KEYS %}
+                    <td>
+                        {{ value }}
+                    </td>
+                    {% endif %}
+                {% endfor %}
+
+                {% if SHOW_OPTIONS and CRUDL_MAP is not None %}
+                <td>
+                    {% if CRUDL_MAP.detail_url %}
+                        <a class="btn btn-link text-info noBoxShadow" href="{% url CRUDL_MAP.detail_url row.slug %}"
+                            data-mdb-toggle="tooltip" title="Show this {{ ENTITY_NAME_SINGULAR }}">
+                            <i class="fa fa-eye"></i>&nbsp;
+                            {% trans "Show" %}
+                        </a>
+                    {% endif %}
+                    {% if CRUDL_MAP.edit_url %}
+                        <a class="btn btn-link text-success noBoxShadow" href="{% url CRUDL_MAP.edit_url row.slug %}"
+                            data-mdb-toggle="tooltip" title="Edit this {{ ENTITY_NAME_SINGULAR }}">
+                            <i class="fa fa-edit"></i>&nbsp;
+                            {% trans "Edit" %}
+                        </a>
+                    {% endif %}
+                    {% if CRUDL_MAP.delete_url %}
+                        <a class="btn btn-link text-danger noBoxShadow" href="{% url CRUDL_MAP.delete_url row.slug %}"
+                            data-mdb-toggle="tooltip" title="Delete this {{ ENTITY_NAME_SINGULAR }}">
+                            <i class="fa fa-trash"></i>&nbsp;
+                            {% trans "Delete" %}
+                        </a>
+                    {% endif %}
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+</div>
+
+{% endif %}
+
+<script>
+    $(document).ready(function () {
+        const dt = $('#entitiesTable').DataTable( {
+            dom: 'Brtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ]
+        } );
+
+        document.getElementById('datatable-search-input').addEventListener('input', (e) => {
+           dt.search(e.target.value).draw();
+        })
+    })
+</script>
+
+{% endblock %}

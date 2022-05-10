@@ -8,7 +8,7 @@
             <input type="submit" style="display:none;" />
 
             <input type="hidden" name="uuid" id="event_uuid">
-            
+
             <div class="form-group">
                 <label class="d-block">Tittel <small class="text-muted float-end"> * Required</small></label>
                 <input type="text" class="form-control" id="title" code-qualified-name="title" required/>
@@ -17,8 +17,9 @@
                 <label class="d-block">Tittel <em class="small">(engelsk)</em> <small class="text-muted float-end"> * Required</small></label>
                 <input type="text" class="form-control" id="title_en" code-qualified-name="title" required/>
             </div>
-
             <div class="form-group mt-2">
+            <div class="row">
+                <div class="col-6">
                 <label class="d-block">Ticket Code</label>
                 <div class="input-group flex-nowrap">
                     <span class="input-group-text"><i class="fas fa-receipt"></i></span>
@@ -26,12 +27,14 @@
                 </div>
             </div>
 
-            <div class="form-group mt-2">
+            <div class="col-6">
                 <label class="d-block">Expected amount of visitors</label>
                 <div class="input-group flex-nowrap">
                     <span class="input-group-text"><i class="fas fa-users"></i></span>
                     <input type="text" class="form-control" id="expected_visitors" code-qualified-name="title" value="0"/>
                 </div>
+            </div>
+              </div>
             </div>
 
             <div class="form-group mt-2">
@@ -55,7 +58,7 @@
                 </div>
                 </div>
             </div>
-        
+
             <div class="form-group mt-2">
                 <label class="d-block">Til <small class="text-muted float-end"> * Required</small></label>
                 <div class="row">
@@ -79,15 +82,25 @@
             </div>
 
             <div class="form-group mt-3">
+            <div class="row">
+                <div class="col-6">
                 <label class="d-block"><i class='fas fa-desktop'></i>&nbsp; {% trans "Show on:" %}</label>
                 <!-- {{form.display_layouts}} -->
-                <ul>
+                <ul style="list-style-type:none">
                     {% for choice_id, choice_label in form.display_layouts.field.choices %}
                         <li class='your class'> <input type="checkbox" value="{{choice_id}}" name="display_layouts_create_event" id="{{choice_id}}_dlcheck" />
                         <label for="{{choice_id}}_dlcheck">{{choice_label}}</label></li>
                     {% endfor %}
                 </ul>
-                    
+              </div>
+             <div class="col-6">
+                <label class="d-block"><i class='fas fa-desktop'></i>&nbsp; {% trans "Note:" %}</label>
+                <!-- {{form.notes}} -->
+
+                <textarea code-qualified-name="notes" name="note" cols="36" rows="4" name="note_create_event" id="noteToEvent"></textarea>
+
+              </div>
+            </div>
             </div>
 
             <div class="row mt-4">
@@ -148,7 +161,7 @@
     document.addEventListener("{{managerName}}.d1_peopleSelected", (e) => {
         peopleNameMap = e.detail.context.people_name_map;
         dialogCreateEvent__setPeople(e.detail.context.people);
-    }) 
+    })
     document.addEventListener("{{managerName}}.d1_roomsSelected", (e) => {
         roomsNameMap = e.detail.context.room_name_map;
         dialogCreateEvent__setRooms(e.detail.context.rooms);
@@ -170,7 +183,7 @@
                             title='{% trans "Remove this room from the activity" %}'
                             onclick='dialogCreateEvent__removeAssociation(this)'>
                                 <i class='fas fa-trash'></i>
-                            </a> 
+                            </a>
                     </td>
                    </tr>`)
             )
@@ -191,7 +204,7 @@
                             title='{% trans "Remove this person from the activity" %}'
                             onclick='dialogCreateEvent__removeAssociation(this)'>
                                 <i class='fas fa-trash'></i>
-                            </a> 
+                            </a>
                     </td>
                    </tr>`)
             )
@@ -255,6 +268,7 @@
             expected_visitors: $('#expected_visitors').val(),
             start: new Date( $('#fromDate').val() + "T" + $('#fromTime').val() ).toISOString(),
             end: new Date( $('#toDate').val() + "T" + $('#toTime').val() ).toISOString(),
+            notes: $('#noteToEvent').val(),
             arrangement: 0,
             rooms: dialogCreateEvent__getSelectedRoomIds(),
             people: dialogCreateEvent__getSelectedPeopleIds(),
@@ -270,7 +284,7 @@
 
         document.dispatchEvent(
             new CustomEvent(
-                "{{managerName}}.submit", 
+                "{{managerName}}.submit",
                 {
                     'detail': { 'dialog': "newSimpleActivityDialog", 'event': qualifiedEvent, 'csrf_token': '{{ csrf_token }}' }
                 }

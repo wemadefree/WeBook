@@ -109,22 +109,6 @@ class RoomDeleteView(LoginRequiredMixin, RoomSectionManifestMixin, MetaMixin, Ar
 room_delete_view = RoomDeleteView.as_view()
 
 
-class SearchRoomsAjax (LoginRequiredMixin, SearchView):
-    model = Room
-
-    def search(self, search_term):
-        rooms = []
-
-        if (search_term == ""):
-            rooms = Room.objects.all()
-        else:
-            rooms = Room.objects.filter(name__contains=search_term)
-
-        return rooms
-
-search_room_ajax_view = SearchRoomsAjax.as_view();
-
-
 class LocationRoomListView (LoginRequiredMixin, ListView):
     model = Location
     queryset = Room.objects.all()
@@ -140,17 +124,6 @@ location_room_list_view = LocationRoomListView.as_view()
 
 class SearchRoomsAjax (LoginRequiredMixin, SearchView):
     model = Room
-
-    def search (self, search_term):
-        search_term.replace(' ', "")
-
-        rooms = []
-
-        if (search_term == ""):
-            rooms = Room.objects.all()
-        else:
-            rooms = Room.objects.filter(name__contains=search_term)
-
-        return rooms
+    search_by_field = "name"
 
 search_rooms_ajax_view = SearchRoomsAjax.as_view()

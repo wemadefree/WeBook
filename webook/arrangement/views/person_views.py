@@ -160,10 +160,10 @@ class SearchPeopleAjax (LoginRequiredMixin, SearchView):
         # This avoids concatenation issues. Working with the full name may be difficult, should middle_name be unspecified
         # One could for instance end up with a string like this in the comparison: "John  Smith" as opposed to the intended "John Smith"
         # The best solution seems to be to just remove spaces from the user input, and the concatenation, and the issue is eliminated.
-        search_term.replace(' ', "")
+        search_term.replace(" ", "")
 
         people = []
-        if (search_term == ""):
+        if search_term == "":
             people = Person.objects.all()
         else:
             people = Person.objects\

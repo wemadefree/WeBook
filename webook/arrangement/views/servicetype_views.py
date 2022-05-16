@@ -103,15 +103,8 @@ service_type_create_view = ServiceTypeCreateView.as_view()
 
 
 class SearchServiceTypes (LoginRequiredMixin, ServiceTypeSectionManifestMixin, MetaMixin, SearchView):
-    def search(self, search_term):
-        service_types = []
-    
-        if (search_term == ""):
-            service_types = ServiceType.objects.all()
-        else: 
-            service_types = ServiceType.objects.filter(name__contains=search_term)
-
-        return service_types
+    model = ServiceType
+    search_by_field = "name"
 
 search_service_types = SearchServiceTypes.as_view()
 

@@ -11,10 +11,12 @@ from django.views.generic import (
 )
 from django.urls import reverse, reverse_lazy
 from webook.arrangement.views.generic_views.archive_view import ArchiveView
+from webook.arrangement.views.generic_views.search_view import SearchView
 from webook.arrangement.views.mixins.multi_redirect_mixin import MultiRedirectMixin
 from django.http.response import HttpResponse
 from django.views.generic.edit import DeleteView
 from webook.arrangement.models import Location
+from webook.arrangement.views.person_views import SearchPeopleAjax
 from webook.utils.meta_utils.meta_mixin import MetaMixin
 import json
 
@@ -175,3 +177,10 @@ class LocationsCalendarResourcesListView (LoginRequiredMixin, ListView):
         )
 
 locations_calendar_resources_list_view = LocationsCalendarResourcesListView.as_view()
+
+
+class LocationSearchView(LoginRequiredMixin, SearchView):
+    model = Location
+    search_by_field="name"
+
+location_search_view = LocationSearchView.as_view()

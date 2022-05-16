@@ -110,3 +110,10 @@ class ArrangementTypeDeleteView(LoginRequiredMixin, ArrangementTypeSectionManife
         )
 
 arrangement_type_delete_view = ArrangementTypeDeleteView.as_view()
+
+
+class ArrangementTypeSearchView(LoginRequiredMixin, SearchView):
+    model = ArrangementType
+    search_by_field = "name"
+
+arrangement_type_search_view = ArrangementTypeSearchView.as_view()

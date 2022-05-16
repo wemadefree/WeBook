@@ -99,15 +99,8 @@ arrangement_delete_view = ArrangementDeleteView.as_view()
 
 
 class ArrangementSearchView(LoginRequiredMixin, SearchView):
-    def search(self, search_term):
-        arrangements = []
-
-        if (search_term == ""):
-            arrangements = Arrangement.objects.all()
-        else: 
-            arrangements = Arrangement.objects.filter(name__contains=search_term)
-
-        return arrangements
+    model = Arrangement
+    search_by_field = "name"
 
 arrangement_search_view = ArrangementSearchView.as_view()
 

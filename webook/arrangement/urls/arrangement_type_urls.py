@@ -6,6 +6,7 @@ from webook.arrangement.views import (
     arrangement_type_update_view,
     arrangement_type_detail_view,
     arrangement_type_delete_view,
+    arrangement_type_search_view,
 )
 
 
@@ -35,4 +36,9 @@ arrangement_type_urls = [
         view=arrangement_type_delete_view,
         name="arrangement_type_delete",
     ),
+    path(
+        route="arrangementtype/search",
+        view=arrangement_type_search_view,
+        name="arrangement_type_search",
+    )
 ]

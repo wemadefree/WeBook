@@ -67,20 +67,6 @@ class AudienceDetailView(LoginRequiredMixin, AudienceSectionManifestMixin, MetaM
 audience_detail_view = AudienceDetailView.as_view()
 
 
-class AudienceSearchView(LoginRequiredMixin, SearchView):
-    def search(self, search_term):
-        audiences = []
-
-        if (search_term == ""):
-            audiences = Audience.objects.all()
-        else: 
-            audiences = Audience.objects.filter(name__contains=search_term)
-
-        return audiences
-
-audience_search_view = AudienceSearchView.as_view()
-
-
 class AudienceCreateView(LoginRequiredMixin, AudienceSectionManifestMixin, MetaMixin, MultiRedirectMixin, CreateView):
     model = Audience
     fields = [
@@ -126,3 +112,10 @@ class AudienceDeleteView(LoginRequiredMixin, AudienceSectionManifestMixin, MetaM
         )
 
 audience_delete_view = AudienceDeleteView.as_view()
+
+
+class AudienceSearchView(LoginRequiredMixin, SearchView):
+    model = Audience
+    search_by_field = "name"
+
+audience_search_view = AudienceSearchView.as_view()

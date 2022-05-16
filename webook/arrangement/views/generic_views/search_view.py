@@ -1,14 +1,10 @@
 import json
-from django.contrib.auth.mixins import LoginRequiredMixin
+from typing import Any
 from django.http import JsonResponse
-from django.urls import reverse
 from django.core import serializers
+from django.db.models import Q
 from django.views.generic import (
-    DetailView,
-    RedirectView,
-    UpdateView,
     ListView,
-    CreateView,
 )
 from enum import Enum
 
@@ -47,4 +43,10 @@ class SearchView (ListView):
         return self.model.objects.filter(pk__in=pks)
 
     def search(self, search_term):
-        raise NotImplementedError
+        if not hasattr(self, "search_by_field") or self.search_by_field is None:
+            raise Exception("No search function implemented. Please specify a search_by_field attribute or implement search.")
+
+        if search_term == "":
+            return self.model.objects.all()
+        
+        return self.model.objects.filter(**{ self.search_by_field + "__contains": search_term })

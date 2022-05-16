@@ -12,6 +12,7 @@ from .location_views import (
     location_create_view,
     location_delete_view,
     locations_calendar_resources_list_view,
+    location_search_view,
 )
 
 from .room_views import (
@@ -20,7 +21,6 @@ from .room_views import (
     room_list_view,
     room_create_view,
     room_delete_view,
-    search_room_ajax_view,
     location_room_list_view,
     search_rooms_ajax_view,
 )
@@ -176,6 +176,7 @@ from .arrangementtype_views import (
     arrangement_type_create_view,
     arrangement_type_update_view,
     arrangement_type_delete_view,
+    arrangement_type_search_view,
 )
 
 

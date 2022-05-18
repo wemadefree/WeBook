@@ -607,6 +607,15 @@ class PlannerArrangementInformationDialogView(LoginRequiredMixin, UpdateView):
 
         return context
 
+    def form_valid(self, form) -> HttpResponse:
+        print(form)
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        print("Form invalid")
+        print( form.errors )
+        return super().form_invalid(form)
+
     def get_success_url(self) -> str:
         return reverse("arrangement:arrangement_dialog", kwargs={ "slug": self.get_object().slug })
 

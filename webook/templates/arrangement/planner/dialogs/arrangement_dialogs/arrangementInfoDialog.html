@@ -70,19 +70,24 @@
                     <tr>
                         <td colspan='2'>
                             <strong>Målgruppe:</strong>
-                            {{ form.audience }}
-
+                            <div class="form-group">
+                                <select class="select" id="audienceFilterSelect" data-mdb-container="#mainDialog" data-mdb-filter="true" name="{{ form.audience.name }}">
+                                </select>
+                            </div>
                             {% if form.audience.errors|length > 0 %}
-                                <div class="alert alert-danger">
-                                    {{ form.audience.errors }}
-                                </div>
-                            {% endif %}
+                            <div class="alert alert-danger">
+                                {{ form.audience.errors }}
+                            </div>
+                        {% endif %}
                         </td>
                     </tr>
                     <tr>
                         <td colspan="3">
                             <strong>Lokasjon</strong>
-                            {{ form.location }}
+
+                            <div class="form-group">
+                                <select name="{{form.location.name}}" data-mdb-filter="true" data-mdb-container="#mainDialog" id="locationFilterSelect" class="select"></select>
+                            </div>
 
                             {% if form.location.errors|length > 0 %}
                                 <div class="alert alert-danger">
@@ -94,7 +99,10 @@
                     <tr>
                         <td colspan='2'>
                             <strong>Arrangementstype:</strong>
-                            {{ form.arrangement_type }}
+                            
+                            <div class="form-group">
+                                <select class="select" name="{{form.arrangement_type.name}}" data-mdb-filter="true" data-mdb-container="#mainDialog" id="arrangementTypeFilterSelect"></select>
+                            </div>
                             
                             {% if form.arrangement_type.errors|length > 0 %}
                                 <div class="alert alert-danger">
@@ -483,15 +491,68 @@
 
 
 <script>
+    $(document).ready(function () {
+
+        document.querySelector("#mainDialog").querySelectorAll('.select').forEach((select) => {
+            new mdb.Select(select);
+        });
+
+        new ExtendedSelect({
+            jqElement: $("#arrangementTypeFilterSelect"),
+            getUrl: "/arrangement/arrangementtype/search",
+            extraHeaders: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            dataParser: function (item) {
+                return {
+                    value: item.pk,
+                    text: item.fields.name
+                }
+            }
+        })
+
+        new ExtendedSelect({
+            jqElement: $("#locationFilterSelect"),
+            getUrl: "/arrangement/location/search",
+            extraHeaders: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            dataParser: function (item) {
+                return {
+                    value: item.pk,
+                    text: item.fields.name,
+                }
+            }
+        })
+
+        new ExtendedSelect({
+            jqElement: $("#audienceFilterSelect"), 
+            getUrl: "/arrangement/audience/search",
+            extraHeaders: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            dataParser: function (item) {
+                return {
+                    value: item.pk,
+                    text: item.fields.name,
+                }
+            } 
+        })
+    })
+
     function mainPlannerDialog__updateArrangementInfo() {
         var csrf_token="{{csrf_token}}"
+
+        var arrangementTypeFilterSelectInstance = mdb.Select.getInstance(document.querySelector("#arrangementTypeFilterSelect"));
+        var audienceFilterSelectInstance = mdb.Select.getInstance(document.querySelector("#audienceFilterSelect"));
+        var locationFilterSelectInstance = mdb.Select.getInstance(document.querySelector("#locationFilterSelect"));
 
         var formData = new FormData();
         formData.append("name",             $('#id_name').val());
         formData.append("name_en",          $('#id_name_en').val());
-        formData.append("audience",         $('#id_audience').val());
-        formData.append("location",         $('#id_location').val());
-        formData.append("arrangement_type", $('#id_arrangement_type').val());
+        formData.append("audience",         audienceFilterSelectInstance.value);
+        formData.append("location",         locationFilterSelectInstance.value);
+        formData.append("arrangement_type", arrangementTypeFilterSelectInstance.value);
         formData.append("ticket_code",      $('#id_ticket_code').val());
         formData.append("meeting_place",    $('#id_meeting_place').val());
         formData.append("expected_visitors",$('#id_expected_visitors').val());

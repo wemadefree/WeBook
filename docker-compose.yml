@@ -1,25 +1,10 @@
 services:
   webook:
-    image: "ghcr.io/wemadefree/webook-nm:Docker"
+    build: .
+    container_name: weboook-meet
     ports:
-      - "8000:8000"
+      - "6000:6000"
     volumes:
       - .:/app
       - /app/node_modules
     restart: always
-
-  dozzle:
-    image: amir20/dozzle:latest
-    container_name: dozzle
-    restart: unless-stopped
-    ports:
-      - 8888:80
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - DOZZLE_USERNAME=${DOZZLE_USER}
-      - DOZZLE_PASSWORD=${DOZZLE_PASSWORD}
-      - DOZZLE_KEY=${DOZZLE_KEY}
-      - DOZZLE_ADDR=:80
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock

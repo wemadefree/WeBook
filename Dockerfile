@@ -24,6 +24,6 @@ COPY . .
 RUN npm install
 RUN chmod +x ./entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["gunicorn", "--preload", "-b", "0.0.0.0:8000", "config.wsgi:application", "--threads", "4", "-w", "4"]
+CMD ["gunicorn", "--preload", "-b", "0.0.0.0:6000", "config.wsgi:application", "--threads", "4", "-w", "4"]
 
 

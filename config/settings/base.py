@@ -341,6 +341,15 @@ APP_TITLE = env(
     default="WeBook"
 )
 
+APP_VERSION = env(
+    "APP_VERSION",
+    default="0.0.1"
+)
+
+APP_CUSTOMER = env(
+    "APP_CUSTOMER",
+    default="WeBook"
+)
 # Remember to override this with a valid key if project is commercial.
 FULLCALENDAR_LICENSE_KEY = env(
     "FULLCALENDAR_LICENSE_KEY",

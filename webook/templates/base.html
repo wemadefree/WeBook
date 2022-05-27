@@ -68,7 +68,7 @@
   <body>
     <header>
       <!-- Sidenav -->
-      
+
       <nav id="sidenav-1" style="background-color:darkslateblue; color:white" class="sidenav ps sidenav-primary sidenav-dark" data-mdb-mode="side" data-mdb-hidden="false" data-mdb-accordion="true" style="width: 240px; height: 100vh; position: fixed; transition: all 0.3s linear 0s; ">
         <a class="ripple d-flex justify-content-center py-4" href="#!" data-mdb-ripple-color="primary">
           <!-- <img id="app-logo" src="/{{ APP_LOGO }}" alt="App Logo" width="150px" draggable="false"> -->
@@ -87,9 +87,9 @@
           {% now "jS F Y" %}
         </div>
         <div style="background-color: #6A5DB8; font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;" class="p-1 text-center text-uppercase">
-          Nasjonalmuseet
+          {{ APP_TITLE }}
         </div>
-        
+
 
         <ul class="sidenav-menu">
           <li class="sidenav-item">
@@ -326,7 +326,7 @@
 
       <!-- Your stuff: Third-party javascript libraries go here -->
       <script src="{{ ASSET_SERVER_URL }}mdb/js/mdb.min.js"></script>
-      
+
       <script src="{{ ASSET_SERVER_URL }}mdb/plugins/js/color-picker.min.js"></script>
       <script src="{{ ASSET_SERVER_URL }}mdb/plugins/js/transfer.min.js"></script>
 

@@ -152,6 +152,9 @@ dropuser --if-exists myuser
 ### APP_TITLE
 The name of the application shown to users. For instance on the log-in screen, sidemenu, and so on.
 
+### APP_CUSTOMER
+Customer name, for instance `"My Company"`.
+
 ### APP_LOGO
 Path to the main application logo. Shown on login screen, sidemenu, etc..
 

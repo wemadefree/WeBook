@@ -155,6 +155,9 @@ The name of the application shown to users. For instance on the log-in screen, s
 ### APP_CUSTOMER
 Customer name, for instance `"My Company"`.
 
+### APP_VERSION
+The version of the application. `"0.0.1"` by default.
+
 ### APP_LOGO
 Path to the main application logo. Shown on login screen, sidemenu, etc..
 

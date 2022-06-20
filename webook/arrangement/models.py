@@ -862,8 +862,8 @@ class Event(TimeStampedModel, ModelTicketCodeMixin, ModelVisitorsMixin, ModelArc
     COLLISION_EVENT = 'collision_event'
     HOLIDAY_EVENT = 'holiday_event'
     EVENT_TYPE_CHOICES = (
-        ( ARRANGEMENT_EVENT, ARRANGEMENT_EVENT ),
-        ( HOLIDAY_EVENT, HOLIDAY_EVENT ),
+        (ARRANGEMENT_EVENT, ARRANGEMENT_EVENT),
+        (HOLIDAY_EVENT, HOLIDAY_EVENT),
     )
 
     objects = EventManager()
@@ -908,8 +908,8 @@ class Event(TimeStampedModel, ModelTicketCodeMixin, ModelVisitorsMixin, ModelArc
 
     def degrade_to_association_status(self, commit=True) -> None:
         """Degrade this event to an associate of its serie, as opposed to a direct child
-        
-        Degradation of an event to an associate is done when the event has become more specific, or has mutated in such a way that 
+
+        Degradation of an event to an associate is done when the event has become more specific, or has mutated in such a way that
         it is not in uniform with the rest of the serie. In the cases where an event in a serie becomes more specific (breaks uniform)
         it has become something of its own, and should be distinguished and not treated as a serie child.
 
@@ -931,7 +931,7 @@ class Event(TimeStampedModel, ModelTicketCodeMixin, ModelVisitorsMixin, ModelArc
 
         if commit:
             self.save()
-        
+
 
     def __str__(self):
         """Return title of event, with start and end times"""
@@ -940,6 +940,7 @@ class Event(TimeStampedModel, ModelTicketCodeMixin, ModelVisitorsMixin, ModelArc
 
 class CollisionAnalysisReport (TimeStampedModel):
     generated_for = models.ForeignKey(to=Arrangement, on_delete=models.RESTRICT)
+
 
 class CollisionAnalysisRecord (TimeStampedModel):
     DIMENSION_UNDEFINED = "dimension_undefined"
@@ -995,6 +996,7 @@ class EventService(TimeStampedModel, ModelArchiveableMixin):
     service_provider = models.ForeignKey(to=ServiceProvidable, on_delete=models.RESTRICT, verbose_name=_("Service Provider"), related_name="services_provided")
     notes = models.ManyToManyField(to=Note, verbose_name=_("Notes"))
     associated_people = models.ManyToManyField(to=Person, verbose_name=_("Associated People"))
+
 
 class RequisitionRecord (TimeStampedModel, ModelArchiveableMixin):
 
@@ -1084,7 +1086,7 @@ class PlanManifest(TimeStampedModel):
     @property
     def schedule_description(self):
         return describe_manifest(self)
-    
+
     @property
     def days(self):
         return {
@@ -1096,7 +1098,7 @@ class PlanManifest(TimeStampedModel):
             5: self.saturday,
             6: self.sunday
         }
-        
+
 
 
 class EventSerie(TimeStampedModel, ModelArchiveableMixin):

@@ -1,353 +1,152 @@
-"""
-Base settings to build other settings files upon.
-"""
-
-from pathlib import Path
-
-import environ
-from django.utils.translation import gettext_lazy as _
-
-# webook/
-import webook.screenshow.apps
-
-BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-APPS_DIR = BASE_DIR / "webook"
-
-env = environ.Env()
-
-ENV_FILE = BASE_DIR / ".env"
-if Path(ENV_FILE).exists():
-    # OS environment variables take precedence over variables from .env
-    env.read_env(str(ENV_FILE))
-
-# GENERAL
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = env.bool("DJANGO_DEBUG", False)
-# Local time zone. Choices are
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# though not all of them may be available with every OS.
-# In Windows, this must be set to your system time zone.
-TIME_ZONE = "UTC"
-# https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-LANGUAGE_CODE = "en-us"
-# https://docs.djangoproject.com/en/dev/ref/settings/#site-id
-SITE_ID = 1
-# https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
-USE_I18N = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
-USE_L10N = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
-USE_TZ = True
-
-LANGUAGES = [
-    ('en', _('English')),
-    ('nb', _('Norwegian'))
-]
-
-# https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
-LOCALE_PATHS = [str(BASE_DIR / "locale")]
-
-# DATABASES
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#databases
-
-DATABASES = {
-    "default": env.db(
-        "DATABASE_URL",
-        default=f"sqlite:///{str(BASE_DIR / 'webook.db')}",
-    )
-}
-
-# DATABASES = {
-
-#     'default': {
-
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-
-#         'NAME': 'postgres',
-
-#         'USER': 'postgres',
-
-#         'PASSWORD': 'postgres',
-
-#         'HOST': '127.0.0.1',
-
-#         'PORT': '5433',
-
-#     }
-
-# }
-DATABASES["default"]["ATOMIC_REQUESTS"] = True
-
-# URLS
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#root-urlconf
-ROOT_URLCONF = "config.urls"
-# https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
-WSGI_APPLICATION = "config.wsgi.application"
-
-# APPS
-# ------------------------------------------------------------------------------
-DJANGO_APPS = [
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.sites",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    # "django.contrib.humanize", # Handy template tags
-    "django.contrib.admin",
-    "django.forms",
-]
-THIRD_PARTY_APPS = [
-    "crispy_forms",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-]
-
-LOCAL_APPS = [
-    "webook.users.apps.UsersConfig",
-    # Your stuff: custom apps go here
-    "webook.arrangement.apps.ArrangementConfig",
-    "webook.crumbinator.apps.CrumbinatorConfig",
-    "webook.screenshow.apps.ScreenshowConfig",
-]
-# https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
-
-# MIGRATIONS
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
-MIGRATION_MODULES = {
-    "sites": "webook.contrib.sites.migrations"
-}
-
-# AUTHENTICATION
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
-AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
-]
-# https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
-AUTH_USER_MODEL = "users.User"
-# To comply with AllAuth
-USER_MODEL_USERNAME_FIELD = "email"
-# https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
-LOGIN_REDIRECT_URL = "users:redirect"
-# https://docs.djangoproject.com/en/dev/ref/settings/#login-url
-LOGIN_URL = "account_login"
-
-# PASSWORDS
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#password-hashers
-PASSWORD_HASHERS = [
-    # https://docs.djangoproject.com/en/dev/topics/auth/passwords/#using-argon2-with-django
-    "django.contrib.auth.hashers.Argon2PasswordHasher",
-    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
-    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
-    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
-]
-# https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"
-    },
-]
-
-# MIDDLEWARE
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#middleware
-MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.locale.LocaleMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.common.BrokenLinkEmailsMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-]
-
-# STATIC
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#static-root
-STATIC_ROOT = str(BASE_DIR / "staticfiles")
-# https://docs.djangoproject.com/en/dev/ref/settings/#static-url
-STATIC_URL = "/static/"
-# https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
-STATICFILES_DIRS = [str(APPS_DIR / "static")]
-# https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
-STATICFILES_FINDERS = [
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "npm.finders.NpmFinder",
-]
-
-# MEDIA
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#media-root
-MEDIA_ROOT = str(APPS_DIR / "media")
-# https://docs.djangoproject.com/en/dev/ref/settings/#media-url
-MEDIA_URL = "/media/"
-
-# TEMPLATES
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#templates
-TEMPLATES = [
-    {
-        # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-TEMPLATES-BACKEND
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        # https://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
-        "DIRS": [str(APPS_DIR / "templates")],
-        "OPTIONS": {
-            # https://docs.djangoproject.com/en/dev/ref/settings/#template-loaders
-            # https://docs.djangoproject.com/en/dev/ref/templates/api/#loader-types
-            "loaders": [
-                "django.template.loaders.filesystem.Loader",
-                "django.template.loaders.app_directories.Loader",
-            ],
-            # https://docs.djangoproject.com/en/dev/ref/settings/#template-context-processors
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.template.context_processors.i18n",
-                "django.template.context_processors.media",
-                "django.template.context_processors.static",
-                "django.template.context_processors.tz",
-                "django.contrib.messages.context_processors.messages",
-                "webook.utils.context_processors.settings_context",
-            ],
-        },
-    }
-]
-
-# https://docs.djangoproject.com/en/dev/ref/settings/#form-renderer
-FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
-
-# http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
-CRISPY_TEMPLATE_PACK = "form_layout_material"
-
-# FIXTURES
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#fixture-dirs
-FIXTURE_DIRS = (str(APPS_DIR / "fixtures"),)
-
-# SECURITY
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
-SESSION_COOKIE_HTTPONLY = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
-CSRF_COOKIE_HTTPONLY = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
-SECURE_BROWSER_XSS_FILTER = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
-X_FRAME_OPTIONS = "DENY"
-
-# EMAIL
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = env(
-    "DJANGO_EMAIL_BACKEND",
-    default="django.core.mail.backends.smtp.EmailBackend",
-)
-# https://docs.djangoproject.com/en/2.2/ref/settings/#email-timeout
-EMAIL_TIMEOUT = 5
-DEFAULT_FROM_EMAIL = env(
-    "DJANGO_DEFAULT_FROM_EMAIL", default="webook@webook.no"
-)
-SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
-
-# ADMIN
-# ------------------------------------------------------------------------------
-# Django Admin URL.
-ADMIN_URL = "admin/"
-# https://docs.djangoproject.com/en/dev/ref/settings/#admins
-ADMINS = [("Eivind Teig", "eivind.teig@gmail.com")]
-# https://docs.djangoproject.com/en/dev/ref/settings/#managers
-MANAGERS = ADMINS
-
-# LOGGING
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#logging
-# See https://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "%(levelname)s %(asctime)s %(module)s "
-            "%(process)d %(thread)d %(message)s"
-        }
-    },
-    "handlers": {
-        "console": {
-            "level": "DEBUG",
-            "class": "logging.StreamHandler",
-            "formatter": "verbose",
-        }
-    },
-    "root": {"level": "INFO", "handlers": ["console"]},
-}
-
-# django-allauth
-# ------------------------------------------------------------------------------
-ACCOUNT_ALLOW_REGISTRATION = env.bool(
-    "DJANGO_ACCOUNT_ALLOW_REGISTRATION", True
-)
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_EMAIL_REQUIRED = True
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = "webook.users.adapters.AccountAdapter"
-ACCOUNT_FORMS = {
-    'signup': 'webook.users.forms.UserCreationForm'
-}
-
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_USERNAME_REQUIRED = False
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-SOCIALACCOUNT_ADAPTER = (
-    "webook.users.adapters.SocialAccountAdapter"
-)
-
-# Your stuff...
-# ------------------------------------------------------------------------------
-APP_LOGO = env(
-    "APP_LOGO",
-    default="static/images/wemade_logo.jpg"
-)
-
-APP_TITLE = env(
-    "APP_TITLE",
-    default="WeBook"
-)
-
-# Remember to override this with a valid key if project is commercial.
-FULLCALENDAR_LICENSE_KEY = env(
-    "FULLCALENDAR_LICENSE_KEY",
-    default="CC-Attribution-NonCommercial-NoDerivatives"
-)
-
-ASSET_SERVER_URL = env(
-    "ASSET_SERVER_URL",
-    default="localhost/static"
-)
+alabaster==0.7.12
+amqp==5.1.1
+anyio==3.5.0
+anytree==2.8.0
+appdirs==1.4.4
+argon2-cffi==20.1.0
+asgiref==3.2.10
+astroid==2.9.3
+asttokens==2.0.5
+async-timeout==4.0.2
+atomicwrites==1.4.0
+attrs==21.4.0
+Babel==2.9.1
+backcall==0.2.0
+billiard==3.6.4.0
+black==20.8b1
+celery==5.2.6
+certifi==2021.10.8
+cffi==1.15.0
+cfgv==3.3.1
+charset-normalizer==2.0.11
+click==8.0.3
+click-didyoumean==0.3.0
+click-plugins==1.1.1
+click-repl==0.2.0
+Collectfast==2.2.0
+colorama==0.4.4
+coverage==5.3
+decorator==5.1.1
+defusedxml==0.7.1
+Deprecated==1.2.13
+distlib==0.3.4
+Django==3.1.1
+django-allauth==0.42.0
+django-anymail==8.0
+django-autoslug==1.9.8
+django-coverage-plugin==1.8.0
+django-crispy-forms==1.9.2
+django-debug-toolbar==3.1
+django-environ==0.4.5
+django-extensions==3.0.9
+django-model-utils==4.0.0
+django-node==4.0.2
+django-npm==1.0.0
+django-redis==4.12.1
+django-storages==1.12.3
+django-stubs==1.5.0
+django-test-plus==1.4.0
+dnspython==2.2.0
+docutils==0.17.1
+email-validator==1.1.3
+executing==0.8.2
+factory-boy==3.0.1
+Faker==12.2.0
+fastapi==0.73.0
+filelock==3.4.2
+flake8==3.8.3
+gunicorn==20.0.4
+h11==0.13.0
+httptools==0.2.0
+identify==2.4.9
+idna==3.3
+imagesize==1.3.0
+importlib-metadata==4.11.3
+iniconfig==1.1.1
+ipdb==0.13.3
+ipython==8.0.1
+isort==5.10.1
+itsdangerous==2.0.1
+jedi==0.18.1
+Jinja2==3.0.3
+kombu==5.2.4
+lazy-object-proxy==1.7.1
+MarkupSafe==2.0.1
+matplotlib-inline==0.1.3
+mccabe==0.6.1
+mypy==0.770
+mypy-extensions==0.4.3
+nodeenv==1.6.0
+npm==0.1.1
+oauthlib==3.2.0
+optional-django==0.1.0
+orjson==3.6.6
+packaging==21.3
+parso==0.8.3
+pathspec==0.9.0
+pickleshare==0.7.5
+Pillow==7.2.0
+platformdirs==2.5.0
+pluggy==0.13.1
+pre-commit==2.7.1
+prompt-toolkit==3.0.27
+psycopg2==2.8.6
+psycopg2-binary==2.9.3
+pure-eval==0.2.2
+py==1.11.0
+pycodestyle==2.6.0
+pycparser==2.21
+pydantic==1.9.0
+pyflakes==2.2.0
+Pygments==2.11.2
+pylint==2.12.2
+pylint-django==2.3.0
+pylint-plugin-utils==0.7
+pyparsing==3.0.7
+pytest==6.1.0
+pytest-django==3.10.0
+pytest-sugar==0.9.4
+python-dateutil==2.8.2
+python-dotenv==0.19.2
+python-multipart==0.0.5
+python-slugify==4.0.1
+python3-openid==3.2.0
+pytz==2022.1
+PyYAML==5.4.1
+redis==4.3.1
+regex==2022.1.18
+requests==2.27.1
+requests-oauthlib==1.3.1
+six==1.16.0
+sniffio==1.2.0
+snowballstemmer==2.2.0
+Sphinx==4.5.0
+sphinxcontrib-applehelp==1.0.2
+sphinxcontrib-devhelp==1.0.2
+sphinxcontrib-htmlhelp==2.0.0
+sphinxcontrib-jsmath==1.0.1
+sphinxcontrib-qthelp==1.0.3
+sphinxcontrib-serializinghtml==1.1.5
+sqlparse==0.4.2
+stack-data==0.1.4
+starlette==0.17.1
+termcolor==1.1.0
+text-unidecode==1.3
+toml==0.10.2
+traitlets==5.1.1
+typed-ast==1.4.3
+typing_extensions==4.0.1
+ujson==4.3.0
+Unidecode==1.1.1
+urllib3==1.26.8
+uvicorn==0.15.0
+vine==5.0.0
+virtualenv==20.13.1
+watchgod==0.7
+wcwidth==0.2.5
+websockets==10.1
+Werkzeug==1.0.1
+whitenoise==5.2.0
+wincertstore==0.2
+wrapt==1.13.3
+zipp==3.7.0

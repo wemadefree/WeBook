@@ -19,6 +19,7 @@ class CollisionAnalysisFormView(JsonFormView):
         return super().form_valid(form)
 
     def form_invalid(self, form) -> JsonResponse:
+        print(form.errors)
         return super().form_invalid(form)
 
 
@@ -36,6 +37,7 @@ class AnalyzeNonExistentSerieManifest(LoginRequiredMixin, CollisionAnalysisFormV
             ev.rooms = rooms_list
 
         records = analyze_collisions(calculated_serie)
+
         return JsonResponse( [ vars(record) for record in records ], safe=False )
 
 analyze_non_existent_serie_manifest_view = AnalyzeNonExistentSerieManifest.as_view()

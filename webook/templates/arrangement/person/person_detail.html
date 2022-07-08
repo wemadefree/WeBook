@@ -36,9 +36,10 @@
                 <p>
                     {% trans "Associate this person with an existing user account." %}
                 </p>
-                <button class="btn btn-outline-dark btn-block"">
+                <a class="btn btn-outline-dark btn-block""
+                   href="{% url 'arrangement:associate_person_with_user' slug=object.slug %}">
                     {% trans "Associate with user" %}
-                </button>
+                </a>
             </section>
 
             <section>
@@ -84,7 +85,11 @@
                     {% trans "Has user?" %}
                 </h5>
                 <span>
-                    <i class="fas fa-times text-danger"></i>
+                    {% if object.user_set.exists %}
+                        <i class="fas fa-check text-success"></i>
+                    {% else %}
+                        <i class="fas fa-times text-danger"></i>
+                    {% endif %}
                 </span>
             </div>
         </div>

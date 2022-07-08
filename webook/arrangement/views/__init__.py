@@ -100,6 +100,7 @@ from .organizationtype_views import (
     organization_type_update_view,
 )
 from .person_views import (
+    associate_person_with_user_form_view,
     organization_person_member_list_view,
     people_calendar_resources_list_view,
     person_create_view,

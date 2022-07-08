@@ -2,36 +2,32 @@ import datetime
 import json
 from re import search
 from typing import Any, Dict, List
+
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core import serializers
+from django.db.models import F, Q
+from django.db.models.functions import Concat
 from django.db.models.query import QuerySet
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
-from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
-from django.views.generic import (
-    DetailView,
-    RedirectView,
-    UpdateView,
-    ListView,
-    CreateView,
-)
 from django.urls import reverse, reverse_lazy
-from webook.arrangement.views.generic_views.archive_view import ArchiveView
-from webook.arrangement.views.mixins.multi_redirect_mixin import MultiRedirectMixin
-from django.core import serializers
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import CreateView, DetailView, FormView, ListView, RedirectView, UpdateView
 from django.views.generic.base import View
-from django.views.generic.edit import DeleteView
-from webook.utils.json_serial import json_serial
-from webook.arrangement.views.organization_views import OrganizationSectionManifestMixin
-from webook.arrangement.views.generic_views.search_view import SearchView
-from webook.utils.meta_utils.section_manifest import SectionManifest
+from django.views.generic.edit import DeleteView, FormMixin
+
+from webook.arrangement.forms.person_forms import AssociatePersonWithUserForm
 from webook.arrangement.models import Organization, Person
-from webook.utils.meta_utils.meta_mixin import MetaMixin
+from webook.arrangement.views.generic_views.archive_view import ArchiveView
+from webook.arrangement.views.generic_views.search_view import SearchView
+from webook.arrangement.views.mixins.multi_redirect_mixin import MultiRedirectMixin
+from webook.arrangement.views.organization_views import OrganizationSectionManifestMixin
 from webook.utils.crudl_utils.view_mixins import GenericListTemplateMixin
-from webook.utils.meta_utils import SectionManifest, ViewMeta, SectionCrudlPathMap
-from django.db.models.functions import Concat
-from django.db.models import Q, F
+from webook.utils.json_serial import json_serial
+from webook.utils.meta_utils import SectionCrudlPathMap, SectionManifest, ViewMeta
+from webook.utils.meta_utils.meta_mixin import MetaMixin
+from webook.utils.meta_utils.section_manifest import SUBTITLE_MODE, SectionManifest
 
 
 def get_section_manifest():
@@ -173,6 +169,27 @@ class SearchPeopleAjax (LoginRequiredMixin, SearchView):
         return people
 
 search_people_ajax_view = SearchPeopleAjax.as_view()
+
+
+class AssociatePersonWithUserFormView(LoginRequiredMixin, PersonSectionManifestMixin, MetaMixin, UpdateView):
+    template_name: str = "arrangement/person/associate_person_with_user.html"
+    form_class = AssociatePersonWithUserForm
+    model = Person
+    view_meta = ViewMeta(current_crumb_icon="fas fa-list",
+				  subtitle=f"Associate with user",
+				  current_crumb_title="Associate with user",
+				  entity_name_attribute="full_name",
+                  subtitle_mode=SUBTITLE_MODE.ENTITY_NAME_AS_SUBTITLE)
+
+    def form_valid(self, form) -> HttpResponse:
+        form.save(person=self.object)
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self) -> str:
+        return reverse('arrangement:person_detail', kwargs={'slug': self.object.slug})
+
+associate_person_with_user_form_view = AssociatePersonWithUserFormView.as_view()
+
 
 class PeopleCalendarResourcesListView (LoginRequiredMixin, ListView):
 

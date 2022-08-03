@@ -1,14 +1,15 @@
 from django.urls import path
-from webook.arrangement.views import (
-    person_list_view,
-    person_create_view,
-    person_update_view,
-    person_detail_view,
-    person_delete_view,
-    search_people_ajax_view,
-    people_calendar_resources_list_view,
-)
 
+from webook.arrangement.views import (
+    associate_person_with_user_form_view,
+    people_calendar_resources_list_view,
+    person_create_view,
+    person_delete_view,
+    person_detail_view,
+    person_list_view,
+    person_update_view,
+    search_people_ajax_view,
+)
 
 person_urls = [
     path(
@@ -27,6 +28,12 @@ person_urls = [
         route="person/edit/<slug:slug>",
         view=person_update_view,
         name="person_edit"
+    ),
+
+    path(
+        route="person/<slug:slug>/associate_with_user",
+        view=associate_person_with_user_form_view,
+        name="associate_person_with_user"
     ),
 
     path(

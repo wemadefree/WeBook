@@ -1,0 +1,83 @@
+{% extends "arrangement/meta_base.html" %}
+{% load static i18n %}
+
+{% block beneath_breadcrumbs_block %}
+    <a class="btn btn-dark"
+        onclick="history.back()">
+        <i class="fa fa-arrow-left"></i>&nbsp; {% trans "Go back" %}
+    </a>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+
+        <table class="table" id="eligibleUsersTable">
+            <thead>
+                <tr>
+                    <th>
+                        <div class="row">
+                            <div class="col-10">
+                                <h4>{% trans "Eligible users" %}</h4>
+                            </div>
+                            <div class="col-2">
+                                <div class="form-outline bg-white">
+                                    <input type="text" id="searchTable" class="form-control" />
+                                    <label class="form-label" for="form12"><i class="fas fa-search"></i>&nbsp; {% trans "Search for user by email address" %}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for choice_id, choice_label in form.user_set.field.choices %}
+                {% if choice_id %}
+                    <tr>
+                        <td>
+                            <input type="radio" value="{{choice_id}}" name="{{form.user_set.name}}" id="" />&nbsp;
+                            {{choice_label}}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="clearfix">
+            <button class="btn btn-lg btn-success float-end"
+                type="submit">
+                <i class="fas fa-check"></i>&nbsp; 
+                {% trans "Associate chosen user with" %} {{object}}
+            </button>
+
+            <button class="btn btn-lg btn-dark float-end me-2"
+                type="button"
+                onclick="history.back()">
+                <i class="fas fa-times"></i>&nbsp;
+                {% trans "Cancel" %}
+            </button>
+        </div>
+    </form>
+
+    <script>
+        var table;
+
+        $(document).ready(function () {
+            table = $('#eligibleUsersTable').DataTable({
+                "bLengthChange": false,
+                "dom": ''
+            });
+        });
+
+        $('#searchTable').keyup(function(){
+            table.search($(this).val()).draw() ;
+        })
+    </script>
+
+{% endblock %}

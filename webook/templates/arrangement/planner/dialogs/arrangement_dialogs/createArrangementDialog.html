@@ -18,7 +18,7 @@
                         <div class="form-outline mb-2">
                             <input type="text"
                                 class="form-control mb-2"
-                                id="{{ form.name.id_for_label }}" 
+                                id="{{ form.name.id_for_label }}"
                                 value="{{ form.name.value|default:'' }}"
                                 name="{{ form.name.name }}"
                                 autocomplete="off"
@@ -34,7 +34,7 @@
                         <div class="form-outline mb-3">
                             <input type="text"
                                 class="form-control form-control-md"
-                                id="{{ form.name_en.id_for_label }}" 
+                                id="{{ form.name_en.id_for_label }}"
                                 value="{{ form.name_en.value|default:'' }}"
                                 name="{{ form.name_en.name }}"
                                 autocomplete="off"
@@ -76,7 +76,7 @@
                                 {{ form.arrangement_type.errors }}
                             </div>
                         {% endif %}
-                        
+
                         <div class="mb-3">
                             {{ form.responsible }}
                             <label for="" class="form-label select-label"><i class="fas fa-user"></i>&nbsp; {{ form.responsible.label }}</label>
@@ -90,7 +90,7 @@
                         <div class="mb-2 form-outline">
                             <input type="text"
                                 class="form-control"
-                                id="{{ form.ticket_code.id_for_label }}" 
+                                id="{{ form.ticket_code.id_for_label }}"
                                 value="{{ form.ticket_code.value|default:'' }}"
                                 name="{{ form.ticket_code.name }}"
                                 placeholder="{% trans 'Ticket code' %}..."/>
@@ -107,7 +107,7 @@
                         <div class="mb-2 form-outline">
                             <input type="text"
                                 class="form-control"
-                                id="{{ form.meeting_place.id_for_label }}" 
+                                id="{{ form.meeting_place.id_for_label }}"
                                 value="{{ form.meeting_place.value|default:'' }}"
                                 name="{{ form.meeting_place.name }}"
                                 placeholder="{% trans 'Meeting place' %}..."/>
@@ -124,7 +124,7 @@
                         <div class="mb-2 form-outline">
                             <input type="text"
                                 class="form-control"
-                                id="{{ form.meeting_place_en.id_for_label }}" 
+                                id="{{ form.meeting_place_en.id_for_label }}"
                                 value="{{ form.meeting_place_en.value|default:'' }}"
                                 name="{{ form.meeting_place_en.name }}"
                                 placeholder="{% trans 'Meeting place' %}..."/>
@@ -142,7 +142,7 @@
                             <input type="number"
                                 min="0"
                                 class="form-control"
-                                id="{{ form.expected_visitors.id_for_label }}" 
+                                id="{{ form.expected_visitors.id_for_label }}"
                                 value="{{ form.expected_visitors.value|default:'' }}"
                                 name="{{ form.expected_visitors.name }}"
                                 required />
@@ -155,7 +155,7 @@
                                 {{ form.expected_visitors.errors }}
                             </div>
                         {% endif %}
-                        
+
                         <div class="mt-5 mb-3">
                             <h5 class="header-fonted">
                                 <i class="fas fa-tv"></i>
@@ -163,40 +163,6 @@
                             </h5>
                             <label class="d-block">&nbsp; {% trans "Vises på skjermen:" %}</label>
                                             {{form.display_layouts}}
-        
-                            <div class="mb-2 form-outline">
-                                <input type="text"
-                                    class="form-control"
-                                    id="{{ form.display_text.id_for_label }}"
-                                    value="{{ form.display_text.value|default:'' }}"
-                                    name="{{ form.display_text.name }}"
-                                    placeholder="{% trans 'Custom text for display' %}..."/>
-                                <label for="{{ form.display_text.id_for_label }}" class="form-label">
-                                    <i>🇳🇴</i>&nbsp; Skjermtekst
-                                </label>
-                            </div>
-                            {% if form.display_text.errors|length > 0 %}
-                                <div class="alert alert-danger">
-                                    {{ form.display_text_en.errors }}
-                                </div>
-                            {% endif %}
-        
-                            <div class="form-outline">
-                                <input type="text"
-                                    class="form-control"
-                                    id="{{ form.display_text_en.id_for_label }}"
-                                    value="{{ form.display_text_en.value|default:'' }}"
-                                    name="{{ form.display_text_en.name }}"
-                                    placeholder="{% trans 'Custom text for display' %}..."/>
-                                <label for="{{ form.display_text_en.id_for_label }}" class="form-label">
-                                    <i>🇬🇧</i>&nbsp; Skjermtekst
-                                </label>
-                            </div>
-                            {% if form.display_text_en.errors|length > 0 %}
-                                <div class="alert alert-danger">
-                                    {{ form.display_text_en.errors }}
-                                </div>
-                            {% endif %}
                         </div>
                     </fieldset>
                 </form>
@@ -205,14 +171,14 @@
                 <h5 class="header-fonted">
                     <i class="fas fa-clock"></i>
                     Plan
-                </h4>
+                </h5>
 
                 <div class="alert alert-info small">
                     <h5><i class="fas fa-info-circle"></i></h5>
                     <p>Definer en plan på når og hvor arrangementet inntreffer.</p>
-                    
+
                     <p>Du kan opprette egne tidsplaner, dette er i praksis det samme som en repeterende hendelse i Outlook.</p>
-        
+
                     Eller så kan du opprette en enkel aktivitet, dette er et frittstående tidspunkt eller hendelse som inntreffer en gang.
                 </div>
 
@@ -316,8 +282,7 @@
         formData.append("meeting_place",    $('#id_meeting_place').val());
         formData.append("meeting_place_en", $('#id_meeting_place_en').val());
         formData.append("expected_visitors",$('#id_expected_visitors').val());
-        formData.append("display_text",$('#id_display_text').val());
-        formData.append("display_text_en",$('#id_display_text_en').val());
+
 
         let displayLayouts = [];
         document.querySelectorAll("input[name='display_layouts'][type='checkbox']:checked").forEach(element => {
@@ -355,12 +320,12 @@
                     ${element.start} - ${element.end}
                     <div class="btn-group">
                         <a href="#" class="btn btn-danger text-white"
-                            data-toggle='tooltip' title='{% trans "Remove this serie from the arrangement to be" %}' 
+                            data-toggle='tooltip' title='{% trans "Remove this serie from the arrangement to be" %}'
                             onclick='createArrangementDialog_removeSimpleActivity("${element._uuid}")'>
                             Slett
                         </a>
                         <a href="#" class="btn btn-success text-white"
-                            data-toggle='tooltip' title='{% trans "Edit this serie" %}' 
+                            data-toggle='tooltip' title='{% trans "Edit this serie" %}'
                             onclick='createArrangementDialog_editSimpleActivity("${element._uuid}")'>
                             Rediger
                         </a>
@@ -373,7 +338,7 @@
 
     function setSeries(series) {
         seriesMap = series;
-        
+
         var tbody = $('#timeplansBody');
         tbody.html("")
 
@@ -388,7 +353,7 @@
                         <div class="row">
                             <div class="col-5">
                                 <div class="">
-                                    <div class="fw-bolder">${collisionRecord.event_a_title}</div> 
+                                    <div class="fw-bolder">${collisionRecord.event_a_title}</div>
                                     <h6>${collisionRecord.event_a_start} - ${collisionRecord.event_a_end}</h6>
                                 </div>
                             </div>
@@ -397,7 +362,7 @@
                             </div>
                             <div class="col-5">
                                 <div class="">
-                                    <div class="fw-bolder">${collisionRecord.event_b_title}</div>  
+                                    <div class="fw-bolder">${collisionRecord.event_b_title}</div>
                                     <h6>${collisionRecord.event_b_start} - ${collisionRecord.event_b_end}</h6>
                                 </div>
                             </div>
@@ -422,12 +387,12 @@
 
                             <div class="btn-group shadow-0 mb-2">
                                 <a href="#" class="btn btn-success text-white"
-                                    data-toggle='tooltip' title='{% trans "Edit this serie" %}' 
+                                    data-toggle='tooltip' title='{% trans "Edit this serie" %}'
                                     onclick='createArrangementDialog_editSerie("${element._uuid}")'>
                                     <i class="fas fa-edit"></i>&nbsp; Rediger tidsplan
                                 </a>
                                 <a href="#" class="btn btn-danger text-white"
-                                    data-toggle='tooltip' title='{% trans "Remove this serie from the arrangement to be" %}' 
+                                    data-toggle='tooltip' title='{% trans "Remove this serie from the arrangement to be" %}'
                                     onclick='createArrangementDialog_removeSerie("${element._uuid}")'>
                                     <i class="fas fa-trash"></i>&nbsp; Slett tidsplan
                                 </a>

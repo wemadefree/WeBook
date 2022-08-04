@@ -71,8 +71,6 @@ class ArrangementCreateView (LoginRequiredMixin, MetaMixin, CreateView):
         "meeting_place",
         "meeting_place_en",
         "expected_visitors",
-        "display_text",
-        "display_text_en",
     ]
     template_name = "arrangement/arrangement/arrangement_form.html"
     view_meta = ViewMeta.Preset.create(Arrangement)
@@ -111,8 +109,6 @@ class ArrangementUpdateView(LoginRequiredMixin, MetaMixin, UpdateView):
         "meeting_place",
         "meeting_place_en",
         "expected_visitors",
-        "display_text",
-        "display_text_en",
     ]
     current_crumb_title = _("Edit Arrangement")
     section_subtitle = _("Edit Arrangement")

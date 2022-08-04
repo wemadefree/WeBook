@@ -32,7 +32,7 @@ class ArchiveIrrespectiveAutoSlugField(AutoSlugField):
             manager_name = "all_objects"
 
         super().__init__(*args, **kwargs, manager_name=manager_name)
-        
+
 
 
 class ModelArchiveableMixin(models.Model):
@@ -273,9 +273,6 @@ class Arrangement(TimeStampedModel, ModelNamingMetaMixin, ModelTicketCodeMixin, 
     people_participants = models.ManyToManyField(to="Person", verbose_name=_("People Participants"), related_name="participating_in")
     organization_participants = models.ManyToManyField(to="Organization", verbose_name=_("Organization Participants"), related_name="participating_in")
     show_on_multimedia_screen = models.BooleanField(verbose_name=_("Show on multimedia screen"), default=False)
-
-    display_text = models.CharField(verbose_name=_("Screen Display Text"), max_length=255, blank=True, null=True)
-    display_text_en = models.CharField(verbose_name=_("Screen Display Text(English)"), max_length=255, blank=True, null=True)
     display_layouts = models.ManyToManyField(to=screen_models.DisplayLayout, verbose_name=_("Display Layout"), related_name="arrangements", blank=True)
 
     slug = AutoSlugField(populate_from="name", unique=True, manager_name="all_objects")
@@ -896,11 +893,13 @@ class Event(TimeStampedModel, ModelTicketCodeMixin, ModelVisitorsMixin, ModelArc
 
     display_layouts = models.ManyToManyField(to=screen_models.DisplayLayout, verbose_name=_("Display Layouts"),
                                              related_name="events", blank=True)
+    display_text = models.CharField(verbose_name=_("Screen Display Text"), max_length=255, blank=True, null=True)
+    display_text_en = models.CharField(verbose_name=_("Screen Display Text(English)"), max_length=255, blank=True, null=True)
 
     def degrade_to_association_status(self, commit=True) -> None:
         """Degrade this event to an associate of its serie, as opposed to a direct child
-        
-        Degradation of an event to an associate is done when the event has become more specific, or has mutated in such a way that 
+
+        Degradation of an event to an associate is done when the event has become more specific, or has mutated in such a way that
         it is not in uniform with the rest of the serie. In the cases where an event in a serie becomes more specific (breaks uniform)
         it has become something of its own, and should be distinguished and not treated as a serie child.
 
@@ -922,7 +921,7 @@ class Event(TimeStampedModel, ModelTicketCodeMixin, ModelVisitorsMixin, ModelArc
 
         if commit:
             self.save()
-        
+
 
     def __str__(self):
         """Return title of event, with start and end times"""
@@ -1075,7 +1074,7 @@ class PlanManifest(TimeStampedModel):
     @property
     def schedule_description(self):
         return describe_manifest(self)
-    
+
     @property
     def days(self):
         return {
@@ -1087,7 +1086,7 @@ class PlanManifest(TimeStampedModel):
             5: self.saturday,
             6: self.sunday
         }
-        
+
 
 
 class EventSerie(TimeStampedModel, ModelArchiveableMixin):

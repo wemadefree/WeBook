@@ -17,10 +17,8 @@ class PlannerCreateArrangementModelForm(forms.ModelForm):
                     "meeting_place",
                     "meeting_place_en",
                     "expected_visitors",
-                    "display_layouts",
-                    "display_text",
-                    "display_text_en", )
-        widgets = { "display_layouts": CheckboxSelectMultiple(), 
+                    "display_layouts",)
+        widgets = { "display_layouts": CheckboxSelectMultiple(),
                     'location': forms.Select(attrs={'class': 'form-control'}),
                     'audience': forms.Select(attrs={'class': 'select', 'data-mdb-placeholder': 'Select audience'}),
                     'arrangement_type': forms.Select(attrs={'class': 'form-control'}),

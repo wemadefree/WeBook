@@ -880,9 +880,11 @@
                 }
 
                 const getDateISOStringFromMdbDateTimePickerInstance = function (mdbDatetimePicker) {
-                    let isoStr = (mdbDatetimePicker._datepicker._selectedDate ??
-                                    new Date(mdbDatetimePicker._dateValue + " " + mdbDatetimePicker._timeValue)).toISOString();
-                    return isoStr;
+                    console.log(mdbDatetimePicker)
+
+                    let [day, month, year] = mdbDatetimePicker._dateValue.split("/")
+                    let [hours, minutes] = mdbDatetimePicker._timeValue.split(":")
+                    return `${year}-${month}-${day}T${hours}:${minutes}`
                 }
                 let dateTimeStartMdbInstance = mdb.Datetimepicker.getInstance(dialog.getElementById("startDateTime"));
                 let dateTimeEndMdbInstance = mdb.Datetimepicker.getInstance(dialog.getElementById("endDateTime"));

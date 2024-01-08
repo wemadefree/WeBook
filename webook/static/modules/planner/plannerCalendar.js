@@ -15,8 +15,7 @@ export class PlannerCalendar extends FullCalendarBased {
         arrangementInspectorUtility,
         eventInspectorUtility,
         eventsSrcUrl, 
-        colorProviders = [],
-        initialView = "dayGridMonth",
+        colorProviders=[], 
         initialColorProvider="",
         csrf_token=undefined, 
         licenseKey=undefined,
@@ -30,8 +29,6 @@ export class PlannerCalendar extends FullCalendarBased {
 
         super(navigationHeaderWrapperElement);
 
-        this.initialView = initialView;
-
         this.height = height;
 
         this.showAdministrativeActionsInContextMenu = showAdministrativeActionsInContextMenu;
@@ -39,130 +36,104 @@ export class PlannerCalendar extends FullCalendarBased {
         this.renderContextMenu = renderContextMenu;
         this.renderPopovers = renderPopovers;
 
-        if (window.isMobile) {
-            this.viewButtons = new Map([
-                [1, {
-                    "key": 1, 
-                    "title": "Dag", 
-                    "isParent": false,
-                    "view": "listDay",
-                }],
-                [2, {
-                    "key": 2,
-                    "title": "Uke",
-                    "isParent": false,
-                    "view": "listWeek",
-                }],
-                [3, {
-                    "key": 3,
-                    "title": "Måned",
-                    "isParent": false,
-                    "view": "listMonth"
-                }]
-            ])
-        }
-        else {
-            this.viewButtons = new Map([
-                [1, {
-                    "key": 1,
-                    "title": "Dag",
-                    "isParent": true,
-                    "view": "timeGridDay",
-                    "parent": undefined,
-                    "weight": 100,
-                }],
-                [2, {
-                    "key": 2,
-                    "title": "Måned",
-                    "isParent": true,
-                    "view": "dayGridMonth",
-                    "parent": undefined,
-                    "weight": 200,
-                }],
-                [3, {
-                    "key": 3,
-                    "title": "Tidslinje",
-                    "isParent": false,
-                    "view": "timelineMonth",
-                    "parent": 2,
-                    "weight": undefined,
-                }],
-                [4, {
-                    "key": 4,
-                    "title": "Grid",
-                    "isParent": false,
-                    "view": "dayGridMonth",
-                    "parent": 2,
-                    "weight": undefined,
-                }],
-                [5, {
-                    "key": 5,
-                    "title": "Uke",
-                    "isParent": true,
-                    "view": "timeGridWeek",
-                    "parent": undefined,
-                    "weight": 300,
-                }],
-                [6, {
-                    "key": 6,
-                    "title": "År",
-                    "isParent": false,
-                    "view": "timelineYear",
-                    "afterClick": () => {
-                        let target = $('.fc-timelineYear-view th.fc-timeline-slot[data-date=' + this._fcCalendar.getDate().toISOString().split("T")[0] + ']')
-                        if (target.length) {
-                            $(".fc-timelineYear-view div.fc-scroller-liquid-absolute").scrollTo(target);
-                        }
-                    },
-                    "parent": undefined,
-                    "weight": 400,
-                }],
-                [7, {
-                    "key": 7,
-                    "title": "Liste",
-                    "isParent": false,
-                    "view": "listWeek",
-                    "parent": 5,
-                    "weight": undefined,
-                }],
-                [8, {
-                    "key": '5',
-                    "title": "Tidsgrid",
-                    "isParent": false,
-                    "view": "timeGridWeek",
-                    "parent": 5,
-                    "weight": undefined,
-                }],
-                [9, {
-                    "key": '5',
-                    "title": "Dagsgrid",
-                    "isParent": false,
-                    "view": "dayGridWeek",
-                    "parent": 5,
-                    "weight": undefined,
-                }],
-    
-    
-                [10, {
-                    "key": 10,
-                    "title": "Liste",
-                    "isParent": false,
-                    "view": "listDay",
-                    "parent": 1,
-                    "weight": undefined
-                }],
-                [8, {
-                    "key": 8,
-                    "title": "Grid",
-                    "isParent": false,
-                    "view": "timeGridDay",
-                    "parent": 1,
-                    "weight": 100,
-                }],
-            ]);
-        }
+        this.viewButtons = new Map([
+            [1, {
+                "key": 1,
+                "title": "Dag",
+                "isParent": true,
+                "view": "timeGridDay",
+                "parent": undefined,
+                "weight": 100,
+            }],
+            [2, {
+                "key": 2,
+                "title": "Måned",
+                "isParent": true,
+                "view": "dayGridMonth",
+                "parent": undefined,
+                "weight": 200,
+            }],
+            [3, {
+                "key": 3,
+                "title": "Tidslinje",
+                "isParent": false,
+                "view": "timelineMonth",
+                "parent": 2,
+                "weight": undefined,
+            }],
+            [4, {
+                "key": 4,
+                "title": "Grid",
+                "isParent": false,
+                "view": "dayGridMonth",
+                "parent": 2,
+                "weight": undefined,
+            }],
+            [5, {
+                "key": 5,
+                "title": "Uke",
+                "isParent": true,
+                "view": "timeGridWeek",
+                "parent": undefined,
+                "weight": 300,
+            }],
+            [6, {
+                "key": 6,
+                "title": "År",
+                "isParent": false,
+                "view": "timelineYear",
+                "afterClick": () => {
+                    let target = $('.fc-timelineYear-view th.fc-timeline-slot[data-date=' + this._fcCalendar.getDate().toISOString().split("T")[0] + ']')
+                    if (target.length) {
+                        $(".fc-timelineYear-view div.fc-scroller-liquid-absolute").scrollTo(target);
+                    }
+                },
+                "parent": undefined,
+                "weight": 400,
+            }],
+            [7, {
+                "key": 7,
+                "title": "Liste",
+                "isParent": false,
+                "view": "listWeek",
+                "parent": 5,
+                "weight": undefined,
+            }],
+            [8, {
+                "key": '5',
+                "title": "Tidsgrid",
+                "isParent": false,
+                "view": "timeGridWeek",
+                "parent": 5,
+                "weight": undefined,
+            }],
+            [9, {
+                "key": '5',
+                "title": "Dagsgrid",
+                "isParent": false,
+                "view": "dayGridWeek",
+                "parent": 5,
+                "weight": undefined,
+            }],
 
 
+            [10, {
+                "key": 10,
+                "title": "Liste",
+                "isParent": false,
+                "view": "listDay",
+                "parent": 1,
+                "weight": undefined
+            }],
+            [8, {
+                "key": 8,
+                "title": "Grid",
+                "isParent": false,
+                "view": "timeGridDay",
+                "parent": 1,
+                "weight": 100,
+            }],
+        ]);
 
         this.csrf_token = csrf_token;
         this._headerGenerator = new HeaderGenerator(
@@ -441,11 +412,13 @@ export class PlannerCalendar extends FullCalendarBased {
     async init() {
         let _this = this;
 
+        let initialView = 'dayGridMonth';
+
         if (this._fcCalendar === undefined) {
             this._fcCalendar = new FullCalendar.Calendar(this._calendarElement, {
                 schedulerLicenseKey: this._fcLicenseKey,
                 stickyFooterToolbar: true,
-                initialView: _this.initialView,
+                initialView: initialView,
                 selectable: true,
                 weekNumbers: true,
                 navLinks: true,

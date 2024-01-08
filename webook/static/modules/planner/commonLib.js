@@ -272,6 +272,8 @@ export class ArrangementStore extends BaseStore {
         let audienceTypesMap =      mapTypeFilter(audience_types);
         let statusTypesMap =        mapTypeFilter(statuses);
         let locationsMap =          mapTypeFilter(locations);
+        
+        debugger;
 
         arrangements.forEach ( (arrangement) => {
             let isWithinFilter =
@@ -303,6 +305,8 @@ export class ArrangementStore extends BaseStore {
         });
         
         arrangements = filteredArrangements;
+
+        debugger;
 
         if (get_as === _FC_EVENT) {
             let mappedEvents = [];
@@ -479,7 +483,7 @@ export class FullCalendarBased {
             return resultingElement;
         }
 
-        let wrapper = $("<div class='shadow-0 fc-custom-navigation-buttons '></div>")
+        let wrapper = $("<div class='shadow-0 fc-custom-navigation-buttons'></div>")
         buttons.filter((x) => x.parent === undefined).forEach(function (button) {
             let result = renderButtons(button, buttons);
             wrapper.append(result);

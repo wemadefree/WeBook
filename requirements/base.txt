@@ -22,4 +22,3 @@ python-dateutil
 django-colorfield
 schedule
 django-crum==0.7.9
-#django-storages==1.14.2

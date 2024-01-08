@@ -58,8 +58,6 @@ export class AdvancedTreeFilter extends Popover {
         this._selectedMap = new Map();
         this._categorySearchMap = new Map();
 
-        this._clearBtn = null;
-
         this._render();
         this._bindOnChange();
     }
@@ -91,19 +89,6 @@ export class AdvancedTreeFilter extends Popover {
         $(this._jsTreeElement).jstree("deselect_all");
 
         this._onSubmit(this, [], []);
-    }
-
-    toggleSelection() {
-        // If any selected, clear all
-        if ($(this._jsTreeElement).jstree("get_selected", true).length > 0) {
-            this._clearBtn.innerHTML = "<i class='fas fa-square'></i>";
-            this.clear();
-            return;
-        }
-
-        // If none selected, select all
-        $(this._jsTreeElement).jstree("select_all");
-        this._clearBtn.innerHTML = "<i class='fas fa-check-square'></i>";
     }
 
     _search(term) {
@@ -155,9 +140,7 @@ export class AdvancedTreeFilter extends Popover {
             const selectedNodes = $(this._jsTreeElement).jstree("get_selected", true);
             const undeterminedNodes = $(this._jsTreeElement).jstree("get_undetermined", true);
 
-            if (selectedNodes.length > 0) {
-                this._onSubmit(this, selectedNodes, undeterminedNodes);
-            }
+            this._onSubmit(this, selectedNodes, undeterminedNodes);
         });
 
         actionsBtnGroup.appendChild(filterBtn);
@@ -165,15 +148,14 @@ export class AdvancedTreeFilter extends Popover {
         let clearBtn = document.createElement("button");
         clearBtn.setAttribute("type", "button");
         clearBtn.classList.add("btn", "wb-btn-secondary");
-        clearBtn.innerHTML = "<i class='fas fa-square'></i>";
+        clearBtn.innerHTML = "<i class='fas fa-times'></i>";
         clearBtn.setAttribute("data-mdb-toggle", "tooltip");
         clearBtn.setAttribute("data-mdb-placement", "top");
         clearBtn.setAttribute("title", "Fjern alle valg");
 
         clearBtn.addEventListener("click", (event) => {
-            this.toggleSelection();
+            this.clear();
         });
-        this._clearBtn = clearBtn;
 
         actionsBtnGroup.appendChild(clearBtn);
 

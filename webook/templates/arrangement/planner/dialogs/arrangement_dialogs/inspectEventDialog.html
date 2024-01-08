@@ -24,7 +24,7 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-4 col-md-12 col-sm-12">
+        <div class="col-4">
             <div class="alert col-auto mb-4 mt-2 wb-bg-secondary">
                 <div class="clearfix">
                     <div class="float-start">
@@ -48,7 +48,7 @@
             </div>
         </div>
 
-        <div class="col-lg-8 col-md-12 col-sm-12">
+        <div class="col-8">
             {% if event.serie %}
             <div class="alert mb-4 mt-2" style="background-color:  #f6f6f0 !important;">
                     <div>
@@ -140,10 +140,10 @@
                             </label>
                             {{form.responsible}}
                         </div> {% endcomment %}
-                        <div class="col-lg-7 col-md-12 col-sm-12">
+                        <div class="col-7">
                             
                             <div class="row">
-                                <div class="col-lg-6 col-md-12 col-sm-12">
+                                <div class="col-6">
                                     <div class="form-group">
                                         {{ form.title|as_crispy_field }}
                                         <!-- <label class="form-label" for="{{ form.title.id_for_label }}">Tittel på norsk</label>
@@ -161,7 +161,7 @@
                                         </div>  
                                     {% endif %}
                                 </div>
-                                <div class="col-lg-6 col-md-12 col-sm-12">
+                                <div class="col-6">
                                     <div class="form-group">
                                         {{ form.title_en|as_crispy_field }}
                                         <!-- <label class="form-label" for="{{ form.title_en.id_for_label }}">Tittel på engelsk</label>
@@ -174,7 +174,7 @@
                                             /> -->
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-md-12 col-sm-12 mt-3">
+                                <div class="col-6 mt-3">
                                     <div class="form-outline form-control-md" id="startDateTime"
                                         data-mdb-default-date="{{object.start|date:'d.m.Y' }}" 
                                         data-mdb-default-time="{{object.start|date:'G:i' }}">
@@ -183,7 +183,7 @@
                                         <label for="datetimepickerExample" class="form-label h5">Startdato og tidspunkt</label>
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-md-12 col-sm-12 mt-3">
+                                <div class="col-6 mt-3">
                                     <div class="form-outline form-control-md" id="endDateTime"
                                         data-mdb-default-date="{{object.end|date:'d.m.Y' }}" 
                                         data-mdb-default-time="{{object.end|date:'G:i' }}">
@@ -192,7 +192,7 @@
                                         <label for="datetimepickerExample" class="form-label h5">Sluttdato og tidspunkt</label>
                                     </div>
                                 </div>
-                                <div class="col-12 mt-2">
+                                <div class="col-6 mt-2">
                                     <div class="form-group mb-3">
                                         {{ form.expected_visitors|as_crispy_field }}
                                         <!-- <label class="form-label" for="{{ form.expected_visitors.id_for_label }}">Forventet besøk</label>
@@ -210,7 +210,7 @@
                                         </div>
                                     {% endif %}
                                 </div>
-                                <div class="col-12 mt-2">
+                                <div class="col-6 mt-2">
                                     <div class="form-group mb-3">
                                         {{ form.actual_visitors|as_crispy_field }}
                                         <!-- <label class="form-label" for="{{ form.actual_visitors.id_for_label }}">Faktisk besøk</label>
@@ -253,16 +253,16 @@
                             </div> 
                             
                             <div class="row">
-                                <div class="col-lg-6 col-md-12 col-sm-12">
+                                <div class="col-6">
                                     {{form.meeting_place|as_crispy_field}}
                                 </div>
         
-                                <div class="col-lg-6 col-md-12 col-sm-12">
+                                <div class="col-6">
                                     {{form.meeting_place_en|as_crispy_field}}
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-5 col-md-12 col-sm-12">
+                        <div class="col-5">
                             <div class="rounded box-shadow-2 wb-bg-secondary p-4 mb-4">
                                 <input type="hidden" name="{{ form.responsible.name }}" id="{{ form.responsible.id_for_label }}"
                                     value="{{form.responsible.value|default:''}}">

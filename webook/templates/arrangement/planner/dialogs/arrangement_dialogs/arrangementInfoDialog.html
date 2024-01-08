@@ -22,27 +22,29 @@
     <input type="hidden" id="_selectedArrangementTypeId" />
 
     <div class="row">
-        <div class="col-12 col-lg-4 col-md-6">
+        <div class="col-4">
             <div class="alert wb-bg-secondary">
-                <h6 class="mb-0 d-inline fw-lighter"><i class="fas fa-star"></i> Hovedplanlegger:</h4>
-                <h4 class="mb-0">{{ object.responsible }}</h4>
-
-                <span style="text-wrap: wrap;"><i class="fas fa-envelope"></i> {{ object.responsible.personal_email }}</span>
-
-                {% if user|has_group:"planners" or user.is_superuser %}
                 <div class="clearfix">
+                    <div class="float-start">
+                        <h6 class="mb-0 d-inline fw-lighter"><i class="fas fa-star"></i> Hovedplanlegger:</h4>
+                        <h4 class="mb-0">{{ object.responsible }}</h4>
+
+                        <small class="d-block"><i class="fas fa-envelope"></i> {{ object.responsible.personal_email }}</small>
+                            
+                    </div>
+                    {% if user|has_group:"planners" or user.is_superuser %}
                     <a class="btn wb-btn-blank float-end shadow-0" href="#"
                             type="button"
                             id="mainPlannerDialog__promotePlannerBtn">
                         Endre
                     </a>
+                    {% endif %}
                 </div>
-                {% endif %}
             </div>
         </div>
 
         {% if object.next_event %}
-        <div class="col-12 col-lg-4 col-md-6">
+        <div class="col-4">
             <div class="alert wb-bg-secondary">
                 <h6 class="mb-0 d-inline fw-lighter">
                     <i class="fas fa-calendar"></i>
@@ -104,10 +106,10 @@
         <div class="tab-pane fade show active" id="arrangementInfoDialog_tabs_information" role="tabpanel">
 
             <div class="row">
-                <div class="col-lg-8 col-md-8 col-sm-12">
+                <div class="col-8">
     
                     <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="col-6">
                             <div class="form-group mb-2">
                                 <label class="form-label">Navn:</label>
                                 <input type="text"
@@ -124,7 +126,7 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="col-6">
                             <div class="form-group mb-2">
                                 <label class="form-label">Navn (<em class="small">Engelsk</em>):</label>
                                 <input type="text"
@@ -265,7 +267,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-4 col-sm-12">
+                <div class="col-4">
                     <div class="form-group">
                         <label for="{{form.location.id_for_label}}" class="form-label">Lokasjon</label>
                         {{ form.location }}

@@ -1,0 +1,16 @@
+services:
+  webook:
+    image: "europe-west1-docker.pkg.dev/$PROJECT_ID/wemadefree/webook-nm-development"
+    ports:
+      - "8090:8080"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: always
+  scheduler:
+    build:
+      context: .
+      dockerfile: scheduler.Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules

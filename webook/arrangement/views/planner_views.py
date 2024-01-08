@@ -427,7 +427,6 @@ class GetArrangementsInPeriod(LoginRequiredMixin, ListView):
         LEFT JOIN arrangement_statustype as status on status.id = ev.status_id
         LEFT JOIN arrangement_event_rooms as evr on evr.event_id = ev.id
         LEFT JOIN arrangement_room as room on room.id = evr.room_id
-        LEFT JOIN arrangement_person as participants on s_pers.person_id = participants.id
         LEFT JOIN arrangement_eventserie as evserie on evserie.id = ev.serie_id
         WHERE arr.is_archived = false AND ev.start > %s AND ev.end < %s AND ev.is_archived = false
         GROUP BY 

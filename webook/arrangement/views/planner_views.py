@@ -427,12 +427,6 @@ class GetArrangementsInPeriod(LoginRequiredMixin, ListView):
         LEFT JOIN arrangement_statustype as status on status.id = ev.status_id
         LEFT JOIN arrangement_event_rooms as evr on evr.event_id = ev.id
         LEFT JOIN arrangement_room as room on room.id = evr.room_id
-        LEFT JOIN arrangement_serviceorder_events as so_e_link on so_e_link.event_id = ev.id
-        LEFT JOIN arrangement_serviceorder as so on so.id = so_e_link.serviceorder_id
-        LEFT JOIN arrangement_service as se on se.id = so.service_id
-        LEFT JOIN arrangement_serviceorderpreconfiguration as preconf on preconf.id = so.applied_preconfiguration_id
-        LEFT JOIN arrangement_serviceorderprovision as sopr on sopr.for_event_id = ev.id
-        LEFT JOIN arrangement_serviceorderprovision_selected_personell as s_pers on s_pers.serviceorderprovision_id = sopr.id
         LEFT JOIN arrangement_person as participants on s_pers.person_id = participants.id
         LEFT JOIN arrangement_eventserie as evserie on evserie.id = ev.serie_id
         WHERE arr.is_archived = false AND ev.start > %s AND ev.end < %s AND ev.is_archived = false

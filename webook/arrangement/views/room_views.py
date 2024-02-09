@@ -8,7 +8,13 @@ from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import CreateView, DetailView, ListView, RedirectView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    ListView,
+    RedirectView,
+    UpdateView,
+)
 from django.views.generic.edit import DeleteView
 
 from webook.arrangement.models import BusinessHour, Location, Room
@@ -78,6 +84,11 @@ class RoomUpdateView(
     view_meta = ViewMeta.Preset.edit(Room)
     template_name = "arrangement/room/room_form.html"
     model = Room
+
+    def get_success_url(self) -> str:
+        return reverse(
+            "arrangement:location_detail", kwargs={"slug": self.object.location.slug}
+        )
 
 
 room_update_view = RoomUpdateView.as_view()

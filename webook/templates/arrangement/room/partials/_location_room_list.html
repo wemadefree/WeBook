@@ -60,7 +60,13 @@
 <script>
     $(document).ready(function () {
         $('#roomList').DataTable({
-            dom: '',
+            dom: 'Brtip',
+            buttons: [
+                { extend: 'copy', className: 'wb-btn-white text-dark' },
+                { extend: 'excel', className: 'wb-btn-white text-dark' },
+                { extend: 'pdf', className: 'wb-btn-white text-dark' },
+                { extend: 'print', className: 'wb-btn-white text-dark' }
+            ]
         });
     });
 </script>

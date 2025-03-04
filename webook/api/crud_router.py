@@ -12,7 +12,7 @@ from django.core.paginator import Paginator
 from webook.api.dj_group_auth import SessionGroupAuth
 from webook.api.jwt_auth import JWTBearer
 from webook.api.paginate import PaginatedData, paginate_queryset
-from webook.api.schemas.base_schema import BaseSchema, ModelBaseSchema
+from webook.api.schemas.base_schema import BaseSchema, ListResponseSchema, ModelBaseSchema, SearchResponseItemSchema
 from webook.api.m2m_rel_router_mixin import ManyToManyRelRouterMixin
 from haystack.query import EmptySearchQuerySet, SearchQuerySet
 from haystack.models import SearchResult
@@ -47,7 +47,6 @@ class Views(Enum):
     SEARCH = "search"
 
 
-T = TypeVar("T")
 
 
 class ExportType(str, Enum):
@@ -83,14 +82,6 @@ class SearchMetadataSchema(BaseSchema):
     required: bool = False
 
 
-class ListResponseSchema(BaseSchema, Generic[T]):
-    summary: dict
-    data: List[T]
-
-
-class SearchResponseItemSchema(BaseSchema, Generic[T]):
-    score: float
-    obj: T
 
 
 class QueryFilter:
@@ -100,14 +91,21 @@ class QueryFilter:
         query_by: str,
         default: any = None,
         annotation: Optional[Type] = None,
+        distinct: bool = False,
     ):
         self.param = param
         self.query_by = query_by
         self.default = default
         self.annotation = annotation
+        self.distinct = distinct
 
     def apply(self, qs, value) -> models.QuerySet:
-        return qs.filter(**{self.query_by: value})
+        if self.distinct:
+            return qs.filter(**{self.query_by: value}).distinct()
+
+        qs = qs.filter(**{self.query_by: value})
+        
+        return qs
 
     def __str__(self) -> str:
         return f"{self.field}"
@@ -183,7 +181,10 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             List[ConditionalCallableTrigger]
         ] = None,
         enable_search: bool = False,
+        m2m_rel_fields: Dict[str, Type[models.Field]] = {},
     ) -> None:
+
+        self.m2m_rel_fields = m2m_rel_fields
 
         if views is None:
             self.views = [
@@ -225,7 +226,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
                 )
 
         self.property_fields_on_model: List[str] = [
-            k for k, v in Person.__dict__.items() if type(v) == property
+            k for k, v in model.__dict__.items() if type(v) == property
         ]
 
         self.list_filters += list_filters or []
@@ -628,11 +629,13 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
         )
         return manager.all().defer(*self._deferred_fields.keys())
 
-    def transform_pd_to_response(self, pd: PaginatedData) -> ListResponseSchema:
-        if type(pd.paginated_qs) == models.QuerySet:
-            items_s = [self.list_schema.from_orm(x) for x in pd.paginated_qs.all()]
+    def transform_pd_to_response(self, pd: PaginatedData, overriden_list_schema = None) -> ListResponseSchema:
+        list_schema = overriden_list_schema or self.list_schema
 
-            return ListResponseSchema[self.list_schema](
+        if type(pd.paginated_qs) == models.QuerySet:
+            items_s = [list_schema.from_orm(x) for x in pd.paginated_qs.all()]
+
+            return ListResponseSchema[list_schema](
                 summary={
                     "page": pd.current_page,
                     "limit": pd.page_size,
@@ -643,12 +646,12 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             )
         else:
             # It is a search result
-            items_s: List[SearchResponseItemSchema[self.list_schema]] = list()
+            items_s: List[SearchResponseItemSchema[list_schema]] = list()
             for x in pd.paginated_qs:
                 if type(x) == SearchResult:
                     items_s.append(
                         SearchResponseItemSchema(
-                            obj=self.list_schema.from_orm(
+                            obj=list_schema.from_orm(
                                 self.model.objects.get(id=x.pk)
                             ),
                             score=x.score,

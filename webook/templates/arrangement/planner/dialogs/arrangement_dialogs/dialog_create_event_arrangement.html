@@ -221,6 +221,26 @@
                 <input type="text" id="expected_visitors" name="expected_visitors" class="form-control form-control-lg" required />
             </div>
         </div>
+        <div id="step-services">
+            <div class="clearfix">
+                <a class="btn btn-lg btn-outline-dark btn-block shadow-0 mb-2 p-2"
+                    style="text-transform: none; font-size: larger; border-width: 0.7px;"
+                    d-trigger="triggerOrderService">
+                    <i class="fas fa-calendar-plus"></i>&nbsp;
+                    Bestill tjenester
+                </a>
+            </div>
+
+            <div class="alert alert-info mt-2">
+                Her kan du bestille tjenester for denne aktiviteten. <br>
+                Du kan også fjerne aktiviteten fra bestillinger plassert på arrangementsnivået. Fjerner du bestillinger her vil 
+                denne aktiviteten ikke være delaktige i den respektive bestillingen, men de vil fortsatt være aktuelle for andre aktiviteter/tidsplaner <br>
+            </div>
+
+            <div id="serviceOrders" class="mb-2">
+
+            </div>
+        </div>
         <div id="step-3">
             <div class="alert alert-info small">
                 <i class="fas fa-info-circle"></i>
@@ -641,6 +661,11 @@
                         stepOut: () => { console.log("2. Step Out"); }
                     },
                     {
+                        element: dialog.getElementById('step-services'),
+                        title: 'Tjenester'
+
+                    },
+                    {
                         element: dialog.getElementById('step-3'),
                         title: 'Opp og ned-rigg',
                         visible: {% if HIDE_RIGGING %}false{% else %}true{% endif %},
@@ -741,13 +766,13 @@
 
                     school:                    dialog.getElementById("schoolSelect").value == 0 ? "" : dialog.getElementById("schoolSelect").value,
                     county:                   dialog.getElementById("countySelect").value == 0 ? "" : dialog.getElementById("countySelect").value,
+
+                    ordered_services: dialog.data.serviceOrders,
                 };
 
                 let statusValue = dialog.data.statusTypeJsTreeSelect.getSelectedValue();
                 if (statusValue !== undefined)
                     qualifiedEvent.status = statusValue;
-
-                console.log("qualifiedEvent", qualifiedEvent);
 
                 qualifiedEvent.display_layouts = 
                     [...dialog.querySelectorAll("input[name='display_layouts_create_event'][type='checkbox']:checked")]
@@ -830,6 +855,19 @@
                 
                 triggeredByElement.remove();
             },
+            triggerOrderService(dialog, {} = {}, triggeredByElement) {
+                dialog.raiseTriggerEvent(
+                    "{{managerName}}", "orderServiceDialog", 
+                    { 
+                        $parent: dialog.dialogElement, 
+                        sendTo: '{{dialogId}}', 
+                        renderInChain: true,
+                        data: { whenEventName: "newServiceOrder" },
+                        entity_type: "event",
+                        entity_id: "0",
+                    }
+                )
+            },
             triggerAddRooms(dialog, {} = {}, triggeredByElement) {
                 dialog.raiseTriggerEvent(
                     "{{managerName}}", "{{orderRoomDialog}}", 
@@ -863,6 +901,10 @@
                     data: { whenEventName: "setPlanner", selectedBundle: dialog.data.mainPlannerPayload } 
                 }
             )},
+            removeServiceOrder(dialog, { id }, triggeredByElement) {
+                dialog.data.serviceOrders = dialog.data.serviceOrders.filter((order) => order.key !== id);
+                dialog.$(`#${id}`).remove();
+            },
         },
         data: {
             selectedPeopleIds: new Map(),
@@ -870,6 +912,7 @@
             peopleNameMap: new Map(),
             roomsNameMap: new Map(),
             stepper: null,
+            serviceOrders: [],
         },
         when: [
             { eventKnownAs: "roomsSelected", do: (dialog, payload) => {
@@ -956,6 +999,31 @@
                     dialog.data.statusTypeJsTreeSelect.setSelected(payload);
                 else
                     dialog.$('#_statusTypeId').val(payload);
+            } },
+            { eventKnownAs: "newServiceOrder", do: (dialog, payload) => {
+                payload = payload[0];
+                payload.key = Math.random().toString(36).substring(7);
+                dialog.data.serviceOrders.push(payload);
+                console.log("Service orders", dialog.data.serviceOrders);
+                console.log("newServiceOrder.payload", payload);
+                dialog.$("#serviceOrders").append(
+                    $(`<div class='card card-body shadow-0 wb-bg-secondary border border-dark mt-2' id='${payload.key}'>
+                            <h5>
+                                ${payload.service_name}
+                                <button class='btn wb-btn-main-outline border border-dark shadow-0 float-end' 
+                                    @click='serviceOrders.splice(serviceOrders.indexOf(order), 1)'
+                                    select-type='serviceOrder' 
+                                    d-trigger='removeServiceOrder'
+                                    d-arg-id='${payload.key}'>
+                                    
+                                    <i class='fas fa-times'></i>
+                                </button>
+                            </h5>
+                            <code>
+                                ${payload.freetext_comment}
+                            </code>
+                        </div>`)
+                );
             } },
         ],
         plugins: [

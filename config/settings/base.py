@@ -475,3 +475,4 @@ ALERT_TEXT_SUPER_USER = env("ALERT_TEXT_SUPER_USER", default=None)
 ALERT_TEXT_ALL_USERS = env("ALERT_TEXT_ALL_USERS", default=None)
 
 ADMIN_ENABLED = env("ADMIN_ENABLED", default=False)
+APP_BASE_URL = env("APP_BASE_URL", default="http://localhost:8000")

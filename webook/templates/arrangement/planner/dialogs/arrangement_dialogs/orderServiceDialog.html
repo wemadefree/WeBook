@@ -1,0 +1,248 @@
+{% load crispy_forms_tags %}
+{% load static i18n %}
+
+<div class="{{discriminator}}" id="{{dialogId}}" title="Bestill tjeneste(r)">
+    <div class="mt-4"></div>
+
+    <div class="mt-3 shadow-0 p-3 rounded-6">
+        <div class="d-flex" style="justify-content: space-between;">
+            {% if EVENT %}
+            <div class="d-flex" style="align-items: center;">
+                <h2>
+                    <i class="fas fa-calendar text-muted"></i>
+                </h2>
+                <div class="ms-4">
+                    <h4 class="mb-0">{{EVENT.title}}</h4>
+                    <h6 class="text-muted">{{EVENT.start|date:"d.m.Y H:i:s"}} - {{EVENT.end|date:"d.m.Y H:i:s"}}</h6>
+                </div>
+            </div>
+            <div class="d-flex" style="align-items: center;">
+                <h2>
+                    <!-- <i class="fas fa-flask text-muted"></i> -->
+                </h2>
+                <div class="ms-4">
+                    <!-- <h4 class="mb-0">{{EVENT.arrangement.title}}</h4> -->
+                    <h6 class="text-muted"><i class="fas fa-star"></i> {{EVENT.responsible}}</h6>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="" v-if="page == 0">
+        <div class="d-flex" style="align-items: flex-end; justify-content: space-between;">
+            <h5>Velg tjeneste(r)</h5>
+            <input type="search" name="" id="" class="form-control w-25">
+        </div>
+
+        <table class="table">
+            <tbody>
+                <tr v-for="service in services">
+                    <td> <input type="checkbox" :value="service" v-model="selectedServices" name="" :id="'check_' + service.id"> </td>
+                    <td> <label :for="'check_' + service.id">[[ service.name ]]</label> </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <nav aria-label="Table pagination or navigation" class="clearfix">
+            <ul class="pagination float-end">
+                <li class="page-item" :class="{ disabled: page == 1 }"><a class="page-link" href="javascript:void(0)" @click.stop="page--">Forrige</a></li>
+                <li class="page-item" :class="{ active: thisPage == page }" v-for="thisPage in totalPages"><a class="page-link" href="#">{{thisPage}}</a></li>
+                <li class="page-item" :class="{ disabled: page == totalPages }"><a class="page-link" href="javascript:void(0)" @click.stop="page++">Neste</a></li>
+            </ul>
+        </nav>
+
+        <div class="clearfix mt-2">
+            <div class="float-end">
+                <button class="btn wb-btn-secondary cancel-button" d-trigger="closeDialog">
+                    Avbryt
+                </button>
+                <button class="btn wb-btn-main ms-2" @click="page++">
+                    Neste
+                </button>
+            </div>
+        </div> 
+    </div>
+    <div v-else>
+        <div class="alert alert-info wb-bg-secondary text-dark d-flex" style="justify-content: space-between; align-items: center;">
+            <h3 class="mb-0">
+                <i class="fas fa-info"></i>
+            </h3>
+            <h6 class="ms-2">Fyll ut kommentarfeltene for tjenesten hvor det er nødvendig. Tjenestekoordinatorene vil kunne se innholdet i disse fritekstfeltene.
+                Du kan også bruke pre-etablerte konfigurasjoner for å auto-utfylle fritekst feltet med en mal.
+            </h6>
+        </div>
+
+        <table class="table">
+            <tbody>
+                <tr v-for="service in selectedServices">
+                    <td>
+                        <h4>[[service.name]]</h4>
+
+                        <div class="form-group">
+                            <label class="w-100"><i class="fas fa-cog"></i>&nbsp; Benytt en prekonfigurasjoner <em cless="float-end">(Valgfritt)</em></label>
+                            
+                            <div class="d-flex">
+                                <div class="input-group">
+                                    <select class="form-control" @input="updateFreetext($event, service.id)">
+                                        <option value="">Ingen prekonfigurasjon</option>
+                                        <option v-for="preconfig in service.preconfigurations" :value="preconfig.id">
+                                            [[preconfig.title]]
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="">Kommentar</label>
+                            <textarea name="" id="freetext_[[service.id]]" cols="30" rows="3" class="form-control" v-model="service.freetext">
+                            </textarea>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="clearfix mt-3">
+            <div class="float-end">
+                <button class="btn wb-btn-secondary" d-trigger="closeDialog">
+                    Avbryt
+                </button>
+                <button class="btn wb-btn-secondary ms-2" @click="page--">
+                    Tilbake
+                </button>
+                <button class="btn wb-btn-main ms-2" @click="save()">
+                    Plasser bestilling
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import TableComponent from "{% static 'vue-components/table.js' %}";
+
+    new Dialog({
+        managerName: '{{managerName}}',
+        dialogId: '{{dialogId}}',
+        discriminator: '{{discriminator}}',
+        postInit: function (dialog) {
+            dialog.data.vueApp = Vue.createApp({
+                components: {
+                    TableComponent
+                },
+                data() {
+                    return {
+                        event: '',
+                        page: 0,
+                        pageSize: 20,
+                        selectedServices: [],
+                        selectedServicesLookup: {},
+                        services: [],
+                        preconfigurations: {},
+                        setPreconfiguration: null,
+                    }
+                },
+                computed: {
+                    totalPages() {
+                        if (this.services.length)
+                            return Math.ceil(this.services.length / this.pageSize)
+                        else return 0;
+                    },
+                },
+                watch: {
+                    async services() {
+                        this.services.forEach(async service => {
+                            service.preconfigurations = await this.getPreconfigurations(service.id);
+                        })
+                    },
+                    selectedServices() {
+                        let lookupObj = {};
+                        this.services.forEach(s => lookupObj[s.id] = s);
+                        this.selectedServicesLookup = lookupObj;
+                    }
+                },
+                methods: {
+                    async getPreconfigurations(serviceId) {
+                        let preconfigurations = await fetch("/arrangement/service/" + serviceId + "/preconfigurations")
+                                .then(response => response.json());
+
+                        let obj = {};
+                        preconfigurations.forEach((pc) => obj[pc.id] = pc);
+                        return obj;
+                    },
+                    updateFreetext(event, serviceId) {
+                        let selectedService = this.selectedServicesLookup[serviceId];
+                        let selectedPreconfiguration = selectedService.preconfigurations[event.originalTarget.value];
+
+                        if (selectedPreconfiguration === undefined)
+                            return;
+
+                        selectedService.freetext = selectedPreconfiguration.message;
+                        selectedService.appliedPreconfiguration = selectedPreconfiguration;
+                    },
+                    async getServices() {
+                        let services = await fetch('/arrangement/service/json/list', {
+                            method: 'GET',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}',
+                            }
+                        }).then(response => response.json());
+                        return services.filter(x => x.isArchived === false);
+                    },
+                    async save(dialog, {} = {}, triggeredByElement) {
+                        let serviceOrders = [];
+
+                        this.selectedServices.forEach((service) => {
+                            serviceOrders.push({
+                                "parent_type": "{% if EVENT %}event{%elif SERIE %}serie{% endif %}",
+                                "parent_id": "{% if EVENT %}{{EVENT.pk}}{% elif SERIE %}{{SERIE.pk}}{% endif %}",
+                                "service_id": service.id,
+                                "applied_preconfiguration": service.appliedPreconfiguration ? service.appliedPreconfiguration.id : null,
+                                "freetext_comment": service.freetext || "",
+                                "service_name": service.name,
+                                "service_order": null
+                            });
+                        });
+
+                        console.log("orderServiceDialog.save", {
+                            "managerName": "{{managerName}}",
+                            "detail": { 
+                                dialog: "{{dialogId}}",
+                                requestedServices: serviceOrders, 
+                                csrf_token: "{{csrf_token}}", 
+                                recipientDialog: "{{recipientDialogId}}" 
+                            }
+                        });
+                        
+                        document.dispatchEvent(
+                            new CustomEvent(`{{managerName}}.submit`, {
+                                "detail": { 
+                                    dialog: "{{dialogId}}",
+                                    requestedServices: serviceOrders, 
+                                    csrf_token: "{{csrf_token}}", 
+                                    recipientDialog: "{{recipientDialogId}}" 
+                                }
+                            })
+                        );
+                    }
+                },
+                delimiters: ['[[',']]'],
+                async mounted() {
+                    this.services = await this.getServices();
+                }
+            });
+
+            dialog.data.vueApp.mount('#{{ dialogId }}');
+        },
+        methods: {
+            closeDialog(dialog, {} = {}, triggeredByElement) {
+                dialog.closeMe();
+            },
+        },
+        data: {
+            whenEventName: "newServiceOrder"
+        },
+    })
+</script>

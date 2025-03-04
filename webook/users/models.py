@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import webook.users.media_pathing as media_path
-from webook.arrangement.models import Person
+from webook.arrangement.models import Person, ServiceEmail
 
 
 class LoginAudit(models.Model):
@@ -104,6 +104,13 @@ class User(AbstractUser):
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"slug": self.slug})
+
+    @property
+    def is_service_coordinator(self) -> bool:
+        if self.person is None:
+            return False
+
+        return ServiceEmail.objects.filter(email=self.email).exists()
 
     @property
     def get_representative_name(self) -> str:

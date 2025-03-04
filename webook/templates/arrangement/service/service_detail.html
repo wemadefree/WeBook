@@ -1,0 +1,386 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block container_classes %}
+contaner-fluid ps-5 pe-5
+{% endblock %}
+
+{% block content %}
+
+
+{% include "arrangement/vue/table_component.html" %}
+{% include "arrangement/vue/service_responsibles_component.html" %}
+{% include "arrangement/service/shared/_preconfigurationsComponent.html" %}
+{% include "arrangement/vue/fancy_popover.html" %}
+
+
+<div id="service_detail_app">
+    <h3>{{ object.name }}</h3>
+
+    <button class="btn wb-btn-main mt-1" @click="openAddPersonDialog()">
+        <i class="fas fa-plus"></i>&nbsp; Administrer Personell
+    </button>
+    
+    <div class="d-flex justify-content-between mb-3 mt-3">
+    
+        <div class="card card-body border border-warning shadow-2 w-auto me-3">
+            <div class="d-flex align-items-center">
+                <h1>
+                    <i class="fas fa-hourglass text-warning"></i>
+                </h1>
+        
+                <div class="ms-5">
+                    <h3>{{STATISTICS_AWAITING_COUNT}}</h3>
+                    Bestillinger som venter behandling
+                </div>
+            </div>        
+        </div>
+    
+        <div class="card card-body border border-success shadow-2 w-auto ms-3 me-3">        
+            <div class="d-flex align-items-center">
+                <h1>
+                    <i class="fas fa-plus text-success"></i>
+                </h1>
+        
+                <div class="ms-5">
+                    <h3>0</h3>
+                    Nye bestillinger i dag
+                </div>
+            </div>        
+        </div>
+    
+        <div class="card card-body shadow-2 border border-secondary w-auto ms-3">
+            <div class="d-flex align-items-center">
+                <h1>
+                    <i class="fas fa-user text-secondary"></i>
+                </h1>
+        
+                <div class="ms-5">
+                    <h3>{{STATISTICS_PERSONELL_COUNT}}</h3>
+                    Personell
+                </div>
+            </div>      
+        </div>
+    
+    </div>
+    
+    <div class="p-0 mb-3  rounded-5 ">
+        <ul class="nav nav-tabs webook-tabs" id="ex1" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a
+                    class="nav-link active"
+                    id="ex1-tab-2"
+                    data-mdb-toggle="tab"
+                    href="#orders-tab"
+                    role="tab"
+                    aria-controls="ex1-tabs-2"
+                    aria-selected="false">
+                
+                    <i class="fas fa-table"></i>&nbsp;
+                    Bestillinger
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#preconfigurations-tab" class="nav-link" role="tab" data-mdb-toggle="tab">
+                    Prekonfigurasjoner
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="#administration-tab" role="tab" data-mdb-toggle="tab" class="nav-link">
+                    <i class="fas fa-user-shield"></i>&nbsp;
+                    Administrativt
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+    
+    <div class="tab-content" id="tabs-content">
+        <div class="tab-pane fade  show active" id="orders-tab" role="tabpanel" aria-labelledby="orders-tab">
+            <div>
+                <span id="fancyPopoverHolder"></span>
+                <table-component
+                    :data-source="ordersDataSourceFunc"
+                    :column-names="{ 'message': 'Melding' }"
+                    :can-search="true"
+                    @row-clicked="whenRowIsClicked"
+                    @show-detailed-view="showDetailedView">
+                </table-component>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="personell-tab" role="tabpanel">
+
+        </div>
+
+        <div class="tab-pane fade" id="preconfigurations-tab" role="tabpanel">
+            <preconfigurations-table-component :service-id="{{object.id}}" :key="preconfigTableKey">
+            </preconfigurations-table-component>
+        </div>
+        <div class="tab-pane fade" id="administration-tab" role="tabpanel">
+            <div class="row">
+                <div class="col-6">
+                    <div class="p-3 text-center">
+                        <h4><i class="fas fa-users"></i></h4>
+                        <h5>Behandlere</h5>
+            
+                        <small class="text-muted">
+                            Behandlere kan behandle denne tjenesten, og bestillinger som er gjort mot den. Behandlere vil få e-post når en ny bestilling
+                            har blitt plassert med link direkte til tjenestebehandling. Alternativt om de har en brukerkonto i planleggeren så vil de også
+                            få tilgang og kunne behandle tjenestebestillinger fra denne siden.
+                        </small>
+                    </div>
+
+                    <hr>
+
+                    <service-responsibles-component 
+                        :service-id="{{object.id}}">
+                    </service-responsibles-component >
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<template id="vuec_service_order_popover_template">
+    <fancy-popover :x="x" :y="y" :title="`Tjenestebestilling ${serviceOrder.id}`">
+        Fancy popover - not in use
+    </fancy-popover>
+</template>
+
+<script type="module">
+    import { Dialog, DialogManager, DialogSimpleRenderer, DialogFormInterceptorPlugin } from  "{% static 'modules/planner/dialog_manager/dialogManager.js' %}";
+    
+    class CustomDialogFormInterceptorPlugin extends DialogFormInterceptorPlugin {
+        constructor (csrf_token) {
+            super(csrf_token);
+        }
+
+        onResponseOk() {
+            toastr.success("Forandringene har blitt lagret!");
+        }
+    }
+
+    const ServiceOrderPopover = {
+        components: {
+            FancyPopover,
+        },
+        props: {
+            x: Number, y: Number,
+            serviceOrder: Object
+        },
+        delimiters: [ "[[", "]]" ],
+        template: '#vuec_service_order_popover_template'
+    }
+
+    $(document).ready(function () {
+        const serviceDetailVueApp = Vue.createApp({
+            components: {
+                TableComponent,
+                ServiceResponsiblesComponent,
+                PreconfigurationsTableComponent
+            },
+            data() {
+                return {
+                    preconfigTableKey: 0
+                };
+            },
+            computed: {},
+            methods: {
+                refreshPreconfigurationsTable() {
+                    this.preconfigTableKey += 1;
+                },
+                openAddPersonDialog(serviceId) {
+                    document.dispatchEvent(new CustomEvent(
+                        "personellTableDialogsManager.add_person_dialog.trigger",
+                        { detail: { id: serviceId } }
+                    ))
+                },
+                showDetailedView(row) {
+                    location.href = "/arrangement/service/process_redirect/" + row.id;
+                },
+                async ordersDataSourceFunc() {
+                    let data = await fetch("/arrangement/service/{{object.id}}/orders", {
+                        method: 'GET',
+                    }).then(response => response.json())
+
+                    data.forEach(function (item) {
+                        const stateToTypeConversions = {
+                            "awaiting": { 
+                                "type": "warning",
+                                "iconClass": "fa-hourglass",
+                                "tooltip": "Bestillingen venter behandling"
+                            },
+                            "denied": {
+                                "type": "danger",
+                                "iconClass": "fa-hand-paper",
+                                "tooltip": "Bestillingen har blitt avslått"
+                            },
+                            "confirmed": {
+                                "type": "success",
+                                "iconClass": "fa-check",
+                                "tooltip": "Bestillingen er ferdig behandlet"
+                            },
+                            "cancelled": {
+                                "type": "danger",
+                                "iconClass": "fa-times",
+                                "tooltip": "Bestillingen har blitt kansellert av planlegger"
+                            },
+                            "in_revision": {
+                                "type": "secondary",
+                                "iconClass": "fa-edit",
+                                "tooltip": "Bestillingen er under revisjon"
+                            }
+                        }
+
+                        const stateBasedActions = {
+                            "confirmed": { 
+                                "openForEditing": { type: 'main', content: '<i class="fas fa-unlock"></i>&nbsp; Åpne for redigering', isContentHtml: true },
+                                "-processServiceOrder":"",
+                            },
+                            "cancelled": {
+                                "-processServiceOrder": "",
+                            },
+                            "denied": {
+                                "-processServiceOrder": "",
+                            }
+                        };
+
+                        const stateSort = {
+                            "awaiting": 1,
+                            "confirmed": 2,
+                            "denied": 3,
+                            "cancelled": 4,
+                        };
+                        if (item.state in stateSort)
+                            item.state_sort = stateSort[item.state];
+
+                        if (item.state in stateBasedActions)
+                            item._actions = stateBasedActions[item.state];
+
+                        if (item.state in stateToTypeConversions)
+                            item.state = stateToTypeConversions[item.state];
+                        else
+                            item.state = { "type": "info", "iconClass": "fa-question" };
+
+                        if (item.assigned_personell)
+                            item.assigned_personell = item.assigned_personell.join(", ")
+                    })
+
+                    return {
+                        columns: {
+                            "state": { 
+                                isHtml: true, 
+                                friendlyName: "Status", 
+                                isComponent: true, 
+                                componentName: 'statusIndicator',
+                                isSortable: true,
+                            },
+                            "id": { 
+                                isHtml: false, 
+                                friendlyName: "#", 
+                                isSortable: true,
+                                isSearchable: true
+                            },
+                            "created": { 
+                                isHtml: false, 
+                                friendlyName: "Tidsstempel",
+                                isSortable: true,
+                            },
+                            "freetext_comment": { 
+                                isHtml: false, 
+                                friendlyName: "Kommentar fra planlegger", 
+                                isSortable: true,
+                                isSearchable: true,
+                            },
+                        },
+                        actions: {
+                            "showDetailedView": { type: 'main', content: '<i class="fas fa-eye"></i>&nbsp; Vis mer', isContentHtml: true },
+                        },
+                        data: data
+                    };
+                },
+                async responsiblesDataSourceFunc() {
+                    let data = await fetch("/arrangement/service/{{object.id}}/responsibles")
+                        .then(response => response.json());
+
+                    return {
+                        columns: {
+                            "email": {
+                                isHtml: false,
+                                friendlyName: "E-Post",
+                                isSortable: true
+                            },
+                            "user": {
+                                isHtml: false,
+                                friendlyName: "Bruker",
+                                isSortable: true
+                            }
+                        },
+                        actions: {
+                            "removeResponsible": { type: 'main', content: "<i class='fas fa-trash'></i>&nbsp; Slett", isContentHtml: true }
+                        },
+                        data: data
+                    }
+                },
+                whenRowIsClicked(event, item) {
+                    console.log("whenRowIsClicked")
+                }
+            },
+            mounted() {
+                this.dialogManager = new DialogManager({
+                    managerName: 'personellTableDialogsManager',
+                    allowMultipleOpenAtOnce: false,
+                    dialogs: [
+                    [
+                        "add_person_dialog",
+                        new Dialog({
+                            dialogElementId: 'add_person_dialog',
+                            triggerElementId: undefined,
+                            triggerByEvent: true,
+                            formUrl: '/arrangement/service/add_person/<<id>>',
+                            dialogOptions: {
+                                classes: { "ui-dialog": "wb-dialog" },
+                                dialogClass: 'no-titlebar',
+                                position: {
+                                    my: 'top right',
+                                    at: 'top',
+                                    of: document
+                                },
+                                modal: true,
+                                width: '100%',
+                                height: $(window).height,
+                            },
+                            plugins: [ new CustomDialogFormInterceptorPlugin("{{csrf_token}}") ],
+                            htmlFabricator: async (context, dialog) => {
+                                const id = context.lastTriggererDetails.id;
+                                return this.dialogManager.loadDialogHtml({
+                                    url: "/arrangement/service/add_person/{{object.id}}",
+                                    dialogId: "add_person_dialog",
+                                    managerName: "personellTableDialogsManager",
+                                });
+                            },
+                            onRenderedCallback: (dialogManager, context) => {
+                            },
+                            onUpdatedCallback: async (dialogManager, context) => {
+                                await this.getPersonnell();
+                            },
+                            onSubmit: async (context, details) => {
+                                await this.refreshPreconfigurationsTable();
+                            }
+                        })
+                    ]
+                ]});
+        
+                this.dialogManager._makeAware();
+            },
+            delimiters: [ '[[', ']]']
+        });
+
+        serviceDetailVueApp.mount("#service_detail_app")
+    })
+</script>
+
+{% endblock %}

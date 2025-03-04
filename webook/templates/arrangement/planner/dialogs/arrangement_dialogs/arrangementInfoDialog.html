@@ -110,6 +110,14 @@
             </a>
         </li>
         {% endif %}
+
+        <!-- Service Orders -->
+        <li class="nav-item" role="presentation">
+            <a href="#arrangementInfoDialog_tabs_service_orders" class="nav-link" id="arrangementInfoDialog_tabs_service_orders-link"
+                data-mdb-toggle="tab" role="tab">
+                Tjenestebestillinger
+            </a>
+        </li>
     </ul>
 
     <div class="tab-content pt-4">
@@ -700,6 +708,76 @@
 
         </div>
         {% endif %}
+
+        <!-- Service Orders Tabs -->
+        <div class="tab-pane fade" id="arrangementInfoDialog_tabs_service_orders" role="tabpanel">
+            {% if ORDERS|length == 0 %}
+                <div class="alert wb-bg-secondary fw-bold text-center">
+                    Ingen tjenestebestillinger er knyttet til dette arrangementet.
+                </div>
+            {% endif %}
+
+            {% for service_order in ORDERS %}
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex">
+                                <div class="mb-0 wb-bg-secondary p-3 border">
+                                    <h5 class="mb-0">Bestilling #{{service_order.id}}</h5>
+                                    <div>{{service_order.service.name}}</div>
+                                    {% if service_order.state == "awaiting" %}
+                                    <div class="badge badge-warning">
+                                        <h5 class="mb-0">
+                                            Venter behandling
+                                        </h5>
+                                    </div>
+                                    {% elif service_order.state == "cancelled" %}
+                                        <div class="badge badge-dark">
+                                            <h5 class="mb-0">
+                                                Kansellert
+                                            </h5>
+                                        </div>
+                                    {% elif service_order.state == "denied" %}
+                                        <div class="badge badge-danger">
+                                            <h5 class="mb-0">
+                                                Avvist
+                                            </h5>
+                                        </div>
+                                    {% elif service_order.state == "in_revision" %}
+                                        <div class="badge badge-warning">
+                                            Revideres
+                                        </div>
+                                    {% elif service_order.state == "changed" %}
+                                        <div class="badge badge-warning">
+                                            Endret, venter bekreftelse
+                                        </div>
+                                    {% elif service_order.state == "confirmed" %}
+                                        <div class="badge badge-success">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-check"></i>
+                                                Bekreftet
+                                            </h5>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="p-2 ms-2 me-2">
+                                    <h5>Kommentar:</h5>
+                                    <div class="bg-light">
+                                        {{ service_order.freetext_comment }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="clearfix">
+                                <button class="btn wb-btn-main float-end me-2" d-trigger="triggerInspectServiceOrderDialog" d-arg-order_id="{{ service_order.pk }}">
+                                    Vis bestilling
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 
@@ -1034,15 +1112,22 @@
                                                 <h5><span class='badge badge-dark'>${eventSerie.id}</span> ${eventSerie.seriePlanManifest.title} - <em>${eventSerie.seriePlanManifest.scheduleDescription}</em></h5>
                                                 {% if user|has_group:"planners" %}
                                                 <div>
-                                                    <button class="btn wb-btn-main" id="c_${eventSerie.id}_openButton">
-                                                        <i class="fas fa-eye"></i>
-                                                        Åpne
-                                                    </button>
+                                                    <div>
+                                                        <button class="btn wb-btn-main" id="c_${eventSerie.id}_openButton">
+                                                            <i class="fas fa-eye"></i>
+                                                            Åpne
+                                                        </button>
 
-                                                    <button class="btn wb-btn-main" id="c_${eventSerie.id}_deleteButton">
-                                                        <i class="fas fa-trash"></i>
-                                                        Slett
-                                                    </button>
+                                                        <button class="btn wb-btn-main" id="c_${eventSerie.id}_deleteButton">
+                                                            <i class="fas fa-trash"></i>
+                                                            Slett
+                                                        </button>
+
+                                                        <button class="btn wb-btn-main" id="c_${eventSerie.id}_orderService">
+                                                            <i class="fas fa-shopping-cart"></i>
+                                                            Bestill tjeneste
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 {% endif %}
                                             </div>
@@ -1129,6 +1214,37 @@
                                                     </table>
                                                 </div>
                                             </div>
+
+                                            <div class="mt-3 wb-bg-secondary border border-dark p-2">
+                                                <h6 id="c_${eventSerie.id}_showServiceOrdersTable" class="wb-bg-secondary mb-0 pt-2 pb-2 ps-1">
+                                                    <i class="fas fa-chevron-right" id="c_${eventSerie.id}_showServiceOrdersTableButtonIcon"></i>
+                                                    Tjenestebestillinger <small class="text-muted ms-3"><i class='fas fa-info'></i>&nbsp; Trykk for å ekspandere/skjule</small>    
+                                                </h6>
+                                            </div>
+
+                                            <div id="c_${eventSerie.id}_serviceOrders_loader" style="display: none">
+                                                <div class="spinner-border" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                                Laster inn data...
+                                            </div>
+
+                                            <div id="c_${eventSerie.id}_serviceOrdersBody" class="bg-white" style="display: none;">
+                                                <table class="table table-sm table-bordered table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Tjeneste</th>
+                                                            <th>Status</th>
+                                                            <th>Kommentar</th>
+                                                            <th>Valg</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody id="c_${eventSerie.id}_serviceOrdersTbody">
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </td>
                                     `;
 
@@ -1144,7 +1260,23 @@
                                     dialog.getElementById(`c_${eventSerie.id}_uploadFilesBtn`).onclick = () => {
                                         dialog._methods.uploadFilesToEventSerie(dialog, { eventSeriePk: eventSerie.id });
                                     };
+                                    dialog.getElementById(`c_${eventSerie.id}_orderService`).onclick = () => {
+                                        dialog._methods.triggerOrderService(dialog, { serie_id: eventSerie.id });
+                                    };
                                     {% endif %}
+                                    dialog.getElementById(`c_${eventSerie.id}_showServiceOrdersTable`).onclick = () => {
+                                        let serviceOrdersBody = dialog.getElementById(`c_${eventSerie.id}_serviceOrdersBody`);
+                                        let serviceOrdersTableButtonIcon = dialog.getElementById(`c_${eventSerie.id}_showServiceOrdersTableButtonIcon`);
+                                        serviceOrdersTableButtonIcon.className = serviceOrdersBody.style.display === "none" ? "fas fa-chevron-down" : "fas fa-chevron-right";
+                                        serviceOrdersBody.style.display = serviceOrdersBody.style.display === "none" ? "block" : "none";
+
+                                        if (serviceOrdersBody.style.display === "none") {
+                                            return;
+                                        }
+
+                                        let loader = dialog.getElementById(`c_${eventSerie.id}_serviceOrders_loader`);
+                                        loader.style.display = "block";
+                                    }
                                     dialog.getElementById(`c_${eventSerie.id}_showEventsTable`).onclick = () => {
                                         let eventsBody = dialog.getElementById(`c_${eventSerie.id}_eventsBody`);
                                         let eventsTableButtonIcon = dialog.getElementById(`c_${eventSerie.id}_showEventsTableButtonIcon`);
@@ -1239,6 +1371,9 @@
             uploadFilesToEventSerie(dialog, { eventSeriePk } = {}, triggeredByElement) {
                 dialog.raiseTriggerEvent(dialog.managerName, "uploadFilesToEventSerieDialog", { event_serie_pk: eventSeriePk, $parent: dialog.dialogElement });
             },
+            triggerInspectServiceOrderDialog(dialog, { orderId } = {}, triggeredByElement) {
+                dialog.raiseTriggerEvent(dialog.managerName, "inspectServiceOrderDialog", { "order_id": orderId });
+            },
             deleteActivity(dialog, { activityPk } = {}, triggeredByElement) {
                 Swal.fire({
                     title: 'Er du sikker?',
@@ -1330,6 +1465,19 @@
             },
             triggerAddPlannerDialog(dialog, {} = {}, triggeredByElement) {
                 dialog.raiseTriggerEvent("arrangementInspector", "addPlannerDialog", { $parent: dialog.dialogElement });
+            },
+            triggerOrderService(dialog, { serie_id } = {}, triggeredByElement) {
+                dialog.raiseTriggerEvent(
+                    "{{managerName}}", "orderServiceDialog", 
+                    { 
+                        $parent: dialog.dialogElement, 
+                        sendTo: '{{dialogId}}', 
+                        renderInChain: true,
+                        data: { whenEventName: "newServiceOrder" },
+                        entity_type: "serie",
+                        entity_id: serie_id 
+                    }
+                );
             },
             openEditEvent(dialog, { eventPk } = {}, triggeredByElement) {
                 document.dispatchEvent(
@@ -1489,6 +1637,40 @@
                 })
             },
         },
+        when: [
+            { eventKnownAs: "newServiceOrder", do: (dialog, payload) => {
+                payload.forEach(async (serviceOrder) => {
+                    let formData = new FormData();
+                    formData.append("parent_type", "serie");
+                    formData.append("parent_id", serviceOrder.parent_id);
+                    formData.append("service_id", serviceOrder.service_id);
+                    formData.append("freetext_comment", serviceOrder.freetext_comment);
+
+                    await fetch('/arrangement/planner/dialogs/order_service/serie/' + serviceOrder.parent_id, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRFToken": '{{csrf_token}}'
+                        }
+                    }).then(async response => {
+                        if (!response.ok) {
+                            toastr.error("Noe gikk galt under bestillingen av tjenesten. Prøv igjen senere.");
+                        } else {
+                            toastr.success("Bestilling er plassert og avventer behandling av koordinator.");
+                            response = await response.json();
+
+                            console.log("order response", response);
+                        }
+
+                        document.dispatchEvent(
+                            new CustomEvent("arrangementInspector.hasBeenUpdated", {'detail': {
+                                dialog: "mainDialog",
+                            }})
+                        );
+                    });
+                });
+            } }
+        ],
         data: {
             currentlyActiveTab: "",
         },

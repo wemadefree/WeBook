@@ -18,6 +18,7 @@ from webook.arrangement.api.routers.room_router import room_router
 from webook.arrangement.api.routers.event_serie_router import (
     router as event_serie_router,
 )
+from webook.arrangement.api.routers.service_router import service_router, service_order_router
 from webook.arrangement.api.routers.calendar_router import calendar_router
 from webook.api.routers.login_router import login_router
 from webook.arrangement.api.routers.organization_router import organization_router
@@ -73,6 +74,9 @@ api.add_router("/arrangement/room", room_router)
 api.add_router("/arrangement/event_serie", event_serie_router)
 api.add_router("/arrangement/calendar", calendar_router)
 api.add_router("/arrangement/organization", organization_router)
+
+api.add_router("/arrangement/service", service_router)
+api.add_router("/arrangement/service_order", service_order_router)
 
 api.add_router("/arrangement/report", report_router)
 

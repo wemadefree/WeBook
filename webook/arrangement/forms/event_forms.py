@@ -255,6 +255,8 @@ class BaseEventForm(forms.ModelForm):
         self.instance.rooms.set(self.cleaned_data["rooms"])
         self.instance.people.set(self.cleaned_data["people"])
 
+        return self.instance.id
+
     class Meta:
         model = Event
         fields = _ALWAYS_FIELDS

@@ -1,0 +1,131 @@
+{% load static i18n %}
+
+<div id="personellTableApp">
+
+    <div class="d-flex justify-content-between">
+        <button class="btn wb-btn-main mt-1" @click="openAddPersonDialog()">
+            <i class="fas fa-plus"></i>&nbsp; Administrer Personell
+        </button>
+
+        <div class="input-group w-25">
+            <span class="input-group-text">
+                <i class="fas fa-search"></i>
+            </span>
+            <input type="text" class="form-control form-control-lg ">
+        </div>
+    </div>
+
+
+    <table class="table table-striped table-sm mt-3">
+        <thead>
+            <tr>
+                <th class="h5">Person</th>
+            </tr>
+        </thead>
+
+        <tbody class="align-middle">
+            <tr v-for="person in allPersonnell">
+
+                <td>[[ getFullName(person) ]]</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<script type="module">
+    import { Dialog, DialogManager, DialogSimpleRenderer, DialogFormInterceptorPlugin } from  "{% static 'modules/planner/dialog_manager/dialogManager.js' %}";
+
+    class CustomDialogFormInterceptorPlugin extends DialogFormInterceptorPlugin {
+        constructor (csrf_token) {
+            super(csrf_token);
+        }
+
+        onResponseOk() {
+            toastr.success("Forandringene har blitt lagret!");
+        }
+    }
+
+    $(document).ready(function () {
+        const personellTableApp = Vue.createApp({
+            data() {
+                return {
+                    allPersonnell: [],
+                    dialogManager: DialogManager,
+                }
+            },
+            computed: {},
+            methods: {
+                async getPersonnell() {
+                    await fetch("/arrangement/service/{{object.id}}/personnell")
+                        .then(async response => this.allPersonnell = await response.json());
+                },
+                openAddPersonDialog(serviceId) {
+                    console.log(">> openAddPersonDialog")
+                    document.dispatchEvent(new CustomEvent(
+                        "personellTableDialogsManager.add_person_dialog.trigger",
+                        { detail: { id: serviceId } }
+                    ))
+                },
+                getFullName(person) {
+                    return [ person.first_name, person.middle_name, person.last_name ].join(" ");
+                }
+            },
+            async mounted() {
+                await this.getPersonnell()
+
+                this.dialogManager = new DialogManager({
+                    managerName: 'personellTableDialogsManager',
+                    allowMultipleOpenAtOnce: false,
+                    dialogs: [
+                    [
+                        "add_person_dialog",
+                        new Dialog({
+                            dialogElementId: 'add_person_dialog',
+                            triggerElementId: undefined,
+                            triggerByEvent: true,
+                            formUrl: '/arrangement/service/add_person/<<id>>',
+                            dialogOptions: {
+                                classes: { "ui-dialog": "wb-dialog" },
+                                dialogClass: 'no-titlebar',
+                                position: {
+                                    my: 'top right',
+                                    at: 'top',
+                                    of: document
+                                },
+                                modal: true,
+                                width: '100%',
+                                height: $(window).height,
+                            },
+                            plugins: [ new CustomDialogFormInterceptorPlugin("{{csrf_token}}") ],
+                            htmlFabricator: async (context, dialog) => {
+                                const id = context.lastTriggererDetails.id;
+        
+                                return this.dialogManager.loadDialogHtml({
+                                    url: "/arrangement/service/add_person/{{object.id}}",
+                                    dialogId: "add_person_dialog",
+                                    managerName: "serviceDialogsManager",
+                                });
+                            },
+                            onRenderedCallback: (dialogManager, context) => {
+                            },
+                            onUpdatedCallback: async (dialogManager, context) => {
+                                await this.getPersonnell();
+
+                            },
+                            onSubmit: async (context, details) => {
+                                console.log("onsubmit has been triggerered")
+                                await this.getPersonnell();
+                            }
+                        })
+                    ]
+                ]});
+        
+                this.dialogManager._makeAware();
+            },
+            delimiters: [ '[[', ']]']
+        });
+
+        personellTableApp.mount("#personellTableApp");
+    });
+</script>

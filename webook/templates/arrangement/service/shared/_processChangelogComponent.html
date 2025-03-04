@@ -1,0 +1,114 @@
+<template id="vuec-components-process-changelog">
+
+    <table class="table align-middle" v-if="Object.keys(provisionsById).length > 0">
+        <thead>
+            <tr>
+                <th class="h4">Hendelse</th>
+                <th class="h4">Status</th>
+                <th class="h4">Dato & Tid</th>
+                <th class="h4">Valg</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="changelog in changelogData.changelogs" 
+                >
+                <td class="text-center">
+                    <div class="badge shadow-3 badge-warning p-2" v-if="changelog.change_type == 'times_changed'">
+                        <i class="fas fa-clock"></i>&nbsp; Tid endret
+                    </div>
+                    <div class="badge shadow-3 badge-danger p-2" v-if="changelog.change_type == 'removed'">
+                        <i class="fas fa-trash"></i>&nbsp; Fjernet
+                    </div>
+                    <div class="badge shadow-3 badge-success p-2" v-if="changelog.change_type == 'new'">
+                        <i class="fas fa-plus"></i>&nbsp; Lagt til
+                    </div>
+                </td>
+                <td style="width: 1rem">
+                    <div v-if="changelog.change_type == 'removed'">
+                        <div class="badge p-2 badge-danger">Slettet</div>
+                    </div>
+                    <div v-else-if='provisionsById[changelog.provision].is_complete'>
+                        <div class="badge p-2 badge-success">Ferdigbehandlet</div>
+                    </div>
+                    <div v-else>
+                        <div class="badge p-2 badge-warning">Venter behandling</div>
+                    </div>
+                </td>
+                <td>
+                    <span v-if="changelog.change_type == 'times_changed'">
+                        [[ provisionsById[changelog.provision].time_display ]]
+                        <em class=" fw-bold ms-2">(Gikk tidligere fra: [[ changelog.initial_time ]])</em>
+                    </span>
+                    <span v-else-if="changelog.change_type == 'removed'">
+                        <!-- [[changelog.date.replaceAll("-", ".")]] [[ initialTimesByDate[changelog.date].start ]] til [[ initialTimesByDate[changelog.date].end ]] -->
+                        [[changelog.initial_time]]
+                    </span>
+                    <span v-else-if="changelog.change_type == 'new'">
+                        [[ changelog.initial_time ]]
+                    </span>
+                </td>
+                <td>
+                    <div v-if="changelog.change_type !== 'removed'">
+                        <button class="btn wb-btn-main" 
+                                @click="$emit('openLineForProcessing', changelog.provision)">
+                            Behandle
+                        </button>
+                    </div>
+                    <div v-else>
+                        <button class="btn wb-btn-main" disabled>
+                            Behandle
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+</template>
+
+
+<script>
+    const ProcessChangelogTableComponent = {
+        components: {
+        },
+        props: {
+            soprToken: String,
+            provisions: Array,
+        },
+        data() {
+            return {
+                changelogData: [],
+            }
+        },
+        computed: {
+            isComplete() {
+                return false;
+            },
+            provisionsById() {
+                let result = {}
+
+                this.provisions.forEach((provision) => {
+                    result[provision.provision_id] = provision;
+                });
+
+                return result;
+            }
+        },
+        methods: {
+            async getChangelog() {
+                return 
+            }
+        },
+        async created() {
+            this.changelogData = await fetch("/arrangement/service/changesummary/" + this.soprToken, {
+                method: 'GET'
+            }).then(async response => await response.json());
+            console.log(this.changelogData);
+            console.log("provisionsog", this.provisions);
+            console.log("provisions", this.provisionsById)
+        },
+        delimiters: [ "[[", "]]" ],
+        template: "#vuec-components-process-changelog"
+    }
+</script>

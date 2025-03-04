@@ -1,0 +1,263 @@
+{% load static %}
+
+
+<template id="vuec-preconfigurations-component">
+
+    <div class="clearfix">
+        <button class="btn wb-btn-main mb-3 float-end" @click="openCreatePreconfigurationModal()">
+            Ny prekonfigurasjon
+        </button>
+    </div>
+
+    <table-component v-if="renderTable"
+        :data-source="preconfigurationsDataSourceFunc"
+        :can-search="true"
+        @row-clicked="whenRowIsClicked"
+        @delete-preconfiguration="deletePreconfiguration"
+        @edit-preconfiguration="onEditPreconfigurationAction">
+    </table-component>
+
+    <div class="modal fade" id="vuec-preconfigurations-component-update-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" v-if="focusedPreconfiguration.id"><i class="fas fa-edit"></i>&nbsp; Rediger <em>[[focusedPreconfiguration.title]]</em></h5>
+                <h5 class="modal-title" v-else><i class="fas fa-plus"></i>&nbsp; Ny prekonfigurasjon</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-7">
+                        <div class="form-group">
+                            <label for="" class="h5">Tittel</label>
+                            <input type="text" class="form-control" name="" id="" v-model="focusedPreconfiguration.title">
+                        </div>
+        
+                        <div class="form-group mt-3">
+                            <label for="" class="h5">Innhold</label>
+                            <textarea name="" class="form-control" id="" cols="30" rows="10" v-model="focusedPreconfiguration.message"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <h3>Personell</h3>
+                        
+                        <table-component
+                            :data-source="personellDataSourceFunc"
+                            :can-search="true"
+                            :hidden-columns="['personell']"
+                            @checkbox-clicked="onPersonellCheckboxClicked">
+                        </table-component>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn wb-btn-secondary" data-mdb-dismiss="modal">Avbryt</button>
+                <button type="button" class="btn wb-btn-main" @click="upsertPreconfiguration()">
+                    <span v-if="focusedPreconfiguration.id == 0">Opprett</span>
+                    <span v-else>Oppdater</span>
+                </button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+</template>
+
+
+<script>
+    const PreconfigurationsTableComponent = {
+        components: {
+            TableComponent
+        },
+        props: { serviceId: Number },
+        data() {
+            return {
+                preconfigurations: [],
+                focusedPreconfiguration: {},
+                renderTable: true,
+                cachedPersonell: [],
+            }
+        },
+        computed: {
+            async personellDataSourceFunc() {
+                // TODO: Verify if this is necessary. Causes issues if no results.
+                // if (this.cachedPersonell.length == 0)
+                //     console.log("fetching personell")
+
+                this.cachedPersonell = await fetch("/arrangement/service/" + this.serviceId + "/personell")
+                    .then(response => response.json());
+                    
+                const data = this.cachedPersonell.map(person => {
+                    return {
+                        id: person.id,
+                        name: person.name,
+                        is_selected: this.focusedPreconfiguration.personell?.includes(person.id) ?? false
+                    }
+                });
+
+                return {
+                    columns: {
+                        "name": {
+                            isHtml: false,
+                            friendlyName: "Navn",
+                            isSortable: true,
+                            isSearchable: true,
+                        },
+                        "is_selected": {
+                            isComponent: true,
+                            componentName: "checkbox",
+                            isHtml: false,
+                            friendlyName: "Valgt",
+                            isSortable: true,
+                            isSearchable: true,
+                        }
+                    },
+                    data: data
+                }
+            },
+        },
+        created() {
+
+        },
+        methods: {
+            onPersonellCheckboxClicked(data) {
+                const { row, columnKey } = data;
+                const value = row[columnKey];
+
+                if (this.focusedPreconfiguration.personell == undefined)
+                    this.focusedPreconfiguration.personell = [];
+
+                if (value == true)
+                    this.focusedPreconfiguration.personell.push(row.id);
+                else
+                    this.focusedPreconfiguration.personell = this.focusedPreconfiguration.personell.filter(id => id != row.id);
+            },
+            async rerenderTable() {
+                this.renderTable = false;
+                await this.$nextTick();
+                this.renderTable = true;
+            },
+            async preconfigurationsDataSourceFunc() {
+                let data = await fetch("/arrangement/service/" + this.serviceId + "/preconfigurations").then(response => response.json());
+
+                return {
+                    columns: {
+                        "title": {
+                            isHtml: false,
+                            friendlyName: "Tittel",
+                            isSortable: true,
+                            isSearchable: true,
+                        },
+                        "message": {
+                            isHtml: false,
+                            friendlyName: "Innhold",
+                            isSortable: true,
+                            isSearchable: true,
+                        },
+                        "personell": {
+                            friendlyName: "Personell",
+                            isHidden: true
+                        }
+                    },
+                    actions: {
+                        "editPreconfiguration": { type: 'main', content: "<i class='fas fa-edit'></i>&nbsp; Rediger", isContentHtml: true },
+                        "deletePreconfiguration": { type: 'main', content: "<i class='fas fa-trash'></i>&nbsp; Slett", isContentHtml: true },
+                    },
+                    data: data
+                }
+            },
+            whenRowIsClicked(event, row) {
+                //this.focusedPreconfiguration = row;
+                //this.openEditPreconfigurationModal();
+            },
+            openEditPreconfigurationModal() {
+                if (!this.editPreconfigurationModal)
+                    this.editPreconfigurationModal = new mdb.Modal(document.getElementById('vuec-preconfigurations-component-update-modal'))
+                this.editPreconfigurationModal.show();
+            },
+            openCreatePreconfigurationModal() {
+                this.focusedPreconfiguration = { id: 0, title: "", message: ""};
+                this.openEditPreconfigurationModal();
+            },
+            onEditPreconfigurationAction(row) {
+                this.focusedPreconfiguration = row;
+                this.openEditPreconfigurationModal();
+            },
+            async upsertPreconfiguration() {
+                let formData = new FormData();
+                formData.set("service", this.serviceId);
+                formData.set("title", this.focusedPreconfiguration.title);
+                formData.set("message", this.focusedPreconfiguration.message);
+
+                if (this.focusedPreconfiguration.personell && this.focusedPreconfiguration.personell.length > 0) {
+                    this.focusedPreconfiguration.personell.forEach((item) => {
+                        if (item) {
+                            formData.append("assigned_personell", item);
+                        }
+                    });
+                }
+
+                const operationType = this.focusedPreconfiguration.id == 0 ? "create" : "update";
+ 
+                await fetch(operationType == "create" 
+                        ? "/arrangement/service/preconfigurations/create"
+                        : `/arrangement/service/preconfigurations/${this.focusedPreconfiguration.id}/update`, {
+                    method: 'POST',
+                    headers: { "X-CSRFToken": "{{csrf_token}}" },
+                    body: formData
+                }).then(async response => {
+                    if (!response.ok) {
+                        toastr.error("Feilet på opprettelse av prekonfigurasjon");
+                        return;
+                    }
+                    const responseData = await response.json();
+                    if ("success" in responseData && responseData.success === false) {
+                        toastr.error("Tilsendt skjema er manglende, operasjonen feilet.");
+                        return;
+                    }
+
+                    toastr.success(`Prekonfigurasjon '${this.focusedPreconfiguration.title}' ${operationType == 'create' ? 'opprettet' : 'oppdatert'}`);
+
+                    this.editPreconfigurationModal.hide();
+
+                    this.rerenderTable();
+                });
+            },
+            async deletePreconfiguration(row) {
+                Swal.fire({
+                    title: 'Er du sikker?',
+                    text: `Er du sikker på at du har lyst til å slette '${row.title}'? Dette vil ikke affektere bestillinger som har brukt denne prekonfigurasjonen,
+                    men valget vil ikke være tilgjengelig lenger.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Slett',
+                    cancelButtonText: 'Avbryt'
+                }).then(async result => {
+                    if (result.isConfirmed) {
+                      await fetch("/arrangement/service/preconfigurations/delete/" + row.id, {
+                        method: 'DELETE',
+                        headers: { "X-CSRFToken": "{{csrf_token}}" },
+                      }).then(response => {
+                        if (!response.ok) {
+                            toastr.error("En feil oppstod ved sletting");
+                            return;
+                        }
+
+                        toastr.success(`${row.title} har blitt slettet`);
+
+                        this.rerenderTable();
+                      });
+                    }
+                })
+            },
+        },
+        mounted() {
+        },
+        template: "#vuec-preconfigurations-component",
+        delimiters: [ "[[", "]]"]
+    }
+</script>

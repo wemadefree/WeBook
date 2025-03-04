@@ -65,7 +65,7 @@ class RequisitionsDashboard(
     LoginRequiredMixin, RequisitionSectionManifestMixin, MetaMixin, ListView
 ):
     model = LooseServiceRequisition
-    view_meta = ViewMeta.Preset.table
+    view_meta = ViewMeta.Preset.table(LooseServiceRequisition)
 
 
 requisition_dashboard_view = RequisitionsDashboard.as_view()
@@ -175,9 +175,7 @@ class RequisitionServiceFormView(LoginRequiredMixin, FormView):
         context["LREQ"] = loose_service_requisition
 
         if loose_service_requisition.generated_requisition_record is not None:
-            context[
-                "ORDER"
-            ] = (
+            context["ORDER"] = (
                 loose_service_requisition.generated_requisition_record.get_requisition_data()
             )
 

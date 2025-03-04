@@ -9,6 +9,7 @@ T = TypeVar("T")
 
 
 class OperationType(Enum):
+    ADD = "add"
     CREATE = "create"
     UPDATE = "update"
     GET = "get"

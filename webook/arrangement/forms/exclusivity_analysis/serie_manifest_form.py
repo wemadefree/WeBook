@@ -321,3 +321,5 @@ class CreateSerieForm(SerieManifestForm):
         Event.rooms.through.objects.bulk_create(room_throughs)
         Event.people.through.objects.bulk_create(people_throughs)
         Event.display_layouts.through.objects.bulk_create(display_layout_throughs)
+
+        return serie.id

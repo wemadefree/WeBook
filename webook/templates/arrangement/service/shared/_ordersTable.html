@@ -1,0 +1,33 @@
+<div id="ordersPageApp">
+    <div class="table-responsive">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th><strong>#</strong></th>
+                    <th>Status</th>
+                    <th>Tidsstempel</th>
+                    <th>Tildelte</th>
+                    <th>Valg</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        const ordersPageApp = Vue.createApp({
+            data() {
+                return {
+                    allOrders: [],
+                }
+            },
+            computed: {},
+            methods: {
+            },
+            async mounted() {
+            },
+            delimiters: [ '[[', ']]']
+        })
+    })
+</script>

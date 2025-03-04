@@ -527,7 +527,6 @@
 
                 if (this.isApiDataSource) {
                     return items || []; // Do not filter on API data sources. It's handled by backend.
-                
                 }
 
                 if (this.canSearch && this.searchTerm) {
@@ -567,8 +566,14 @@
                     return this.visibleItems.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage);
                 else if (this.dataSource instanceof Function)
                     return this.visibleItems.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage);
+                else if (this.dataSource instanceof Promise)
+                    return this.visibleItems.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage);
+                else if (this.dataSource instanceof Object)
+                    return this.visibleItems.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage);
+                
+                console.log("dataSource", this.dataSource);
 
-                throw new Error("Data source is not an array, and is not an instance of APITableDataSource");
+                throw new Error("(1) Data source is not an array, and is not an instance of APITableDataSource", this.dataSource);
             },
             visibleColumns() {
                 let columns = {};
@@ -846,6 +851,17 @@
                     const result = await this.dataSource();
                     if (!result instanceof Object)
                         throw new Error("DataSource is callable, but did not return an array");
+
+                    return result;
+                }
+
+                if (this.dataSource instanceof Promise) {
+                    const result = await this.dataSource;
+                    if (!result instanceof Object)
+                        throw new Error("DataSource is a promise, but did not resolve to an array");
+
+
+                    console.log("Promise resolved", result);
 
                     return result;
                 }

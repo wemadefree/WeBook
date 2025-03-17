@@ -795,7 +795,6 @@ async def delete_event(event_id: int):
             .prefetch_related("serie__synced_events")
             .prefetch_related("serie__events")
             .prefetch_related("serie__associated_events")
-            .prefetch_related("synced_events__graph_calendar__person")
             .aget(id=event_id)
         )
     except Event.DoesNotExist:
@@ -809,9 +808,10 @@ async def delete_event(event_id: int):
     ).select_related("graph_calendar")
 
     async for synced_event in synced_events:
+        person = await Person.objects.aget(pk=synced_event.graph_calendar.person_id)
         calendar_request_builder: CalendarItemRequestBuilder = (
             graph_service_client.users.by_user_id(
-                synced_event.graph_calendar.person.social_provider_email
+                person.social_provider_email
             ).calendars.by_calendar_id(synced_event.graph_calendar.calendar_id)
         )
         _ = await calendar_request_builder.events.by_event_id(
@@ -835,16 +835,15 @@ async def delete_serie(serie_id: int):
 
         graph_service_client: GraphServiceClient = create_graph_service_client()
 
-        synced_events = (
-            SyncedEvent.objects.filter(webook_event_serie=deleted_serie)
-            .select_related("graph_calendar")
-            .select_related("graph_calendar__person")
-        )
+        synced_events = SyncedEvent.objects.filter(
+            webook_event_serie=deleted_serie
+        ).select_related("graph_calendar")
 
         async for synced_event in synced_events:
+            person = await Person.objects.aget(pk=synced_event.graph_calendar.person_id)
             calendar_request_builder: CalendarItemRequestBuilder = (
                 graph_service_client.users.by_user_id(
-                    synced_event.graph_calendar.person.social_provider_email
+                    person.social_provider_email
                 ).calendars.by_calendar_id(synced_event.graph_calendar.calendar_id)
             )
 

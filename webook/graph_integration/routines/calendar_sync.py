@@ -745,11 +745,8 @@ async def subscribe_person_to_webook_calendar(person: Person) -> GraphCalendar:
                                 raise err
                             c += 1
 
-                            if c > 100:
-                                raise ValueError(
-                                    "Could not create calendar for person"
-                                )
-                            
+                            if c > 20:
+                                raise ValueError("Could not create calendar for person")
 
             raise err
 

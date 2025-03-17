@@ -263,6 +263,10 @@ async def map_serie_to_graph_event(event_serie: WebookEventSerie) -> GraphEvent:
         .afirst()
     )
 
+    if sample_event is None:
+        print(event_serie.id)
+        raise ValueError("Event serie has no events")
+
     base: GraphEvent = await map_event_to_graph_event(sample_event)
     # base.start = None
     # base.end = None

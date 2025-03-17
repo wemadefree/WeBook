@@ -1,6 +1,6 @@
 import calendar
 from dataclasses import dataclass
-from datetime import datetime, time, timedelta
+from datetime import datetime, time, timedelta, date
 from typing import List, Optional
 
 from dateutil.relativedelta import *
@@ -41,6 +41,7 @@ class _Scope:
 @dataclass
 class _Event:
     title: str
+    date: date
     start: time
     end: time
 
@@ -195,6 +196,7 @@ def _pattern_strategy_weekly_standard(cycle: _CycleInstruction) -> List[_Event]:
                     end=cycle.tz.localize(
                         datetime.combine(adjusted_start_date, cycle.event.end)
                     ),
+                    date=adjusted_start_date.date(),
                 )
             )
 
@@ -400,6 +402,7 @@ def calculate_serie(
                 title=serie_manifest.title,
                 start=serie_manifest.start_time,
                 end=serie_manifest.end_time,
+                date=date_cursor.date(),
             ),
             arbitrator=serie_manifest.arbitrator,
             interval=serie_manifest.interval,

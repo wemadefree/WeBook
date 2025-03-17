@@ -4,6 +4,23 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
+        {
+            "name": "Django Celery Worker",
+            "type": "debugpy",
+            "request": "launch",
+            // "console": "integratedTerminal",
+            "module": "celery",
+            "args": [
+                "--app",
+                "celery_app.celery",
+                "worker",
+                "--loglevel",
+                "DEBUG",
+                "--pool",
+                "solo"
+            ]       
+        },
         {
             "name": "Python Debugger: Django",
             "type": "debugpy",
@@ -15,6 +32,12 @@
             "autoStartBrowser": false,
             "justMyCode": false,
             "program": "${workspaceFolder}/manage.py"
+        },
+    ],
+    "compounds": [
+        {
+            "name": "Celery and Django",
+            "configurations": ["Django Celery Worker", "Python Debugger: Django"]
         }
     ]
 }

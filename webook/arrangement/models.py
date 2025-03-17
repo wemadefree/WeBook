@@ -207,7 +207,7 @@ class ModelAuditableMixin(models.Model):
                 self.created_by = person
             else:
                 self.updated_by = person
-        elif request.service_account:
+        elif request and request.service_account:
             if not request.service_account.person:
                 person = Person()
                 person.first_name = request.service_account.username
@@ -1524,6 +1524,16 @@ class Event(
         to=ArrangementType, on_delete=models.RESTRICT, null=True, blank=True
     )
 
+    original_date = models.DateField(
+        verbose_name=_("Original Date"), null=True, blank=True
+    )
+
+    def save(self, **kwargs):
+        if self.original_date is None:
+            self.original_date = self.start.date()
+
+        return super().save(**kwargs)
+
     def hash_key(self) -> str:
         return str(
             (self.title + "-" + self.start.isoformat() + "-" + self.end.isoformat())
@@ -1662,7 +1672,7 @@ class Event(
 
     def delete(self, using=None, keep_parents=False):
         self.abandon_rigging_relations()
-        return super().delete(using, keep_parents)
+        return super().archive()
 
     def abandon_rigging_relations(self, commit=True) -> None:
         # If we are deleting a rigging event (supporting another event)
@@ -1683,10 +1693,12 @@ class Event(
         # If the event we are deleting has supporting rigging events then we want to delete these supporting
         # rigging events when the parent owner is deleted.
         if self.buffer_before_event:
-            self.buffer_before_event.delete()
+            # self.buffer_before_event.delete()
+            self.buffer_before_event.archive()
             self.buffer_before_event = None
         if self.buffer_after_event:
-            self.buffer_after_event.delete()
+            # self.buffer_after_event.delete()
+            self.buffer_after_event.archive()
             self.buffer_after_event = None
 
         if commit:
@@ -1968,6 +1980,8 @@ class PlanManifest(TimeStampedModel, BufferFieldsMixin, CalendarEntitySchoolMixi
         max_length=124,
     )
 
+    calculated_end_date = models.DateField(blank=True, null=True)
+
     def hash_key(self) -> str:
         return "-".join(
             [
@@ -2016,6 +2030,14 @@ class EventSerie(TimeStampedModel, ModelArchiveableMixin):
     serie_plan_manifest = models.ForeignKey(
         to=PlanManifest, on_delete=models.RESTRICT, related_name="event_series"
     )
+
+    @property
+    def time_range(self) -> Tuple[datetime.date, datetime.date]:
+        events = [*self.events.all(), *self.associated_events.all()]
+        start = min(events, key=lambda x: x.start).start
+        end = max(events, key=lambda x: x.end).end
+
+        return (start, end)
 
     def hash_key(self) -> str:
         if self.serie_plan_manifest is None:

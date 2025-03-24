@@ -139,8 +139,8 @@
             schedulerLicenseKey: '{{ FULLCALENDAR_LICENSE_KEY }}',
             initialView: 'resourceTimelineWeek',
             resourceLabelContent: function (arg) {
-                let roomName = arg.resource.title;
-                let slug = arg.resource.id;
+                const roomName = arg.resource.title;
+                const slug = arg.resource.id;
 
                 let rootWrapper = document.createElement("div");
                 rootWrapper.classList.add("d-flex", "vertical-align-middle", "justify-content-between");

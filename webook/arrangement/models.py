@@ -29,6 +29,7 @@ import webook.screenshow.models as screen_models
 from webook.arrangement.managers import ArchivedManager, EventManager
 from webook.utils.crudl_utils.model_mixins import ModelNamingMetaMixin
 from webook.utils.manifest_describe import describe_manifest
+from django.db.models.query import QuerySet
 
 
 class SelfNestedModelMixin(models.Model):
@@ -741,6 +742,9 @@ class Location(TimeStampedModel, ModelNamingMetaMixin, ModelArchiveableMixin):
         for room in rooms:
             room.archive(person_archiving_this)
 
+    def active_rooms(self) -> QuerySet[Room]:
+        return self.rooms.filter(is_disabled=False)
+
     name = models.CharField(verbose_name=_("Name"), max_length=255)
     slug = AutoSlugField(populate_from="name", unique=True, manager_name="all_objects")
 
@@ -791,9 +795,12 @@ class Room(TimeStampedModel, ModelNamingMetaMixin, ModelArchiveableMixin):
         on_delete=models.CASCADE,
         related_name="rooms",
     )
+
     max_capacity = models.IntegerField(verbose_name="Maximum Occupants")
     is_exclusive = models.BooleanField(verbose_name=_("Is Exclusive"), default=False)
     has_screen = models.BooleanField(verbose_name=_("Has Screen"), default=True)
+    is_disabled = models.BooleanField(verbose_name=_("Is Disabled"), default=False)
+
     business_hours = models.ManyToManyField(
         to="BusinessHour", verbose_name=_("Business Hours")
     )

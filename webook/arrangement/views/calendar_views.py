@@ -142,9 +142,8 @@ class EventSourceViewMixin(ListView):
             end = self.request.GET.get("end", None)
 
             if start and end is not None:
-                self.event_list = self.event_list.get_in_period(
-                    start=parser.parse(start),
-                    end=parser.parse(end),
+                self.event_list = self.event_list.filter(
+                    Q(start__lte=parser.parse(end)) & Q(end__gte=parser.parse(start))
                 )
 
         if self.event_list.model is not Event:
@@ -178,7 +177,6 @@ class LocationEventSourceView(EventSourceViewMixin):
 
     def get_queryset(self):
         location_slug = self.request.GET.get("location", None)
-
         if location_slug is None:
             raise SuspiciousOperation("No location supplied, please supply a location.")
 

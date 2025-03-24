@@ -4,11 +4,11 @@
     <table class="table table-sm" id="roomList">
         <thead>
             <tr>
-                <th class="h5">{% trans "Name" %}</th>
-                <th class="h5">{% trans "Maximum Occupants" %}</th>
-                <th class="h5">{% trans "Is Exclusive?" %}</th>
-                <th class="h5">{% trans "Has Screen?" %}</th>
-                <th class="h5">{% trans "Options" %}</th>
+                <th class="h5">Navn</th>
+                <th class="h5">Maks Antall Personer</th>
+                <th class="h5">Er Eksklusiv?</th>
+                <th class="h5">Har Skjerm?</th>
+                <th class="h5">Valg</th>
             </tr>
         </thead>
 
@@ -42,13 +42,13 @@
                             class="btn wb-btn-main btn-sm"
                             href="">
                             <i class="fas fa-trash"></i>&nbsp;
-                            {% trans "Delete" %}
+                            Slett
                         </a>
                         <a
                             class="btn wb-btn-main btn-sm"
                             href="{% url 'arrangement:room_edit' item.slug %}">
                             <i class="fas fa-edit"></i>&nbsp;
-                            {% trans "Edit" %}
+                            Rediger
                         </a>
                     </td>
                 </tr>

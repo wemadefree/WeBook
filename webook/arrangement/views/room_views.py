@@ -81,6 +81,7 @@ class RoomUpdateView(
         "is_exclusive",
         "has_screen",
         "max_capacity",
+        "is_disabled",
     ]
     view_meta = ViewMeta.Preset.edit(Room)
     template_name = "arrangement/room/room_form.html"

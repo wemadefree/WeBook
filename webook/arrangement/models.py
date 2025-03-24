@@ -791,9 +791,12 @@ class Room(TimeStampedModel, ModelNamingMetaMixin, ModelArchiveableMixin):
         on_delete=models.CASCADE,
         related_name="rooms",
     )
+
     max_capacity = models.IntegerField(verbose_name="Maximum Occupants")
     is_exclusive = models.BooleanField(verbose_name=_("Is Exclusive"), default=False)
     has_screen = models.BooleanField(verbose_name=_("Has Screen"), default=True)
+    is_disabled = models.BooleanField(verbose_name=_("Is Disabled"), default=False)
+
     business_hours = models.ManyToManyField(
         to="BusinessHour", verbose_name=_("Business Hours")
     )

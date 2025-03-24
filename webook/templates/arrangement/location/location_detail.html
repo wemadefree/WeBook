@@ -138,12 +138,34 @@
         var calendar = new FullCalendar.Calendar(calendarEl, {
             schedulerLicenseKey: '{{ FULLCALENDAR_LICENSE_KEY }}',
             initialView: 'resourceTimelineWeek',
-            height: 600,
+            resourceLabelContent: function (arg) {
+                let roomName = arg.resource.title;
+                let slug = arg.resource.id;
+
+                let rootWrapper = document.createElement("div");
+                rootWrapper.classList.add("d-flex", "vertical-align-middle", "justify-content-between");
+
+                let roomNameElement = document.createElement("span");
+                roomNameElement.classList.add("h5");
+                roomNameElement.innerText = roomName;
+                rootWrapper.appendChild(roomNameElement);
+
+                let roomLink = document.createElement("a");
+                roomLink.href = "{% url 'arrangement:room_edit' 'slug' %}".replace("slug", slug);
+                roomLink.classList.add("btn", "btn-sm", "btn-dark");
+                let roomLinkIcon = document.createElement("i");
+                roomLinkIcon.classList.add("fas", "fa-edit");
+                roomLink.appendChild(roomLinkIcon);
+                rootWrapper.appendChild(roomLink);
+
+                return { domNodes: [rootWrapper] }
+            },
+            // height: 600,
             navLinks:true,
             locale: 'nb',
 
-            events: async function () {
-                return await fetch('{% url "arrangement:events_on_location_source" %}?location={{ object.slug }}')
+            events: async function (info) {
+                return await fetch('{% url "arrangement:events_on_location_source" %}?location={{ object.slug }}&start=' + info.start.toISOString() + '&end=' + info.end.toISOString())
                     .then(response => response.json())
             },
 

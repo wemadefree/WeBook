@@ -3,6 +3,7 @@ from msgraph.generated.models.event import Event as GraphEvent
 from webook.arrangement.models import (
     Arrangement as WebookArrangement,
     Event as WebookEvent,
+    Person,
     PlanManifest as WebookSerieManifest,
     Location as WebookLocation,
     Room as WebookRoom,
@@ -21,7 +22,7 @@ from msgraph.generated.models.week_index import WeekIndex
 from asgiref.sync import sync_to_async
 
 
-async def map_event_to_graph_event(event: WebookEvent) -> GraphEvent:
+async def map_event_to_graph_event(event: WebookEvent, person: Person) -> GraphEvent:
     """Map a WeBook event to a Graph API event.
 
     Args:
@@ -52,7 +53,6 @@ async def map_event_to_graph_event(event: WebookEvent) -> GraphEvent:
                 ),
                 type="required",
             )
-            async for person in event.people.all()
         ],
         allow_new_time_proposals=False,
     )

@@ -305,7 +305,7 @@ async def _execute_sync_instructions(
                 )
             else:
                 mapped_graph_event = await map_event_to_graph_event(
-                    synced_event.webook_event
+                    synced_event.webook_event, person
                 )
 
         print("calendar_id|" + synced_event.graph_calendar.calendar_id)

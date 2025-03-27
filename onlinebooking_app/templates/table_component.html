@@ -432,7 +432,7 @@
                     this.currentPage = data.summary.page;
                     this.itemsPerPage = data.summary.limit;
 
-                    if (useV2Search) {
+                    if (this.useV2Search) {
                         data = data.map(x => x.obj); // api sorts by score, top hits are the most relevant
                     }
 

@@ -1,0 +1,208 @@
+<template id="vuec-orders-table-component">
+    <ul class="nav nav-tabs webook-tabs webook-tabs-sm mt-0" role="tablist">
+        <li class="nav-item" role="presentation">
+            <li class="nav-item" role="presentation">
+                <a 
+                    class="nav-link active" 
+                    id="orders-tab" 
+                    data-mdb-toggle="tab" 
+                    href="#queued-orders" 
+                    role="tab" 
+                    aria-controls="orders" 
+                    aria-selected="true">
+                    <i class="fas fa-hourglass"></i>
+                    I kø
+                    <span class="badge badge-pill badge-info">
+                        0
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a 
+                    class="nav-link text-small" 
+                    id="orders-tab" 
+                    data-mdb-toggle="tab" 
+                    href="#orders-awaiting-processing" 
+                    role="tab" 
+                    aria-controls="orders" 
+                    aria-selected="true">
+                    <i class="fas fa-spinner"></i>
+                    Venter provisjonering
+                    <span class="badge badge-pill badge-warning">
+                        0
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a 
+                    class="nav-link" 
+                    id="orders-tab" 
+                    data-mdb-toggle="tab" 
+                    href="#orders-processed" 
+                    role="tab" 
+                    aria-controls="orders" 
+                    aria-selected="true">
+                    <i class="fas fa-check"></i>
+                    Ferdigbehandlet
+                    <span class="badge badge-pill badge-success">
+                        0
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a 
+                    class="nav-link" 
+                    id="orders-tab" 
+                    data-mdb-toggle="tab" 
+                    href="#orders-history" 
+                    role="tab" 
+                    aria-controls="orders" 
+                    aria-selected="true">
+                    <i class="fas fa-history"></i>
+                    Historikk
+                    <span class="badge badge-pill badge-secondary">
+                        0
+                    </span>
+                </a>
+            </li>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="orders-table-tabs-content">
+        <div class="tab-pane mt-3 fade show active" id="queued-orders" role="tabpanel" aria-labelledby="queued-orders-tab">
+            <table-component
+                :data-source="ordersDataSourceFunc"
+                :column-names="{ 'message': 'Melding' }"
+                :can-search="true">
+            </table-component>
+        </div>
+
+        <div class="tab-pane mt-3 fade" id="orders-awaiting-processing" role="tabpanel" aria-labelledby="orders-awaiting-processing-tab">
+            A
+        </div>
+    </div>
+
+
+</template>
+
+<script>
+    let OrdersTableComponent = {
+        components: {
+            'table-component': TableComponent
+        },
+        props: {
+            serviceId: Number
+        },
+        emits: [],
+        data() {
+
+        },
+        methods: {
+            async ordersDataSourceFunc() {
+                console.log("Fetching orders for service id: " + this.serviceId)
+
+                let data = await fetch("/arrangement/service/" + this.serviceId + "/orders", {
+                    method: 'GET',
+                }).then(response => response.json())
+
+                data.forEach(function (item) {
+                    const stateToTypeConversions = {
+                        "awaiting": { 
+                            "type": "warning",
+                            "iconClass": "fa-hourglass",
+                            "tooltip": "Bestillingen venter behandling"
+                        },
+                        "denied": {
+                            "type": "danger",
+                            "iconClass": "fa-hand-paper",
+                            "tooltip": "Bestillingen har blitt avslått"
+                        },
+                        "confirmed": {
+                            "type": "success",
+                            "iconClass": "fa-check",
+                            "tooltip": "Bestillingen er ferdig behandlet"
+                        },
+                        "cancelled": {
+                            "type": "danger",
+                            "iconClass": "fa-times",
+                            "tooltip": "Bestillingen har blitt kansellert av planlegger"
+                        },
+                        "in_revision": {
+                            "type": "secondary",
+                            "iconClass": "fa-edit",
+                            "tooltip": "Bestillingen er under revisjon"
+                        }
+                    }
+
+                    const stateBasedActions = {
+                        "confirmed": { 
+                            "openForEditing": { type: 'main', content: '<i class="fas fa-unlock"></i>&nbsp; Åpne for redigering', isContentHtml: true },
+                            "-processServiceOrder":"",
+                        },
+                        "cancelled": {
+                            "-processServiceOrder": "",
+                        },
+                        "denied": {
+                            "-processServiceOrder": "",
+                        }
+                    };
+
+                    const stateSort = {
+                        "awaiting": 1,
+                        "confirmed": 2,
+                        "denied": 3,
+                        "cancelled": 4,
+                    };
+                    if (item.state in stateSort)
+                        item.state_sort = stateSort[item.state];
+
+                    if (item.state in stateBasedActions)
+                        item._actions = stateBasedActions[item.state];
+
+                    if (item.state in stateToTypeConversions)
+                        item.state = stateToTypeConversions[item.state];
+                    else
+                        item.state = { "type": "info", "iconClass": "fa-question" };
+
+                    if (item.assigned_personell)
+                        item.assigned_personell = item.assigned_personell.join(", ")
+                })
+
+                return {
+                    columns: {
+                        "state": { 
+                            isHtml: true, 
+                            friendlyName: "Status", 
+                            isComponent: true, 
+                            componentName: 'statusIndicator',
+                            isSortable: true,
+                        },
+                        "id": { 
+                            isHtml: false, 
+                            friendlyName: "#", 
+                            isSortable: true,
+                            isSearchable: true
+                        },
+                        "created": { 
+                            isHtml: false, 
+                            friendlyName: "Tidsstempel",
+                            isSortable: true,
+                        },
+                        "freetext_comment": { 
+                            isHtml: false, 
+                            friendlyName: "Kommentar fra planlegger", 
+                            isSortable: true,
+                            isSearchable: true,
+                        },
+                    },
+                    actions: {
+                        "showDetailedView": { type: 'main', content: '<i class="fas fa-eye"></i>&nbsp; Vis mer', isContentHtml: true },
+                    },
+                    data: data
+                };
+            },
+        },
+        delimiters: ["[[", "]]"],
+        template: "#vuec-orders-table-component"
+    }
+</script>

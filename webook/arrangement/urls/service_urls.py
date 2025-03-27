@@ -168,4 +168,9 @@ service_urls = [
         view=service_tree_json_view,
         name="service_tree_json_view",
     ),
+    path(
+        route="service/<int:id>/personellEvents",
+        view=get_service_personell_fc_calendar_json_view,
+        name="get_service_personell_fc_calendar_json_view",
+    ),
 ]

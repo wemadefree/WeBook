@@ -293,6 +293,17 @@ over the JQUERY dialogs.
   border-color: black;
   background-color: white;
 }
+  
+.webook-tabs-sm .nav-link {
+  font-size: small!important;
+}
+
+.webook-tabs-sm {
+  background-color: var(--SECONDARY-COLOR);
+}
+.webook-tabs-sm .nav-link.active {
+  background-color: var(--SECONDARY-COLOR);
+}
 
 .sidenav-primary .sidenav-link.active {
   color: #231f20;

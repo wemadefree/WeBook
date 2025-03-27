@@ -2222,6 +2222,8 @@ class States(models.TextChoices):
     AWAITING = "awaiting", _("Awaiting")
     DENIED = "denied", _("Denied")
     CONFIRMED = "confirmed", _("Confirmed")
+    MAYBE = "maybe", _("Maybe")
+    PROVISIONED = "provisioned", _("Provisioned")
     CANCELLED = "cancelled", _("Cancelled")
     CHANGED = "changed", _("Changed")
     TEMPLATE = "template", _("Template")

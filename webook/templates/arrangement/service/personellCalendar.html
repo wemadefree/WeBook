@@ -1,0 +1,64 @@
+<template id="vuec-personell-calendar-component">
+    <div ref="calendar">
+    </div>
+
+    <button class="btn btn-primary" @click="initCalendar">Reload calendar</button>
+</template>
+
+<script>
+    let PersonellCalendarComponent = {
+        components: {},
+        props: {
+            serviceId: Number
+        },
+        emits: [],
+        data() {
+
+        },
+        methods: {
+            initCalendar() {
+                console.log("Initializing calendar");
+                const serviceId = this.serviceId;
+                this.$nextTick(() => {
+                    if (this.$refs.calendar === undefined) {
+                       this.initCalendar();
+                       return;
+                    }
+
+                    this.calendar = new FullCalendar.Calendar(this.$refs.calendar, {
+                        schedulerLicenseKey: '{{ FULLCALENDAR_LICENSE_KEY }}',
+                        initialView: 'resourceTimelineWeek',
+                        height: 600,
+                        navLinks:true,
+                        locale: 'nb',
+                        slotMinTime: "06:00:00",
+                        slotMaxTime: "23:00:00",
+                        resources: async function () {
+                            return await fetch("/arrangement/service/" + serviceId + "/personell")
+                                .then(response => response.json())
+                                .then(data => {
+                                    return data.map(personell => {
+                                        return {
+                                            id: personell.id,
+                                            title: personell.name
+                                        }
+                                    });
+                                });
+                        },
+                        events: async function () {
+                            return await fetch("/arrangement/service/" + serviceId + "/personellEvents")
+                                .then(response => response.json())
+                                .then(d => d.events);
+                        },
+                        // { "id": 42033, "title": "Strange Magic 2", "start": "2025-03-25 09:00", "end": "2025-03-25 18:00" }
+                    });
+                    this.calendar.render();
+                });
+            }
+        },
+        mounted() {
+            // this.initCalendar();
+        },
+        template: '#vuec-personell-calendar-component'
+    }
+</script>

@@ -33,6 +33,7 @@ from django.views.generic.detail import (
     SingleObjectTemplateResponseMixin,
 )
 from django.views.generic.edit import DeleteView, FormMixin
+from pytz import timezone
 
 from webook.arrangement.facilities.service_ordering import (
     generate_processing_request_for_user,
@@ -1008,6 +1009,45 @@ class GetServicePersonellJsonView(Service, DetailView):
 
 
 get_service_personell_json_view = GetServicePersonellJsonView.as_view()
+
+
+class GetServicePersonellFCCalendarJsonView(ListView, JSONResponseMixin):
+    model = Service
+    pk_url_kwarg = "id"
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> JsonResponse:
+        service_id = self.kwargs.get("id")
+        service = Service.objects.get(id=service_id)
+
+        personell = service.resources.all()
+
+        events = Event.objects.filter(people__in=personell)
+        format = "%Y-%m-%d %H:%M"
+        return JsonResponse(
+            data={
+                "events": [
+                    {
+                        "extendedProps": {"originatingSource": "bookings"},
+                        "id": event.id,
+                        "title": event.title,
+                        "start": event.start.astimezone(
+                            timezone("Europe/Oslo")
+                        ).strftime(format),
+                        "end": event.end.astimezone(timezone("Europe/Oslo")).strftime(
+                            format
+                        ),
+                        "resourceIds": [person.id for person in event.people.all()],
+                    }
+                    for event in events
+                ]
+            },
+            safe=False,
+        )
+
+
+get_service_personell_fc_calendar_json_view = (
+    GetServicePersonellFCCalendarJsonView.as_view()
+)
 
 
 class ServiceTreeJsonView(LoginRequiredMixin, JsonListView):

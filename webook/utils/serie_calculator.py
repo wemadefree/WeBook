@@ -104,7 +104,7 @@ def _day_seek(start_date: datetime, arbitrator: int, weekday: int) -> datetime:
     # 3 = fourth
     # 4 = last
 
-    weekday = weekday
+    weekday = weekday - 1  # -1 being tmp hotfix
     date = start_date.replace(day=1)
 
     # figure out the diff between the weekday we are currently "cursored" on, and the one we want to be on

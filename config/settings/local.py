@@ -75,6 +75,10 @@ INSTALLED_APPS += ["django_extensions"]  # noqa: F405
 # ------------------------------------------------------------------------------
 # https://anymail.readthedocs.io/en/stable/installation/#installing-anymail
 INSTALLED_APPS += ["anymail"]  # noqa: F405
+INSTALLED_APPS += ["hijack", "hijack.contrib.admin"]
+
+MIDDLEWARE += ["hijack.middleware.HijackUserMiddleware"]
+
 EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 # https://anymail.readthedocs.io/en/stable/installation/#anymail-settings-reference
 if env("MAILGUN_API_KEY", default=None):
@@ -86,3 +90,5 @@ if env("MAILGUN_API_KEY", default=None):
 else:
     # Use console backend if no mailgun credentials are provided.
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+ADMIN_ENABLED = True

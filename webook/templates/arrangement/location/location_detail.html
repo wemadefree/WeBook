@@ -8,11 +8,11 @@
 {% block beneath_breadcrumbs_block %}
     <a class="btn wb-btn-main"
         href="{% url 'arrangement:location_delete' object.slug %}">
-        <i class="fa fa-trash"></i>&nbsp; {% trans "Delete" %}
+        <i class="fa fa-trash"></i>&nbsp; Slett
     </a>
     <a class="btn wb-btn-main"
         href="{% url 'arrangement:location_edit' object.slug %}">
-        <i class="fa fa-edit"></i>&nbsp; {% trans "Edit" %}
+        <i class="fa fa-edit"></i>&nbsp; Rediger
     </a>
 {% endblock %}
 
@@ -74,7 +74,7 @@
             <span class="badge badge-success">
                 <i class="fas fa-plus"></i>
             </span>
-            {% trans "New room" %}
+            Nytt rom
         </h5>
         <button
           type="button"
@@ -87,34 +87,34 @@
         <form id="createNewRoomDialogForm">
             <input type="hidden" name="location" value="{{ object.id }}" />
             <div class="form-group">
-                <label>{% trans "Location" %}</label>
+                <label>Lokasjon</label>
                 <input type="text" class="form-control" value="{{ object.name }}" disabled/>
             </div>
 
             <div class="form-group mt-3">
-                <label>{% trans "Maximum Occupancy" %}</label>
+                <label>Maks Antall Personer</label>
                 <input type="number" name="max_capacity" class="form-control" value="0" />
             </div>
 
             <div class="form-group mt-3">
-                <label>{% trans "Room Name" %}</label>
+                <label>Navn</label>
                 <input type="text" class="form-control" name="name" id="roomNameInput"/>
             </div>
 
             <div class="form-group mt-3">
-                <label>{% trans "Room Name (English)" %}</label>
+                <label>Navn (Engelsk)</label>
                 <input type="text" class="form-control" name="name_en" id="roomNameEnInput">
             </div>
 
             <div class="form-group mt-3">
                 <div class="form-check form-switch">
-                    <label>Is Exclusive?</label>
+                    <label>Er Eksklusiv?</label>
                     <input class="form-check-input" name="is_exclusive" type="checkbox" role="switch" id="roomIsExclusive" />
                 </div>
             </div>
             <div class="form-group mt-3">
                 <div class="form-check form-switch">
-                    <label>Has Screen?</label>
+                    <label>Har Skjerm?</label>
                     <input class="form-check-input" name="has_screen" type="checkbox" role="switch" id="roomHasScreen" />
                 </div>
             </div>
@@ -125,8 +125,8 @@
             <i class="fas fa-times"></i>&nbsp; 
             {% trans "Cancel" %}
         </button>
-        <button type="button" class="btn wb-btn-main" onclick="createNewRoom()"><i class="fas fa-check"></i>&nbsp; {% trans "Create room" %}</button>
-        <button type="button" class="btn wb-btn-main" onclick="createNewRoom(false /* dont close after save*/)">{% trans "Create and new" %}</button>
+        <button type="button" class="btn wb-btn-main" onclick="createNewRoom()"><i class="fas fa-check"></i>&nbsp; Opprett Rom</button>
+        <button type="button" class="btn wb-btn-main" onclick="createNewRoom(false /* dont close after save*/)">Opprett, og ny</button>
       </div>
     </div>
   </div>
@@ -138,12 +138,34 @@
         var calendar = new FullCalendar.Calendar(calendarEl, {
             schedulerLicenseKey: '{{ FULLCALENDAR_LICENSE_KEY }}',
             initialView: 'resourceTimelineWeek',
-            height: 600,
+            resourceLabelContent: function (arg) {
+                const roomName = arg.resource.title;
+                const slug = arg.resource.id;
+
+                let rootWrapper = document.createElement("div");
+                rootWrapper.classList.add("d-flex", "vertical-align-middle", "justify-content-between");
+
+                let roomNameElement = document.createElement("span");
+                roomNameElement.classList.add("h5");
+                roomNameElement.innerText = roomName;
+                rootWrapper.appendChild(roomNameElement);
+
+                let roomLink = document.createElement("a");
+                roomLink.href = "{% url 'arrangement:room_edit' 'slug' %}".replace("slug", slug);
+                roomLink.classList.add("btn", "btn-sm", "btn-dark");
+                let roomLinkIcon = document.createElement("i");
+                roomLinkIcon.classList.add("fas", "fa-edit");
+                roomLink.appendChild(roomLinkIcon);
+                rootWrapper.appendChild(roomLink);
+
+                return { domNodes: [rootWrapper] }
+            },
+            // height: 600,
             navLinks:true,
             locale: 'nb',
 
-            events: async function () {
-                return await fetch('{% url "arrangement:events_on_location_source" %}?location={{ object.slug }}')
+            events: async function (info) {
+                return await fetch('{% url "arrangement:events_on_location_source" %}?location={{ object.slug }}&start=' + info.start.toISOString() + '&end=' + info.end.toISOString())
                     .then(response => response.json())
             },
 

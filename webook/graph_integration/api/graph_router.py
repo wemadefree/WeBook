@@ -50,7 +50,10 @@ def subscribe_to_calendar(request, payload: GraphCalendarSubscribeSchema):
     print("/graph_calendar/subscribe", payload)
     if request.user.is_anonymous:
         return HttpResponse(status=401, content="You need to be logged in")
-    if payload.person_id != request.user.id and request.user.is_superuser is False:
+    if (
+        payload.person_id != request.user.person.id
+        and request.user.is_superuser is False
+    ):
         return HttpResponse(status=403, content="You do not have permission")
 
     existing_calendar = GraphCalendar.objects.filter(
@@ -78,7 +81,7 @@ def destroy_graph_calendar(request, person_id: int):
     if not person:
         return HttpResponse(status=404, content="Person not found")
 
-    if person_id != request.user.id and request.user.is_superuser is False:
+    if person_id != request.user.person.id and request.user.is_superuser is False:
         return HttpResponse(status=403, content="You do not have permission to do this")
 
     print("set task!", tasks.unsubscribe_person_from_webook_calendar.delay(person_id))

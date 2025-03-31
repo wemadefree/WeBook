@@ -4,7 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
             "name": "Django Celery Worker",
             "type": "debugpy",
@@ -19,7 +18,18 @@
                 "DEBUG",
                 "--pool",
                 "solo"
-            ]       
+            ]
+        },
+        {
+            "name": "Online Booking App",
+            "type": "debugpy",
+            "request": "launch",
+            "args": [
+                "runserver"
+            ],
+            "autoStartBrowser": true,
+            "justMyCode": false,
+            "program": "${workspaceFolder}/onlinebooking_app/app.py"
         },
         {
             "name": "Python Debugger: Django",

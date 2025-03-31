@@ -78,7 +78,7 @@
                                     v-model="row[columnKey]" :disabled="'is_disabled' in row && row.is_disabled" />
                             </label>
                         </div>
-                        [[options]]
+
                         <div class="form-group" v-if="options.componentName == 'toggle'">
                             <label class="switch">
                                 <input type="checkbox" @click.native="emitCheckboxClickedEvent(row, columnKey)"

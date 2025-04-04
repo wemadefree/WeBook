@@ -23,50 +23,7 @@ contaner-fluid ps-5 pe-5
         <i class="fas fa-plus"></i>&nbsp; Administrer Personell
     </button>
     
-    <!-- <div class="d-flex justify-content-between mb-3 mt-3">
-    
-        <div class="card card-body border border-warning shadow-2 w-auto me-3">
-            <div class="d-flex align-items-center">
-                <h1>
-                    <i class="fas fa-hourglass text-warning"></i>
-                </h1>
-        
-                <div class="ms-5">
-                    <h3>{{STATISTICS_AWAITING_COUNT}}</h3>
-                    Bestillinger som venter behandling
-                </div>
-            </div>        
-        </div>
-    
-        <div class="card card-body border border-success shadow-2 w-auto ms-3 me-3">        
-            <div class="d-flex align-items-center">
-                <h1>
-                    <i class="fas fa-plus text-success"></i>
-                </h1>
-        
-                <div class="ms-5">
-                    <h3>0</h3>
-                    Nye bestillinger i dag
-                </div>
-            </div>        
-        </div>
-    
-        <div class="card card-body shadow-2 border border-secondary w-auto ms-3">
-            <div class="d-flex align-items-center">
-                <h1>
-                    <i class="fas fa-user text-secondary"></i>
-                </h1>
-        
-                <div class="ms-5">
-                    <h3>{{STATISTICS_PERSONELL_COUNT}}</h3>
-                    Personell
-                </div>
-            </div>      
-        </div>
-    
-    </div> -->
-    
-    <div class="p-0  rounded-5 ">
+    <div class="p-0 rounded-5 ">
         <ul class="nav nav-tabs webook-tabs" id="ex1" role="tablist">
             <li class="nav-item" role="presentation">
                 <a
@@ -101,21 +58,12 @@ contaner-fluid ps-5 pe-5
         </ul>
     </div>
     
-    
     <div class="tab-content" id="tabs-content">
         <div class="tab-pane fade  show active" id="orders-tab" role="tabpanel" aria-labelledby="orders-tab">
             <div>
                 <span id="fancyPopoverHolder"></span>
 
                 <orders-table-component :service-id="{{object.id}}"></orders-table-component>
-
-                <!-- <table-component
-                    :data-source="ordersDataSourceFunc"
-                    :column-names="{ 'message': 'Melding' }"
-                    :can-search="true"
-                    @row-clicked="whenRowIsClicked"
-                    @show-detailed-view="showDetailedView">
-                </table-component> -->
             </div>
         </div>
 
@@ -176,7 +124,7 @@ contaner-fluid ps-5 pe-5
 
     const ServiceOrderPopover = {
         components: {
-            FancyPopover,
+            FancyPopover
         },
         props: {
             x: Number, y: Number,
@@ -193,7 +141,7 @@ contaner-fluid ps-5 pe-5
                 ServiceResponsiblesComponent,
                 PreconfigurationsTableComponent,
                 OrdersTableComponent,
-                PersonellCalendarComponent,
+                PersonellCalendarComponent
             },
             data() {
                 return {

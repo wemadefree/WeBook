@@ -1,5 +1,6 @@
-<template id="vuec-table-component-template">
+{% include "arrangement/vue/tristate_toggle_component.html" %}
 
+<template id="vuec-table-component-template">
     <div class="d-flex justify-content-between">
         <div class="input-group w-50" v-if="canSearch">
             <span class="input-group-text border-end-0">
@@ -75,6 +76,10 @@
                                 &nbsp;
                             </span>
                         </div>
+
+                        <tri-state-toggle-component v-if="options.componentName == 'tri-state-toggle'" @state-set="(state) => { row.stateChanged(state); }">
+                        </tri-state-toggle-component>
+
                         <div class="form-group" v-if="options.componentName == 'checkbox'">
                             <input type="checkbox" @click.native="emitCheckboxClickedEvent(row, columnKey)"
                                 v-model="row[columnKey]" :disabled="'is_disabled' in row && row.is_disabled">
@@ -472,6 +477,7 @@
     const TableComponent = {
         components: {
             StatusIndicatorComponent,
+            TriStateToggleComponent,
         },
         props: {
             dataSource: Function,

@@ -1,0 +1,193 @@
+{% include "arrangement/vue/modal-component-v2.html" %}
+
+<template id="vuec-orders-queue-table-component">
+    <mdb-modal-component :is-visible="showOrderResponseModal" title="Besvar bestilling">
+        <template #modal-body>
+            <div class="d-flex flex-column">
+                <div class="d-flex justify-content-between">
+                    <span class="fw-bold">
+                        <i class="fas fa-receipt"></i>
+                        Bestilling ID:
+                    </span>
+                    <h5 class="badge badge-info">
+                        [[ openServiceOrder?.id ]]
+                    </h5>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="fw-bold">
+                        <i class="fas fa-comment"></i>
+                        Kommentar fra planlegger:
+                    </span>
+                </div>
+                <div class=" border border-dark wb-bg-secondary rounded-3 p-2">
+                    <span class="text-muted">
+                        [[ openServiceOrder?.freetextComment ]]
+                    </span>
+                </div>
+            </div>
+
+            <h5 class="mt-4">
+                <i class="fas fa-calendar"></i>
+                Datoer
+                
+                <span class="badge badge-secondary">
+                    [[ new Date(openServiceOrder?.startAndEnd[0]) ]] - 
+                    [[ new Date(openServiceOrder?.startAndEnd[1]) ]]
+                </span>
+
+                <span class="badge badge-secondary">
+                    [[ openServiceOrder?.eventCount ]]
+                </span>
+            </h5>
+            <div data-mdb-perfect-scrollbar-init style="position: relative; height: 200px; overflow-y: scroll;">
+                <table class="table table-sm">
+                    <tbody>
+                        <tr v-for="event in openServiceOrder?.events">
+                            <th>
+                                <span>
+                                    [[ event?.dateStr ]]
+                                </span>
+                            </th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+        <template #modal-footer>
+            <button type="button" class="btn btn-secondary" @click="$emit('close')">Lukk</button>
+        </template>
+
+        <hr>
+
+    </mdb-modal-component>
+
+    <table-component :data-source="dataSourceFunc"
+                     :column-names="{ 'message': 'Melding' }"
+                     :can-search="true"
+                     @open-order-response-modal="openOrderResponseModal">
+    </table-component>
+</template>
+
+<script>
+    let OrdersQueueTableComponent = {
+        components: {
+            'table-component': TableComponent,
+            MdbModalComponent
+        },
+        props: {
+            serviceId: Number
+        },
+        emits: [],
+        data() {
+            return {
+                ordersDataSourceFunc: this.dataSourceFunc,
+                openServiceOrder: null,
+                showOrderResponseModal: false,
+            }
+        },
+        methods: {
+            openOrderResponseModal(item) {
+                console.log("openOrderResponseModal", item);
+                this.showOrderResponseModal = true;
+                this.openServiceOrder = item;
+
+                fetch("/api/arrangement/service_order/" + item.id + "/events", {
+                    method: 'GET'
+                }).then(response => response.json()).then(data => {
+                    console.log("data", data);
+                    this.openServiceOrder.events = data;
+
+                    this.openServiceOrder.events.forEach((ev) => {
+                        ev.start = new Date(ev.start);
+                        ev.end = new Date(ev.end);
+
+                        const isOneDayEvent = ev.start.getDate() === ev.end.getDate();
+                        if (isOneDayEvent) {
+                            // avoid duplicating the date, show Start date,  time - end time
+                            ev.dateStr = `${ev.start.toLocaleDateString()}, ${ev.start.toLocaleTimeString()} - ${ev.end.toLocaleTimeString()}`;
+                        } else {
+                            ev.dateStr = `${ev.start.toLocaleDateString()} - ${ev.end.toLocaleDateString()}`;
+                        }
+                    });
+
+                    this.openServiceOrder.eventCount = data.length;
+                })
+            },
+            async dataSourceFunc() {
+                let data = await fetch("/api/arrangement/service_order/list?service_id=" + this.serviceId + "&state=awaiting", {
+                    method: 'GET'
+                }).then(response => response.json());
+
+                console.log("data", data);
+
+                data.data.forEach((item) => {
+                    console.log("item", item)
+                    item.stateChanged = (value) => {
+                        fetch("/api/arrangement/service_order/respond/" + item.id, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({
+                                response: value
+                            })
+                        }).then(response => response.json()).then(data => {
+                            console.log("data", data);
+                        });
+                    }
+                });
+
+                return {
+                    columns: {
+                        "id": { 
+                            isHtml: false, 
+                            friendlyName: "#", 
+                            isSortable: true,
+                            isSearchable: true
+                        },
+                        "event_count": { 
+                            isHtml: false, 
+                            friendlyName: "Antall Aktiviteter", 
+                            isSortable: true,
+                            isSearchable: true,
+                            formatter: (item) => {
+                                return item.eventCount;
+                            }
+                        },
+                        "created": { 
+                            isHtml: false, 
+                            friendlyName: "Tidsstempel",
+                            isSortable: true,
+                            formatter: (item) => {
+                                const start = new Date(item.startAndEnd[0]).toLocaleString();
+                                const end = new Date(item.startAndEnd[1]).toLocaleString();
+                                return `${start} - ${end}`;
+                            }
+                        },
+                        "freetext_comment": { 
+                            isHtml: false, 
+                            friendlyName: "Kommentar fra planlegger", 
+                            isSortable: true,
+                            isSearchable: true,
+                        },
+                        // "choice": { 
+                        //     isHtml: true, 
+                        //     friendlyName: "Send Svar", 
+                        //     isComponent: true, 
+                        //     componentName: 'tri-state-toggle',
+                        //     isSortable: false,
+                        // },
+                    },
+                    actions: {
+                        "openOrderResponseModal": { type: 'main', content: '<i class="fas fa-reply"></i>&nbsp; Besvar', isContentHtml: true },
+                    },
+                    data: data.data
+                };
+            }
+        },
+        template: '#vuec-orders-queue-table-component',
+        delimiters: [ '[[', ']]'],
+
+    }
+</script>

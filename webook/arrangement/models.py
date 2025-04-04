@@ -1572,6 +1572,10 @@ class Event(
                 "Can not get buffering-for event since the event is not buffering any other event."
             )
 
+    @property
+    def is_multiple_day_event(self) -> bool:
+        return self.start.date() != self.end.date()
+
     def generate_rigging_events(self):
         # TODO: Rewrite this to avoid duplication.
         _title_generators_per_position = {
@@ -2273,6 +2277,22 @@ class ServiceOrder(TimeStampedModel, ModelArchiveableMixin):
     )
 
     freetext_comment = models.TextField()
+
+    @property
+    def start_and_end(
+        self,
+    ) -> Tuple[Optional[datetime.datetime], Optional[datetime.datetime]]:
+        """Returns the start and end time of the service order, or None if no events are present"""
+        if self.events.exists():
+            start = self.events.first().start
+            end = self.events.last().end
+            return (start, end)
+        return (None, None)
+
+    @property
+    def event_count(self) -> int:
+        """Returns the number of events in this service order"""
+        return self.events.count()
 
     @property
     def arrangement(self) -> Optional[Arrangement]:

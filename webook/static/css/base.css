@@ -17,6 +17,18 @@
     --DIALOG-BORDER-COLOR: #DEDFE3;
 }
 
+.dot {
+    height: 25px;
+    width: 25px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.dot:hover {
+    box-shadow: 0 0 5px 5px #bbb;
+}
+
 html, body {
     height: 100%!important;
 }

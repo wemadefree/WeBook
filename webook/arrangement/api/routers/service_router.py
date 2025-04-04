@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import List, Optional, Tuple
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -23,6 +24,7 @@ from webook.arrangement.models import (
     Arrangement,
     Audience,
     Event,
+    States,
     Person,
     Service,
     ServiceEmail,
@@ -66,6 +68,8 @@ class ServiceOrderGetSchema(ModelBaseSchema):
     created_by: Optional[PersonGetSchema] = None
     template_for: Optional[ServiceGetSchema] = None
     state: Optional[str] = None
+    start_and_end: Tuple[Optional[datetime], Optional[datetime]] = None
+    event_count: int = 0
     service: ServiceGetSchema
     assigned_personell: List[PersonGetSchema]
     applied_preconfiguration: Optional[GetServiceOrderPreconfigurationSchema] = None
@@ -124,6 +128,30 @@ service_router = CrudRouter(
 )
 
 
+class ServiceSummarySchema(BaseSchema):
+    rejected: int = 0
+    queued: int = 0
+    awaiting_provisioning: int = 0
+    provisioned: int = 0
+
+
+@service_router.get(
+    "/{service_id}/summary",
+    response=ServiceSummarySchema,
+)
+def get_service_summary(request, service_id: int):
+    service = get_object_or_404(Service, pk=service_id)
+    service_orders = service.associated_lines.all()
+
+    summary = {
+        "rejected": service_orders.filter(state=States.DENIED).count(),
+        "queued": service_orders.filter(state=States.AWAITING).count(),
+        "awaiting_provisioning": service_orders.filter(state=States.CONFIRMED).count(),
+        "provisioned": service_orders.filter(state=States.PROVISIONED).count(),
+    }
+    return ServiceSummarySchema(**summary)
+
+
 class ServiceOrderRouter(CrudRouter):
     def __init__(self, *args, **kwargs):
         self.list_filters = [
@@ -171,6 +199,16 @@ class ServiceOrderRouter(CrudRouter):
         super().__init__(*args, **kwargs)
 
 
+class ServiceOrderResponseTypes(Enum):
+    REJECTED = "rejected"
+    MAYBE = "maybe"
+    ACCEPTED = "accepted"
+
+
+class ServiceOrderRespondSchema(BaseSchema):
+    response: ServiceOrderResponseTypes
+
+
 service_order_router = ServiceOrderRouter(
     tags=["service_order"],
     model=ServiceOrder,
@@ -192,6 +230,26 @@ def order_service(request, data: OrderServiceSchema):
     if not form.is_valid():
         raise Exception(form.errors)
 
-    x = form.save(user=request.user)
+    form.save(user=request.user)
 
     return True
+
+
+@service_order_router.post("/respond/{id}", response=ServiceOrderGetSchema)
+def respond_to_service_order(
+    request,
+    id: int,
+    data: ServiceOrderRespondSchema,
+):
+    service_order = get_object_or_404(ServiceOrder, pk=id)
+
+    if data.response == ServiceOrderResponseTypes.REJECTED:
+        service_order.state = States.DENIED
+    if data.response == ServiceOrderResponseTypes.MAYBE:
+        service_order.state = States.MAYBE
+    if data.response == ServiceOrderResponseTypes.ACCEPTED:
+        service_order.state = States.CONFIRMED
+
+    service_order.save()
+
+    return service_order

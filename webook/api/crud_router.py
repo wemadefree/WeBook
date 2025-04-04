@@ -12,7 +12,12 @@ from django.core.paginator import Paginator
 from webook.api.dj_group_auth import SessionGroupAuth
 from webook.api.jwt_auth import JWTBearer
 from webook.api.paginate import PaginatedData, paginate_queryset
-from webook.api.schemas.base_schema import BaseSchema, ListResponseSchema, ModelBaseSchema, SearchResponseItemSchema
+from webook.api.schemas.base_schema import (
+    BaseSchema,
+    ListResponseSchema,
+    ModelBaseSchema,
+    SearchResponseItemSchema,
+)
 from webook.api.m2m_rel_router_mixin import ManyToManyRelRouterMixin
 from haystack.query import EmptySearchQuerySet, SearchQuerySet
 from haystack.models import SearchResult
@@ -45,8 +50,6 @@ class Views(Enum):
     DELETE = "delete"
     EXPORT = "export"
     SEARCH = "search"
-
-
 
 
 class ExportType(str, Enum):
@@ -82,8 +85,6 @@ class SearchMetadataSchema(BaseSchema):
     required: bool = False
 
 
-
-
 class QueryFilter:
     def __init__(
         self,
@@ -104,7 +105,7 @@ class QueryFilter:
             return qs.filter(**{self.query_by: value}).distinct()
 
         qs = qs.filter(**{self.query_by: value})
-        
+
         return qs
 
     def __str__(self) -> str:
@@ -590,7 +591,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
         # @decorate_view(transaction.non_atomic_requests(using="default"))
         def retrieve_func(request, id: int) -> self.get_schema:
             try:
-                return self.model.get(id=id)
+                return self.model.objects.get(id=id)
             except self.model.DoesNotExist:
                 raise HttpResponse(status=404)
 
@@ -629,7 +630,9 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
         )
         return manager.all().defer(*self._deferred_fields.keys())
 
-    def transform_pd_to_response(self, pd: PaginatedData, overriden_list_schema = None) -> ListResponseSchema:
+    def transform_pd_to_response(
+        self, pd: PaginatedData, overriden_list_schema=None
+    ) -> ListResponseSchema:
         list_schema = overriden_list_schema or self.list_schema
 
         if type(pd.paginated_qs) == models.QuerySet:
@@ -651,9 +654,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
                 if type(x) == SearchResult:
                     items_s.append(
                         SearchResponseItemSchema(
-                            obj=list_schema.from_orm(
-                                self.model.objects.get(id=x.pk)
-                            ),
+                            obj=list_schema.from_orm(self.model.objects.get(id=x.pk)),
                             score=x.score,
                         )
                     )

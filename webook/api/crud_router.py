@@ -513,9 +513,16 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
 
         self.init_m2m_functionality()
 
+    def ensure_authorization(self, view: Views, request=None, instance=None):
+        pass
+
     def get_export_list_func(self):
         # @decorate_view(transaction.non_atomic_requests(using="default"))
         def export_func(request, export_instruction: ExportInstructionSchema):
+            self.ensure_authorization(
+                view=Views.EXPORt, request=request, instance=None
+            )
+            
             qs = self.get_queryset(Views.EXPORT, request)
             if not export_instruction.include_archived_entities and hasattr(
                 self.model, "is_archived"
@@ -578,6 +585,10 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
         def post_func(request, payload: self.create_schema) -> int:
             instance = self.model()
 
+            self.ensure_authorization(
+                view=Views.CREATE, request=request, instance=None
+            )
+
             if self.pre_create_hook is not None:
                 (instance, payload) = self.pre_create_hook(instance, payload)
 
@@ -602,10 +613,15 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             qs = self.get_queryset(Views.GET, request)
             try:
                 # return self.model.objects.get(id=id)
-                return get_object_or_404(
+                result = get_object_or_404(
                     qs,
                     id=id,
                 )
+
+                self.ensure_authorization(
+                    view=Views.GET, request=request, instance=result
+                )
+
             except self.model.DoesNotExist:
                 raise HttpResponse(status=404)
 
@@ -708,6 +724,10 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             sort_desc: bool = False,
             **extra_params,
         ) -> ListResponseSchema[self.list_schema]:
+            self.ensure_authorization(
+                view=Views.LIST, request=request, instance=None
+            )
+    
             qs = self.get_queryset(Views.LIST, request)
 
             if not include_archived and hasattr(self.model, "is_archived"):
@@ -818,10 +838,15 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             limit: int = 0,
             **extra_params,
         ) -> ListResponseSchema[self.list_schema]:
+            self.ensure_authorization(
+                view=Views.SEARCH, request=request, instance=None
+            )
+
             sqs: SearchQuerySet = self.transform_queryset(
                 qs=SearchQuerySet().models(self.model),
                 view=Views.SEARCH,
-                request=request,)
+                request=request,
+            )
 
             if self.search_query_filters:
                 for qf in self.search_query_filters:
@@ -842,6 +867,10 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
 
     def get_search_metadata(self):
         def search_metadata_func(request):
+            self.ensure_authorization(
+                view=Views.SEARCH, request=request, instance=None
+            )
+
             field_metadata_list: List[SearchMetadataSchema] = list()
 
             for qf in self.search_query_filters:
@@ -871,6 +900,10 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             request, id: int, payload: self.update_schema
         ) -> OperationResultSchema[self.get_schema]:
             instance = get_object_or_404(self.model, id=id)
+
+            self.ensure_authorization(
+                view=Views.UPDATE, request=request, instance=instance
+            )
 
             if self.pre_update_hook is not None:
                 self.pre_update_hook(instance, payload)
@@ -902,6 +935,10 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
         ) -> OperationResultSchema[self.get_schema]:
             instance = get_object_or_404(self.model, id=id)
 
+            self.ensure_authorization(
+                view=Views.UPDATE, request=request, instance=instance
+            )
+
             if self.pre_update_hook is not None:
                 self.pre_update_hook(instance, payload)
 
@@ -924,6 +961,10 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
     def get_delete_func(self):
         def delete_func(request, id: int):
             instance = get_object_or_404(self.model, id=id)
+
+            self.ensure_authorization(
+                view=Views.DELETE, request=request, instance=instance
+            )
 
             if self.pre_delete_hook is not None:
                 self.pre_delete_hook(instance)

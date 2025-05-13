@@ -93,14 +93,19 @@ class QueryFilter:
         default: any = None,
         annotation: Optional[Type] = None,
         distinct: bool = False,
+        hidden: bool = False,
     ):
         self.param = param
         self.query_by = query_by
         self.default = default
         self.annotation = annotation
         self.distinct = distinct
+        self.hidden = hidden
 
     def apply(self, qs, value) -> models.QuerySet:
+        if value is None:
+            value = self.default
+
         if self.distinct:
             return qs.filter(**{self.query_by: value}).distinct()
 
@@ -322,7 +327,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
                 methods=["PATCH"],
                 auth=self.update_auth
                 or [JWTBearer(), SessionGroupAuth(group_name="planners")],
-                view_func=self.get_put_func(),
+                view_func=self.get_patch_func(),
                 response=OperationResultSchema[self.get_schema],
                 summary=f"Patch {self.model_name_singular}",
                 description=f"Patch a {self.model_name_singular.lower()} instance.",
@@ -385,7 +390,11 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
                             kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
                             default=qf.default,
                         )
-                        for qf in self.list_filters or []
+                        for qf in (
+                            [f for f in self.list_filters if not f.hidden]
+                            if self.list_filters
+                            else []
+                        )
                     ],
                     # *[
                     #     *[inspect.Parameter(
@@ -507,7 +516,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
     def get_export_list_func(self):
         # @decorate_view(transaction.non_atomic_requests(using="default"))
         def export_func(request, export_instruction: ExportInstructionSchema):
-            qs = self.get_queryset(Views.EXPORT)
+            qs = self.get_queryset(Views.EXPORT, request)
             if not export_instruction.include_archived_entities and hasattr(
                 self.model, "is_archived"
             ):
@@ -590,8 +599,13 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
     def get_retrieve_func(self):
         # @decorate_view(transaction.non_atomic_requests(using="default"))
         def retrieve_func(request, id: int) -> self.get_schema:
+            qs = self.get_queryset(Views.GET, request)
             try:
-                return self.model.objects.get(id=id)
+                # return self.model.objects.get(id=id)
+                return get_object_or_404(
+                    qs,
+                    id=id,
+                )
             except self.model.DoesNotExist:
                 raise HttpResponse(status=404)
 
@@ -622,13 +636,25 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
 
         return d
 
-    def get_queryset(self, view: Views = Views.GET) -> models.QuerySet:
+    def transform_queryset(
+        self,
+        qs: models.QuerySet | SearchQuerySet,
+        request=None,
+        view: Views = Views.GET,
+    ) -> models.QuerySet | SearchQuerySet:
+        return qs
+
+    def get_queryset(self, view: Views = Views.GET, request=None) -> models.QuerySet:
         manager = (
             self.model.all_objects
             if hasattr(self.model, "all_objects")
             else self.model.objects
         )
-        return manager.all().defer(*self._deferred_fields.keys())
+        return self.transform_queryset(
+            qs=manager.all().defer(*self._deferred_fields.keys()),
+            view=view,
+            request=request,
+        )
 
     def transform_pd_to_response(
         self, pd: PaginatedData, overriden_list_schema=None
@@ -682,7 +708,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             sort_desc: bool = False,
             **extra_params,
         ) -> ListResponseSchema[self.list_schema]:
-            qs = self.get_queryset(Views.LIST)
+            qs = self.get_queryset(Views.LIST, request)
 
             if not include_archived and hasattr(self.model, "is_archived"):
                 qs = qs.filter(is_archived=False)
@@ -792,7 +818,10 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             limit: int = 0,
             **extra_params,
         ) -> ListResponseSchema[self.list_schema]:
-            sqs = SearchQuerySet().models(self.model)
+            sqs: SearchQuerySet = self.transform_queryset(
+                qs=SearchQuerySet().models(self.model),
+                view=Views.SEARCH,
+                request=request,)
 
             if self.search_query_filters:
                 for qf in self.search_query_filters:
@@ -877,7 +906,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
                 self.pre_update_hook(instance, payload)
 
             for key, value in dict(payload).items():
-                if value is not NOT_SET:
+                if key in payload.model_fields_set:
                     setattr(instance, key, value)
             instance.save()
 

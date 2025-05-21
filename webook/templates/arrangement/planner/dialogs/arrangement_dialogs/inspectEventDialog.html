@@ -784,7 +784,7 @@
 
         <div class="tab-pane fade" id="service-orders-tab" role="tabpanel" aria-labelledby="service-orders-tab">
             {% if event.provisions.all|length == 0 %}
-                <div class="alert wb-bg-secondary">
+                <div class="alert">
                     <h4 class="text-center">Ingen tjenester bestilt</h4>
                     {% if user|has_group:"planners" or user.is_superuser %}
                     <div class="row">
@@ -810,61 +810,79 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-flex">
-                                <div class="mb-0 wb-bg-secondary p-3 border">
-                                    <h5 class="mb-0">Ordre #{{provision.related_to_order.id}}</h5>
-                                    <div>{{provision.related_to_order.service.name}}</div>
+                                <div class="mb-0">
+                                    <div class="d-flex">
+                                        {% if provision.related_to_order.state == 'confirmed' or provision.related_to_order.state == 'provisioned' %}
+                                            <span class="dot me-2 wb-bg-success">
+                                            </span>
+                                        {% elif provision.related_to_order.state == 'in_revision' %}
+                                            <span class="dot me-2 wb-bg-warning">
+                                            </span>
+                                        {% elif provision.related_to_order.state == 'awaiting' %}
+                                            <span class="dot me-2 wb-bg-secondary">
+                                            </span>
+                                        {% elif provision.related_to_order.state == 'maybe' %}
+                                            <span class="dot me-2 wb-bg-secondary">
+                                            </span>
+                                        {% elif provision.related_to_order.state == 'denied' %}
+                                            <span class="dot me-2 wb-bg-danger">
+                                            </span>
+                                        {% elif provision.related_to_order.state == 'cancelled' %}
+                                            <span class="dot me-2 wb-bg-danger">
+                                            </span>
+                                        {% elif provision.related_to_order.state == 'changed' %}
+                                            <span class="dot me-2 wb-bg-danger">
+                                            </span>
+                                        {% endif %}
+
+                                        <h5 class="mb-0">Bestilling #{{provision.related_to_order.id}} |&nbsp; </h5>
+                                        <div class="text-muted">{{provision.related_to_order.service.name}}</div>
+                                    </div>
+
                                     <div>
                                         {% if provision.related_to_order.state == "awaiting" %}
-                                        <div class="badge badge-warning">
-                                            <h5 class="mb-0">
-                                                Venter behandling
-                                            </h5>
-                                        </div>
+                                            <div class="text-small fw-bold">
+                                                (Venter behandling)
+                                            </div>
                                         {% elif provision.related_to_order.state == "cancelled" %}
-                                            <div class="badge badge-dark">
-                                                <h5 class="mb-0">
-                                                    Kansellert
-                                                </h5>
+                                            <div class="text-small fw-bold">
+                                                (Kansellert)
                                             </div>
                                         {% elif provision.related_to_order.state == "denied" %}
-                                            <div class="badge badge-danger">
-                                                <h5 class="mb-0">
-                                                    Avvist
-                                                </h5>
+                                            <div class="text-small fw-bold">
+                                                (Avvist)
                                             </div>
                                         {% elif provision.related_to_order.state == "in_revision" %}
-                                            <div class="badge badge-warning">
-                                                <h5 class="mb-0">
-                                                Revideres
-                                                </h5>
+                                            <div class="text-small fw-bold">
+                                                (Revideres)
                                             </div>
                                         {% elif provision.related_to_order.state == "changed" %}
-                                            <div class="badge badge-warning">
-                                                <h5 class="mb-0">
-                                                Basis endret, venter bekreftelse
-                                                </h5>
+                                            <div class="text-small fw-bold">
+                                                (Endret, venter bekreftelse)
+                                            </div>
+                                        {% elif provision.related_to_order.state == "maybe" %}
+                                            <div class="text-small fw-bold">
+                                                (Kanskje)
+                                            </div>
+                                        {% elif provision.related_to_order.state == "provisioned "%}    
+                                           <div class="text-small fw-bold">
+                                                (Bekreftet, ferdig behandlet)
                                             </div>
                                         {% elif provision.related_to_order.state == "confirmed" %}
-                                            <div class="badge badge-success">
-                                                <h5 class="mb-0">
-                                                    <i class="fas fa-check"></i>
-                                                    Bekreftet
-                                                </h5>
+                                            <div class="text-small fw-bold">
+                                                (Bekreftet, ikke behandlet ennå)
                                             </div>
                                         {% endif %}
                                     </div>
-                                    
                                 </div>
-                                <div class="p-2 ms-2 me-2">
+                                <!-- <div class="p-2 ms-2 me-2">
                                     <h5>Kommentar:</h5>
                                     <hr>
                                     <div class="text-muted">
                                         {{ provision.related_to_order.freetext_comment }}
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
-
-
     
                             <div class="clearfix">
                                 <button class="btn wb-btn-main btn-lg float-end me-2" d-trigger="triggerInspectServiceOrderDialog" d-arg-order_id="{{ provision.related_to_order.pk }}">

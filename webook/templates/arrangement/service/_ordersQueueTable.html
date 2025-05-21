@@ -231,7 +231,6 @@
                                 response: "accepted"
                             })
                         }).then(response => response.json()).then(data => {
-                            console.log("data", data);
                             this.hideOrderResponseModal();
                             toastr.success("Bestilling godkjent", "Bestilling #" + this.openServiceOrder.id + " er godkjent");
                             this.$emit("orderStateHasChanged", {
@@ -265,7 +264,6 @@
                                 response: "maybe"
                             })
                         }).then(response => response.json()).then(data => {
-                            console.log("data", data);
                             this.hideOrderResponseModal();
                             toastr.success("Bestilling kanskje", "Bestilling #" + this.openServiceOrder.id + " er kanskje");
                             this.$emit("orderStateHasChanged", {
@@ -299,7 +297,6 @@
                                 response: "rejected"
                             })
                         }).then(response => response.json()).then(data => {
-                            console.log("data", data);
                             this.hideOrderResponseModal();
                             toastr.success("Bestilling avslått", "Bestilling #" + this.openServiceOrder.id + " er avslått");
                             this.$emit("orderStateHasChanged", {
@@ -315,7 +312,6 @@
                 this.showOrderResponseModal = false;
             },
             openOrderResponseModal(item) {
-                console.log("openOrderResponseModal", item);
                 this.showOrderResponseModal = true;
 
                 this.openServiceOrder = item;
@@ -351,7 +347,6 @@
                 fetch("/api/arrangement/service_order/" + item.id + "/events", {
                     method: 'GET'
                 }).then(response => response.json()).then(data => {
-                    console.log("data", data);
                     this.openServiceOrder.events = data;
 
                     this.openServiceOrder.events.forEach((ev) => {
@@ -385,10 +380,7 @@
                     data.data = data.data.concat(data2.data);
                 }); 
 
-                console.log("data", data);
-
                 data.data.forEach((item) => {
-                    console.log("item", item)
                     item.stateChanged = (value) => {
                         fetch("/api/arrangement/service_order/respond/" + item.id, {
                             method: 'POST',

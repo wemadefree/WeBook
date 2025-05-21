@@ -173,4 +173,9 @@ service_urls = [
         view=get_service_personell_fc_calendar_json_view,
         name="get_service_personell_fc_calendar_json_view",
     ),
+    path(
+        route="service/<int:id>/allocate",
+        view=service_order_allocation_view,
+        name="service_order_allocation_view",
+    ),
 ]

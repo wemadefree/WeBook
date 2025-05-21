@@ -1,6 +1,7 @@
 import json
 from datetime import date, datetime, time, timedelta
 from re import search
+import secrets
 from typing import Any, Dict, List, Optional, Union
 
 from django import http
@@ -133,12 +134,7 @@ class ServiceAuthorizationMixin(UserPassesTestMixin):
         if not self.request.user.person:
             raise PermissionDenied("User does not have a person")
 
-        service: Service = self.get_service()
-        authorized_emails = map(
-            lambda service_email: service_email.email, list(service.emails.all())
-        )
-
-        return self.request.user.email in authorized_emails
+        return self.request.user.person in self.get_service().staff.all()
 
 
 class AnyServiceAuthorizationMixin(UserPassesTestMixin):
@@ -433,6 +429,52 @@ class CreateServiceTemplateView(
 create_service_template_view = CreateServiceTemplateView.as_view()
 
 
+class ServiceOrderAllocation(DetailView):
+    model = ServiceOrder
+    slug_field = "id"
+    slug_url_kwarg = "id"
+
+    def get_template_names(self) -> List[str]:
+        template_name = "arrangement/service/allocation.html"
+        return template_name
+
+    def get_service(self) -> Service:
+        return Service.objects.get(id=self.kwargs.get("pk"))
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        service_order = self.get_object()
+
+        processing_request = ServiceOrderProcessingRequest.objects.filter(
+            related_to_order=service_order,
+            user=self.request.user.person,
+        )
+
+        if processing_request.exists():
+            context["SOPR_TOKEN"] = processing_request.first().code
+        else:
+            context["SOPR_TOKEN"] = secrets.token_urlsafe(120)
+            ServiceOrderProcessingRequest.objects.create(
+                related_to_order=service_order,
+                user=self.request.user.person,
+                code=context["SOPR_TOKEN"],
+                expires_at=datetime.now() + timedelta(days=365),
+            )
+
+        context["ARRANGEMENT_NAME"] = (
+            (self.get_object().provisions.first().for_event.arrangement.name)
+            if self.get_object().provisions.exists()
+            else "Ukjent"
+        )
+
+        context["SERVICE_ID"] = self.kwargs.get("pk")
+        context["SERVICE_ORDER_ID"] = self.kwargs.get("id")
+        return context
+
+
+service_order_allocation_view = ServiceOrderAllocation.as_view()
+
+
 class ProcessServiceRequestView(DetailView):
     model = ServiceOrderProcessingRequest
     slug_field = "code"
@@ -600,6 +642,7 @@ class GetProvisionsJsonView(ValidateTokenMixin, ListView, JSONResponseMixin):
                 "modified": provision.modified,
                 "created": provision.created,
                 "event_name": provision.for_event.title,
+                "event_id": provision.for_event.id,
                 "time_display": get_friendly_display_of_time_range(
                     provision.for_event.start, provision.for_event.end
                 ),
@@ -618,6 +661,9 @@ class GetProvisionsJsonView(ValidateTokenMixin, ListView, JSONResponseMixin):
                 "is_complete": provision.is_complete,
                 "assigned_personell": [
                     person.full_name for person in provision.selected_personell.all()
+                ],
+                "assigned_personell_ids": [
+                    person.id for person in provision.selected_personell.all()
                 ],
                 "freetext_comment": provision.freetext_comment,
                 "comment_to_personell": provision.comment_to_personell,
@@ -876,7 +922,7 @@ class CreatePreconfigurationJsonView(
     LoginRequiredMixin, ServiceAuthorizationMixin, CreateView, JsonModelFormMixin
 ):
     model = ServiceOrderPreconfiguration
-    fields = ["service", "title", "message", "assigned_personell"]
+    fields = ["service", "title", "message", "assigned_personell", "parent"]
 
     def get_service(self) -> Service:
         return Service.objects.get(id=self.request.POST.get("service"))
@@ -895,7 +941,7 @@ class UpdatePreconfigurationJsonView(
     LoginRequiredMixin, ServiceAuthorizationMixin, UpdateView, JsonModelFormMixin
 ):
     model = ServiceOrderPreconfiguration
-    fields = ["service", "title", "message", "assigned_personell"]
+    fields = ["service", "title", "message", "assigned_personell", "parent_id"]
     pk_url_kwarg = "id"
 
     def get_service(self) -> Service:

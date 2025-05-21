@@ -1,11 +1,14 @@
 <template id="vuec-mdb-modal-component-template">
     
     <div class="modal" ref="modal" tabindex="-1" aria-labelledby="modal" aria-hidden="false">
-        <div class="modal-dialog modal-dialog-centered">
+        <div :class="`modal-dialog modal-lg ${fullSize ? 'modal-fullscreen' : ''}`" role="document">
+            
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modal">[[ title ]]</h5>
-                    <button type="button" class="btn-close" @click="hide()"></button>
+                    <slot name="modal-header">
+                        <h5 class="modal-title" id="modal">[[ title ]]</h5>
+                        <button type="button" class="btn-close" @click="hide()"></button>
+                    </slot>
                 </div>
     
                 <div class="modal-body">
@@ -33,6 +36,16 @@
                 title: 'Title',
                 type: String,
                 default: 'Modal'
+            },
+            position: {
+                title: 'Position',
+                type: String,
+                default: 'center'
+            },
+            fullSize: {
+                title: 'Full Size',
+                type: Boolean,
+                default: false
             }
         },
         data: function () {
@@ -42,7 +55,7 @@
         },
         watch: {
             isVisible: function (val) {
-                val ? this.show() : this.close();
+                val ? this.show() : this.hide();
             }
         },
         methods: {
@@ -70,6 +83,27 @@
                 if (this.isVisible) {
                     this.show();
                 }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.hide();
+                }
+            });
+
+            this.$refs.modal.addEventListener('hidden.bs.modal', () => {
+                this.$emit('close');
+            });
+        },
+        unmounted() {
+            document.removeEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.hide();
+                }
+            });
+
+            this.$refs.modal.removeEventListener('hidden.bs.modal', () => {
+                this.$emit('close');
             });
         }
     }

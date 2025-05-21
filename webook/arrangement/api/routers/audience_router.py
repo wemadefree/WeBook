@@ -57,8 +57,8 @@ class AudienceRouter(CrudRouter):
         self.non_deferred_fields = ["parent"]
         super().__init__(*args, **kwargs)
 
-    def get_queryset(self, view: Views = Views.GET) -> QuerySet:
-        qs = super().get_queryset(view)
+    def get_queryset(self, view: Views = Views.GET, request=None) -> QuerySet:
+        qs = super().get_queryset(view=view, request=request)
         qs = qs.select_related("parent")
         return qs
 

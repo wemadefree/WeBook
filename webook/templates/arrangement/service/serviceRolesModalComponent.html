@@ -1,0 +1,48 @@
+<template id="vuec-service-roles-modal-component">
+    <mdb-modal-component :is-visible="isVisible" title="Rollestyring" @close="hide()">
+        <template #modal-body>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Rollenavn</th>
+                        <th>Kan besvare bestillinger <i class="small">(Godkjent, Kanskje, Avslått)</i></th>
+                        <th>Kan tildele ressurser</th>
+                        <th>Kan administrere prekonfigurasjoner</th>
+                        <th>Kan administrere personal register</th>
+                        <th>Kan administrere tjenesteansvarlige</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="serviceRole in serviceRoles">
+
+                    </tr>
+                </tbody>
+            </table>
+        </template>
+
+        <template #modal-footer>
+            <button type="button" class="btn btn-secondary" @click="hide()">Lukk</button>
+        </template>
+
+    </mdb-modal-component>
+</template>
+
+<script>
+    let ServiceRolesModalComponent = {
+        components: {
+            MdbModalComponent,
+        },
+        props: {
+            isVisible: {
+                title: 'Visible',
+                type: Boolean,
+                default: false
+            },
+        },
+        emits: [
+            'close',
+        ],
+        template: '#vuec-service-roles-modal-component',
+        delimiters: ['[[', ']]'],
+    }
+</script>

@@ -3,6 +3,58 @@
 {% include "arrangement/service/_orderCompletesTable.html" %}
 
 <template id="vuec-orders-table-component">
+
+    <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+        <!-- <div>
+            <h4>Bestillinger</h4>
+        </div> -->
+
+        <div class="d-flex align-items-center">
+            <div>
+                <h5 class="mb-0">
+                    Visninger: 
+                </h5>
+            </div>
+
+            <button 
+                :class="'btn ms-2 ' + (shownTable == 'all-orders' ? 'wb-btn-main' : 'wb-btn-secondary')"
+                @click="shownTable = 'all-orders'">
+                Alle <div class="badge border badge-light ms-2">[[ counts.queued + counts.awaiting + counts.processed + counts.history ]]</div>
+            </button>
+
+            <button 
+                :class="'btn ms-2 ' + (shownTable == 'queued-orders' ? 'wb-btn-main' : 'wb-btn-secondary')"
+                @click="shownTable = 'queued-orders'">
+                I Kø <div class="badge border badge-light ms-2">[[ counts.queued ]]</div>
+            </button>
+
+            <button
+                :class="'btn ms-2 ' + (shownTable == 'orders-awaiting-processing' ? 'wb-btn-main' : 'wb-btn-secondary')"
+                @click="shownTable = 'orders-awaiting-processing'">
+                Venter Provisjonering <div class="badge border badge-light ms-2">[[ counts.awaiting ]]</div>
+            </button>
+
+            <button
+                :class="'btn ms-2 ' + (shownTable == 'orders-processed' ? 'wb-btn-main' : 'wb-btn-secondary')"
+                @click="shownTable = 'orders-processed'">
+                Ferdigbehandlet <div class="badge border badge-light ms-2">[[ counts.processed ]]</div>
+            </button>
+
+            <button
+                :class="'btn ms-2 ' + (shownTable == 'orders-reprocessing' ? 'wb-btn-main' : 'wb-btn-secondary')"
+                @click="shownTable = 'orders-reprocessing'">
+                Etterbehandling Kreves <div class="badge border badge-light ms-2">[[ counts.for_reprocessing ]]</div>
+            </button>
+
+
+            <button
+                :class="'btn ms-2 ' + (shownTable == 'orders-history' ? 'wb-btn-main' : 'wb-btn-secondary')"
+                @click="shownTable = 'orders-history'">
+                Historiske <div class="badge border badge-light ms-2">[[ counts.history ]]</div>
+            </button>
+        </div>
+    </div>
+<!-- 
     <ul class="nav nav-tabs webook-tabs webook-tabs-sm mt-0" role="tablist">
         <li class="nav-item" role="presentation">
             <li class="nav-item" role="presentation">
@@ -15,7 +67,7 @@
                     aria-controls="orders" 
                     aria-selected="true">
                     <i class="fas fa-hourglass"></i>
-                    I kø
+                    <span class="text-small text-muted ms-1">(1)</span> I kø
                     <span class="badge badge-pill badge-info">
                         [[ counts.queued ]]
                     </span>
@@ -31,7 +83,7 @@
                     aria-controls="orders" 
                     aria-selected="true">
                     <i class="fas fa-spinner"></i>
-                    Venter provisjonering
+                    <span class="text-small text-muted ms-1">(2)</span> Venter provisjonering
                     <span class="badge badge-pill badge-warning">
                         [[ counts.awaitingProvisioning ]]
                     </span>
@@ -47,7 +99,7 @@
                     aria-controls="orders" 
                     aria-selected="true">
                     <i class="fas fa-check"></i>
-                    Ferdigbehandlet
+                    <span class="text-small text-muted ms-1">(3)</span> Ferdigbehandlet
                     <span class="badge badge-pill badge-success">
                         [[ counts.processed ]]
                     </span>
@@ -63,14 +115,60 @@
                     aria-controls="orders" 
                     aria-selected="true">
                     <i class="fas fa-history"></i>
-                    Historikk
+                    Historiske
                     <span class="badge badge-pill badge-secondary">
                         0
                     </span>
                 </a>
             </li>
         </li>
-    </ul>
+    </ul> -->
+
+    <div>
+        <div v-if="shownTable == 'all-orders'">
+            <table-component
+                :data-source="ordersDataSourceFunc"
+                :column-names="{ 'message': 'Melding' }"
+                :can-search="true"
+                @show-detailed-view="showDetailedView">
+            </table-component>
+        </div>
+        <div v-if="shownTable == 'queued-orders'">
+            <orders-queue-table-component
+                :service-id="serviceId">
+            </orders-queue-table-component>
+        </div>
+        <div v-else-if="shownTable == 'orders-awaiting-processing'">
+            <orders-awaiting-provisioning-table
+                :service-id="serviceId">
+            </orders-awaiting-provisioning-table>
+        </div>
+        <div v-else-if="shownTable == 'orders-processed'">
+            <order-completes-table @show-detailed-view="showDetailedView"
+                :service-id="serviceId">
+            </order-completes-table>
+        </div>
+        <div v-else-if="shownTable == 'orders-reprocessing'">
+            <table-component @show-detailed-view="showDetailedView"
+                :data-source="ordersNeedingReprocessingDataSourceFunc"
+                :column-names="{ 'message': 'Melding' }"
+                :can-search="true">
+            </table-component>
+        </div>
+        
+
+        <!-- <div v-else-if="shownTable == 'orders-happening'">
+            <h4>Tbd</h4>
+        </div> -->
+        <div v-else-if="shownTable == 'orders-history'">
+            <table-component
+                @show-detailed-view="showDetailedView"
+                :data-source="historicOrdersDataSourceFunc"
+                :column-names="{ 'message': 'Melding' }"
+                :can-search="true">
+            </table-component>
+        </div>
+    </div>
 
     <div class="tab-content" id="orders-table-tabs-content">
         <div class="tab-pane mt-3 fade show active" id="queued-orders" role="tabpanel" aria-labelledby="queued-orders-tab">
@@ -80,12 +178,12 @@
                 :can-search="true">
             </table-component> -->
 
-            <orders-queue-table-component
+            <!-- <orders-queue-table-component
                 :service-id="serviceId">
-            </orders-queue-table-component>
+            </orders-queue-table-component> -->
         </div>
 
-        <div class="tab-pane mt-3 fade" id="orders-awaiting-processing" role="tabpanel" aria-labelledby="orders-awaiting-processing-tab">
+        <!-- <div class="tab-pane mt-3 fade" id="orders-awaiting-processing" role="tabpanel" aria-labelledby="orders-awaiting-processing-tab">
             <orders-awaiting-provisioning-table
                 :service-id="serviceId">
             </orders-awaiting-provisioning-table>
@@ -103,7 +201,7 @@
                 :column-names="{ 'message': 'Melding' }"
                 :can-search="true">
             </table-component>
-        </div>
+        </div> -->
     </div>
 
 
@@ -123,11 +221,13 @@
         emits: [],
         data() {
             return {
+                shownTable: 'queued-orders',
                 counts: {
                     queued: 0,
                     awaiting: 0,
                     processed: 0,
-                    history: 0
+                    history: 0,
+                    for_reprocessing: 0,
                 }
             }
         },
@@ -136,22 +236,17 @@
                 let data = await fetch("/api/arrangement/service/" + this.serviceId + "/summary", {
                     method: 'GET',
                 }).then(response => response.json());
-
-                console.log("Counts data", data);
+                
                 this.counts.queued = data.queued;
-                this.counts.awaitingProvisioning = data.awaiting_provisioning;
+                this.counts.awaiting = data.awaiting_provisioning;
                 this.counts.processed = data.provisioned;
+                this.counts.history = data.historic;
+                this.counts.for_reprocessing = data.changed;
             },
             async ordersDataSourceFunc() {
-                let data = await fetch("/arrangement/service/" + this.serviceId + "/orders", {
+                let data = await fetch("/api/arrangement/service_order/list?service_id=" + this.serviceId, {
                     method: 'GET',
                 }).then(response => response.json());
-
-                data.forEach((item) => {
-                    item.stateChanged = (value) => {
-                        console.log("State changed to: " + value);
-                    }
-                });
 
                 return {
                     columns: {
@@ -159,14 +254,216 @@
                             isHtml: false, 
                             friendlyName: "#", 
                             isSortable: true,
-                            isSearchable: true
+                            isSearchable: true,
+                            formatter: (item) => {
+                                return "TB-" + item.id;
+                            }
+                        },
+                        "arrangement": {
+                            isHtml: true,
+                            friendlyName: "Arrangement",
+                            isSortable: true,
+                            formatter: (item) => {
+                                return `${item.arrangement.name} <div></div><span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.status.name})</span> <span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.arrangementType.name})</span>`;
+                            }
+                        },
+                        "count_instances": { 
+                            isHtml: false, 
+                            friendlyName: "Antall instanser", 
+                            isSortable: true,
+                            isSearchable: true,
+                            formatter: (item) => {
+                                return item.provisions.length;
+                            }
                         },
                         "created": { 
                             isHtml: false, 
-                            friendlyName: "Tidsstempel",
+                            friendlyName: "Plassert",
                             isSortable: true,
+                            formatter: (item) => {
+                                return new Date(item.created).toLocaleString();
+                            }
+                        },
+                        "time": { 
+                            isHtml: false, 
+                            friendlyName: "Fra - Til",
+                            isSortable: true,
+                            formatter: (item) => {
+                                const start = new Date(item.startAndEnd[0]).toLocaleString();
+                                const end = new Date(item.startAndEnd[1]).toLocaleString();
+                                return `${start} - ${end}`;
+                            }
                         },
                         "freetext_comment": { 
+                            isHtml: true, 
+                            friendlyName: "Kommentar fra planlegger", 
+                            isSortable: true,
+                            isSearchable: true,
+                            formatter: (item) => {
+                                return "<div class='text-small'>" + item.freetextComment + "</div>";
+                            }
+                        },
+                        "choice": { 
+                            isHtml: true, 
+                            friendlyName: "Status", 
+                            isSortable: false,
+                            isHtml: true,
+                            formatter: (item) => {
+                                let html = "";
+
+                                if (item.state === "confirmed")
+                                    html += "<span class='badge badge-success'>Bekreftet, avventer provisjonering</span>";
+                                else if (item.state === "denied")
+                                    html += "<span class='badge badge-danger'>Avslått</span>";
+                                else if (item.state === "maybe")
+                                    html += "<span class='badge badge-warning'>Usikker</span>";
+                                else if (item.state === "awaiting")
+                                    html += "<span class='badge badge-info'>I kø</span>";
+                                else if (item.state === "in_revision")
+                                    html += "<span class='badge badge-secondary'>Under revisjon</span>";
+                                else if (item.state === "provisioned")
+                                    html += "<span class='badge badge-success'>Ferdigbehandlet</span>";
+                                else if (item.state === "changed")
+                                    html += "<span class='badge badge-warning'>Endret</span>";
+                                else if (item.state === "cancelled")
+                                    html += "<span class='badge badge-danger'>Kansellert</span>";
+                                else
+                                    html += "<span class='badge badge-light'>" + item.state + "</span>";
+
+                                    
+                                if (item.temporalState === "historical")
+                                    html += "<span class='badge badge-secondary ms-2'>Historisk</span>";
+                                else if (item.temporalState === "upcoming")
+                                    html += "<span class='badge badge-info ms-2'>Oppkommende</span>";
+                                else if (item.temporalState === "in_progress")
+                                    html += "<span class='badge badge-warning ms-2'>Pågående</span>";
+                                else
+                                    html += "<span class='badge badge-light ms-2'>" + item.temporalState + "</span>";
+
+                                return html;
+                            },
+                        },
+                    },
+                    // actions: {
+                    //     "showDetailedView": { type: 'main', content: '<i class="fas fa-eye"></i>&nbsp; Vis mer', isContentHtml: true },
+                    // },
+                    data: data.data
+                };
+            },
+            async ordersNeedingReprocessingDataSourceFunc() {
+                let data = await fetch("/api/arrangement/service_order/list?service_id=" + this.serviceId + "&state=changed", {
+                    method: 'GET',
+                }).then(response => response.json());
+
+                return {
+                    columns: {
+                        "id": { 
+                            isHtml: false, 
+                            friendlyName: "#", 
+                            isSortable: true,
+                            isSearchable: true,
+                            formatter: (item) => {
+                                return "TB-" + item.id;
+                            }
+                        },
+                        "arrangement": {
+                            isHtml: true,
+                            friendlyName: "Arrangement",
+                            isSortable: true,
+                            formatter: (item) => {
+                                return `${item.arrangement.name} <div></div><span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.status.name})</span> <span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.arrangementType.name})</span>`;
+                            }
+                        },
+                        "count_instances": { 
+                            isHtml: false, 
+                            friendlyName: "Antall instanser", 
+                            isSortable: true,
+                            isSearchable: true,
+                            formatter: (item) => {
+                                return item.provisions.length;
+                            }
+                        },
+                        "created": { 
+                            isHtml: false, 
+                            friendlyName: "Plassert",
+                            isSortable: true,
+                            formatter: (item) => {
+                                return new Date(item.created).toLocaleString();
+                            }
+                        },
+                        "time": { 
+                            isHtml: false, 
+                            friendlyName: "Fra - Til",
+                            isSortable: true,
+                            formatter: (item) => {
+                                const start = new Date(item.startAndEnd[0]).toLocaleString();
+                                const end = new Date(item.startAndEnd[1]).toLocaleString();
+                                return `${start} - ${end}`;
+                            }
+                        },
+                        "freetext_comment": { 
+                            isHtml: true, 
+                            friendlyName: "Kommentar fra planlegger", 
+                            isSortable: true,
+                            isSearchable: true,
+                            formatter: (item) => {
+                                return "<div class='text-small'>" + item.freetextComment + "</div>";
+                            }
+                        },
+                    },
+                    actions: {
+                        "showDetailedView": { type: 'main', content: '<i class="fas fa-eye"></i>&nbsp; Behandle', isContentHtml: true },
+                    },
+                    data: data.data
+                };
+            },
+            showDetailedView(row) {
+                location.href = "/arrangement/service/" + row.id + "/allocate"
+            },
+            async historicOrdersDataSourceFunc() {
+                let data = await fetch("/api/arrangement/service_order/list?service_id=" + this.serviceId + "&is_historic=true", {
+                    method: 'GET',
+                }).then(response => response.json());
+
+                this.counts.history = data.data.length;
+
+                return {
+                    columns: {
+                        "id": { 
+                            isHtml: false, 
+                            friendlyName: "#", 
+                            isSortable: true,
+                            isSearchable: true,
+                            formatter: (item) => {
+                                return "TB-" + item.id;
+                            }
+                        },
+                        "arrangement": {
+                            isHtml: true,
+                            friendlyName: "Arrangement",
+                            isSortable: true,
+                            formatter: (item) => {
+                                return `${item.arrangement.name} <span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.status.name})</span> <span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.arrangementType.name})</span> <span class='text-small text-muted'>(<i class='fas fa-mask'></i> ${item.arrangement.audience.name})</span>`;
+                            }
+                        },
+                        "event_count": { 
+                            isHtml: false, 
+                            friendlyName: "Antall Aktiviteter", 
+                            isSortable: true,
+                            isSearchable: true,
+                            formatter: (item) => {
+                                return item.eventCount;
+                            }
+                        },
+                        "duration": { 
+                            isHtml: false, 
+                            friendlyName: "Varighet", 
+                            isSortable: true,
+                            formatter: (item) => {
+                                return new Date(item.startAndEnd[0]).toLocaleString() + " - " + new Date(item.startAndEnd[1]).toLocaleString();
+                            }
+                        },
+                        "freetextComment": { 
                             isHtml: false, 
                             friendlyName: "Kommentar fra planlegger", 
                             isSortable: true,
@@ -174,16 +471,25 @@
                         },
                         "choice": { 
                             isHtml: true, 
-                            friendlyName: "Svar", 
-                            isComponent: true, 
-                            componentName: 'tri-state-toggle',
+                            friendlyName: "Endelig status", 
                             isSortable: false,
+                            isHtml: true,
+                            formatter: (item) => {
+                                if (item.state === "provisioned")
+                                    return "<span class='badge badge-success'>Utført</span>";
+                                else if (item.state === "denied")
+                                    return "<span class='badge badge-danger'>Avslått</span>";
+                                else if (item.state === "cancelled")
+                                    return "<span class='badge badge-danger'>Kansellert</span>";
+                                else
+                                    return "<span class='badge badge-light'>" + item.state + "</span>";
+                            },
                         },
                     },
-                    // actions: {
-                    //     "showDetailedView": { type: 'main', content: '<i class="fas fa-eye"></i>&nbsp; Vis mer', isContentHtml: true },
-                    // },
-                    data: data
+                    actions: {
+                        "showDetailedView": { type: 'main', content: '<i class="fas fa-eye"></i>&nbsp; Vis mer', isContentHtml: true },
+                    },
+                    data: data.data
                 };
             },
             // async oldOrdersDataSourceFunc() {

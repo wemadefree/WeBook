@@ -18,8 +18,8 @@ class GroupRouter(CrudRouter):
         # self.non_deferred_fields = ["endpoint_scopes"]
         super().__init__(*args, **kwargs)
 
-    def get_queryset(self, view: Views = Views.GET) -> QuerySet:
-        qs = super().get_queryset(view)
+    def get_queryset(self, view: Views = Views.GET, request=None) -> QuerySet:
+        qs = super().get_queryset(view=view, request=request)
         # qs = qs.select_related("endpoint_scopes")
 
         return qs

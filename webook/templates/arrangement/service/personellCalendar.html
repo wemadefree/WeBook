@@ -1,21 +1,64 @@
+
 <template id="vuec-personell-calendar-component">
     <div ref="calendar">
     </div>
-
-    <button class="btn btn-primary" @click="initCalendar">Reload calendar</button>
 </template>
 
 <script>
+    function removePersonell(service_id, personell_id, name) {
+        Swal.fire({
+            title: 'Fjern personell',
+            text: "Er du sikker på at du vil fjerne " + name + " fra denne tjenesten?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ja, fjern personell',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch("/api/arrangement/service/personell/remove?id=" + service_id + "&related_id=" + personell_id, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                }).then(response => {
+                    if (response.ok) {
+                        Swal.fire(
+                            'Fjernet!',
+                            name + ' er nå fjernet fra tjenesten.',
+                            'success'
+                        );
+                        location.reload();
+                    } else {
+                        Swal.fire(
+                            'Feil!',
+                            'Det oppstod en feil under fjerning av personell.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        })
+    }
+
     let PersonellCalendarComponent = {
-        components: {},
+        components: {
+            PersonSelectComponent,
+        },
         props: {
             serviceId: Number
         },
         emits: [],
         data() {
-
+            return {
+                modalIsVisible: false,
+            }
         },
         methods: {
+            // removePersonell(id) {
+            //     console.log("Removing personell with id: " + id);
+            // },
             initCalendar() {
                 console.log("Initializing calendar");
                 const serviceId = this.serviceId;
@@ -29,7 +72,8 @@
                         schedulerLicenseKey: '{{ FULLCALENDAR_LICENSE_KEY }}',
                         initialView: 'resourceTimelineWeek',
                         height: 600,
-                        navLinks:true,
+                        navLinks:false,
+                        resourceLabelText: 'Personale',
                         locale: 'nb',
                         slotMinTime: "06:00:00",
                         slotMaxTime: "23:00:00",
@@ -45,12 +89,26 @@
                                     });
                                 });
                         },
+                        resourceLabelContent: function (arg) {
+                            let domContent = document.createElement("div");
+                            domContent.innerHTML = `<div class="d-flex justify-content-between align-items-middle" role="tooltip">
+                                <div>${arg.resource.title}</div>
+
+                                <div>
+                                    <button class='btn btn-sm wb-btn-danger' onclick="removePersonell(${serviceId}, ${arg.resource.id}, '${arg.resource.title}')" title="Fjern personell">
+                                        <i class='fas fa-trash'></i>
+                                    </button>
+                                </div>
+                            </div>`;
+                            return { 
+                                domNodes: [domContent],
+                            };
+                        },
                         events: async function () {
                             return await fetch("/arrangement/service/" + serviceId + "/personellEvents")
                                 .then(response => response.json())
                                 .then(d => d.events);
                         },
-                        // { "id": 42033, "title": "Strange Magic 2", "start": "2025-03-25 09:00", "end": "2025-03-25 18:00" }
                     });
                     this.calendar.render();
                 });

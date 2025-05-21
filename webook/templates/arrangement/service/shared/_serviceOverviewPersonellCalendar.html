@@ -1,0 +1,48 @@
+<div class="clearfix" id="serviceOverviewCalendarApp">
+    <div class="float-end">
+
+
+    </div>
+ </div>
+
+ <div id="serviceCalendar" class="mt-4">
+ </div>
+
+
+ <script>
+    $(document).ready(function () {
+        const serviceOverviewCalendarApp = Vue.createApp({
+            data() {
+                return {
+                    personell: []
+                }
+            },
+            computed: {},
+            methods: {
+                async getPersonnell() {
+                    return await fetch("/arrangement/service/{{object.id}}/personnell")
+                        .then(async response => await response.json());
+                },
+                getFullName(person) {
+                    return [ person.first_name, person.middle_name, person.last_name ].join(" ");
+                }
+            },
+            delimiters: ["[[", "]]"],
+            async mounted() {
+                this.personell = await this.getPersonnell();
+                console.log(this.personell.map(x => {
+                    return { title: this.getFullName(x) };
+                }))
+                let calendarEl = document.getElementById('serviceCalendar')
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'resourceTimelineWeek',
+                    resources: this.personell.map(x => { return { title: this.getFullName(x) }; }),
+                    height: 650
+                  });
+                calendar.render();
+                console.log("mounted")
+            }
+        });
+        serviceOverviewCalendarApp.mount("#serviceOverviewCalendarApp")
+    })
+ </script>

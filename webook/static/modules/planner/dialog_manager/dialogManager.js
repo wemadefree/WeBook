@@ -191,7 +191,7 @@ export class DialogFormInterceptorPlugin {
 
     _findAllForms() {
         let formElementsWithinDialog = this.dialog._$getDialogEl()[0].querySelectorAll("form");
-        
+
         formElementsWithinDialog.forEach((formElement) => {
             let cancelButtons = formElement.querySelectorAll(".cancel-button");
             cancelButtons.forEach((cancelButton) => {
@@ -202,10 +202,16 @@ export class DialogFormInterceptorPlugin {
             });
 
             formElement.onsubmit = function (event) {
+                debugger;
                 event.preventDefault();
 
-                const action = formElement.getAttribute("action") || this.dialog.formUrl;
+                let action = formElement.getAttribute("action") || this.dialog.formUrl;
                 const formData = new FormData(formElement);
+
+                for (const pair of formData.entries()) { // allow using <<variable>> to populate dynamic values from formData
+                    console.log(pair);
+                    action = action.replace("<<" + pair[0] + ">>", pair[1]);
+                }
 
                 fetch(action, {
                     method: 'POST',
@@ -222,6 +228,7 @@ export class DialogFormInterceptorPlugin {
                     return response.text();
                 }).then(html => { 
                     if (this._ascertainStateFromBodyHtml(html)) {
+                        this.dialog.onSubmit();
                         this.onResponseOk();
                         this.dialog.close();
                     }
@@ -398,6 +405,11 @@ export class DialogComplexDiscriminativeRenderer extends DialogBaseRenderer {
             span.innerHTML = html;
 
             let dialogEl = span.querySelector("#" + dialog.dialogElementId);
+
+            if (!dialogEl) {
+                throw new Error("Dialog element not found in HTML by id: " + dialog.dialogElementId);
+            }
+
             dialog.discriminator = dialogEl.getAttribute("class");
 
             let instantializeDialog;

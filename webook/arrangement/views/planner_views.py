@@ -48,6 +48,7 @@ from webook.arrangement.forms.ordering_forms import (
     RemovePersonFromEventForm,
     RemoveRoomFromEventForm,
 )
+from webook.arrangement.forms.service_forms import OrderServiceForm
 from webook.arrangement.forms.planner.planner_create_arrangement_form import (
     PlannerCreateArrangementModelForm,
 )
@@ -74,6 +75,7 @@ from webook.arrangement.models import (
     RequisitionRecord,
     Room,
     RoomPreset,
+    ServiceOrder,
 )
 from webook.arrangement.views.generic_views.archive_view import (
     ArchiveView,
@@ -384,7 +386,7 @@ planner_arrangement_events_view = PlannerArrangementEvents.as_view()
 
 
 class GetSpecificArrangementInFormatByEventPk(LoginRequiredMixin, View):
-      def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         serializable_arrangements = []
         results = []
 
@@ -452,7 +454,11 @@ class GetSpecificArrangementInFormatByEventPk(LoginRequiredMixin, View):
             content_type="application/json",
         )
 
-get_specific_arrangement_in_format_view = GetSpecificArrangementInFormatByEventPk.as_view()
+
+get_specific_arrangement_in_format_view = (
+    GetSpecificArrangementInFormatByEventPk.as_view()
+)
+
 
 class GetArrangementsInPeriod(LoginRequiredMixin, ListView):
     """Get all arrangements happening in a given period"""
@@ -709,6 +715,15 @@ class PlannerArrangementInformationDialogView(
         context["DISPLAY_LAYOUTS_WITH_REQUISITE_TEXT"] = DisplayLayout.objects.filter(
             triggers_display_layout_text=True
         )
+
+        service_orders = []
+
+        arrangement_in_focus = self.get_object()
+        for event in arrangement_in_focus.event_set.all():
+            for provision in event.provisions.all():
+                service_orders.append(provision.related_to_order)
+
+        context["ORDERS"] = set(service_orders)
 
         context["sets"] = sets.values()
         context["arrangement"] = arrangement_in_focus
@@ -1297,6 +1312,74 @@ class PlanSerieForm(LoginRequiredMixin, DialogView, FormView):
 
 
 arrangement_create_serie_dialog_view = PlanSerieForm.as_view()
+
+
+class PlannerCalendarV2(TemplateView):
+    template_name = "arrangement/planner/planner_calendar_v2.html"
+
+
+planner_calendar_v2 = PlannerCalendarV2.as_view()
+
+
+class OrderServiceDialog(
+    LoginRequiredMixin, PlannerAuthorizationMixin, DialogView, JsonFormView
+):
+    template_name = (
+        "arrangement/planner/dialogs/arrangement_dialogs/orderServiceDialog.html"
+    )
+    form_class = OrderServiceForm
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+
+        entity_type = self.kwargs.get("entity_type")
+        entity_id = self.kwargs.get("entity_id")
+
+        if entity_type == "event":
+            context["EVENT"] = Event.objects.get(id=entity_id) if entity_id else None
+        if entity_type == "serie":
+            context["SERIE"] = (
+                EventSerie.objects.get(id=entity_id) if entity_id else None
+            )
+
+        context["recipientDialogId"] = self.request.GET.get("recipientDialogId", None)
+
+        return context
+
+    def form_valid(self, form) -> JsonResponse:
+        form.save(self.request.user)
+        return super().form_valid(form)
+
+
+order_service_dialog_view = OrderServiceDialog.as_view()
+
+
+class InspectServiceOrderDialogView(
+    LoginRequiredMixin, DialogView, UpdateView, JsonFormView
+):
+    model = ServiceOrder
+    template_name = (
+        "arrangement/planner/dialogs/arrangement_dialogs/inspectOrderProvision.html"
+    )
+    pk_url_kwarg = "pk"
+    pk_field = "pk"
+    fields = ["freetext_comment"]
+    # form_class = UpdateServiceOrderForm
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        service_order: ServiceOrder = self.get_object()
+        basis_is_serie = service_order.associated_manifest is not None
+        context["BASIS_TYPE"] = "serie" if basis_is_serie else "event"
+        context["SAMPLE_BASIS_ITEM"] = (
+            service_order.associated_manifest
+            if basis_is_serie
+            else service_order.provisions.first().for_event
+        )
+        return context
+
+
+inspect_service_order_dialog_view = InspectServiceOrderDialogView.as_view()
 
 
 class PlannerCalendarV2(TemplateView):

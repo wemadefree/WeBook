@@ -13,7 +13,11 @@
         props: {
             isVisible: Boolean,
             excludes: Array,
-            style: String
+            style: String,
+            hideOnClickOutside: {
+                type: Boolean,
+                default: true
+            }
         },
         data() {
             return {
@@ -50,30 +54,35 @@
                 this.$emit("update:isVisible", newState);
             }
         },
+        emits: ["update:isVisible"],
         mounted() {
             this.internalIsVisible = this.isVisible;
-
-            this.clickOutsideEvent = (e) => {
-                if (this.ignoreNextClick) {
-                    this.ignoreNextClick = false;
-                    return;
-                }
-
-                if (this.$el !== event.target && !this.$el.contains(event.target)) {
-                    if (this.excludes && this.excludes.length > 0 && this.excludes.includes(event.target)) {
+            if (this.hideOnClickOutside) {
+                this.clickOutsideEvent = (e) => {
+                    if (this.ignoreNextClick) {
+                        this.ignoreNextClick = false;
                         return;
                     }
 
-                    this.internalIsVisible = false;
-                }
-            };
+                    if (this.$el !== event.target && !this.$el.contains(event.target)) {
+                        if (this.excludes && this.excludes.length > 0 && this.excludes.includes(event.target)) {
+                            return;
+                        }
+                        console.log("click outside!")
+                        this.internalIsVisible = false;
+                        // this.$emit("update:isVisible", false);
+                    }
+                };
 
-            document.addEventListener('click', this.clickOutsideEvent);
-            document.addEventListener('touchstart', this.clickOutsideEvent);
+                document.addEventListener('click', this.clickOutsideEvent);
+                document.addEventListener('touchstart', this.clickOutsideEvent);
+            }
         },
         unmounted() {
-            document.removeEventListener('click', this.clickOutsideEvent);
-            document.removeEventListener('touchstart', this.clickOutsideEvent);
+            if (this.hideOnClickOutside) {
+                document.removeEventListener('click', this.clickOutsideEvent);
+                document.removeEventListener('touchstart', this.clickOutsideEvent);
+            }
         },
         delimiters: ["[[", "]]"],
         template: "#vuec-popover-component"

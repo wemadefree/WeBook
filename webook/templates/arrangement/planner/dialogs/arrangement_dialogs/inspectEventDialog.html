@@ -133,6 +133,20 @@
             </a>
         </li>
         {% endif %}
+        <li class="nav-item" role="presentation">
+            <a 
+                href="#service-orders-tab"
+                id="service-orders-tab-link" 
+                role="tab"
+                data-mdb-toggle="tab"
+                aria-controls="service-orders-tab"
+                aria-selected="false"
+                class="nav-link">
+                Tjenester
+                <!-- <i class="fas fa-envelope fa-1x"></i>
+                <span class="badge rounded-pill badge-notification bg-danger">99</span> -->
+            </a>
+        </li>
     </ul>
 
     <div class="tab-content" id="ex1-content">
@@ -767,6 +781,128 @@
             </div>
         </div>
         {% endif %}
+
+        <div class="tab-pane fade" id="service-orders-tab" role="tabpanel" aria-labelledby="service-orders-tab">
+            {% if event.provisions.all|length == 0 %}
+                <div class="alert">
+                    <h4 class="text-center">Ingen tjenester bestilt</h4>
+                    {% if user|has_group:"planners" or user.is_superuser %}
+                    <div class="row">
+                        <div class="col text-center">
+                            <a class="btn wb-btn-main text-center shadow-0 mb-2 center" style="margin:auto"
+                                d-trigger="triggerOrderServiceDialog">
+                                Bestill tjeneste(r)
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            {% elif user|has_group:"planners" or user.is_superuser %}
+                <div class="clearfix mb-2">
+                    <button class="btn wb-btn-main float-end" d-trigger="triggerOrderServiceDialog">
+                        Bestill tjeneste(r)
+                    </button>
+                </div>
+            {% endif %}
+
+            {% for provision in event.provisions.all %}
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex">
+                                <div class="mb-0">
+                                    <div class="d-flex">
+                                        {% if provision.related_to_order.state == 'confirmed' or provision.related_to_order.state == 'provisioned' %}
+                                            <span class="dot me-2 wb-bg-success">
+                                            </span>
+                                        {% elif provision.related_to_order.state == 'in_revision' %}
+                                            <span class="dot me-2 wb-bg-warning">
+                                            </span>
+                                        {% elif provision.related_to_order.state == 'awaiting' %}
+                                            <span class="dot me-2 wb-bg-secondary">
+                                            </span>
+                                        {% elif provision.related_to_order.state == 'maybe' %}
+                                            <span class="dot me-2 wb-bg-secondary">
+                                            </span>
+                                        {% elif provision.related_to_order.state == 'denied' %}
+                                            <span class="dot me-2 wb-bg-danger">
+                                            </span>
+                                        {% elif provision.related_to_order.state == 'cancelled' %}
+                                            <span class="dot me-2 wb-bg-danger">
+                                            </span>
+                                        {% elif provision.related_to_order.state == 'changed' %}
+                                            <span class="dot me-2 wb-bg-danger">
+                                            </span>
+                                        {% endif %}
+
+                                        <h5 class="mb-0">Bestilling #{{provision.related_to_order.id}} |&nbsp; </h5>
+                                        <div class="text-muted">{{provision.related_to_order.service.name}}</div>
+                                    </div>
+
+                                    <div>
+                                        {% if provision.related_to_order.state == "awaiting" %}
+                                            <div class="text-small fw-bold">
+                                                (Venter behandling)
+                                            </div>
+                                        {% elif provision.related_to_order.state == "cancelled" %}
+                                            <div class="text-small fw-bold">
+                                                (Kansellert)
+                                            </div>
+                                        {% elif provision.related_to_order.state == "denied" %}
+                                            <div class="text-small fw-bold">
+                                                (Avvist)
+                                            </div>
+                                        {% elif provision.related_to_order.state == "in_revision" %}
+                                            <div class="text-small fw-bold">
+                                                (Revideres)
+                                            </div>
+                                        {% elif provision.related_to_order.state == "changed" %}
+                                            <div class="text-small fw-bold">
+                                                (Endret, venter bekreftelse)
+                                            </div>
+                                        {% elif provision.related_to_order.state == "maybe" %}
+                                            <div class="text-small fw-bold">
+                                                (Kanskje)
+                                            </div>
+                                        {% elif provision.related_to_order.state == "provisioned "%}    
+                                           <div class="text-small fw-bold">
+                                                (Bekreftet, ferdig behandlet)
+                                            </div>
+                                        {% elif provision.related_to_order.state == "confirmed" %}
+                                            <div class="text-small fw-bold">
+                                                (Bekreftet, ikke behandlet ennå)
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <!-- <div class="p-2 ms-2 me-2">
+                                    <h5>Kommentar:</h5>
+                                    <hr>
+                                    <div class="text-muted">
+                                        {{ provision.related_to_order.freetext_comment }}
+                                    </div>
+                                </div> -->
+                            </div>
+    
+                            <div class="clearfix">
+                                <button class="btn wb-btn-main btn-lg float-end me-2" d-trigger="triggerInspectServiceOrderDialog" d-arg-order_id="{{ provision.related_to_order.pk }}">
+                                    Vis ordre
+                                </button>
+                            </div>
+                        </div>
+
+                        {% if provision.selected_personell.exists and provision.related_to_order.state == "confirmed" %}
+                            <h5 class="mt-2">Personell tildelt til denne aktiviteten:</h5>
+                            <ul>
+                                {% for person in provision.selected_personell.all %}
+                                    <li>{{person}}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 
     {% if user|has_group:"planners" or user.is_superuser %}
@@ -996,6 +1132,12 @@
             },
             triggerNewNoteDialog(dialog, {} = {}, triggeredByElement) {
                 dialog.raiseTriggerEvent("eventInspector", "newNoteDialog", { $parent: dialog.dialogElement });
+            },
+            triggerOrderServiceDialog(dialog, {} = {}, triggeredByElement) {
+                dialog.raiseTriggerEvent("eventInspector", "orderServiceDialog", { entity_type: "event" });
+            },
+            triggerInspectServiceOrderDialog(dialog, { orderId } = {}, triggeredByElement) {
+                dialog.raiseTriggerEvent("eventInspector", "inspectServiceOrderDialog", { "order_id": orderId });
             },
             /* Delete a note, identified by note_pk */
             deleteNote: (dialog, { notePk } = {}) => {

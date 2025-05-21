@@ -56,8 +56,8 @@ class CreateEventSerieJsonFormView(
     form_class = CreateSerieForm
 
     def form_valid(self, form) -> JsonResponse:
-        form.save(form, user=self.request.user)
-        return super().form_valid(form)
+        serie_id = form.save(form, user=self.request.user)
+        return JsonResponse({"success": True, "serie_id": serie_id})
 
 
 create_event_serie_json_view = CreateEventSerieJsonFormView.as_view()
@@ -71,6 +71,10 @@ class CreateEventJsonFormView(
 
     form_class = CreateEventForm
     model = Event
+
+    def form_valid(self, form) -> JsonResponse:
+        event_id = form.save()
+        return JsonResponse({"success": True, "event_id": event_id})
 
 
 create_event_json_view = CreateEventJsonFormView.as_view()

@@ -1,5 +1,6 @@
-<template id="vuec-table-component-template">
+{% include "arrangement/vue/tristate_toggle_component.html" %}
 
+<template id="vuec-table-component-template">
     <div class="d-flex justify-content-between">
         <div class="input-group w-50" v-if="canSearch">
             <span class="input-group-text border-end-0">
@@ -33,7 +34,6 @@
 
     <div class="clearfix">
         <div class="float-end">
-            
             <div>
                 <button class="btn btn-sm wb-btn-main mt-2" @click="addCreateRow()" v-if="canInsert">
                     <i class="fas fa-plus"></i>
@@ -43,8 +43,8 @@
         </div>
     </div>
 
-    <table :class="tableClasses ? tableClasses : 'table  align-middle mt-3 text-center'">
-        <thead ref="thead">
+    <table :class="tableClasses ? tableClasses : 'table table-sm align-middle mt-3 text-center'">
+        <thead ref="thead" style="background-color: ghostwhite;">
             <tr>
                 <th v-for="( options, columnKey ) in visibleColumns" @click="sortBy(columnKey)">
                     <strong>[[ options.friendlyName ]]</strong>
@@ -75,6 +75,10 @@
                                 &nbsp;
                             </span>
                         </div>
+
+                        <tri-state-toggle-component v-if="options.componentName == 'tri-state-toggle'" @state-set="(state) => { row.stateChanged(state); }">
+                        </tri-state-toggle-component>
+
                         <div class="form-group" v-if="options.componentName == 'checkbox'">
                             <input type="checkbox" @click.native="emitCheckboxClickedEvent(row, columnKey)"
                                 v-model="row[columnKey]" :disabled="'is_disabled' in row && row.is_disabled">
@@ -204,6 +208,11 @@
 
     <div v-if="compactNav" class="text-center">
         <em>[[entitiesCount]] resultater</em>
+    </div>
+
+    <div v-if="entitiesCount == 0">
+        <slot name="no-results">
+        </slot>
     </div>
 
 </template>
@@ -472,6 +481,7 @@
     const TableComponent = {
         components: {
             StatusIndicatorComponent,
+            TriStateToggleComponent,
         },
         props: {
             dataSource: Function,
@@ -484,7 +494,8 @@
             columnNames: Object,
             rerenderToggle: Boolean,
             compactNav: Boolean,
-            forceDropdownActionButton: Boolean
+            forceDropdownActionButton: Boolean,
+            hideTableIfNoData: Boolean,
         },
         data() {
             return {
@@ -527,7 +538,6 @@
 
                 if (this.isApiDataSource) {
                     return items || []; // Do not filter on API data sources. It's handled by backend.
-                
                 }
 
                 if (this.canSearch && this.searchTerm) {
@@ -567,8 +577,14 @@
                     return this.visibleItems.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage);
                 else if (this.dataSource instanceof Function)
                     return this.visibleItems.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage);
+                else if (this.dataSource instanceof Promise)
+                    return this.visibleItems.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage);
+                else if (this.dataSource instanceof Object)
+                    return this.visibleItems.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage);
+                
+                console.log("dataSource", this.dataSource);
 
-                throw new Error("Data source is not an array, and is not an instance of APITableDataSource");
+                throw new Error("(1) Data source is not an array, and is not an instance of APITableDataSource", this.dataSource);
             },
             visibleColumns() {
                 let columns = {};
@@ -846,6 +862,17 @@
                     const result = await this.dataSource();
                     if (!result instanceof Object)
                         throw new Error("DataSource is callable, but did not return an array");
+
+                    return result;
+                }
+
+                if (this.dataSource instanceof Promise) {
+                    const result = await this.dataSource;
+                    if (!result instanceof Object)
+                        throw new Error("DataSource is a promise, but did not resolve to an array");
+
+
+                    console.log("Promise resolved", result);
 
                     return result;
                 }

@@ -1,4 +1,4 @@
-import { Dialog, DialogManager } from "./dialog_manager/dialogManager.js";
+import { Dialog, DialogFormInterceptorPlugin, DialogManager } from "./dialog_manager/dialogManager.js";
 import { QueryStore } from "./querystore.js";
 
 export class EventInspector {
@@ -277,6 +277,84 @@ export class EventInspector {
                             dialogClass: 'no-titlebar',
                         },
                     })
+                ],
+                [
+                    "orderServiceDialog",
+                    new Dialog({
+                        dialogElementId: "orderServiceDialog",
+                        triggerElementId: undefined,
+                        triggerByEvent: true,
+                        htmlFabricator: async (context) => {
+                            if (!context.lastTriggererDetails.entity_type)
+                                throw Error("Please supply a valid entity type (either 'event' or 'serie')");
+
+                            return this.dialogManager.loadDialogHtml({
+                                url: '/arrangement/planner/dialogs/order_service/' + context.lastTriggererDetails.entity_type + '/' + context.event.pk,
+                                dialogId: 'orderServiceDialog',
+                                managerName: 'eventInspector',
+                                customParameters: {
+                                    recipientDialogId: context.lastTriggererDetails.sendTo,
+                                }
+                            });
+                        },
+                        onRenderedCallback: () => { },
+                        dialogOptions: { width: "70%", dialogClass: 'no-titlebar', },
+                        onUpdatedCallback: async () => {
+                        },
+                        onSubmit: async (context, details, dialogManager, dialog) => {
+                            details.requestedServices.forEach(async (serviceOrder) => {
+                                let formData = new FormData();
+                                formData.append("parent_type", "event")
+                                formData.append("parent_id", serviceOrder.parent_id);   
+                                formData.append("service_id", serviceOrder.service_id);
+                                formData.append("freetext_comment", serviceOrder.freetext_comment);
+
+                                await fetch('/arrangement/planner/dialogs/order_service/event/' + serviceOrder.parent_id, {
+                                    method: 'POST',
+                                    body: formData,
+                                    headers: {
+                                        "X-CSRFToken": details.csrf_token
+                                    }
+                                }).then(response => response.json())
+                                .then(async _ => { 
+                                    this.dialogManager.closeDialog("orderServiceDialog");
+                                    await this.dialogManager.reloadDialog("inspectEventDialog");
+
+                                    window.MessagesFacility.send( "inspectEventDialog", { tab: "service-orders-tab" }, "moveToTab" );
+                                 });
+                            });
+
+                        }
+                    })
+                ],
+                [
+                    "inspectServiceOrderDialog",
+                    new Dialog({
+                        dialogElementId: "inspectServiceOrderDialog",
+                        triggerElementId: undefined,
+                        triggerByEvent: true,
+                        plugins: [ new CustomDialogFormInterceptorPlugin("{{csrf_token}}") ],
+                        formUrl: '/arrangement/planner/dialogs/inspect_service_order/<<id>>',
+                        htmlFabricator: async (context) => {
+                            console.log("context", context);
+
+                            return this.dialogManager.loadDialogHtml({
+                                url: '/arrangement/planner/dialogs/inspect_service_order/' + context.lastTriggererDetails.order_id,
+                                dialogId: "inspectServiceOrderDialog",
+                                managerName: "eventInspector",
+                            })
+                        },
+                        onRenderedCallback: () => { this.dialogManager._makeAware(); },
+                        dialogOptions: { width: "70%", dialogClass: 'no-titlebar' },
+                        onUpdatedCallback: async () => {
+                            this.dialogManager.closeDialog("inspectServiceOrderDialog");
+                            await this.dialogManager.reloadDialog("inspectEventDialog");
+
+                            window.MessagesFacility.send( "inspectEventDialog", { tab: "service-orders-tab" }, "moveToTab" );
+                        },
+                        onSubmit: (context, details, dialogManager, dialog) => {
+                        }
+                    })
                 ]
             ]            
         })
@@ -286,4 +364,14 @@ export class EventInspector {
         this.dialogManager.setContext({ event: { pk: pk } });
         this.dialogManager.openDialog( "inspectEventDialog" );
     }    
+}
+
+class CustomDialogFormInterceptorPlugin extends DialogFormInterceptorPlugin {
+    constructor (csrf_token) {
+        super(csrf_token);
+    }
+
+    onResponseOk() {
+        toastr.success("Forandringene har blitt lagret!");
+    }
 }

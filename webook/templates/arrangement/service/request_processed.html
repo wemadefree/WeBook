@@ -1,0 +1,35 @@
+{% extends "simple_header_secondary_public_base.html" %}   
+{% load static i18n %}
+{% load custom_tags %}
+
+{% block content %}
+    <div style="margin: auto" class="text-center">
+        <h2>
+            {% if object.related_to_order.state == "confirmed" %}
+            <i class="fas fa-check text-success"></i>
+            {% else %}
+            <i class="fas fa-times text-danger"></i>
+            {% endif %}
+        </h2>
+        <h2>Ordre #{{object.related_to_order.id}}</h2>
+        <h3>Denne tjenestebestillingen er 
+            {% if object.related_to_order.state == "confirmed" %}
+            ferdigbehandlet
+            {% elif object.related_to_order.state == "cancelled" %}
+            kansellert
+            {% elif object.related_to_order.state == "denied" %}
+            avvist
+            {% endif %}
+        </h3>
+
+        {% if request.user.is_authenticated %}
+        <a class="btn wb-btn-main mt-3" href="{% url 'users:detail' request.user.slug %}">
+            Tilbake til planleggeren
+        </a>
+        {% else %}
+            <a href="{% url 'account_login' %}" class="btn wb-btn-main mt-3">
+                Til innlogging
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}

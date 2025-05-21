@@ -221,6 +221,10 @@
                 <input type="text" id="expected_visitors" name="expected_visitors" class="form-control form-control-lg" required />
             </div>
         </div>
+        <div id="step-services">
+            <order-services-component v-model="orderedServices">
+            </order-services-component>
+        </div>
         <div id="step-3">
             <div class="alert alert-info small">
                 <i class="fas fa-info-circle"></i>
@@ -397,6 +401,50 @@
         managerName: '{{ managerName }}',
         discriminator: '{{ discriminator }}',
         postInit: function (dialog) {
+            const values = {};
+            for (const [key, inputEl] of Object.entries(dialog.interior)) {
+                if (!key)
+                    continue;
+
+                values[key] = inputEl.value;
+            }
+
+            dialog.data.vueApp = Vue.createApp({
+                components: {
+                    OrderServicesComponent
+                },
+                data() {
+                    return {
+                        orderedServices: dialog.data.orderedServices ? dialog.data.orderedServices : [],
+                    };
+                },
+                computed: {},
+                methods: {},
+                mounted() {
+
+                },
+                delimiters: ['[[', ']]'],
+            });
+            dialog.data.vueApp.mount(dialog.$dialogElement[0]);
+            dialog._discover();
+
+            for (const [key, value] of Object.entries(values)) {
+                if (!key)
+                    continue;
+                
+                let inputElement;
+                try {
+                    inputElement = dialog.getElementById(key);
+                } catch (e) {
+                    console.warn("Could not find element with id: " + key);
+                    continue;
+                }
+                
+                if (inputElement) {
+                    inputElement.value = value;
+                }
+            }
+
             document.querySelectorAll('.form-outline').forEach((formOutline) => {
                 new mdb.Input(formOutline).init();
             });
@@ -641,6 +689,11 @@
                         stepOut: () => { console.log("2. Step Out"); }
                     },
                     {
+                        element: dialog.getElementById('step-services'),
+                        title: 'Tjenester'
+
+                    },
+                    {
                         element: dialog.getElementById('step-3'),
                         title: 'Opp og ned-rigg',
                         visible: {% if HIDE_RIGGING %}false{% else %}true{% endif %},
@@ -741,13 +794,20 @@
 
                     school:                    dialog.getElementById("schoolSelect").value == 0 ? "" : dialog.getElementById("schoolSelect").value,
                     county:                   dialog.getElementById("countySelect").value == 0 ? "" : dialog.getElementById("countySelect").value,
+
+                    ordered_services: dialog.data.vueApp._instance.ctx.orderedServices.map((service) => {
+                        return {
+                            applied_preconfiguration: service.preconfigurations[service.preconfigurations.length - 1].id,
+                            service_id: service.service.id,
+                            freetext_comment: service.description,
+                            service_order: null
+                        }
+                    })
                 };
 
                 let statusValue = dialog.data.statusTypeJsTreeSelect.getSelectedValue();
                 if (statusValue !== undefined)
                     qualifiedEvent.status = statusValue;
-
-                console.log("qualifiedEvent", qualifiedEvent);
 
                 qualifiedEvent.display_layouts = 
                     [...dialog.querySelectorAll("input[name='display_layouts_create_event'][type='checkbox']:checked")]
@@ -830,6 +890,19 @@
                 
                 triggeredByElement.remove();
             },
+            triggerOrderService(dialog, {} = {}, triggeredByElement) {
+                dialog.raiseTriggerEvent(
+                    "{{managerName}}", "orderServiceDialog", 
+                    { 
+                        $parent: dialog.dialogElement, 
+                        sendTo: '{{dialogId}}', 
+                        renderInChain: true,
+                        data: { whenEventName: "newServiceOrder" },
+                        entity_type: "event",
+                        entity_id: "0",
+                    }
+                )
+            },
             triggerAddRooms(dialog, {} = {}, triggeredByElement) {
                 dialog.raiseTriggerEvent(
                     "{{managerName}}", "{{orderRoomDialog}}", 
@@ -863,6 +936,10 @@
                     data: { whenEventName: "setPlanner", selectedBundle: dialog.data.mainPlannerPayload } 
                 }
             )},
+            removeServiceOrder(dialog, { id }, triggeredByElement) {
+                dialog.data.serviceOrders = dialog.data.serviceOrders.filter((order) => order.key !== id);
+                dialog.$(`#${id}`).remove();
+            },
         },
         data: {
             selectedPeopleIds: new Map(),
@@ -870,6 +947,7 @@
             peopleNameMap: new Map(),
             roomsNameMap: new Map(),
             stepper: null,
+            serviceOrders: [],
         },
         when: [
             { eventKnownAs: "roomsSelected", do: (dialog, payload) => {
@@ -893,6 +971,13 @@
                 payload.selectedPresets.forEach( (presetId) => dialog.data.roomPresets.set(presetId, payload.allPresets.get(presetId)) );
 
                 dialog.data.roomPayload = payload;
+            } },
+            { eventKnownAs: "setServiceOrders", do: (dialog, payload) => {
+                if (!dialog.data.vueApp) {
+                    dialog.data.orderedServices = payload;
+                } else {
+                    dialog.data.vueApp._instance.ctx.orderedServices = payload;
+                }
             } },
             { eventKnownAs: "peopleSelected", do: (dialog, payload) => {
                 let wrapper = dialog.$('#selectedPeopleWrapper');
@@ -956,6 +1041,31 @@
                     dialog.data.statusTypeJsTreeSelect.setSelected(payload);
                 else
                     dialog.$('#_statusTypeId').val(payload);
+            } },
+            { eventKnownAs: "newServiceOrder", do: (dialog, payload) => {
+                payload = payload[0];
+                payload.key = Math.random().toString(36).substring(7);
+                dialog.data.serviceOrders.push(payload);
+                console.log("Service orders", dialog.data.serviceOrders);
+                console.log("newServiceOrder.payload", payload);
+                dialog.$("#serviceOrders").append(
+                    $(`<div class='card card-body shadow-0 wb-bg-secondary border border-dark mt-2' id='${payload.key}'>
+                            <h5>
+                                ${payload.service_name}
+                                <button class='btn wb-btn-main-outline border border-dark shadow-0 float-end' 
+                                    @click='serviceOrders.splice(serviceOrders.indexOf(order), 1)'
+                                    select-type='serviceOrder' 
+                                    d-trigger='removeServiceOrder'
+                                    d-arg-id='${payload.key}'>
+                                    
+                                    <i class='fas fa-times'></i>
+                                </button>
+                            </h5>
+                            <code>
+                                ${payload.freetext_comment}
+                            </code>
+                        </div>`)
+                );
             } },
         ],
         plugins: [

@@ -1,0 +1,111 @@
+<template id="vuec-order-completes-table">
+    <table-component :data-source="dataSourceFunc"
+                     :can-search="true">
+
+        <span>
+            <i class="fas fa-info-circle"></i>
+            Oppkommende og pågående bestillinger
+        </span>
+    </table-component>
+</template>
+
+<script>
+    let OrderCompletesTable = {
+        components: {
+            'table-component': TableComponent,
+        },
+        props: {
+            serviceId: Number,
+        },
+        emits: [],
+        data() {
+            return {}
+        },
+        methods: {
+            async dataSourceFunc() {
+                let data = await fetch("/api/arrangement/service_order/list?service_id=" + this.serviceId + "&state=provisioned")
+                    .then(response => response.json());
+
+                data.data = data.data.filter(item => {
+                    return item.temporalState === "upcoming" || item.temporalState === "in_progress";
+                });
+
+                return {
+                    columns: {
+                        "id": { 
+                            isHtml: false, 
+                            friendlyName: "#", 
+                            isSortable: true,
+                            isSearchable: true
+                        },
+                        // "is_active": { 
+                        //     isHtml: false, 
+                        //     friendlyName: "Aktiv", 
+                        //     isSortable: true,
+                        //     isSearchable: true,
+                        //     formatter: (item) => {
+                        //         return item.is_active ? "Ja" : "Nei";
+                        //     }
+                        // },
+                        "temporal_state": { 
+                            isHtml: false, 
+                            friendlyName: "Status", 
+                            isSortable: true,
+                            isSearchable: true,
+                            formatter: (item) => {
+                                return item.temporal_state === "upcoming" ? "Oppkommende" : "Pågående";
+                            }
+                        },
+                        "arrangement": {
+                            isHtml: true,
+                            friendlyName: "Arrangement",
+                            isSortable: true,
+                            formatter: (item) => {
+                                return `${item.arrangement.name} <span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.status.name})</span> <span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.arrangementType.name})</span> <span class='text-small text-muted'>(<i class='fas fa-mask'></i> ${item.arrangement.audience.name})</span>`;
+                            }
+                        },
+                        "count_instances": { 
+                            isHtml: false, 
+                            friendlyName: "Antall instanser", 
+                            isSortable: true,
+                            isSearchable: true,
+                            formatter: (item) => {
+                                return item.provisions.length;
+                            }
+                        },
+                        "created": { 
+                            isHtml: false, 
+                            friendlyName: "Plassert",
+                            isSortable: true,
+                            formatter: (item) => {
+                                return new Date(item.created).toLocaleString();
+                            }
+                        },
+                        "time": { 
+                            isHtml: false, 
+                            friendlyName: "Fra - Til",
+                            isSortable: true,
+                            formatter: (item) => {
+                                const start = new Date(item.startAndEnd[0]).toLocaleString();
+                                const end = new Date(item.startAndEnd[1]).toLocaleString();
+                                return `${start} - ${end}`;
+                            }
+                        },
+                        "freetextComment": { 
+                            isHtml: false, 
+                            friendlyName: "Kommentar fra planlegger", 
+                            isSortable: true,
+                            isSearchable: true,
+                        },
+                    },
+                    actions: {
+                        "showDetailedView": { type: 'main', content: '<i class="fas fa-eye"></i>&nbsp; Vis mer', isContentHtml: true },
+                    },
+                    data: data.data
+                };
+            }
+        },
+        template: '#vuec-order-completes-table',
+        delimiters: [ '[[', ']]'],
+    }
+</script>

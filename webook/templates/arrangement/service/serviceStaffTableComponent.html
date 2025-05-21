@@ -1,0 +1,358 @@
+<template id="vuec-service-staff-table">
+
+
+
+    <table class="table table-sm table-bordered align-middle">
+        <thead>
+            <tr class="wb-bg-secondary">
+                <th colspan="7" class="text-center">
+                    <h4 class="mb-0">
+                        Tjenestebehandlere
+                    </h4>
+
+                    <div class="small text-muted">
+                        Tjenesteansvarlige kan utføre diverse handlinger i relasjon til denne tjenesten.
+                        <br>
+                        Ansvarlige uten noen rettigheter vil ha lesetilgang til tjenesten.
+                    </div>
+                </th>
+            </tr>
+            <tr class="text-center bg-light">
+                <th class="fw-bold">Person</th>
+                <th class="fw-bold">
+                    Kan svare på bestillinger
+                </th>
+                <th class="fw-bold">
+                    Kan tildele ressurser
+                </th>
+                <th class="fw-bold">
+                    Kan administrere prekonfigurasjoner
+                </th>
+                <th class="fw-bold">
+                    Kan administrere personale
+                </th>
+                <th class="fw-bold">
+                    Kan administrere tjenesteansvarlige
+                </th>
+                <th class="fw-bold">
+                    Valg
+                </th>
+            </tr>
+        </thead>
+        <tbody class="align-middle">
+            <tr v-for="staffMember in staff" class="text-center" :key="staffMember.id">
+                <td>
+                    [[ staffMember.person_name ]]
+                </td>
+                <td>
+                    <div class="form-check checkbox-lg d-flex justify-content-center" >
+                        <input type="checkbox" class="form-check-input" v-model="staffMember.can_respond_to_orders" :disabled="!staffMember.editEnabled" />
+                    </div>
+                </td>
+                <td>
+                    <div class="form-check checkbox-lg d-flex justify-content-center" >
+                        <input type="checkbox" class="form-check-input" v-model="staffMember.can_provision_orders" :disabled="!staffMember.editEnabled" />
+                    </div>
+                </td>
+                <td>
+                    <div class="form-check checkbox-lg d-flex justify-content-center" >
+                        <input type="checkbox" class="form-check-input" v-model="staffMember.can_define_preconfigurations" :disabled="!staffMember.editEnabled" />
+                    </div>
+                </td>
+                <td>
+                    <div class="form-check checkbox-lg d-flex justify-content-center" >
+                        <input type="checkbox" class="form-check-input" v-model="staffMember.can_administrate_personell" :disabled="!staffMember.editEnabled" />
+                    </div>
+                </td>
+                <td>
+                    <div class="form-check checkbox-lg d-flex justify-content-center" >
+                        <input type="checkbox" class="form-check-input" v-model="staffMember.can_administrate_staff" :disabled="!staffMember.editEnabled" />
+                    </div>
+                </td>
+
+                <td>
+                    <button class="btn btn-sm wb-btn-main" @click="staffMember.editEnabled = true" v-if="!staffMember.editEnabled">
+                        Rediger
+                    </button>
+                    <button class="btn btn-sm wb-btn-main" @click="updateStaffMember(staffMember)" v-else>
+                        Lagre
+                    </button>
+                    <button class="btn btn-sm wb-btn-danger ms-2" @click="removeStaff(staffMember)">
+                        Fjern
+                    </button>
+                </td>
+            </tr>
+
+            <tr v-if="showCreateRecord" class="text-center">
+                <td>
+                    <div v-if="!staffCreate.personSelect">
+                        <person-select-component 
+                            v-model="staffCreate.personSelect" 
+                            :single-select="true"
+                            :excluded-keys="excludedKeys">
+                        </person-select-component>
+                    </div>
+                    <div v-else>
+                        <i class="fas fa-user-plus"></i> 
+                        [[ staffCreate.personSelect.fullName ]]
+
+                        <a @click="staffCreate.personSelect = null" class="ms-2">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </div>
+                </td>
+                <td>
+                    <div class="form-check checkbox-lg d-flex justify-content-center" >
+                        <input type="checkbox" class="form-check-input" v-model="staffCreate.can_respond_to_orders" />
+                    </div>
+                </td>
+                <td>
+                    <div class="form-check checkbox-lg d-flex justify-content-center" >
+                        <input type="checkbox" class="form-check-input" v-model="staffCreate.can_provision_orders" />
+                    </div>
+                </td>
+                <td>
+                    <div class="form-check checkbox-lg d-flex justify-content-center" >
+                        <input type="checkbox" class="form-check-input" v-model="staffCreate.can_define_preconfigurations" />
+                    </div>
+                </td>
+                <td>
+                    <div class="form-check checkbox-lg d-flex justify-content-center" >
+                        <input type="checkbox" class="form-check-input" v-model="staffCreate.can_administrate_personell" />
+                    </div>
+                </td>
+                <td>
+                    <div class="form-check checkbox-lg d-flex justify-content-center" >
+                        <input type="checkbox" class="form-check-input" v-model="staffCreate.can_administrate_staff" />
+                    </div>
+                </td>
+
+                <td>
+                    <button class="btn btn-sm wb-btn-main" @click="addStaff()">
+                        <i class="fas fa-save"></i>
+                        Lagre
+                    </button>
+                    <button class="btn btn-sm wb-btn-danger ms-2" @click="showCreateRecord = false">
+                        <i class="fas fa-times"></i>
+                        Avbryt
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-end">
+        <button class="btn wb-btn-main" @click="addStaffCreate()">
+            <i class="fas fa-user-plus"></i>
+        </button>
+    </div>
+</template>
+
+<script>
+    let ServiceStaffTableComponent = {
+        components: {
+            MdbModalComponent,
+            PersonSelectComponent,
+        },
+        props: {
+            serviceId: {
+                title: 'Service ID',
+                type: Number,
+                default: null
+            },
+        },
+        data() {
+            return {
+                staff: [],
+                showCreateRecord: false,
+                staffCreate: {
+                    service_id: this.serviceId,
+                    person_id: null,
+                    can_respond_to_orders: false,
+                    can_provision_orders: false,
+                    can_define_preconfigurations: false,
+                    can_administrate_personell: false,
+                    can_administrate_staff: false,
+                    personSelect: null
+                }
+            }
+        }, 
+        computed: {
+            excludedKeys() {
+                const personIds = this.staff.map(staffMember => staffMember.person_id);
+                return personIds;
+            }
+        },
+        methods: {
+            addStaff() {
+                if (this.staffCreate.personSelect) {
+                    this.staffCreate.person_id = this.staffCreate.personSelect.id;
+                } else {
+                    alert("Du må velge en person");
+                    return;
+                }
+
+                fetch(`/api/arrangement/service/${this.serviceId}/staff`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify(this.staffCreate)
+                }).then(response => response.json())
+                  .then(data => {
+                      console.log("Staff added", data);
+                      this.loadData();
+                      this.showCreateRecord = false;
+
+                      toastr.success("Tjenesteansvarlig lagt til");
+                  });
+            },
+            updateStaffMember(staffMember) {
+                console.log("updateStaffMember", staffMember);
+                staffMember.serviceId = this.serviceId;
+                fetch(`/api/arrangement/service/${this.serviceId}/staff/${staffMember.person_id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify(staffMember)
+                }).then(response => {
+                    if (response.ok) {
+                        this.loadData();
+                        staffMember.editEnabled = false;
+                        toastr.success("Endringer lagret");
+                    } else {
+                        alert("Noe gikk galt");
+                    }
+                });
+            },
+            removeStaff(staffMember) {
+                Swal.fire({
+                    title: 'Er du sikker?',
+                    text: "Du kan ikke angre dette!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ja',
+                    cancelButtonText: 'Avbryt'
+                }).then(response => {
+                    if (response.isConfirmed) {
+                        fetch(`/api/arrangement/service/${this.serviceId}/staff/${staffMember.person_id}/delete`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}',
+                            }
+                        }).then(response => {
+                            if (response.ok) {
+                                this.loadData();
+                                toastr.success("Tjenesteansvarlig fjernet");
+                            } else {
+                                alert("Noe gikk galt");
+                            }
+                        });
+                    }
+                })
+            },
+            addStaffCreate() {
+                this.staffCreate = {
+                    service_id: this.serviceId,
+                    person_id: null,
+                    can_respond_to_orders: false,
+                    can_provision_orders: false,
+                    can_define_preconfigurations: false,
+                    can_administrate_personell: false,
+                    can_administrate_staff: false,
+                    personSelect: null
+                };
+                this.showCreateRecord = true;
+            },
+            async loadData() {
+                let data = await fetch(`/api/arrangement/service/${this.serviceId}/staff`, {
+                    method: 'GET'
+                }).then(response => response.json());
+                this.staff = data;
+                console.log("staff data", data);
+            },
+            async dataSourceFunc() {
+                let data = await fetch(`/api/arrangement/service/${this.serviceId}/staff`, {
+                    method: 'GET'
+                }).then(response => response.json());
+                console.log("staff data", data);
+
+                return {
+                    columns: {
+                        "person_name": {
+                            isHtml: false,
+                            friendlyName: "Navn",
+                            isSortable: true,
+                            isSearchable: true,
+                        },
+                        "can_respond_to_orders": {
+                            isHtml: false,
+                            friendlyName: "Kan svare på bestillinger",
+                            isSortable: true,
+                            isSearchable: true,
+                            componentName: "checkbox",
+                            isComponent: true,
+                        },
+                        "can_provision_orders": {
+                            isHtml: false,
+                            friendlyName: "Kan tildele ressurser",
+                            isSortable: true,
+                            isSearchable: true,
+                            componentName: "checkbox",
+                            isComponent: true,
+                        },
+                        "can_define_preconfigurations": {
+                            isHtml: false,
+                            friendlyName: "Kan administrere prekonfigurasjoner",
+                            isSortable: true,
+                            isSearchable: true,
+                            componentName: "checkbox",
+                            isComponent: true,
+                        },
+                        "can_administrate_personell": {
+                            isHtml: false,
+                            friendlyName: "Kan administrere personale",
+                            isSortable: true,
+                            isSearchable: true,
+                            componentName: "checkbox",
+                            isComponent: true,
+                        },
+                        "can_administrate_staff": {
+                            isHtml: false,
+                            friendlyName: "Kan administrere tjenesteansvarlige",
+                            isSortable: true,
+                            isSearchable: true,
+                            componentName: "checkbox",
+                            isComponent: true,
+                        }
+                    },
+                    actions: {
+                        "edit": {
+                            type: 'main',
+                            content: '<i class="fas fa-edit"></i>&nbsp; Rediger',
+                            isContentHtml: true,
+                        },
+                        "delete": {
+                            type: 'danger',
+                            content: '<i class="fas fa-trash"></i>&nbsp; Slett',
+                            isContentHtml: true,
+                        }
+                    },
+                    data: data
+                }
+            },
+        },
+        template: '#vuec-service-staff-table',
+        delimiters: ['[[', ']]'],
+        mounted() {
+            this.$nextTick(() => {
+                this.loadData();
+            });
+        }
+    }
+</script>

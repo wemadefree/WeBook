@@ -137,6 +137,14 @@
           >
         </li>
 
+        <li class="sidenav-item {% if url_name == 'services_dashboard' %}active{% endif %}">
+          <a  href="{% url 'arrangement:services_dashboard' %}" 
+              class="sidenav-link">
+            <i class="fas fa-calendar-plus fa-fw me-3"></i><span>Tjenestebehandling</span></a
+          >
+
+        </li>
+
         <li class="sidenav-item {% if url_name == 'dashboard' %}active{% endif %}">
           <a  href="{% url 'onlinebooking:dashboard' %}" 
               class="sidenav-link">

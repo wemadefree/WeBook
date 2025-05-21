@@ -1,0 +1,465 @@
+{% include "arrangement/vue/modal_component.html" %}
+{% include "arrangement/vue/select2.html" %}
+{% include "arrangement/vue/popover_component_v2.html" %}
+{% include "arrangement/vue/table_component.html" %}
+
+{% include "arrangement/vue/preconfigurations_tree_component.html" %}
+{% include "arrangement/vue/person_select_component.html" %}
+{% include "arrangement/service/createServiceModalComponent.html" %}
+{% include "arrangement/service/serviceRolesModalComponent.html" %}
+{% include "arrangement/service/manageServicePersonellModalComponent.html" %}
+{% include "arrangement/service/serviceStaffTableComponent.html" %}
+{% include "arrangement/vue/order_services_component.html" %}
+
+<template id="vuec-services-dash">
+
+    <create-service-modal-component :is-visible="showCreateServiceModal" @close="showCreateServiceModal=false" @service-created="getServices()">
+    </create-service-modal-component>
+
+    <service-roles-modal-component :full-screen="true" :is-visible="showRolesModal" @close="showRolesModal=false"></service-roles-modal-component>
+
+    <manage-service-personell-modal-component 
+        :modal-title="personellModalTitle"
+        :service-id="personellModalServiceId"
+        :is-visible="personellModalIsVisible"
+        @close="personellModalIsVisible = false">
+    </manage-service-personell-modal-component>
+
+    <!-- <mdb-modal-component
+        :is-visible="showStaffModal"
+        :title="'Tjenestebehandlere'w"
+        @close="showCreateServiceModal=false">
+        <template #modal-body>
+            <create-service-modal-component @service-created="getServices()"></create-service-modal-component>
+        </template>
+    </mdb-modal-component> -->
+
+    <div class="p-5 rounded-4 bg-body-tertiary mb-0 ps-0">
+        <nav class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div>
+                    <h1>
+                    </h1>
+                </div>
+                <div >
+                    <h1 class="">
+                        <i class="fas fa-calendar-alt"></i>
+                        Mine Tjenester</h1>
+                    <h6 class="mb-0">
+                        <a href="{% url 'onlinebooking:dashboard' %}" class="text-reset">Tjenestebestilling</a>
+                        <span>&nbsp;/&nbsp;</span>
+                        <a href="{% url 'onlinebooking:dashboard' %}" class="text-reset active"><u>Mine Tjenester</u></a>
+                    </h6>
+                </div>
+            </div>
+
+            <div class="d-flex">
+                <!-- <button class="btn wb-btn-main" @click="showRolesModal=true">
+                    <i class="fas fa-users"></i>
+                    Rollestyring
+                </button> -->
+
+                <button class="btn wb-btn-main ms-2" @click="showCreateServiceModal=true">
+                    <i class="fas fa-plus"></i>
+                    Opprett ny tjeneste
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-sm">
+                <thead>
+                    <tr class="align-middle text-center border-bottom">
+        
+                        <th scope="col">
+                            <h5 class="mb-0 fw-bold">
+                                Tjeneste
+                            </h5>
+                        </th>
+                        <th>
+                            <h5 class="mb-0 text-muted">
+                                Venter svar
+                            </h5>
+                        </th>
+                        <th>
+                            <h5 class="mb-0 text-muted">
+                                Kanskje
+                            </h5>
+                        </th>
+                        <th>
+                            <h5 class="mb-0 text-muted">
+                                Provisjonering
+                            </h5>
+                        </th>
+                        <th>
+                            <h5 class="mb-0 text-muted">
+                                Ferdigbehandlet
+                            </h5>
+                        </th>
+                        <th>
+                            <span class="small">
+                                (Aktiv)
+                            </span>
+                        </th>
+                        <th>
+                            <h5 class="mb-0 fw-bold">
+                                Valg
+                            </h5>
+                        </th>
+                    </tr>
+                </thead>
+        
+                <tbody class="border-bottom">
+                    <tr v-for="service in services" class="align-middle text-center">
+        
+                        <td class="fw-bold">
+                            [[service.name]]
+                        </td>
+                        <td>
+                            <h6 class="mb-0 badge-warning border" style="  padding: 1px; padding-left: 5px; padding-right: 5px;">
+                                [[ service.summaryCount?.awaiting_answer ]]
+                            </h5>
+                        </td>
+                        <td>
+                            <h6 class="mb-0 badge-secondary border" style="  padding: 1px; padding-left: 5px; padding-right: 5px;">
+                                [[ service.summaryCount?.maybe ]]
+                            </h6>
+                        </td>
+                        <td>
+                            <h6 class="mb-0 badge-primary border" style="  padding: 1px; padding-left: 5px; padding-right: 5px;">
+                                [[ service.summaryCount?.in_provisioning]]
+                            </h6>
+                        </td>
+                        <td>
+                            <h6 class="mb-0 badge-success border" style="  padding: 1px; padding-left: 5px; padding-right: 5px;">
+                                [[ service.summaryCount?.completed ]]
+                            </h6>
+                        </td>
+                        <td>
+                            <span v-if="service.isActive">
+                                <span class="dot wb-bg-success">
+                                    <i class="fas fa-check text-white"></i>
+                                </span>
+                            </span>
+                            <span v-else>
+                                <span class="dot wb-bg-danger">
+                                    <i class="fas fa-times text-white"></i>
+                                </span>
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn wb-btn-white wb-bg-info text-white btn-sm wb-bg-main " style="background-color: var(--SUCCESS-COLOR);" @click="goToService(service)">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+        
+                            <button class="btn wb-btn-white wb-bg-main text-white btn-sm ms-2" style="background-color: var(--MAIN-COLOR);" @click="editPersonellForService(service)">
+                                <i class="fas fa-users"></i>
+                            </button>
+
+                            <!-- <button class="btn wb-btn-white wb-bg-main text-white btn-sm ms-2" style="background-color: var(--MAIN-COLOR);" @click="">
+                                <i class="fas fa-user-shield"></i>
+                            </button> -->
+        
+                            <button class="btn  wb-btn-white wb-bg-danger text-white btn-sm ms-2" style="background-color: var(--DANGER-COLOR);" v-if="service.isActive" @click="toggleServiceActiveState(service)">
+                                <i class="fas fa-times"></i>
+                            </button>
+        
+                            <button class="btn wb-btn-white wb-bg-success text-white btn-sm ms-2" style="background-color: var(--SUCCESS-COLOR);" v-else @click="toggleServiceActiveState(service)">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+        
+                <tfoot class="border-bottom">
+                    <tr class="align-middle text-center">
+                        <td>
+                            <strong>Totalt:</strong>
+                        </td>
+                        <td>
+                            [[ totalAwaitingAnswer ]]
+                        </td>
+                        <td>
+                            [[ totalMaybe ]]
+                        </td>
+                        <td>
+                            [[ totalInProvisioning ]]
+                        </td>
+                        <td>
+                            [[ totalCompleted ]]
+                        </td>
+                        <td>
+        
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <!-- <div class="col-4">
+            <h5>Kommende</h5>
+            <table class="table table-sm">
+                <tbody>
+                    <tr>
+                        <td>
+                            #1
+                        </td>
+                        <td>
+                            01.01.2024
+                        </td>
+                        <td>
+                            <div class="badge badge-warning">Venter Provisjonering</div>
+                        </td>
+                        <td>
+                            Tjeneste
+                        </td>
+                        <td>
+                            <a href="#">
+                                <i class="fas fa-arrow-right"></i>
+                                Til tildeling
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            #2
+                        </td>
+                        <td>
+                            01.01.2024
+                        </td>
+                        <td>
+                            <div class="badge badge-warning">Venter Provisjonering</div>
+                        </td>
+                        <td>
+                            Tjeneste
+                        </td>
+                        <td>
+                            <a href="#">
+                                <i class="fas fa-arrow-right"></i>
+                                Til tildeling
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            #3
+                        </td>
+                        <td>
+                            01.01.2024
+                        </td>
+                        <td>
+                            <div class="badge badge-warning">Venter Provisjonering</div>
+                        </td>
+                        <td>
+                            Tjeneste
+                        </td>
+                        <td>
+                            <a href="#">
+                                <i class="fas fa-arrow-right"></i>
+                                Til tildeling
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            #4
+                        </td>
+                        <td>
+                            01.01.2024
+                        </td>
+                        <td>
+                            <div class="badge badge-success">Provisjonert</div>
+                        </td>
+                        <td>
+                            Tjeneste
+                        </td>
+                        <td>
+                            <a href="#">
+                                <i class="fas fa-arrow-right"></i>
+                                Vis bestilling
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div> -->
+    </div>
+
+<!-- 
+    <div class="mt-5">
+        <h4>
+            <i class="fas fa-clock me-2"></i>
+            Aktivitetslogg
+        </h4>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fas fa-calendar-alt"></i>&nbsp;
+                    Tjeneste
+                </span>
+                <select name="" id="" class="form-control">
+                    <option value="">En Tjeneste</option>
+                </select>
+            </div>
+
+            <div class="input-group ms-2">
+                <span class="input-group-text">
+                    <i class="fas fa-archive"></i>&nbsp;
+                    Type
+                </span>
+                <select name="" id="" class="form-control">
+                    <option value="">En Type</option>
+                </select>
+            </div>
+
+            <div class="input-group ms-2">
+                <span class="input-group-text">
+                    <i class="fas fa-user"></i>&nbsp; 
+                    Person
+                </span>
+                <select name="" id="" class="form-control">
+                    <option value="">En Person</option>
+                </select>
+            </div>
+        </div>
+
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>
+                        Tidspunkt
+                    </th>
+                    <th>
+                        Type
+                    </th>
+                    <th>
+                        Beskrivelse
+                    </th>
+                    <th>
+                        Utførende person
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div> -->
+</template>
+
+<script>
+    let ServicesDash = {
+        components: {
+            MdbModalComponent,
+            CreateServiceModalComponent,
+            ServiceRolesModalComponent,
+            ManageServicePersonellModalComponent,
+            ServiceStaffTableComponent,
+            OrderServicesComponent,
+        },
+        props: {
+            
+        },
+        emits: [],
+        data() {
+            return {
+                services: [],
+                totalAwaitingAnswer: 0,
+                totalMaybe: 0,
+                totalInProvisioning: 0,
+                totalCompleted: 0,
+                showCreateServiceModal: false,
+                showRolesModal: false,
+                personellModalIsVisible: false,
+                personellModalServiceId: null,
+                personellModalTitle: null,
+            }
+        },
+        methods: {
+            goToService(service) {
+                window.location.href = "/arrangement/service/view/" + service.id;
+            },
+            editPersonellForService(service) {
+                this.personellModalServiceId = service.id;
+                this.personellModalTitle = "Personell - " + service.name;
+                this.personellModalIsVisible = true;
+            },
+            getServices() {
+                fetch("/api/arrangement/service/list")
+                    .then(response => response.json())
+                    .then(data => {
+                        this.services = data.data;
+                    }).then(_ => {
+                        fetch("/api/arrangement/service/summaryCount")
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Network response was not ok");
+                                }
+                                return response.json();
+                            })
+                            .then(serviceCountSummaries => {
+                                for (const serviceCountSummary of serviceCountSummaries) {
+                                    const serviceId = serviceCountSummary.service_id;
+                                    const service = this.services.find(s => s.id === serviceId);
+                                    if (service) {
+                                        service.summaryCount = serviceCountSummary;
+                                        this.totalAwaitingAnswer += serviceCountSummary.awaiting_answer;
+                                        this.totalMaybe += serviceCountSummary.maybe;
+                                        this.totalInProvisioning += serviceCountSummary.in_provisioning;
+                                        this.totalCompleted += serviceCountSummary.completed;
+                                    }
+                                    else {
+                                        console.error("Service not found for ID:", serviceId);
+                                    }
+                                }
+                            }).catch(error => {
+                                console.error("Error fetching service count summaries:", error);
+                                toastr.error("Kunne ikke hente tallgrunnlag for tjenester: " + error.message);
+                            });
+                    }).catch(error => {
+                        console.error("Error fetching services:", error);
+                        toastr.error("Kunne ikke hente tjenester: " + error.message);
+                    });                
+            },
+            toggleServiceActiveState(service) {
+                Swal.fire({
+                    title: 'Er du sikker?',
+                    text: service.isActive ? 
+                        "Du vil deaktivere tjenesten. Dette vil gjøre at ingen kan bestille denne tjenesten." :
+                        "Du vil aktivere tjenesten. Dette vil gjøre at alle kan bestille denne tjenesten.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ja, fortsett!',
+                    cancelButtonText: 'Avbryt'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch("/api/arrangement/service/" + service.id + "/setActiveState", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}',
+                            },
+                            body: JSON.stringify({ is_active: !service.isActive }),
+                        }).then(response => {
+                            if (response.ok) {
+                                this.getServices();
+                                toastr.success("Tjeneste oppdatert");
+                            } else {
+                                throw new Error("Network response was not ok");
+                            }
+                        }).catch(error => {
+                            console.error("Error toggling service active state:", error);
+                            toastr.error("Kunne ikke oppdatere tjeneste: " + error.message);
+                        });
+                    }
+                });
+            }
+        },
+        mounted() {
+            this.getServices();
+        },
+        template: '#vuec-services-dash',
+        delimiters: ['[[', ']]'],
+    }
+</script>

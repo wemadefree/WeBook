@@ -1,0 +1,295 @@
+<template id="vuec-order-response-modal-component">
+    <mdb-modal-component :is-visible="isVisible" :title="'Besvar bestilling #' + serviceOrder?.id" ref="mainModal" @close="hideOrderResponseModal"> 
+        <template #modal-body>
+            <div class="alert alert-warning" v-if="serviceOrder?.state === 'maybe'">
+                <i class="fas fa-question"></i>
+                Bestilling er kanskje. Du kan gi et endelig svar.
+
+                <div v-if="serviceOrder?.maybeLog" class="text-muted text-small">
+                    Svaret <strong>kanskje</strong> ble gitt av <strong>[[ serviceOrder?.maybeLog.person.full_name ]]</strong> ([[ new Date(serviceOrder?.maybeLog.created).toLocaleString() ]])
+                </div>
+            </div>
+
+            <div class="d-flex flex-column mb-4" v-if="serviceOrder && serviceOrder.appliedPreconfiguration">
+                <div>
+                    <strong>Prekonfigurasjon: </strong>
+                    [[serviceOrder.appliedPreconfiguration.parentsStr]]
+                </div>
+            </div>
+
+            <div class="d-flex flex-column mb-4" v-if="serviceOrder && serviceOrder.freetextComment">
+                <div class="d-flex justify-content-between">
+                    <h5>
+                        <i class="fas fa-comment"></i>
+                        Kommentar fra planlegger:
+                    </h5>
+                </div>
+                <div class=" border p-2" style="background-color: ghostwhite;">
+                    <span class="text-muted text-small">
+                        [[ serviceOrder?.freetextComment ]]
+                    </span>
+                </div>
+            </div>
+
+            <h5 class="d-flex border-bottom pb-2 justify-content-between">
+                <div>
+                    <i class="fas fa-calendar"></i>
+                    Forekomster
+                </div>
+
+                <div class="badge badge-light">
+                    [[ serviceOrder?.eventCount ]] forekomster
+                </div>
+            </h5>
+
+            <div data-mdb-perfect-scrollbar-init style="position: relative; height: 400px; overflow-y: scroll;">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        Ressursledighet
+                                    </div>
+                                    <div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-user"></i>
+                                        Planlegger
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="event in serviceOrder?.events" :class="event?.resourcePopoverVisible ? 'wb-bg-secondary' : ''">
+                            <th  :key="event.id">
+                                <div :class="'d-flex justify-content-between align-items-center'">
+                                    <div>
+                                        <div @click="event.resourcePopoverVisible = !event.resourcePopoverVisible" class="d-flex justify-content-center">
+                                            <div v-if="event?.availableResources.length > 0">
+                                                <span class="dot text-success text-center text-white" @click="focusedEvent = event" style="background-color: var(--SUCCESS-COLOR); color:white;">
+                                                    [[ event?.availableResources.length]]
+                                                </span>
+                                            </div>
+                                            <div v-else>
+                                                <span class="dot text-danger text-center text-white" @click="focusedEvent = event" style="background-color: var(--DANGER-COLOR); color:white;">
+                                                    [[ event?.unavailableResources.length]]
+                                                </span>
+                                            </div>  
+                                        </div>
+
+                                        <popover-component :is-visible="event.resourcePopoverVisible == true" @update:is-visible="event.resourcePopoverVisible = $event" :excludes="[event]">
+                                            <div>
+                                                <strong>Ledige Ressurser</strong>
+                                                <ul class="mb-0">
+                                                    <li v-for="resource in event?.availableResources" :key="resource.id">
+                                                        [[ resource.full_name ]]
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+                                            <div>
+                                                <strong>Ikke tilgjengelige ressurser</strong>
+                                                <ul class="mb-0">
+                                                    <li v-for="resource in event?.unavailableResources" :key="resource.id">
+                                                        [[ resource.full_name ]]
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </popover-component>
+                                    </div>
+                                    <div>
+                                        <div>
+                                            [[event?.title]]
+                                        </div>
+                                        <div>
+                                            [[ event?.dateStr ]]
+                                        </div>
+                                        <div>
+                                            [[ event?.location ]]
+                                        </div>
+                                    </div>
+                                    <div>
+                                        [[ event?.arrangement_type.name ]]
+                                    </div>
+
+                                    <div>
+                                        [[ event?.responsible.full_name ]]
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <span class="text-muted">
+                (Fra den [[ serviceOrder?.startAndEnd[0] ]] til [[ serviceOrder?.startAndEnd[1] ]])
+            </span>
+
+
+
+        </template>
+        <template #modal-footer>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="me-4">
+                    <span class="fw-bold">
+                        <i class="fas fa-reply"></i>
+                        Besvar bestilling
+                    </span>
+                </div>
+                <div>
+                    <button class="btn wb-btn-danger me-1"  @click="answerReject()">
+                        <i class="fas fa-times"></i>
+                        Avslå
+                    </button>
+                    <button class="btn wb-btn-warning me-1" @click="answerMaybe()" v-if="serviceOrder?.state != 'maybe'">
+                        <i class="fas fa-question"></i>
+                        Kanskje
+                    </button>
+                    <button class="btn wb-btn-success"      @click="answerAccept()">
+                        <i class="fas fa-check"></i>
+                        Godta
+                    </button>
+                </div>
+            </div>
+        </template>
+
+        <hr>
+    </mdb-modal-component>
+</template>
+
+<script>
+    let OrderResponseModalComponent = {
+        props: {
+            isVisible: Boolean,
+            serviceOrderId: Number
+        },
+        components: {
+            MdbModalComponent,
+            PopoverComponent
+        },
+        emits: [ "responseMade", "hide" ],
+        data() {
+            return {
+                serviceOrder: null
+            }
+        },
+        methods: {
+            async fetchServiceOrder() {
+                let serviceOrder = await fetch("/api/arrangement/service_order/get?id=" + this.serviceOrderId, { method: 'GET' })
+                    .then(response => response.json());
+
+                serviceOrder.eventAvailableResourcesLookup = await fetch("/api/arrangement/service_order/" + this.serviceOrderId + "/resourceAvailability", { method: 'GET' })
+                    .then(response => response.json())
+                    .then((data) => {
+                        let lookup = new Map();
+                        console.log("data", data);
+                        if (data) {
+                            data.forEach((ev) => {
+                                lookup.set(ev.event_id, ev);
+                            });
+                        }
+                        return lookup;
+                    });
+
+                let events = await fetch("/api/arrangement/service_order/" + this.serviceOrderId + "/events", { method: 'GET' })
+                    .then(response => response.json())
+                    .then(data => {
+                        serviceOrder.events = data;
+                });
+
+                serviceOrder.events.forEach((ev) => {
+                    ev.start = new Date(ev.start);
+                    ev.end = new Date(ev.end);
+
+                    const isOneDayEvent = ev.start.getDate() === ev.end.getDate();
+                    if (isOneDayEvent) {
+                        // avoid duplicating the date, show Start date,  time - end time
+                        ev.dateStr = `${ev.start.toLocaleDateString()}, ${ev.start.toLocaleTimeString()} - ${ev.end.toLocaleTimeString()}`;
+                    } else {
+                        ev.dateStr = `${ev.start.toLocaleDateString()} - ${ev.end.toLocaleDateString()}`;
+                    }
+
+                    const resources = serviceOrder.eventAvailableResourcesLookup.get(ev.id);
+                    console.log("resources", resources, ev.id, serviceOrder.eventAvailableResourcesLookup);
+                    ev.availableResources = resources.available_resources;
+                    ev.unavailableResources = resources.unavailable_resources;
+                    ev.resourcePopoverVisible = false;
+                })
+
+                this.serviceOrder = serviceOrder;
+            },
+            hideOrderResponseModal() {
+                this.$emit("hide");
+            },
+            answerAccept() {
+                Swal.fire({
+                    title: 'Godta',
+                    text: "Er du sikker på at du vil godta?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ja, svar godta',
+                    cancelButtonText: 'Nei, avbryt'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.replyToServiceOrder('accepted');
+                        this.$emit("responseMade", "accepted");
+                        this.hideOrderResponseModal();
+                    }
+                });
+            },
+            answerReject() {
+                Swal.fire({
+                    title: 'Avslå',
+                    text: "Er du sikker på at du vil avslå?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ja, svar avslag',
+                    cancelButtonText: 'Nei, avbryt'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.replyToServiceOrder('rejected');
+                        this.$emit("responseMade", "rejected");
+                        this.hideOrderResponseModal();
+                    }
+                });
+            },
+            answerMaybe() {
+                Swal.fire({
+                    title: 'Kanskje',
+                    text: "Er du sikker på at du vil svare kanskje?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ja, svar kanskje',
+                    cancelButtonText: 'Nei, avbryt'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.replyToServiceOrder('maybe');
+                        this.$emit("responseMade", "maybe");
+                        this.hideOrderResponseModal();
+                    }
+                });
+            },
+            replyToServiceOrder(state) {
+                fetch('/api/arrangement/service_order/respond/' + this.serviceOrderId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify({ response: state })
+                })
+            }
+        },
+        watch: {
+            serviceOrderId: function (newVal) {
+                if (newVal) {
+                    this.fetchServiceOrder();
+                }
+            },
+        },
+        template: '#vuec-order-response-modal-component',
+        delimiters: ['[[', ']]'],
+    }
+</script>

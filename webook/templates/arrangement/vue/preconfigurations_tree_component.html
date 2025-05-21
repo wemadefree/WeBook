@@ -1,0 +1,268 @@
+<template id="vuec-preconfigurations-tree-node-component">
+    <li>
+        <div class="d-flex" @mouseover="hover = true" @mouseleave="hover = false">
+            <div>
+                <span v-if="node.children && node.children.length > 0">
+                    <span v-if="node.expanded">
+                        <i class="fas fa-chevron-down text-muted" @click="node.expanded = false"></i>
+                    </span>
+                    <span v-else>
+                        <i class="fas fa-chevron-right text-muted" @click="node.expanded = true"></i>
+                    </span>
+                </span>
+                <span v-else>
+                    <i class="fas fa-chevron-right text-white"></i>
+                </span>
+            </div>
+            <div class="ms-2" v-if="selectionEnabled">
+                <input type="checkbox" @click="toggleActiveState()" :checked="modelValue"/>
+            </div>  
+
+            <div class="ms-2">
+                [[ node.text ]]
+                <span v-if="hover && editingEnabled">
+                    <i class="fas fa-plus opt ms-2" title="Opprett ny nøstet prekonfigurasjon" @click="$emit('createPreconfiguration', node)" v-if="!noCreate"></i>
+                    <i class="fas fa-edit opt ms-2" title="Rediger denne prekonfigurasjonen" @click="$emit('editPreconfiguration', node)"></i>
+                    <i class="fas fa-trash opt ms-2" title="Slett denne prekonfigurasjonen" @click="$emit('deletePreconfiguration')"></i>
+                </span>
+            </div>
+        </div>
+    </li>
+</template>
+
+<template id="vuec-preconfigurations-tree-component">
+    <ul class="preconfigurations-tree" style="padding-left: 0;">
+        <li v-for="preconfiguration in preconfigurations">
+            <preconfigurations-tree-node-component 
+                v-model="preconfiguration.selected"
+                :selection-enabled="selectionEnabled"
+                :node="preconfiguration"
+                :editing-enabled="editingEnabled"
+                @clear-selection="() => clearSelection()"
+                @create-preconfiguration="$emit('createPreconfiguration', preconfiguration)"
+                @edit-preconfiguration="$emit('editPreconfiguration', preconfiguration)"
+                @delete-preconfiguration="$emit('deletePreconfiguration', preconfiguration)">
+            </preconfigurations-tree-node-component>
+
+            <ul v-if="preconfiguration.children && preconfiguration.expanded" style="list-style: none;">
+                <div class="w-100">
+                    <span v-for="child in preconfiguration.children">
+                        <preconfigurations-tree-node-component 
+                            v-model="child.selected"
+                            :selection-enabled="selectionEnabled"
+                            :node="child"
+                            :editing-enabled="editingEnabled"
+                            @clear-selection="() => clearSelection()"
+                            @create-preconfiguration="$emit('createPreconfiguration', child)"
+                            @edit-preconfiguration="$emit('editPreconfiguration', child)"
+                            @delete-preconfiguration="$emit('deletePreconfiguration', child)">
+                        </preconfigurations-tree-node-component>
+
+                        <ul v-if="child.children && child.expanded" style="list-style: none;">
+                            <div class="ps-2 border-dark">
+                                <span v-for="subChild in child.children">
+                                    <preconfigurations-tree-node-component 
+                                        v-model="subChild.selected"
+                                        :node="subChild" 
+                                        :editing-enabled="editingEnabled"
+                                        :no-create="true"
+                                        :selection-enabled="selectionEnabled"
+                                        @clear-selection="() => clearSelection()"
+                                        @create-preconfiguration="$emit('createPreconfiguration', subChild)"
+                                        @edit-preconfiguration="$emit('editPreconfiguration', subChild)"
+                                        @delete-preconfiguration="$emit('deletePreconfiguration', subChild)">
+                                    </preconfigurations-tree-node-component>
+                                </span>
+                            </div>
+                        </ul>
+                    </span>
+                </div>
+            </ul>
+        </li>
+    </ul>
+</template>
+
+<script>
+    let PreconfigurationsTreeNodeComponent = {
+        props: {
+            node: {
+                type: Object,
+                required: true
+            },
+            noCreate: {
+                type: Boolean,
+                default: false
+            },
+            selectionEnabled: {
+                type: Boolean,
+                default: false
+            },
+            modelValue: {
+                type: Boolean,
+                default: false
+            },
+            editingEnabled: {
+                type: Boolean,
+                default: false
+            }
+        },
+        data() {
+            return {
+                hover: false
+            };
+        },
+        methods: {
+            toggleActiveState() {
+                this.$emit('clearSelection');
+                this.$emit('update:modelValue', !this.modelValue);
+            }
+        },
+        emits: ['createPreconfiguration', 'editPreconfiguration', 'deletePreconfiguration', 'selectPreconfiguration', 'update:modelValue', 'clearSelection'],
+        template: '#vuec-preconfigurations-tree-node-component',
+        delimiters: ['[[', ']]'],
+    }
+
+    let PreconfigurationsTreeComponent = {
+        components: { PreconfigurationsTreeNodeComponent },
+        props: {
+            rootPreconfigurationId: {
+                type: Number,
+                default: null
+            },
+            selectionEnabled: {
+                type: Boolean,
+                default: false
+            },
+            modelValue: {
+                type: Array[Object],
+                default: false
+            },
+            editingEnabled: {
+                type: Boolean,
+                default: false
+            }
+        },
+        data() {
+            return {
+                preconfigurations: []
+            };
+        },
+        watch: {
+            preconfigurations: {
+                handler(val, oldVal) {
+                    let selected = [];
+                    
+                    let selectedValues = [];
+
+                    if (this.modelValue) {
+                        this.modelValue.filter(preconfiguration => preconfiguration.selected).forEach(preconfig => {
+                            selectedValues.push(preconfig.id);
+                            preconfig.selected = true;
+
+                            if (preconfig.children) {
+                                preconfig.children.forEach(child => {
+                                    if (!child.selected)
+                                        return;
+
+                                    selectedValues.push(child.id);
+                                    child.selected = true;
+                                    
+                                    if (child.children) {
+                                        child.children.forEach(subChild => {
+                                            if (!subChild.selected)
+                                                return;
+
+                                            selectedValues.push(subChild.id);
+                                            subChild.selected = true;
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    this.preconfigurations.forEach(preconfiguration => {
+                        if (preconfiguration.selected || selectedValues.includes(preconfiguration.id)) {
+                            preconfiguration.selected = true;
+                            selected.push(preconfiguration);
+                        }
+                        if (preconfiguration.children) {
+                            preconfiguration.children.forEach(child => {
+                                if (child.selected || selectedValues.includes(child.id)) {
+                                    selected.push(child);
+                                    preconfiguration.selected = true;
+                                }
+                                if (child.children) {
+                                    child.children.forEach(subChild => {
+                                        if (subChild.selected || selectedValues.includes(subChild.id)) {
+                                            selected.push(subChild);
+                                            child.selected = true;
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    this.$emit('update:modelValue', selected);
+                },
+                deep: true
+            },
+            rootPreconfigurationId: {
+                handler() {
+                    this.fetchPreconfigurationTree();
+                },
+                immediate: true
+            }
+        },
+        emits: ['createPreconfiguration', 'editPreconfiguration', 'deletePreconfiguration'],
+        methods: {
+            async fetchPreconfigurationTree() {
+                let url = this.rootPreconfigurationId
+                    ? `/api/arrangement/preconfiguration/tree?root_preconfiguration_id=${this.rootPreconfigurationId}`
+                    : '/api/arrangement/preconfiguration/tree';
+
+                let data = await fetch(url)
+                    .then(response => response.json())
+                    .catch(error => {
+                        console.error('Error fetching preconfiguration tree:', error);
+                        return [];
+                    });
+
+                data.forEach(preconfiguration => {
+                    preconfiguration.selected = false;
+                    preconfiguration.expanded = false;
+                    if (preconfiguration.children) {
+                        preconfiguration.children.forEach(child => {
+                            child.selected = false;
+                            child.expanded = false;
+                        });
+                    }
+                });
+
+                this.preconfigurations = this.rootPreconfigurationId ? data[0].children : data;
+            },
+            clearSelection() {
+                this.preconfigurations.forEach(preconfiguration => {
+                    preconfiguration.selected = false;
+                    if (preconfiguration.children) {
+                        preconfiguration.children.forEach(child => {
+                            child.selected = false;
+                            if (child.children) {
+                                child.children.forEach(subChild => {
+                                    subChild.selected = false;
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        },
+        template: '#vuec-preconfigurations-tree-component',
+        delimiters: ['[[', ']]'],
+        async mounted() {
+            await this.fetchPreconfigurationTree();
+
+        }
+    }
+</script>

@@ -1,0 +1,162 @@
+<div class="clearfix" id="serviceOverviewOrdersCalendarApp">
+    <div class="row mt-4">
+        <div class="col-2 mt-2">
+            
+            <h4>Fargelegende</h4>
+            <table class="table table-borderless table-sm">
+                <tbody>
+                    <tr>
+                        <td class="fw-bold d-flex align-items-center">
+                            <button class="btn btn-floating btn-sm shadow-0 bg-success text-white">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <span class="ms-4">
+                                Bestillingen er ferdig behandlet
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold d-flex align-items-center">
+                            <button class="btn btn-floating btn-sm shadow-0 bg-warning text-white">
+                                <i class="fas fa-hourglass"></i>
+                            </button>
+                            <span class="ms-4">
+                                Bestillingen venter behandling
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold d-flex align-items-center">
+                            <button class="btn btn-floating btn-sm shadow-0 bg-danger text-white">
+                                <i class="fa fa-times"></i>
+                            </button>
+                            <span class="ms-4">
+                                Bestillingen er kansellert
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold d-flex align-items-center">
+                            <button class="btn btn-floating btn-sm shadow-0 bg-danger text-white">
+                                <i class="fa fa-hand-paper"></i>
+                            </button>
+                            <span class="ms-4">
+                                Bestillingen er avslått
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4 class="mt-2">Bestillinger</h4>
+
+            <table class="table">
+                <tbody>
+                    <tr v-for="resource in data.resources">
+                        <td>[[resource]]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-10">
+            <div id="serviceOrdersCalendar">
+            </div>
+        </div>
+     </div>
+</div>
+
+ <script>
+    $(document).ready(function () {
+        const serviceOverviewOrdersCalendarApp = Vue.createApp({
+            data() {
+                return {
+                    data: {},
+                    events: {}
+                }
+            },
+            computed: {
+                allResources() {
+                    this.data.map(x => x.resources).flat()
+                }
+            },
+            methods: {
+                async refreshData(start, end) {
+                    const key = start + end;
+                    
+                    if (key in this.data == false || (Math.abs(this.data[key].stamp - Date.now()) > 5000 ) ) {
+                        const result = await fetch("/arrangement/service/{{object.id}}/calendar/orders?start=" + start + "&end=" + end)
+                            .then(async response => { return await response.json(); });
+                        
+                        let obj = {
+                            events: [],
+                            resources: []
+                        };
+
+                        const resourcesLookup = new Map();
+                        result.orders.forEach((resource) => resourcesLookup.set(resource.id, resource))
+
+                        const colorsByState = {
+                            "awaiting": "orange",
+                            "confirmed": "green",
+                            "cancelled": "red",
+                            "denied": "red",
+                            "in_revision": "orange"
+                        }
+
+                        result.events.forEach((event) => {
+                            const parentResource = resourcesLookup.get(event.order_id);
+                            obj.events.push({
+                                "title": event.title,
+                                "start": event.start,
+                                "end": event.end,
+                                "resouceId": event.order_id,
+                                "backgroundColor": colorsByState[parentResource.state]
+                            })
+                        });
+
+                        result.orders.forEach((order) => {
+                            obj.resources.push({
+                                "id": order.id,
+                                "title": "#" + order.id     
+                            })
+                        });
+
+                        this.data[key] = obj;
+                    }
+                },
+
+                async getEvents(start, end) {
+                    const key = start + end;
+
+                    await this.refreshData(start, end);
+                    return this.data[key].events;
+                },
+
+                async getResources(start, end) {
+                    return [];
+                    const key = start + end;
+
+                    await this.refreshData(start, end);
+                    return data[key].resources;
+                }
+            },
+            delimiters: ["[[", "]]"],
+            async mounted() {
+                let calendarEl = document.getElementById('serviceOrdersCalendar')
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'timeGridWeek',
+                    height: 650,
+                    events: async (fetchInfo) => { 
+                        let start = fetchInfo.startStr.split("T")[0] + "T00:00:00";
+                        let end = fetchInfo.endStr.split("T")[0] + "T23:59:59";
+
+                        const events = await this.getEvents(start, end);
+                        return [];
+                    },
+                  });
+                calendar.render();
+            }
+        });
+        serviceOverviewOrdersCalendarApp.mount("#serviceOverviewOrdersCalendarApp");
+    })
+ </script>

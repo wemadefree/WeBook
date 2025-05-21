@@ -1,6 +1,8 @@
 <template id="select2_component">
     <select ref="select" :multiple="multiple ? true : null" class="w-100">
     </select>
+
+    [[ options  ]]
 </template>
 
 <script>
@@ -40,6 +42,17 @@
                         this.ignoreNextUpdate = true; // avoid triggering watcher, causing infinite loop
                         this.$emit('input', $(this.$refs.select).val() || [])
                     });
+                
+                if (this.options) {
+                    $(this.$refs.select)
+                        .empty()
+                        .select2({
+                            placeholder: this.placeholder,
+                            data: options
+                        })
+                        .val(this.selected)
+                        .trigger('change');
+                }
 
                 $(this.$refs.select).val(this.selected);
             });
@@ -58,6 +71,7 @@
                     .trigger('change')
             },
             options(options) {
+                console.log("optons", options);
                 $(this.$refs.select)
                     .empty()
                     .select2({

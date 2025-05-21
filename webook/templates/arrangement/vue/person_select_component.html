@@ -1,0 +1,297 @@
+<template id="vuec-person-select-component">
+
+    <div class="input-group">
+        <span class="input-group-text" style="background-color: ghostwhite;">
+            <i class="fas fa-search"></i>
+        </span>
+        <input class="form-control mb-0" ref="searchInput" id="searchInput" 
+            type="text" placeholder="Søk etter person" v-model="searchTerm"
+            @focus="popoverIsVisible = true">
+        </input>
+    </div>
+
+    <popover-component 
+        :is-visible="popoverIsVisible" ref="popover" @update:is-visible="hi($event)" :excludes="[$refs.searchInput]" 
+        class="mt-0"  
+        :style="'width: 100%;  padding: 0; border-radius: 0; margin: 0; transform: none;'"
+        >
+
+        <div class="border d-flex justify-content-between ps-3 pe-3 wb-bg-main text-white">
+            <div>
+
+            </div>
+            <div class="text-uppercase">
+                <i class="fas fa-users"></i>
+                [[ headerTitle ]]
+            </div>
+
+            <a href="#" @click="popoverIsVisible=false" class="text-danger">
+                <i class="fas fa-times"></i>
+            </a>
+        </div>
+
+        <table class="table table-sm table-hover mb-0" v-if="options && options.length > 0">
+            <tbody>
+                <tr v-for="option in options" :key="option.id" @click="selectOption(option)">
+                    <td>
+                        <span v-if="selectedPersonIds?.includes(option.id)" class="badge badge-success border shadow wb-bg-secondary">
+                            <i class="fas fa-check"></i>
+                        </span>
+                    </td>
+                    <td>
+                        [[ option.fullName || option.full_name ]]
+                        <span v-if="excludedKeys.includes(option.id)">
+                            <i class="fas fa-user-slash text-danger"></i>
+                        </span>
+                    </td>
+                    <td v-if="showEmailColumn">
+                        [[ option.socialProviderEmail ]]
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div v-else class="p-2">
+            <p class="text-center">Ingen resultater funnet</p>
+        </div>
+
+        <div class="d-flex justify-content-between ms-2 me-2" style="background-color: ghostwhite;">
+            <div class="small text-muted">
+                [[ searchTerm ? options.length : total ]] personer
+            </div>
+
+            <div v-if="!searchTerm">
+                <a href="#" @click="paginateLeft()" class="me-2">
+                    <i class="fas fa-arrow-left  text-dark"></i>
+                </a>
+    
+                <a href="#" disabled class="text-muted">
+                    [[ currentPage ]] / [[ totalPages ]]
+                </a>
+    
+                <a href="#" @click="paginateRight()" class="ms-2">
+                    <i class="fas fa-arrow-right  text-dark"></i>
+                </a>
+            </div>
+        </div>
+
+        <div v-if="selected.length > 0" class="wb-bg-secondary border border-1 p-2">
+            <div>
+                <strong>Utvalg:</strong>
+            </div>
+            <div class="d-flex flex-wrap">
+                <span v-for="(person, index) in selected" :key="index" class="badge badge-dark ms-2 mt-0">
+                    [[ person.fullName || person.full_name ]]
+                    <i class="fas fa-times" @click="selected.splice(index, 1)"></i>
+                </span>
+            </div>
+        </div>
+
+        <div class="border d-flex justify-content-between ps-3 pe-3" style="background-color: ghostwhite;">
+            <div>
+
+            </div>
+            <div class="text-uppercase">
+ 
+            </div>
+
+            <a href="#" @click="popoverIsVisible=false" class="text-success">
+                <i class="fas fa-check"></i>
+            </a>
+        </div>
+    </popover-component>
+    
+    <div v-if="showBadges && !singleSelect">
+        <span v-for="(person, index) in selected" :key="index" class="badge badge-light wb-bg-secondary ms-1">
+            [[ person.fullName || person.full_name ]]
+            <i class="fas fa-times" @click="selected.splice(index, 1)"></i>
+        </span>
+    </div>
+</template>
+
+<script>
+    let PersonSelectComponent = {
+        components: {
+            PopoverComponent
+        },
+        props: {
+            modelValue: {
+                type: [String, Number],
+                default: null
+            },
+            personListBaseUrl: {
+                type: String,
+                default: "/api/arrangement/person/list"
+            },
+            personListExtraParams: {
+                type: Object,
+                default: () => ({})
+            },
+            personSearchBaseUrl: {
+                type: String,
+                default: "/api/arrangement/person/search"
+            },
+            showEmailColumn: {
+                type: Boolean,
+                default: true
+            },
+            headerTitle: {
+                type: String,
+                default: "Personer"
+            },
+            /* 
+            Hide the selected persons from being available for selection
+            */
+            excludedKeys: {
+                type: Array,
+                default: () => []
+            },
+            showBadges: {
+                type: Boolean,
+                default: true
+            },
+            singleSelect: {
+                type: Boolean,
+                default: false
+            }
+        },
+        data: function () {
+            return {
+                popoverIsVisible: false,
+                searchTerm: null,
+                selected: [],
+                options: [],
+                currentPage: 0,
+                limit: 10,
+            }
+        },
+        emits: [
+            'update:modelValue',
+        ],
+        template: '#vuec-person-select-component',
+        delimiters: ['[[', ']]'],
+        methods: {
+            selectOption(person) {
+                if (this.selectedPersonIds.includes(person.id)) {
+                    this.selected = this.selected.filter((p) => p.id !== person.id);
+                } else {
+                    this.selected.push(person);
+                }
+
+                this.$emit('update:modelValue', this.singleSelect ? this.selected[0] : this.selected);
+
+                if (this.singleSelect) {
+                    this.popoverIsVisible = false;
+                }
+            },
+            hi(x) {
+                this.popoverIsVisible = x;
+            },
+            loadData() {
+                if (this.searchTerm && this.searchTerm.length > 0) {
+                    fetch(`${this.personSearchBaseUrl}?query=${this.searchTerm}`, {
+                        method: "GET",
+                    }).then((response) => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error("Network response was not ok");
+                        }
+                    }).then((data) => {
+                        console.log("results", data)
+                        this.options = data.data.filter((item) => !this.excludedKeys.includes(item.obj.id)).map((item) => item.obj);
+                    }).catch((error) => {
+                        console.error("Error fetching data:", error);
+                    });
+                } else {
+                    let personListUrl = this.personListBaseUrl;
+                    let params = new URLSearchParams();
+                    params.append("page", this.currentPage);
+                    params.append("limit", this.limit);
+                    for (const [key, value] of Object.entries(this.personListExtraParams)) {
+                        params.append(key, value);
+                    }
+                    personListUrl += "?" + params.toString();
+
+                    fetch(personListUrl, {
+                        method: "GET",
+                    }).then((response) => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error("Network response was not ok");
+                        }
+                    }).then((data) => {
+                        console.log("results", data)
+                        this.options = data.data.filter((item) => !this.excludedKeys.includes(item.id));
+                        this.currentPage = data.summary.page;
+                        this.limit = data.summary.limit;
+                        this.total = data.summary.total;
+                        this.totalPages = data.summary.total_pages;
+                    }).catch((error) => {
+                        console.error("Error fetching data:", error);
+                    });
+                }
+            },
+            paginateLeft() {
+                if (this.currentPage > 0) {
+                    this.currentPage--;
+                    this.loadData();
+                }
+            },
+            paginateRight() {
+                if (this.currentPage < this.totalPages ) {
+                    this.currentPage++;
+                    this.loadData();
+                }
+            },
+        },
+        async mounted() {
+            if (this.modelValue && this.modelValue.length > 0 && typeof this.modelValue[0] == 'number') {
+                // Consumer is passing an array of ids
+                for (const id of this.modelValue) {
+                    const person = await fetch(`/api/arrangement/person/get?id=${id}`).then(response => response.json());
+                    this.selected.push(person)
+                }
+                this.$emit('update:modelValue', this.selected);
+            } else {
+                this.selected = this.modelValue || [];
+            }
+
+            console.log("mounted", this.selected);
+        },
+        computed: {
+            selectedPersonIds() {
+                return (this.selected || []).map((person) => person.id) || [];
+            },
+        },
+        watch: {
+            searchTerm(newValue) {
+                // console.log("newValue.length", newValue.length);
+                if (!this.popoverIsVisible && this.searchTerm) 
+                    this.popoverIsVisible = true;
+                this.loadData();
+            },
+            async modelValue(newValue) {
+                console.log("modelValue watcher", newValue);	    
+                if (newValue && newValue.length > 0 && typeof newValue[0] == 'number') {
+                    // Consumer is passing an array of ids
+                    console.log("received ids", newValue);
+                    for (const id of newValuee) {
+                        const person = await fetch(`/api/arrangement/person/get?id=${id}`).then(response => response.json());
+                        console.log("retrieved person", person);  
+                        this.selected.push(person)
+                    }
+                } else {
+                    this.selected = newValue || [];
+                }
+            },
+            popoverIsVisible(newValue) {
+                if (newValue) {
+                    this.loadData();
+                } else {
+                    this.searchTerm = null;
+                }
+            },
+        },
+    }
+</script>

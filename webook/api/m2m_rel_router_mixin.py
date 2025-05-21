@@ -1,6 +1,7 @@
 from dataclasses import dataclass
+from enum import Enum
 from functools import reduce
-from typing import Callable, Dict, List, Tuple, Type
+from typing import Callable, Dict, List, Optional, Tuple, Type
 
 from django.http import Http404, HttpResponse
 from webook.api.paginate import PaginatedData, paginate_queryset
@@ -20,6 +21,20 @@ from webook.api.schemas.operation_result_schema import (
     OperationType,
 )
 from webook.utils.camelize import decamelize
+
+
+class M2MRelRouterOperation(Enum):
+    """
+    Enum that describes the operations that can be performed on a relational model.
+    """
+
+    ADD = "add"
+    REMOVE = "remove"
+    LIST = "list"
+    CREATE = "create"
+    GET = "get"
+    UPDATE = "update"
+    DELETE = "delete"
 
 
 @dataclass
@@ -44,6 +59,20 @@ class RelModelDefinition:
     update_schema: Type[BaseSchema] = None
     delete_schema: Type[BaseSchema] = None
 
+    def __standard_ensure_authorization(
+        self,
+        operation: M2MRelRouterOperation,
+        request=None,
+        parent_instance: Optional[models.Model] = None,
+        related_instance: Optional[models.Model] = None,
+    ):
+        """
+        Ensure that the user is authorized to perform the operation.
+        """
+        pass
+
+    ensure_authorization: Callable = __standard_ensure_authorization
+
 
 class ManyToManyRelRouterMixin:
     """
@@ -56,6 +85,27 @@ class ManyToManyRelRouterMixin:
     """
 
     m2m_rel_fields: Dict[str, Type[models.Field]]
+    m2m_authorization_functions: Dict[str, Callable] = {}
+
+    def m2m_ensure_authorization(
+        self,
+        rel_name: str,
+        operation: M2MRelRouterOperation,
+        request=None,
+        parent_instance: Optional[models.Model] = None,
+        related_instance: Optional[models.Model] = None,
+    ):
+        if rel_name not in self.m2m_authorization_functions:
+            raise Exception(
+                f"Relational model {rel_name} not found in m2m_authorization_functions."
+            )
+
+        self.m2m_authorization_functions[rel_name](
+            operation,
+            request,
+            parent_instance=parent_instance,
+            related_instance=related_instance,
+        )
 
     def init_m2m_functionality(self):
         if self.m2m_rel_fields is None:
@@ -67,6 +117,8 @@ class ManyToManyRelRouterMixin:
         self.rel_property_fields_on_model = {}
 
         for rel_name, definition in self.m2m_rel_fields.items():
+            self.m2m_authorization_functions[rel_name] = definition.ensure_authorization
+
             self.rel_property_fields_on_model[definition.field_name] = [
                 k
                 for k, v in definition.relation_model_type.__dict__.items()
@@ -171,6 +223,13 @@ class ManyToManyRelRouterMixin:
                 parent_entity = self.model.objects.get(pk=id)
             except self.model.DoesNotExist:
                 raise Http404(f"{self.model_name_singular} not found")
+
+            self.m2m_ensure_authorization(
+                rel_name=rel_name,
+                operation=M2MRelRouterOperation.LIST,
+                request=request,
+                parent_instance=parent_entity,
+            )
 
             qs = getattr(parent_entity, definition.field_name)
 
@@ -285,8 +344,15 @@ class ManyToManyRelRouterMixin:
         ) -> OperationResultSchema[definition.get_schema]:
             """Add an existing instance of the relation model to the parent model."""
             parent_entity = self.model.objects.get(pk=id)
-
             related_entity = definition.relation_model_type.objects.get(pk=related_id)
+
+            self.m2m_ensure_authorization(
+                rel_name=rel_name,
+                operation=M2MRelRouterOperation.ADD,
+                request=request,
+                parent_instance=parent_entity,
+                related_instance=related_entity,
+            )
 
             if related_entity is None:
                 raise Http404(f"{rel_name} not found")
@@ -313,12 +379,22 @@ class ManyToManyRelRouterMixin:
             except self.model.DoesNotExist:
                 raise Http404(f"{self.model_name_singular} not found")
 
+            self.m2m_ensure_authorization(
+                rel_name=rel_name,
+                operation=M2MRelRouterOperation.CREATE,
+                request=request,
+                instance=parent_entity,
+                related_instance=None,
+            )
+
             new_instance = definition.relation_model_type.objects.create(
                 **payload.dict()
             )
 
             if definition.validate_create:
-                is_valid, message = definition.validate_create(new_instance, parent_entity)
+                is_valid, message = definition.validate_create(
+                    new_instance, parent_entity
+                )
                 if not is_valid:
                     return OperationResultSchema(
                         operation=OperationType.CREATE,
@@ -352,6 +428,14 @@ class ManyToManyRelRouterMixin:
                 definition, parent_id=id, related_id=related_id
             )
 
+            self.m2m_ensure_authorization(
+                rel_name=rel_name,
+                operation=M2MRelRouterOperation.DELETE,
+                request=request,
+                parent_instance=parent_entity,
+                related_instance=related_entity,
+            )
+
             getattr(parent_entity, definition.field_name).remove(related_id)
             parent_entity.save()
 
@@ -369,6 +453,14 @@ class ManyToManyRelRouterMixin:
             """Remove the relation model instance from the parent model, but do not delete it."""
             parent_entity, related_entity = self.__get_entities(
                 definition, parent_id=id, related_id=related_id
+            )
+
+            self.m2m_ensure_authorization(
+                rel_name=rel_name,
+                operation=M2MRelRouterOperation.REMOVE,
+                request=request,
+                parent_instance=parent_entity,
+                related_instance=related_entity,
             )
 
             parent_entity[definition.field_name].remove(related_id)

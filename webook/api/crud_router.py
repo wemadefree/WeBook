@@ -519,10 +519,8 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
     def get_export_list_func(self):
         # @decorate_view(transaction.non_atomic_requests(using="default"))
         def export_func(request, export_instruction: ExportInstructionSchema):
-            self.ensure_authorization(
-                view=Views.EXPORt, request=request, instance=None
-            )
-            
+            self.ensure_authorization(view=Views.EXPORt, request=request, instance=None)
+
             qs = self.get_queryset(Views.EXPORT, request)
             if not export_instruction.include_archived_entities and hasattr(
                 self.model, "is_archived"
@@ -585,9 +583,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
         def post_func(request, payload: self.create_schema) -> int:
             instance = self.model()
 
-            self.ensure_authorization(
-                view=Views.CREATE, request=request, instance=None
-            )
+            self.ensure_authorization(view=Views.CREATE, request=request, instance=None)
 
             if self.pre_create_hook is not None:
                 (instance, payload) = self.pre_create_hook(instance, payload)
@@ -622,6 +618,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
                     view=Views.GET, request=request, instance=result
                 )
 
+                return self.get_schema.from_orm(result)
             except self.model.DoesNotExist:
                 raise HttpResponse(status=404)
 
@@ -724,10 +721,8 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             sort_desc: bool = False,
             **extra_params,
         ) -> ListResponseSchema[self.list_schema]:
-            self.ensure_authorization(
-                view=Views.LIST, request=request, instance=None
-            )
-    
+            self.ensure_authorization(view=Views.LIST, request=request, instance=None)
+
             qs = self.get_queryset(Views.LIST, request)
 
             if not include_archived and hasattr(self.model, "is_archived"):
@@ -838,9 +833,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             limit: int = 0,
             **extra_params,
         ) -> ListResponseSchema[self.list_schema]:
-            self.ensure_authorization(
-                view=Views.SEARCH, request=request, instance=None
-            )
+            self.ensure_authorization(view=Views.SEARCH, request=request, instance=None)
 
             sqs: SearchQuerySet = self.transform_queryset(
                 qs=SearchQuerySet().models(self.model),
@@ -867,9 +860,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
 
     def get_search_metadata(self):
         def search_metadata_func(request):
-            self.ensure_authorization(
-                view=Views.SEARCH, request=request, instance=None
-            )
+            self.ensure_authorization(view=Views.SEARCH, request=request, instance=None)
 
             field_metadata_list: List[SearchMetadataSchema] = list()
 

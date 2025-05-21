@@ -130,6 +130,12 @@ export class ArrangementCreator {
                                     window.MessagesFacility.send("newTimePlanDialog", context.lastTriggererDetails.preselectedMainPlanner, "setPlanner");
                                 }
 
+                                if (context.lastTriggererDetails.orderedServices) {
+                                    window.MessagesFacility.send("newTimePlanDialog", context.lastTriggererDetails.orderedServices, "setServiceOrders");
+                                }
+
+                                console.log("context newTimePlanDialog", context);
+
                                 [
                                     { from: '#countySelect', to: '#countySelect' },
                                     { from: '#schoolSelect', to: '#initialSchoolValue' },
@@ -333,6 +339,10 @@ export class ArrangementCreator {
                                 }
                                 if (context.lastTriggererDetails.preselectedMainPlanner) {
                                     window.MessagesFacility.send("newSimpleActivityDialog", context.lastTriggererDetails.preselectedMainPlanner, "setPlanner");
+                                }
+
+                                if (context.lastTriggererDetails.orderedServices) {
+                                    window.MessagesFacility.send("newSimpleActivityDialog", context.lastTriggererDetails.orderedServices, "setServiceOrders");
                                 }
 
                                 [

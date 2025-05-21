@@ -1,10 +1,11 @@
 from argparse import ArgumentError
 from datetime import datetime
+import time
 from typing import List, Tuple
 from celery import shared_task
 import uuid
 from webook import logger
-from webook.arrangement.models import Event, Person
+from webook.arrangement.models import Event, EventSerie, Person
 from webook.graph_integration.models import GraphCalendar, SyncedEvent
 from enum import Enum
 from django.db.models import Q
@@ -60,6 +61,10 @@ def synchronize_user_calendar(user_pk: int):
     Synchronize a WeBook calendar for a given user in Graph / Outlook.
     This will populate all future events, and series, in the calendar of that user.
     """
+    print("synchronize_user_calendar")
+
+    time.sleep(2)
+
     try:
         _ = User.objects.get(id=user_pk)
     except User.DoesNotExist:
@@ -82,6 +87,8 @@ def synchronize_all_user_calendars():
     Returns:
         _type_: _description_
     """
+    print("synchronize_all_user_calendars")
+
     calendars = GraphCalendar.objects.all()
 
     if not calendars:
@@ -103,13 +110,52 @@ def synchronize_event_to_graph(event_pk: int):
     Synchronize a specific WeBook event to Graph / Outlook.
     This will populate that event in the calendars of all users that are associated with the event.
     """
-    event = Event.objects.get(pk=event_pk)
+    print("synchronize_event_to_graph")
 
-    if not event:
-        raise ArgumentError(f"Event by ID '{event_pk}' does not exist")
+    # allow time for the event to be committed to the database
+    time.sleep(0.5)
+
+    try:
+        # Use all_objects qs to account for just-archived events that are not available in objects
+        _ = Event.objects.get(pk=event_pk)
+    except Event.DoesNotExist:
+        try:
+            Event.all_objects.get(pk=event_pk)
+            asyncio.run(cal_sync.delete_event(event_pk))
+            return
+        except Event.DoesNotExist:
+            raise Exception(f"Event by ID '{event_pk}' does not exist")
 
     return cal_sync.synchronize_calendars(
         future_only=False,
         event_ids=[event_pk],
+        persons=[],
+        dry_run=False,
+    )
+
+
+@shared_task(name="synchronize_serie_to_graph")
+def synchronize_serie_to_graph(serie_pk: int):
+    """
+    Synchronize a specific WeBook event to Graph / Outlook.
+    """
+    print("synchronize_serie_to_graph")
+
+    time.sleep(5)
+
+    try:
+        _ = EventSerie.objects.get(pk=serie_pk)
+    except EventSerie.DoesNotExist:
+        try:
+            EventSerie.all_objects.get(pk=serie_pk)
+            asyncio.run(cal_sync.delete_serie(serie_pk))
+            return
+        except EventSerie.DoesNotExist:
+            raise Exception(f"Serie by ID '{serie_pk}' does not exist")
+
+    return cal_sync.synchronize_calendars(
+        future_only=False,
+        serie_ids=[serie_pk],
+        persons=[],
         dry_run=False,
     )

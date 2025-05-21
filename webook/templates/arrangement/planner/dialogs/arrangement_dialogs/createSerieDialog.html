@@ -1500,7 +1500,7 @@
                     preset.ids.forEach((id) => mapOfSelectedItemIds.delete(itemId));
                 }
                 else {
-                    mapOfSelectedItemIds.delete(itemId);
+                    mapOfSelectedItemIds.delete(Number(itemId));
                 }
 
                 if (reflectorHook)

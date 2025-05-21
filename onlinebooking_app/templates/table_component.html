@@ -78,7 +78,7 @@
                                     v-model="row[columnKey]" :disabled="'is_disabled' in row && row.is_disabled" />
                             </label>
                         </div>
-                        [[options]]
+
                         <div class="form-group" v-if="options.componentName == 'toggle'">
                             <label class="switch">
                                 <input type="checkbox" @click.native="emitCheckboxClickedEvent(row, columnKey)"
@@ -432,7 +432,7 @@
                     this.currentPage = data.summary.page;
                     this.itemsPerPage = data.summary.limit;
 
-                    if (useV2Search) {
+                    if (this.useV2Search) {
                         data = data.map(x => x.obj); // api sorts by score, top hits are the most relevant
                     }
 

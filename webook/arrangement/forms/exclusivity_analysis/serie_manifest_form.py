@@ -190,6 +190,10 @@ class CreateSerieForm(SerieManifestForm):
         manifest.save()
 
         calculated_serie = calculate_serie(manifest)
+        if calculated_serie:
+            manifest.calculated_end_date = calculated_serie[-1].date
+
+        manifest.save()
 
         for ev in calculated_serie:
             ev.rooms = [int(room.id) for room in manifest.rooms.all()]
@@ -251,6 +255,7 @@ class CreateSerieForm(SerieManifestForm):
             event.is_collision = ev.is_collision
 
             event.arrangement = serie.arrangement
+            event.original_date = ev.date
             event.title = manifest.title
             event.title_en = manifest.title_en
             event.ticket_code = manifest.ticket_code

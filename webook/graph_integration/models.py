@@ -40,9 +40,11 @@ class SyncedEvent(models.Model):
 
     REPEATING = "repeating"
     SINGLE = "single"
+    REPEATING_INSTANCE = "repeating_instance"
 
     EVENT_TYPE_CHOICES = [
         (REPEATING, REPEATING),
+        (REPEATING_INSTANCE, REPEATING_INSTANCE),
         (SINGLE, SINGLE),
     ]
 
@@ -59,7 +61,11 @@ class SyncedEvent(models.Model):
     synced_counter = models.PositiveIntegerField(default=0)
     state = models.CharField(max_length=10, choices=STATE_CHOICES, default=PRE_SYNC)
     event_type = models.CharField(
-        max_length=10, choices=EVENT_TYPE_CHOICES, default=SINGLE
+        max_length=20, choices=EVENT_TYPE_CHOICES, default=SINGLE
+    )
+
+    repeating_master = models.ForeignKey(
+        "self", on_delete=models.RESTRICT, related_name="repeating_instances", null=True
     )
 
     @property

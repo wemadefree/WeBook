@@ -531,6 +531,9 @@
                 noSchoolsFound: function () {
                     if (!this.selectedCounty.originalSchoolEnabled)
                         this.selectedCounty.originalSchoolEnabled = this.selectedCounty.schoolEnabled;
+             
+                    if (this.step == 3)
+                        return;
 
                     if (this.noSchoolsFound) {
                         this.selectedCounty.schoolEnabled = false;

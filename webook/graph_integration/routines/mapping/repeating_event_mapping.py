@@ -2,6 +2,7 @@ from typing import List
 from msgraph.generated.models.event import Event as GraphEvent
 from webook.arrangement.models import (
     Event as WebookEvent,
+    Person,
     PlanManifest as WebookSerieManifest,
     EventSerie as WebookEventSerie,
 )
@@ -254,7 +255,7 @@ def _map_recurrence_range(manifest: WebookSerieManifest) -> RecurrenceRange:
     }[manifest.recurrence_strategy](manifest)
 
 
-async def map_serie_to_graph_event(event_serie: WebookEventSerie) -> GraphEvent:
+async def map_serie_to_graph_event(event_serie: WebookEventSerie, person: Person) -> GraphEvent:
     manifest: WebookSerieManifest = event_serie.serie_plan_manifest
     sample_event = (
         await event_serie.events.prefetch_related("people")
@@ -263,7 +264,11 @@ async def map_serie_to_graph_event(event_serie: WebookEventSerie) -> GraphEvent:
         .afirst()
     )
 
-    base: GraphEvent = await map_event_to_graph_event(sample_event)
+    if sample_event is None:
+        print(event_serie.id)
+        raise ValueError("Event serie has no events")
+
+    base: GraphEvent = await map_event_to_graph_event(sample_event, person)
     # base.start = None
     # base.end = None
     base.recurrence = PatternedRecurrence(

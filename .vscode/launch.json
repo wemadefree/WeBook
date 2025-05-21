@@ -5,6 +5,33 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Django Celery Worker",
+            "type": "debugpy",
+            "request": "launch",
+            // "console": "integratedTerminal",
+            "module": "celery",
+            "args": [
+                "--app",
+                "celery_app.celery",
+                "worker",
+                "--loglevel",
+                "DEBUG",
+                "--pool",
+                "solo"
+            ]
+        },
+        {
+            "name": "Online Booking App",
+            "type": "debugpy",
+            "request": "launch",
+            "args": [
+                "runserver"
+            ],
+            "autoStartBrowser": true,
+            "justMyCode": false,
+            "program": "${workspaceFolder}/onlinebooking_app/app.py"
+        },
+        {
             "name": "Python Debugger: Django",
             "type": "debugpy",
             "request": "launch",
@@ -15,6 +42,12 @@
             "autoStartBrowser": false,
             "justMyCode": false,
             "program": "${workspaceFolder}/manage.py"
+        },
+    ],
+    "compounds": [
+        {
+            "name": "Celery and Django",
+            "configurations": ["Django Celery Worker", "Python Debugger: Django"]
         }
     ]
 }

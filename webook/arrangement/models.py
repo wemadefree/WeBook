@@ -29,6 +29,7 @@ import webook.screenshow.models as screen_models
 from webook.arrangement.managers import ArchivedManager, EventManager
 from webook.utils.crudl_utils.model_mixins import ModelNamingMetaMixin
 from webook.utils.manifest_describe import describe_manifest
+from django.db.models.query import QuerySet
 
 
 class SelfNestedModelMixin(models.Model):
@@ -230,7 +231,7 @@ class ModelAuditableMixin(models.Model):
                 self.created_by = person
             else:
                 self.updated_by = person
-        elif request.service_account:
+        elif request and request.service_account:
             if not request.service_account.person:
                 person = Person()
                 person.first_name = request.service_account.username
@@ -764,6 +765,9 @@ class Location(TimeStampedModel, ModelNamingMetaMixin, ModelArchiveableMixin):
         for room in rooms:
             room.archive(person_archiving_this)
 
+    def active_rooms(self) -> QuerySet[Room]:
+        return self.rooms.filter(is_disabled=False)
+
     name = models.CharField(verbose_name=_("Name"), max_length=255)
     slug = AutoSlugField(populate_from="name", unique=True, manager_name="all_objects")
 
@@ -814,9 +818,12 @@ class Room(TimeStampedModel, ModelNamingMetaMixin, ModelArchiveableMixin):
         on_delete=models.CASCADE,
         related_name="rooms",
     )
+
     max_capacity = models.IntegerField(verbose_name="Maximum Occupants")
     is_exclusive = models.BooleanField(verbose_name=_("Is Exclusive"), default=False)
     has_screen = models.BooleanField(verbose_name=_("Has Screen"), default=True)
+    is_disabled = models.BooleanField(verbose_name=_("Is Disabled"), default=False)
+
     business_hours = models.ManyToManyField(
         to="BusinessHour", verbose_name=_("Business Hours")
     )
@@ -1569,6 +1576,16 @@ class Event(
         to=ArrangementType, on_delete=models.RESTRICT, null=True, blank=True
     )
 
+    original_date = models.DateField(
+        verbose_name=_("Original Date"), null=True, blank=True
+    )
+
+    def save(self, **kwargs):
+        if self.original_date is None:
+            self.original_date = self.start.date()
+
+        return super().save(**kwargs)
+
     def hash_key(self) -> str:
         return str(
             (self.title + "-" + self.start.isoformat() + "-" + self.end.isoformat())
@@ -1724,6 +1741,7 @@ class Event(
 
         self.archive(None)
         # return super().delete(using, keep_parents)
+        return super().archive()
 
     def abandon_rigging_relations(self, commit=True) -> None:
         # If we are deleting a rigging event (supporting another event)
@@ -1744,10 +1762,12 @@ class Event(
         # If the event we are deleting has supporting rigging events then we want to delete these supporting
         # rigging events when the parent owner is deleted.
         if self.buffer_before_event:
-            self.buffer_before_event.delete()
+            # self.buffer_before_event.delete()
+            self.buffer_before_event.archive()
             self.buffer_before_event = None
         if self.buffer_after_event:
-            self.buffer_after_event.delete()
+            # self.buffer_after_event.delete()
+            self.buffer_after_event.archive()
             self.buffer_after_event = None
 
         if commit:
@@ -2029,6 +2049,8 @@ class PlanManifest(TimeStampedModel, BufferFieldsMixin, CalendarEntitySchoolMixi
         max_length=124,
     )
 
+    calculated_end_date = models.DateField(blank=True, null=True)
+
     def hash_key(self) -> str:
         return "-".join(
             [
@@ -2077,6 +2099,14 @@ class EventSerie(TimeStampedModel, ModelArchiveableMixin):
     serie_plan_manifest = models.ForeignKey(
         to=PlanManifest, on_delete=models.RESTRICT, related_name="event_series"
     )
+
+    @property
+    def time_range(self) -> Tuple[datetime.date, datetime.date]:
+        events = [*self.events.all(), *self.associated_events.all()]
+        start = min(events, key=lambda x: x.start).start
+        end = max(events, key=lambda x: x.end).end
+
+        return (start, end)
 
     def hash_key(self) -> str:
         if self.serie_plan_manifest is None:

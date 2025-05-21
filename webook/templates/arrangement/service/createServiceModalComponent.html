@@ -1,0 +1,233 @@
+<template id="vuec-create-service-modal-component-template">
+    <mdb-modal-component :is-visible="isVisible" title="Opprett ny tjeneste" @close="$emit('close')">
+        <template #modal-body>
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between">
+                        <label for="service-name" class="h5">
+                            Tjenestenavn
+                        </label>
+
+                        <div>
+                            (* Obligatorisk)
+                        </div>
+                    </div>
+
+                    <input type="text" id="service-name" class="form-control" placeholder="Tjenestenavn"
+                        v-model="serviceName" required>
+
+                    <div class="d-flex justify-content-end text-danger">
+                        <span v-if="showServiceNameMissingError" class="small">
+                            ** Tjenestenavn er påkrevd
+                        </span>
+                    </div>
+
+                    <div class="small text-muted mt-2">
+                        Tjenestenavnet vil være synlig for brukere som bestiller tjenesten.
+                        Det er viktig at navnet er beskrivende og lett å forstå.
+                    </div>
+
+                </div>
+            </div>
+            <div class="mt-3">
+                <label for="" class="h5">Ansvarlige</label>
+                <person-select-component v-model="staff" :show-badges="false"></person-select-component>
+                
+                <table class="table table-sm mt-2" v-if="staff && staff.length > 0">
+                    <thead>
+                        <tr class="wb-bg-secondary">
+                            <th>Person</th>
+                            <th>Full Tilgang</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="member in staff">
+                            <td>[[member.fullName]]</td>
+                            <td>
+                                <input type="checkbox" name="" id="" v-model="member.fullAccess">
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" @click="removeMember(member)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="small text-muted mt-2">
+                    Ansvarlige vil være medlemmer av denne tjenesten, og vil kunne se og besvare forespørsler som kommer inn.
+                    Mer detaljert tilgangsstyring vil kunne gjøres etter opprettelse av tjenesten.
+                </div>
+
+            </div>
+            <div class="mt-3">
+                <label for="" class="h5">Personell</label>
+                <person-select-component v-model="personell"></person-select-component>
+
+                <div class="small text-muted mt-2">
+                    Personell er de som vil utføre tjenesten. Ved behandling av forespørsler vil disse kunne settes opp på tider.
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <label for="service-description" class="h5">Beskrivelse</label>
+                    <textarea id="service-description" class="form-control" rows="3" placeholder="Beskrivelse" v-model="serviceDescription"></textarea>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12">
+                    <label for="">Aktiv</label>
+                    <input type="checkbox" id="is-active" class="form-check-input ms-2" v-model="isActive">
+                </div>
+
+                <div class="alert alert-success mt-2" v-if="isActive">
+                    <strong>Merk:</strong> Tjenesten vil opprettes som aktiv.
+                    <br>
+                    Du kan endre dette senere.
+                </div>
+                <div v-else class="alert alert-warning mt-2">
+                    <strong>Merk:</strong> Tjenesten vil ikke være tilgjengelig for bestilling inntil aktivert.
+                    <br>
+                    Du kan endre dette senere.
+
+                </div>
+            </div>
+        </template>
+        <template #modal-footer>
+            <button type="button" class="btn wb-btn-secondary" @click="$emit('close')">Lukk</button>
+            <button type="button" class="btn wb-btn-main" @click="createService()">Opprett</button>
+        </template>
+    </mdb-modal-component>
+</template>
+
+<script>
+    let CreateServiceModalComponent = {
+        props: {
+            isVisible: {
+                title: 'Visible',
+                type: Boolean,
+                default: false
+            },
+        },
+        data: function () {
+            return {
+                serviceName: null,
+                staff: [],
+                personell: [],
+                serviceDescription: null,
+                isActive: false,
+                showServiceNameMissingError: false,
+            }
+        },
+        methods: {
+            async createService() {
+                if (!this.serviceName) {
+                    this.showServiceNameMissingError = true;
+                    return;
+                }
+
+                const createdService = await fetch("/api/arrangement/service/", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify({
+                        name: this.serviceName,
+                        description: this.serviceDescription,
+                        is_active: this.isActive,
+                    })
+                }).then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                }).catch((error) => {
+                    console.error('Error:', error);
+                    toastr.error('Det oppstod en feil under opprettelse av tjenesten.');
+                });
+
+                for (const staffMember of this.staff) {
+                    console.log("body", {
+                            person_id: staffMember.id,
+                            service_id: createdService.id,
+                            can_respond_to_orders: staffMember.fullAccess || false,
+                            can_provision_orders: staffMember.fullAccess || false,
+                            can_define_preconfigurations: staffMember.fullAccess || false,
+                            can_administrate_personell: staffMember.fullAccess || false,
+                            can_administrate_staff: staffMember.fullAccess || false
+                        })
+                    await fetch("/api/arrangement/service/" + createdService.id + "/staff", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                        body: JSON.stringify({
+                            person_id: staffMember.id,
+                            service_id: createdService.id,
+                            can_respond_to_orders: staffMember.fullAccess || false,
+                            can_provision_orders: staffMember.fullAccess || false,
+                            can_define_preconfigurations: staffMember.fullAccess || false,
+                            can_administrate_personell: staffMember.fullAccess || false,
+                            can_administrate_staff: staffMember.fullAccess || false
+                        })
+                    }).then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                    }).catch((error) => {
+                        console.error('Error:', error);
+                        toastr.error('Det oppstod en feil under opprettelse av tjenesten.');
+                    });
+                }
+
+                for (const personellMember of this.personell) {
+                    await fetch(`/api/arrangement/service/personell/add?id=${createdService.id}&related_id=${personellMember.id}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                        body: JSON.stringify({
+                            id: createdService.id,
+                            related_id: personellMember.id,
+                        })
+                    }).then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                    }).catch((error) => {
+                        console.error('Error:', error);
+                        toastr.error('Det oppstod en feil under opprettelse av tjenesten.');
+                    });
+                }
+
+                toastr.success('Tjenesten ble opprettet.');
+                this.$emit('close');
+                this.$emit('serviceCreated', createdService);
+            },
+            removeMember(member) {
+                this.staff = this.staff.filter((m) => m.id !== member.id);
+            }
+        },
+        watch: {
+            serviceName: function (newValue) {
+                this.showServiceNameMissingError = newValue ? false : true;
+            }
+        },
+        emits: [
+            'close',
+            'serviceCreated'
+        ],
+        components: {
+            MdbModalComponent,
+            PersonSelectComponent,
+        },
+        template: '#vuec-create-service-modal-component-template',
+        delimiters: ['[[', ']]'],
+    }
+</script>

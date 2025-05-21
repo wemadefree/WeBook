@@ -34,7 +34,6 @@
 
     <div class="clearfix">
         <div class="float-end">
-            
             <div>
                 <button class="btn btn-sm wb-btn-main mt-2" @click="addCreateRow()" v-if="canInsert">
                     <i class="fas fa-plus"></i>
@@ -44,8 +43,8 @@
         </div>
     </div>
 
-    <table :class="tableClasses ? tableClasses : 'table  align-middle mt-3 text-center'">
-        <thead ref="thead">
+    <table :class="tableClasses ? tableClasses : 'table table-sm align-middle mt-3 text-center'">
+        <thead ref="thead" style="background-color: ghostwhite;">
             <tr>
                 <th v-for="( options, columnKey ) in visibleColumns" @click="sortBy(columnKey)">
                     <strong>[[ options.friendlyName ]]</strong>
@@ -209,6 +208,11 @@
 
     <div v-if="compactNav" class="text-center">
         <em>[[entitiesCount]] resultater</em>
+    </div>
+
+    <div v-if="entitiesCount == 0">
+        <slot name="no-results">
+        </slot>
     </div>
 
 </template>
@@ -490,7 +494,8 @@
             columnNames: Object,
             rerenderToggle: Boolean,
             compactNav: Boolean,
-            forceDropdownActionButton: Boolean
+            forceDropdownActionButton: Boolean,
+            hideTableIfNoData: Boolean,
         },
         data() {
             return {

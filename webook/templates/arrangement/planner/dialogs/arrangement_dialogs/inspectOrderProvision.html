@@ -2,43 +2,62 @@
 {% load custom_tags %}
 
 <div id="{{dialogId}}" class="{{discriminator}}">
-    <h3>Bestilling av tjeneste {{object.service}}</h3>
-    
-    {% if user|has_group:"planners" or user.is_superuser and object.state != "cancelled" and object.state != "denied" %}
-    <div class="clearfix mb-2">
-        <div class="float-start">
-            <button class="btn wb-btn-main" d-trigger="cancelOrder" type="button">
-                <i class="fas fa-times"></i>
-                Kanseller bestillingen
-            </button>
-        </div>
+    <h3 class="mb-0">Bestilling av tjeneste {{object.service}}</h3>
+
+    <div class="text-small mb-3">
+        <span class="text-muted">
+            <i class="fas fa-user"></i>
+            Bestilt av: {{object.created_by}}
+        </span>
+
+        <span class="text-muted ms-3">
+            <i class="fas fa-calendar"></i>
+            Bestilt når: {{object.created}}
+        </span>
+
+        <span class="text-muted ms-3">
+            <i class="fas fa-person"></i>
+            Sist oppdatert av: {{object.updated_by}}
+        </span>
+
+        <span class="text-muted ms-3">
+            <i class="fas fa-calendar"></i>
+            Sist oppdatert når: {{object.updated}}
+        </span>
     </div>
-    {% endif %}
+
+    <div class="d-flex">
     <div class="alert alert-light justify-content-between
                 {% if object.state == 'awaiting' or object.state == 'changed' %}mild-warning
                 {% elif object.state == 'denied' or object.state == 'cancelled' %}mild-danger
                 {% elif object.state == 'in_revision'}bg-secondary
-                {% elif object.state == 'confirmed' %}mild-success
+                {% elif object.state == 'provisioned' %}mild-success
                 {% endif %}">
-        <div class="row">
-            <div class="col-1 d-flex align-middle d-flex align-items-center">
+        <div class="row border shadow-3 border-radius-3 pt-1" style="background-color: ghostwhite;">
+            <!-- <div class="col-1 d-flex align-middle d-flex align-items-center">
                 <h3 class="fw-bolder">Status</h3>
-            </div>
-            <div class="col-11 d-flex justify-content-between">
+            </div> -->
+            <div class="col-11 d-flex">
                 <div class="p-2">
                     <h4>
                         {% if object.state == "awaiting" %}
-                            Venter behandling
-                            <h6>Koordinator har ikke ennå behandlet denne bestillingen</h6>
+                            Venter svar
+                            <h6>Koordinator har ennå ikke svart på denne bestillingen</h6>
                         {% elif object.state == "denied" %}
                             Avvist
                             <h6>Koordinator har avvist denne bestillingen</h6>
+                        {% elif object.state == "maybe" %}
+                            Kanskje
+                            <h6>Koordinator har gitt et usikkert svar på denne bestillingen</h6>
                         {% elif object.state == "confirmed" %}
-                            <i class="fas fa-check text-success"></i>&nbsp;
-                            Bekreftet
+                            Bekreftet, ikke behandlet
                             <h6>Koordinator har bekreftet denne bestillingen</h6>
+                        {% elif object.state == "provisioned" %}
+                            <i class="fas fa-check text-success"></i>
+                            Bekreftet, ferdig behandlet
+                            <h6>Koordinator har bekreftet og ferdigbehandlet denne bestillingen</h6>
                         {% elif object.state == "in_revision" %}
-                            <i class="fas fa-edit"></i>&nbsp;
+                            <i class="fas fa-edit"></i>
                             Åpnet for revidering
                             <h6>Koordinator har åpnet denne bestillingen for revidering</h6>
                         {% elif object.state == "changed" %}
@@ -53,47 +72,39 @@
                     </h4>
                 </div>
 
-                <h1 class="d-flex align-items-center">
-                    {% if object.state == "awaiting" %}
-                        <i class="fas fa-hourglass"></i>
-                    {% elif object.state == "denied" %}
-                        <i class="fas fa-hand-paper"></i>
-                    {% elif object.state == "confirmed" %}
-                        <i class="fas fa-check"></i>
-                    {% elif object.state == "cancelled" %}
-                        <i class="fas fa-times"></i>
-                    {% endif %}
-                </h1>
             </div>
         </div>
     </div>
-    <div class="alert alert-light wb-bg-secondary">
-        <div class="row">
-            <div class="col-1 d-flex align-middle d-flex align-items-center">
+    <div class="alert alert-light">
+        <div class="row  border shadow-3 border-radius-3 pt-1" style="background-color: ghostwhite;">
+            <!-- <div class="col-1 d-flex align-middle d-flex align-items-center">
                 <h3 class="fw-bolder mb-0">For</h3>
-            </div>
+            </div> -->
             <div class="col-11 d-flex justify-content-between">
                 <div class="p-2 w-100">
                     <h4 class="mb-0">
+                        {% if BASIS_TYPE == "serie" %}
+                        <i class="fas fa-sync"></i>
+                        {% elif BASIS_TYPE == "event" %}
+                        <i class="fas fa-calendar"></i>
+                        {% endif %}
                         {{ SAMPLE_BASIS_ITEM.title }}
 
                         {% if object.associated_manifest %}
-                            {{ object.associated_manifest.title}}
+                            <h6>{{ object.associated_manifest.title}}</h6>
                         {% else %}
                         {% endif %}
                     </h4>
                 </div>
 
                 <h1 class="mb-0 align-middle d-flex align-items-center">
-                    {% if BASIS_TYPE == "serie" %}
-                    <i class="fas fa-sync"></i>
-                    {% elif BASIS_TYPE == "event" %}
-                    <i class="fas fa-calendar"></i>
-                    {% endif %}
+
                 </h1>
             </div>
         </div>
     </div>
+    </div>
+
 
 
     <!-- Tabs navs -->
@@ -176,7 +187,7 @@
                     {% for provision in object.provisions.all %}
                             <tr class="hlist-item ">
                                 <td class="align-middle h6"> 
-                                    <div class="d-flex justify-content-between mb-2 align-items-center mt-2 align-middle">
+                                    <div class="d-flex justify-content-between mb-1 align-items-center mt-1 align-middle">
                                         <div class="d-flex align-items-center align-middle">
                                             <a class="btn btn-sm text-white btn-floating shadow-0 me-3
                                                 {% if provision.is_complete %}bg-success{% else %}bg-warning{% endif %}">
@@ -187,7 +198,7 @@
  
                                                 </i> 
                                             </a>
-                                            <h5 class="mb-0">{{provision.for_event.title}}</h5>
+                                            <h6 class="mb-0">{{provision.for_event.title}}</h5>
                                         </div>
 
                                         <em class="float-end fw-bold"><small>{{provision.for_event.start}} - {{provision.for_event.end}}</small></em>
@@ -214,6 +225,19 @@
             </div>
         </div>
     </div>
+
+    {% if object.state != "cancelled" and object.state != "denied" %}
+        {% if user|has_group:"planners" or user.is_superuser %}
+            <div class="clearfix border-top mt-1 pt-2">
+                <div class="float-start">
+                    <button class="btn wb-btn-main" d-trigger="cancelOrder" type="button">
+                        <i class="fas fa-times"></i>
+                        Kanseller bestillingen
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+    {% endif %}
 </div>
 
 <script>

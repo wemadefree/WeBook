@@ -42,15 +42,29 @@ class SelfNestedModelMixin(models.Model):
         blank=True,
     )
 
-    @classmethod
-    def node_list(cls):
-        if settings.USE_REDIS:
-            cache_key = f"node_list:{cls.__name__}"
-            result = cache.get(cache_key)
-            if result is not None:
-                return result
+    def get_parents(self) -> List[SelfNestedModelMixin]:
+        """Get all parents of this instance"""
+        parents = []
+        parent = self.parent
+        while parent:
+            parents.append(parent)
+            parent = parent.parent
+        return parents
 
-        root_items = list(cls.objects.filter(parent__isnull=True).order_by("id"))
+    @classmethod
+    def node_list(
+        cls,
+        include_parent_meta_on_child_nodes: bool = False,
+        root_node_id: Optional[int] = None,
+        transformer_hook: Optional[callable] = None,
+    ) -> List[Dict]:
+        root_items = (
+            list(cls.objects.filter(parent__isnull=True).order_by("id"))
+            if root_node_id is None
+            else list(
+                cls.objects.filter(parent__isnull=True, id=root_node_id).order_by("id")
+            )
+        )
         child_items = list(cls.objects.filter(parent__isnull=False).order_by("id"))
 
         def populate_children(parent):
@@ -62,18 +76,27 @@ class SelfNestedModelMixin(models.Model):
                     if hasattr(parent, "resolved_name")
                     else "Unknown"
                 ),
+                "message": parent.message if hasattr(parent, "message") else "",
                 "children": [],
-                "data": {"slug": parent.slug},
+                "data": {"slug": parent.slug} if hasattr(parent, "slug") else {},
             }
+
+            if transformer_hook:
+                p = transformer_hook(p, parent)
+
             for child in child_items:
                 if child.parent == parent:
                     p["children"].append(populate_children(child))
+                    if include_parent_meta_on_child_nodes:
+                        for su in p["children"]:
+                            su["parent_id"] = parent.pk
+                            su["parent_title"] = parent.resolved_name
             return p
 
         n_list = [populate_children(root) for root in root_items]
 
-        if settings.USE_REDIS:
-            cache.set(cache_key, n_list, 12000)
+        # if settings.USE_REDIS:
+        #     cache.set(cache_key, n_list, 12000)
 
         return n_list
 
@@ -1688,7 +1711,19 @@ class Event(
 
     def delete(self, using=None, keep_parents=False):
         self.abandon_rigging_relations()
-        return super().delete(using, keep_parents)
+
+        from webook.arrangement.facilities.service_ordering import (
+            remove_provision_from_service_order,
+        )
+
+        for provision in self.provisions.all():
+            remove_provision_from_service_order(
+                service_order=provision.related_to_order,
+                provision=provision,
+            )
+
+        self.archive(None)
+        # return super().delete(using, keep_parents)
 
     def abandon_rigging_relations(self, commit=True) -> None:
         # If we are deleting a rigging event (supporting another event)
@@ -2159,18 +2194,80 @@ class ServiceEmail(TimeStampedModel, ModelArchiveableMixin):
         return self.email
 
 
+class ServiceStaff(TimeStampedModel):
+    """A service staff is a person that is responsible for a service"""
+
+    service = models.ForeignKey(
+        to="Service", related_name="staff", on_delete=models.CASCADE
+    )
+    person = models.ForeignKey(
+        to="Person", related_name="services_staffed", on_delete=models.RESTRICT
+    )
+
+    is_creator = models.BooleanField(
+        default=False,
+        help_text=_("This person created the service"),
+    )
+
+    can_respond_to_orders = models.BooleanField(
+        default=False,
+        help_text=_("This person can respond to orders"),
+    )
+
+    can_provision_orders = models.BooleanField(
+        default=False,
+        help_text=_("This person can provision orders"),
+    )
+
+    can_define_preconfigurations = models.BooleanField(
+        default=False,
+        help_text=_("This person can define preconfigurations"),
+    )
+
+    can_administrate_personell = models.BooleanField(
+        default=False,
+        help_text=_("This person can add personell"),
+    )
+
+    can_administrate_staff = models.BooleanField(
+        default=False,
+        help_text=_("This person can add staff"),
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+        help_text=_("This person is active in this service"),
+    )
+
+    def __str__(self) -> str:
+        return self.person.full_name
+
+
+class ServiceRoles(TimeStampedModel):
+    name: str
+    can_respond_to_orders: bool
+    can_provision_orders: bool
+    can_define_preconfigurations: bool
+    can_administrate_personell: bool
+    can_administrate_staff: bool
+    can_administrate_service: bool
+
+
 class Service(TimeStampedModel, ModelArchiveableMixin):
     """Represents a Service that can be ordered onto events. A service can be used on multiple events.
     A service is managed by the emails set on it -- these emails will receive requests of confirmation for orders of this specific service.
     """
 
-    name = models.CharField(max_length=512, blank=False)
-    emails = models.ManyToManyField(to="ServiceEmail", related_name="services")
-    events = models.ManyToManyField(to="Event")
+    is_active = models.BooleanField(default=True)
 
     resources = models.ManyToManyField(
         to="Person", related_name="responsible_for_services"
     )
+
+    name = models.CharField(max_length=512, blank=False)
+    emails = models.ManyToManyField(to="ServiceEmail", related_name="services")
+    events = models.ManyToManyField(to="Event")
+    description = models.TextField(blank=True, null=True)
 
     def add_email(self, email):
         self.emails.add(ServiceEmail.objects.create(email=email))
@@ -2190,8 +2287,46 @@ class Service(TimeStampedModel, ModelArchiveableMixin):
         return self.name
 
 
-class ServiceOrderPreconfiguration(TimeStampedModel, ModelArchiveableMixin):
+class ServiceNotification(TimeStampedModel, ModelArchiveableMixin):
+    is_acknowledged = models.BooleanField(default=False)
+    acknowledged_by = models.ForeignKey(
+        to="Person",
+        related_name="acknowledged_notifications",
+        null=True,
+        blank=True,
+        on_delete=models.RESTRICT,
+    )
+
+    service = models.ForeignKey(
+        to=Service, related_name="notifications", on_delete=models.RESTRICT
+    )
+    content = models.CharField(max_length=512)
+
+    service_order = models.ForeignKey(
+        to="ServiceOrder",
+        related_name="service_notifications",
+        null=True,
+        blank=True,
+        on_delete=models.RESTRICT,
+    )
+
+
+class ServiceOrderPreconfiguration(
+    TimeStampedModel, ModelArchiveableMixin, SelfNestedModelMixin
+):
     """Preconfigurations are template order 'descriptions'/freetext comment"""
+
+    @property
+    def resolved_name(self):
+        return self.title
+
+    @property
+    def parents_str(self):
+        return (
+            " / ".join(list(map(lambda preconf: preconf.title, self.get_parents())))
+            + " / "
+            + self.title
+        )
 
     service = models.ForeignKey(
         to=Service, related_name="preconfigurations", on_delete=models.CASCADE
@@ -2200,6 +2335,10 @@ class ServiceOrderPreconfiguration(TimeStampedModel, ModelArchiveableMixin):
     message = models.TextField()
     created_by = models.ForeignKey(
         to=Person, blank=True, null=True, on_delete=models.RESTRICT
+    )
+
+    standard_choices = models.ManyToManyField(
+        to="ServiceOrderPreconfiguration", related_name="standard_choice_for"
     )
 
     assigned_personell = models.ManyToManyField(
@@ -2232,6 +2371,12 @@ class States(models.TextChoices):
     CHANGED = "changed", _("Changed")
     TEMPLATE = "template", _("Template")
     IN_REVISION = "in_revision", _("In Revision")
+
+
+class TemporalStates(models.TextChoices):
+    UPCOMING = "upcoming", _("Upcoming")
+    IN_PROGRESS = "in_progress", _("In Progress")
+    HISTORICAL = "historical", _("Historical")
 
 
 class ServiceOrder(TimeStampedModel, ModelArchiveableMixin):
@@ -2279,6 +2424,18 @@ class ServiceOrder(TimeStampedModel, ModelArchiveableMixin):
     freetext_comment = models.TextField()
 
     @property
+    def temporal_state(self) -> TemporalStates:
+        """Returns the temporal state of the service order"""
+        if self.start_and_end[0] is None:
+            return TemporalStates.HISTORICAL
+        if self.start_and_end[0] > datetime.datetime.now(tz=pytz.utc):
+            return TemporalStates.UPCOMING
+        elif self.start_and_end[1] < datetime.datetime.now(tz=pytz.utc):
+            return TemporalStates.HISTORICAL
+
+        return TemporalStates.IN_PROGRESS
+
+    @property
     def start_and_end(
         self,
     ) -> Tuple[Optional[datetime.datetime], Optional[datetime.datetime]]:
@@ -2308,11 +2465,50 @@ class ServiceOrder(TimeStampedModel, ModelArchiveableMixin):
     @property
     def is_final(self):
         return self.state in [
-            States.CONFIRMED,
+            States.PROVISIONED,
             States.DENIED,
             States.CANCELLED,
             States.TEMPLATE,
         ]
+
+
+class ServiceOrderEventLogType(models.TextChoices):
+    RESPONSE_GIVEN = "response_given", _("Response Given")
+    ORDER_FINALIZED = "order_finalized", _("Order Finalized")
+    PROVISIONING_PERFORMED = "provisioning_started", _("Provisioning Started")
+
+
+class ServiceOrderEventLog(TimeStampedModel, ModelArchiveableMixin):
+    """Intenal event log for a service order
+    Track what actions have been done to the service order, and by whom.
+    """
+
+    event_type = models.CharField(
+        max_length=20,
+        choices=ServiceOrderEventLogType.choices,
+        default=ServiceOrderEventLogType.RESPONSE_GIVEN,
+    )
+    service_order = models.ForeignKey(
+        to="ServiceOrder", related_name="event_logs", on_delete=models.RESTRICT
+    )
+    person = models.ForeignKey(
+        to="Person", related_name="service_order_event_logs", on_delete=models.RESTRICT
+    )
+    value = models.TextField(
+        verbose_name=_("Value"),
+        help_text=_("The value of the event log"),
+        null=True,
+        blank=True,
+    )
+    comment = models.TextField(
+        verbose_name=_("Comment"),
+        help_text=_("The comment of the event log"),
+        null=True,
+        blank=True,
+    )
+
+    def __str__(self) -> str:
+        return f"<ServiceOrderEventLog, Type={self.event_type}, Person={self.person}, Value={self.value}>"
 
 
 class ServiceOrderChangeSummaryType(models.TextChoices):
@@ -2446,7 +2642,7 @@ class ServiceOrderChangeLine(TimeStampedModel, ModelArchiveableMixin):
     )
 
     def __str__(self) -> str:
-        return f"<ServiceOrderDateChangeLine, State={self.type_of_change}, Date={self.date}>"
+        return f"<ServiceOrderDateChangeLine, State={self.type_of_change}, Date={self.initial_start}>"
 
 
 class ServiceOrderInternalChangelog(TimeStampedModel):
@@ -2470,6 +2666,12 @@ class ServiceOrderProcessingRequest(TimeStampedModel):
     expires_at = models.DateTimeField(blank=True, null=True)
     related_to_order = models.ForeignKey(
         to="ServiceOrder", related_name="requests", on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        to="Person",
+        related_name="service_order_requests",
+        on_delete=models.CASCADE,
+        null=True,
     )
     recipient = models.EmailField()
     code = models.CharField(max_length=512)

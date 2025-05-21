@@ -37,7 +37,9 @@ from webook.graph_integration.api.graph_router import router as graph_integratio
 # from webook.users.api.group_router import group_router
 from webook.api.scopes_router import api_scopes_router
 from webook.arrangement.api.routers.report_router import report_router
-
+from webook.arrangement.api.routers.preconfiguration_router import (
+    preconfiguration_router,
+)
 
 from webook.onlinebooking.api import (
     county_router,
@@ -79,6 +81,7 @@ api.add_router("/arrangement/calendar", calendar_router)
 api.add_router("/arrangement/organization", organization_router)
 
 api.add_router("/arrangement/service", service_router)
+api.add_router("/arrangement/preconfiguration", preconfiguration_router)
 api.add_router("/arrangement/service_order", service_order_router)
 
 api.add_router("/arrangement/report", report_router)

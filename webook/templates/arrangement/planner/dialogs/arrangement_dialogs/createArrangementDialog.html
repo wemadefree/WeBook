@@ -1,6 +1,9 @@
 {% load static i18n %}
 {% load crispy_forms_tags %}
 
+{% include "arrangement/vue/table_component.html" %}
+{% include "arrangement/vue/preconfigurations_tree_component.html" %}
+{% include "arrangement/vue/order_services_component.html" %}
 
 <div id="{{dialogId}}" class="{{discriminator}}" style="overflow-x: visible;">
     <input type="hidden" name="" id="_audienceId">
@@ -45,7 +48,7 @@
                             Tittel <i>(Engelsk)</i>
                         </label>
                         <input type="text"
-                            class="form-control form-control-lg"
+                            class="form-control form-control-lg" 
                             id="{{ form.name_en.id_for_label }}"
                             value="{{ form.name_en.value|default:'' }}"
                             name="{{ form.name_en.name }}"
@@ -322,7 +325,13 @@
                 </div>
             {% endif %}
         </div>
+
         <div id="step-4">
+            <order-services-component v-model="orderedServices">
+            </order-services-component>
+        </div>
+
+        <div id="step-5">
             <div class="row">
                 <div class="col-6">
                     <a class="btn btn-lg btn-outline-dark btn-block shadow-0 mb-2 p-2"
@@ -369,7 +378,6 @@
 
 <script type="module">
     import { JSTreeSelect } from "{% static 'js/jsTreeSelect.js' %}";
-
     new Dialog({
         managerName: '{{managerName}}',
         dialogId: '{{dialogId}}',
@@ -378,6 +386,26 @@
             dialog.querySelectorAll('.form-outline').forEach((formOutline) => {
                 new mdb.Input(formOutline).init();
             });
+
+            dialog.data.vueApp = Vue.createApp({
+                components: {
+                    OrderServicesComponent,
+                    TableComponent
+                },
+                data() {
+                    return {
+                        orderedServices: [],
+                    };
+                },
+                computed: {},
+                methods: {},
+                mounted() {
+
+                },
+                delimiters: ['[[', ']]'],
+            });
+            dialog.data.vueApp.mount(dialog.$dialogElement[0]);
+            dialog._discover();
             
             dialog.data.schoolAudiences = new Map([
                 {% for audience in schoolAudiences %}
@@ -632,6 +660,16 @@
                 },
                 {
                     element: dialog.getElementById('step-4'),
+                    title: "Tjenestebestilling",
+                    stepIn: () => {
+
+                    },
+                    stepOut: () => {
+                        
+                    }
+                },
+                {
+                    element: dialog.getElementById('step-5'),
                     title: 'Tidsplaner & Aktiviteter',
                     stepIn: () => {
                         dialog.getElementById('next').style.display = "none";
@@ -667,6 +705,13 @@
             has_plans(dialog, {} = {}, triggeredByElement) {
                 return dialog.data.seriesMap !== undefined && dialog.data.seriesMap.size > 0 ||
                     dialog.data.eventsMap !== undefined && dialog.data.eventsMap.size > 0;
+            },
+            printOrderedServices(dialog, {} = {}, triggeredByElement) {
+                console.log("Print ordered services", dialog.data.vueApp._instance.ctx.$data);
+                dialog.data.vueApp._instance.ctx.$data.orderedServices.forEach((service) => {
+                    console.log(service);
+                });
+                console.log("Print ordered services end");
             },
             hasUnresolvedCollisions(dialog, {} = {}, triggeredByElement) {
                 const $collisionCountersPresentInDialog = dialog.$('.collisions-counter').toArray();
@@ -773,7 +818,9 @@
                     seriesArray.forEach((serie) => { serie.collision_resolution_behaviour = resolution_behaviour });
 
                     let eventsArray = dialog.data.eventsMap !== undefined ? Array.from(dialog.data.eventsMap.values()) : [];
-    
+                    
+                    console.log("dispatching submit event!!", seriesArray, eventsArray);
+
                     document.dispatchEvent(
                         new CustomEvent("{{managerName}}.submit", { "detail": {
                             dialog: "createArrangementDialog",
@@ -804,7 +851,6 @@
                         denyButtonText: "Opprett kollisjoner uten rom",
                         confirmButtonText: 'Ignorer kolliderende aktiviteter'
                     }).then((result) => {
-                        console.log("SWAL RESULT", result)
                         if (result.isConfirmed === true) {
                             save(0); // 0 designates behaviour ignore colliding activities (dont create them)
                         }
@@ -1051,6 +1097,7 @@
                         preselectedRooms: dialog.data.roomPayload, 
                         preselectedPeople: dialog.data.peoplePayload,
                         $parent: dialog.dialogElement,
+                        orderedServices: dialog.data.vueApp._instance.ctx.orderedServices
                     }
                 )
             },
@@ -1078,7 +1125,8 @@
                         preselectedMainPlanner: dialog.data.mainPlannerPayload,
                         preselectedRooms: dialog.data.roomPayload, 
                         preselectedPeople: dialog.data.peoplePayload,
-                        $parent: dialog.dialogElement 
+                        $parent: dialog.dialogElement,
+                        orderedServices: dialog.data.vueApp._instance.ctx.orderedServices
                     }
                 );
             },

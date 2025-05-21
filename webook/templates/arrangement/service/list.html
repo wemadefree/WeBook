@@ -1,395 +1,42 @@
-{% extends "common/meta_base.html" %}
-{% load static i18n %}
-{% load custom_tags %}
+
+{% extends "base.html" %}
+
+{% block container_classes %}
+container-fluid
+{% endblock %}
+
 
 {% block content %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <div id="vue_app">
-        <div class="row">
-            <div class="col-12">
-                <h2 class="fw-bolder">Tjenester</h2>
+{% include "arrangement/service/services_dash.html"  %}
 
-                <div class="d-flex" style="justify-content: space-between;">
-                    <button class="wb-btn-main mb-3"
-                        @click="openCreateServiceDialog()">
-                        Opprett tjeneste
-                    </button>
-        
-        
-                    <div class="d-flex">
-                        <div class=" me-3">
-                            <select name="" class="form-control" id="" v-model="pageSize">
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <input type="checkbox" name="showDeactivatedServices" v-model="showDisabledServices">
-                            <label for="showDeactivatedServices" class="ms-2">Vis deaktiverte tjenester</label>
-                        </div>
-                    </div>
-                </div>
-        
-                <input type="search" class="form-control" v-model="serviceSearchTerm" placeholder="Søk etter tjenester..." />
-        
-                <div class="mt-3">
-                    <services-table :services="visibleServices"
-                                    @add-person="openAddPersonDialog"
-                                    @save-email="saveEmail"
-                                    @delete-email="deleteEmail"
-                                    @activate-service="activateService"
-                                    @deactivate-service="deactivateService"
-                                    @edit-service="editService"
-                                    @create-service-template="createServiceConfiguration">
-                    </services-table>
-                </div>
-        
-                <em class="ms-3">
-                    <span class="fa-stack fa-sm" @click="toggleExpansion(service.id)">
-                        <i class="fa fa-circle fa-stack-2x"></i>
-                        <i class="fa fa-info fa-stack-1x fa-inverse" v-else></i>
-                    </span> 
-                    Tjenester kan bestilles for aktiviteter (repeterende <strong>og</strong> enkelte). Man definerer tilgjengelige tjenester her, samt hvem som skal
-                    behandle eventuelle forespørsler på disse tjenestene. De e-postene som er oppført er de som vil få en forespørsel på mail for å
-                    kikke gjennom og eventuelt godkjenne bestillingen. Det trengs ikke en bruker i systemet for å behandle disse forespørslene.
-                </em>
-            </div>
-        </div>
-    </div>
 
-    <script type="module">
-        import { Dialog, DialogManager, DialogSimpleRenderer, DialogFormInterceptorPlugin } from  "{% static 'modules/planner/dialog_manager/dialogManager.js' %}";
-        import ServicesTable from "{% static 'vue-components/services_table.js' %}";
-        import EditRow from "{% static 'vue-components/service-table/edit-row.js' %}";
-        import CreateRow from "{% static 'vue-components/service-table/create-row.js' %}";
-        import DetailRow from "{% static 'vue-components/service-table/detail-row.js' %}";
+<div id="vueApp">
+    <services-dash></services-dash>
+</div>
 
-        let dialogManager = null;
-
-        const app = Vue.createApp({
+<script>
+    $(document).ready(function () {
+        let app = Vue.createApp({
+            el: '#vueApp',
             components: {
-                ServicesTable,
-                EditRow,
-                CreateRow,
-                DetailRow
+                ServicesDash
             },
-            data() {
-                return {
-                    allServices: [],
-                    pageSize: 10,
-                    showDisabledServices: false,
-                    serviceSearchTerm: ""
-                }
-            },
-            computed: {
-                visibleServices() {
-                    let visibleServices = this.allServices;
 
-                    if (!this.showDisabledServices)
-                        visibleServices = visibleServices.filter(service => service.isArchived === false);
-                    if (this.serviceSearchTerm.length)
-                        visibleServices = visibleServices.filter(service => service.name.includes(this.serviceSearchTerm));
-
-                    return visibleServices;
-                }
+            mounted() {
+    
             },
             methods: {
-                async getServices() {
-                    return await fetch("{% url 'arrangement:services_json_list' %}").then(response => response.json());
+                fetchServices() {
                 },
-                activateService(serviceId) {
-                    Swal.fire({
-                        title: 'Er du sikker på at du vil aktivere denne tjenesten?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        cancelButtonText: "Avbryt",
-                        confirmButtonText: 'Aktiver'
-                    }).then(result => {
-                        if (result.isConfirmed) {
-                            this._toggleService(serviceId, "Tjeneste aktivert");
-                        }
-                    })
-                },
-                deactivateService(serviceId) {
-                    Swal.fire({
-                        title: 'Er du sikker på at du vil deaktivere denne tjenesten?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        cancelButtonText: "Avbryt",
-                        confirmButtonText: 'Deaktiver'
-                    }).then(result => {
-                        if (result.isConfirmed) {
-                            this._toggleService(serviceId, "Tjeneste deaktivert");
-                        }
-                    })
-                },
-                _toggleService(serviceId, toastrMessage) {
-                    fetch("/arrangement/service/" + serviceId + "/toggle", {
-                        method: 'DELETE',
-                        headers: {
-                            "X-CSRFToken": "{{ csrf_token }}"
-                        }
-                    }).then(async response => {
-                        if (response.status == 200) {
-                            this.allServices = await this.getServices();
-                            toastr.success(toastrMessage)
-                        }
-                    })
-                },
-                editService(serviceId) {
-                    document.dispatchEvent(new CustomEvent(
-                        'serviceDialogsManager.service_update_form_dialog.trigger',
-                        { detail: { id: serviceId } }  
-                    ));
-                },
-                createServiceConfiguration(serviceId) {
-                    document.dispatchEvent(new CustomEvent(
-                        'serviceDialogsManager.create_template_dialog.trigger',
-                        { detail: { id: serviceId } }  
-                    ));
-                },
-                openAddPersonDialog(serviceId) {
-                    console.log(">> openAddPersonDialog")
-                    document.dispatchEvent(new CustomEvent(
-                        "serviceDialogsManager.add_person_dialog.trigger",
-                        { detail: { id: serviceId } }
-                    ))
-                },
-                openCreateServiceDialog() {
-                    dialogManager.openDialog("create_service");
-                },
-                saveEmail(serviceId, email) {
-                    let formData = new FormData();
-                    formData.append("service_id", serviceId);
-                    formData.append("email", email);
-
-                    fetch("/arrangement/service/add_email/" + serviceId, {
-                        method: 'POST',
-                        headers: {
-                            "X-CSRFToken": "{{csrf_token}}"
-                        },
-                        body: formData
-                    }).then(async response => {
-                        if (response.status === 200) {
-                            toastr.success("E-Post lagt til");  
-                            this.allServices = await this.getServices();
-                        }
-                    })
-                },
-                deleteEmail(serviceId, email) {
-                    Swal.fire({
-                        title: 'Er du sikker på at du vil fjerne ' + email + ' fra denne tjenesten?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        cancelButtonText: "Avbryt",
-                        confirmButtonText: 'Fjern ' + email
-                    }).then(result => {
-                        if (result.isConfirmed) {
-                            let formData = new FormData();
-                            formData.append("service_id", serviceId);
-                            formData.append("email", email);
-        
-                            fetch("/arrangement/service/delete_email", {
-                                method: 'POST',
-                                headers: {
-                                    "X-CSRFToken": "{{csrf_token}}"
-                                },
-                                body: formData
-                            }).then(async response => {
-                                if (response.status == 200) {
-                                    toastr.success("E-Post har blitt fjernet");
-                                    this.allServices = await this.getServices();
-                                }
-                            });
-                        }
-                    })
+                showServiceDetails(service) {
                 }
             },
-            async mounted() {
-                this.allServices = await this.getServices();
-                window.vueRefresh = async () => { this.allServices = await this.getServices(); };
-            },
-            delimiters: ['[[',']]']
-        })
-        
-        app.mount("#vue_app");
-
-        class CustomDialogFormInterceptorPlugin extends DialogFormInterceptorPlugin {
-            constructor (csrf_token) {
-                super(csrf_token);
-            }
-    
-            onResponseOk() {
-                toastr.success("Forandringene har blitt lagret!");
-                window.vueRefresh();
-            }
-        }
-
-        $(document).ready(function () {
-            dialogManager = new DialogManager({
-                managerName: 'serviceDialogsManager',
-                allowMultipleOpenAtOnce: false,
-                dialogs: [
-                    [
-                        "create_service",
-                        new Dialog({
-                            dialogElementId: 'create_service',
-                            triggerElementId: undefined,
-                            triggerByEvent: true,
-                            formUrl: "create",
-                            dialogOptions: {
-                                width: '50rem',
-                                dialogClass: 'no-titlebar',
-                                modal: true
-                            },
-                            plugins: [ new CustomDialogFormInterceptorPlugin("{{csrf_token}}") ],
-                            htmlFabricator: async (context, dialog) => {
-                                return dialogManager.loadDialogHtml({
-                                    url: "{% url 'arrangement:services_create' %}",
-                                    dialogId: "create_service",
-                                    managerName: "serviceDialogsManager",
-                                });
-                            },
-                            onRenderedCallback: (dialogManager, context) => {
-                            },
-                            onUpdatedCallback: (dialogManager, context) => {
-                            },
-                            onSubmit: async (context, details) => {
-                                window.vueRefresh();
-                            }
-                        }),
-                    ],
-                    [
-                    "service_update_form_dialog",
-                    new Dialog({
-                        dialogElementId: 'service_update_form_dialog',
-                        triggerElementId: undefined,
-                        triggerByEvent: true,
-                        formUrl: '<<id>>/update',
-                        dialogOptions: {
-                            dialogClass: 'no-titlebar',
-                            modal: true
-                        },
-                        plugins: [ new CustomDialogFormInterceptorPlugin("{{csrf_token}}") ],
-                        htmlFabricator: async (context, dialog) => {
-                            const id = context.lastTriggererDetails.id;
-    
-                            return dialogManager.loadDialogHtml({
-                                url: "/arrangement/service/" + id + "/update",
-                                dialogId: "service_update_form_dialog",
-                                managerName: "serviceDialogsManager",
-                            });
-                        },
-                        onRenderedCallback: (dialogManager, context) => {
-                        },
-                        onUpdatedCallback: (dialogManager, context) => {
-                        },
-                        onSubmit: async (context, details) => {
-                        }
-                    }),
-                ],
-                [
-                    "add_email_dialog",
-                    new Dialog({
-                        dialogElementId: 'add_email_dialog',
-                        triggerElementId: undefined,
-                        triggerByEvent: true,
-                        dialogOptions: {
-                            classes: { "ui-dialog": "wb-dialog" },
-                            dialogClass: 'no-titlebar',
-                            modal: true,
-                            width: '35rem'
-                        },
-                        plugins: [ new CustomDialogFormInterceptorPlugin("{{csrf_token}}") ],
-                        htmlFabricator: async (context, dialog) => {
-                            const id = context.lastTriggererDetails.id;
-    
-                            return dialogManager.loadDialogHtml({
-                                url: "/arrangement/service/add_email/" + id,
-                                dialogId: "add_email_dialog",
-                                managerName: "serviceDialogsManager",
-                            });
-                        },
-                        onRenderedCallback: (dialogManager, context) => {
-                        },
-                        onUpdatedCallback: (dialogManager, context) => {
-                        },
-                        onSubmit: async (context, details) => {
-                        }
-                    }),
-                ],
-                [
-                    "add_person_dialog",
-                    new Dialog({
-                        dialogElementId: 'add_person_dialog',
-                        triggerElementId: undefined,
-                        triggerByEvent: true,
-                        formUrl: '/arrangement/service/add_person/<<id>>',
-                        dialogOptions: {
-                            classes: { "ui-dialog": "wb-dialog" },
-                            dialogClass: 'no-titlebar',
-                            modal: true,
-                            width: '80%'
-                        },
-                        plugins: [ new CustomDialogFormInterceptorPlugin("{{csrf_token}}") ],
-                        htmlFabricator: async (context, dialog) => {
-                            const id = context.lastTriggererDetails.id;
-
-                            return dialogManager.loadDialogHtml({
-                                url: "/arrangement/service/add_person/" + id,
-                                dialogId: "add_person_dialog",
-                                managerName: "serviceDialogsManager",
-                            });
-                        },
-                        onRenderedCallback: (dialogManager, context) => {
-                        },
-                        onUpdatedCallback: (dialogManager, context) => {
-                        },
-                        onSubmit: async (context, details) => {
-                        }
-                    })
-                ],
-                [
-                    "create_template_dialog",
-                    new Dialog({
-                        dialogElementId: 'create_template_dialog',
-                        triggerElementId: undefined,
-                        triggerByEvent: true,
-                        dialogOptions: {
-                            classes: { "ui-dialog": "wb-dialog" },
-                            dialogClass: 'no-titlebar',
-                            modal: true,
-                            width: '35rem'
-                        },
-                        plugins: [ new CustomDialogFormInterceptorPlugin("{{csrf_token}}") ],
-                        htmlFabricator: async (context, dialog) => {
-                            return dialogManager.loadDialogHtml({
-                                url: "service/create_template",
-                                dialogId: "create_template_dialog",
-                                managerName: "serviceDialogsManager",
-                            });
-                        },
-                        onRenderedCallback: (dialogManager, context) => {
-                        },
-                        onUpdatedCallback: (dialogManager, context) => {
-                        },
-                        onSubmit: async (context, details) => {
-                        }
-                    })
-                ],
-            ]});
-
-            dialogManager._makeAware();
+            delimiters: ['[[', ']]'],
         });
-    </script>
+        app.mount('#vueApp');
+    })
+
+</script>
+
 {% endblock %}

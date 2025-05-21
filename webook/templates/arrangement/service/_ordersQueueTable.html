@@ -1,70 +1,188 @@
 {% include "arrangement/vue/modal-component-v2.html" %}
+{% include "arrangement/vue/popover_component_v2.html" %}
 
 <template id="vuec-orders-queue-table-component">
-    <mdb-modal-component :is-visible="showOrderResponseModal" title="Besvar bestilling">
+    <mdb-modal-component :is-visible="showOrderResponseModal" @close="hideOrderResponseModal" :title="'Besvar bestilling #' + openServiceOrder?.id" ref="mainModal">
         <template #modal-body>
-            <div class="d-flex flex-column">
-                <div class="d-flex justify-content-between">
-                    <span class="fw-bold">
-                        <i class="fas fa-receipt"></i>
-                        Bestilling ID:
-                    </span>
-                    <h5 class="badge badge-info">
-                        [[ openServiceOrder?.id ]]
-                    </h5>
+            <div class="alert alert-warning" v-if="openServiceOrder?.state === 'maybe'">
+                <i class="fas fa-question"></i>
+                Bestilling er kanskje. Du kan gi et endelig svar.
+
+                <div v-if="openServiceOrder?.maybeLog" class="text-muted text-small">
+                    Svaret <strong>kanskje</strong> ble gitt av <strong>[[ openServiceOrder?.maybeLog.person.full_name ]]</strong> ([[ new Date(openServiceOrder?.maybeLog.created).toLocaleString() ]])
                 </div>
+            </div>
+
+            <div class="d-flex flex-column mb-4" v-if="openServiceOrder && openServiceOrder.appliedPreconfiguration">
+                <div>
+                    <strong>Prekonfigurasjon: </strong>
+                    [[openServiceOrder.appliedPreconfiguration.parentsStr]]
+                </div>
+            </div>
+
+            <div class="d-flex flex-column mb-4" v-if="openServiceOrder && openServiceOrder.freetextComment">
                 <div class="d-flex justify-content-between">
-                    <span class="fw-bold">
+                    <h5>
                         <i class="fas fa-comment"></i>
                         Kommentar fra planlegger:
-                    </span>
+                    </h5>
                 </div>
-                <div class=" border border-dark wb-bg-secondary rounded-3 p-2">
-                    <span class="text-muted">
+                <div class=" border p-2" style="background-color: ghostwhite;">
+                    <span class="text-muted text-small">
                         [[ openServiceOrder?.freetextComment ]]
                     </span>
                 </div>
             </div>
 
-            <h5 class="mt-4">
-                <i class="fas fa-calendar"></i>
-                Datoer
-                
-                <span class="badge badge-secondary">
-                    [[ new Date(openServiceOrder?.startAndEnd[0]) ]] - 
-                    [[ new Date(openServiceOrder?.startAndEnd[1]) ]]
-                </span>
+            <h5 class="d-flex border-bottom pb-2 justify-content-between">
+                <div>
+                    <i class="fas fa-calendar"></i>
+                    Forekomster
+                </div>
 
-                <span class="badge badge-secondary">
-                    [[ openServiceOrder?.eventCount ]]
-                </span>
+                <div class="badge badge-light">
+                    [[ openServiceOrder?.eventCount ]] forekomster
+                </div>
             </h5>
-            <div data-mdb-perfect-scrollbar-init style="position: relative; height: 200px; overflow-y: scroll;">
+
+            <div data-mdb-perfect-scrollbar-init style="position: relative; height: 400px; overflow-y: scroll;">
                 <table class="table table-sm">
-                    <tbody>
-                        <tr v-for="event in openServiceOrder?.events">
+                    <thead>
+                        <tr>
                             <th>
-                                <span>
-                                    [[ event?.dateStr ]]
-                                </span>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        Ressursledighet
+                                    </div>
+                                    <div>
+                                    </div>
+                                    <div>
+                                        <i class="fas fa-user"></i>
+                                        Planlegger
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="event in openServiceOrder?.events" :class="event?.resourcePopoverVisible ? 'wb-bg-secondary' : ''">
+                            <th  :key="event.id">
+                                <div :class="'d-flex justify-content-between align-items-center'">
+                                    <div>
+                                        <div @click="event.resourcePopoverVisible = !event.resourcePopoverVisible" class="d-flex justify-content-center">
+                                            <div v-if="event?.availableResources.length > 0">
+                                                <span class="dot text-success text-center text-white" @click="focusedEvent = event" style="background-color: var(--SUCCESS-COLOR); color:white;">
+                                                    [[ event?.availableResources.length]]
+                                                </span>
+                                            </div>
+                                            <div v-else>
+                                                <span class="dot text-danger text-center text-white" @click="focusedEvent = event" style="background-color: var(--DANGER-COLOR); color:white;">
+                                                    [[ event?.unavailableResources.length]]
+                                                </span>
+                                            </div>  
+                                        </div>
+
+                                        <popover-component :is-visible="event.resourcePopoverVisible == true" @update:is-visible="event.resourcePopoverVisible = $event" :excludes="[event]">
+                                            <div>
+                                                <strong>Ledige Ressurser</strong>
+                                                <ul class="mb-0">
+                                                    <li v-for="resource in event?.availableResources" :key="resource.id">
+                                                        [[ resource.full_name ]]
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+                                            <div>
+                                                <strong>Ikke tilgjengelige ressurser</strong>
+                                                <ul class="mb-0">
+                                                    <li v-for="resource in event?.unavailableResources" :key="resource.id">
+                                                        [[ resource.full_name ]]
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </popover-component>
+                                    </div>
+                                    <div>
+                                        <div>
+                                            [[event?.title]]
+                                        </div>
+                                        <div>
+                                            [[ event?.dateStr ]]
+                                        </div>
+                                        <div>
+                                            [[ event?.location ]]
+                                        </div>
+                                    </div>
+                                    <div>
+                                        [[ event?.arrangement_type.name ]]
+                                    </div>
+
+                                    <div>
+                                        [[ event?.responsible.full_name ]]
+                                    </div>
+                                </div>
                             </th>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <span class="text-muted">
+                (Fra den [[ openServiceOrder?.startAndEnd[0] ]] til [[ openServiceOrder?.startAndEnd[1] ]])
+            </span>
+
+
+
         </template>
         <template #modal-footer>
-            <button type="button" class="btn btn-secondary" @click="$emit('close')">Lukk</button>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="me-4">
+                    <span class="fw-bold">
+                        <i class="fas fa-reply"></i>
+                        Besvar bestilling
+                    </span>
+                </div>
+                <div>
+                    <button class="btn wb-btn-danger me-1"  @click="answerReject()">
+                        <i class="fas fa-times"></i>
+                        Avslå
+                    </button>
+                    <button class="btn wb-btn-warning me-1" @click="answerMaybe()" v-if="openServiceOrder?.state != 'maybe'">
+                        <i class="fas fa-question"></i>
+                        Kanskje
+                    </button>
+                    <button class="btn wb-btn-success"      @click="answerAccept()">
+                        <i class="fas fa-check"></i>
+                        Godta
+                    </button>
+                </div>
+
+                <!-- <div>
+                    <button type="button" class="btn wb-btn-secondary" @click="hideOrderResponseModal()">Lukk</button>
+                </div> -->
+            </div>
         </template>
 
         <hr>
-
     </mdb-modal-component>
 
     <table-component :data-source="dataSourceFunc"
                      :column-names="{ 'message': 'Melding' }"
                      :can-search="true"
-                     @open-order-response-modal="openOrderResponseModal">
+                     @open-order-response-modal="openOrderResponseModal"
+                     ref="tableComponent">
+                     
+                     <template #no-results>
+                        <div  class="text-center mt-2">
+                            <h4>
+                                <i class="fas fa-clipboard-check text-success"></i>
+                                Ingen bestillinger i kø
+                            </h4>
+
+                            <p>
+                                Bestillinger vil dukke opp her når planlegger plasserer de på arrangementer.
+                            </p>
+                        </div>
+                     </template>
     </table-component>
 </template>
 
@@ -72,12 +190,14 @@
     let OrdersQueueTableComponent = {
         components: {
             'table-component': TableComponent,
-            MdbModalComponent
+            MdbModalComponent,
+            PopoverComponent,
+            PreconfigurationsTreeComponent,
         },
         props: {
             serviceId: Number
         },
-        emits: [],
+        emits: [ "orderStateHasChanged" ],
         data() {
             return {
                 ordersDataSourceFunc: this.dataSourceFunc,
@@ -86,10 +206,147 @@
             }
         },
         methods: {
+            triggerTableRefresh() {
+                this.$refs.tableComponent.refresh();
+            },
+            answerAccept() {
+                Swal.fire({
+                    title: 'Godta bestilling',
+                    text: "Er du sikker på at du vil godta bestilling?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ja, godta',
+                    cancelButtonText: 'Nei, avbryt'
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        fetch("/api/arrangement/service_order/respond/" + this.openServiceOrder.id, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({
+                                response: "accepted"
+                            })
+                        }).then(response => response.json()).then(data => {
+                            console.log("data", data);
+                            this.hideOrderResponseModal();
+                            toastr.success("Bestilling godkjent", "Bestilling #" + this.openServiceOrder.id + " er godkjent");
+                            this.$emit("orderStateHasChanged", {
+                                orderId: this.openServiceOrder.id,
+                                state: "accepted"
+                            });
+                            this.triggerTableRefresh();
+                        });
+                    }
+                });
+            },
+            answerMaybe() {
+                Swal.fire({
+                    title: 'Kanskje',
+                    text: "Er du sikker på at du vil svare kanskje?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ja, kanskje',
+                    cancelButtonText: 'Nei, avbryt'
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        fetch("/api/arrangement/service_order/respond/" + this.openServiceOrder.id, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({
+                                response: "maybe"
+                            })
+                        }).then(response => response.json()).then(data => {
+                            console.log("data", data);
+                            this.hideOrderResponseModal();
+                            toastr.success("Bestilling kanskje", "Bestilling #" + this.openServiceOrder.id + " er kanskje");
+                            this.$emit("orderStateHasChanged", {
+                                orderId: this.openServiceOrder.id,
+                                state: "maybe"
+                            });
+                            this.triggerTableRefresh();
+                        });
+                    }
+                })
+            },
+            answerReject() {
+                Swal.fire({
+                    title: 'Avslå bestilling',
+                    text: "Er du sikker på at du vil avslå bestilling?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ja, avslå',
+                    cancelButtonText: 'Nei, avbryt'
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        fetch("/api/arrangement/service_order/respond/" + this.openServiceOrder.id, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({
+                                response: "rejected"
+                            })
+                        }).then(response => response.json()).then(data => {
+                            console.log("data", data);
+                            this.hideOrderResponseModal();
+                            toastr.success("Bestilling avslått", "Bestilling #" + this.openServiceOrder.id + " er avslått");
+                            this.$emit("orderStateHasChanged", {
+                                orderId: this.openServiceOrder.id,
+                                state: "rejected"
+                            });
+                            this.triggerTableRefresh();
+                        });
+                    }
+                })
+            },
+            hideOrderResponseModal() {
+                this.showOrderResponseModal = false;
+            },
             openOrderResponseModal(item) {
                 console.log("openOrderResponseModal", item);
                 this.showOrderResponseModal = true;
+
                 this.openServiceOrder = item;
+
+                fetch("/api/arrangement/service_order/" + item.id + "/eventlog", {
+                    method: 'GET'
+                }).then(response => response.json()).then(data => {
+                    this.openServiceOrder.eventLog = data;
+                    if (this.openServiceOrder.state == "maybe") {
+                        this.openServiceOrder.maybeLog = data.find((ev) => {
+                            return ev.value == "maybe" && ev.event_type == "response_given";
+                        });
+                    }
+                });
+
+                fetch("/api/arrangement/service_order/" + item.id + "/resourceAvailability", {
+                    method: 'GET'
+                }).then(response => response.json()).then(data => {
+                    if (data) {
+                        this.openServiceOrder.eventAvailableResourcesLookup = new Map();
+                        data.forEach((ev) => {
+                            this.openServiceOrder.eventAvailableResourcesLookup.set(ev.event_id, ev);
+                        });
+                    }
+                });
+
+                fetch("/api/arrangement/service_order/" + item.id + "/freetext_comment", {
+                    method: 'GET'
+                }).then(response => response.json()).then(data => {
+                    this.openServiceOrder.freetextComment = data;
+                });
 
                 fetch("/api/arrangement/service_order/" + item.id + "/events", {
                     method: 'GET'
@@ -108,15 +365,25 @@
                         } else {
                             ev.dateStr = `${ev.start.toLocaleDateString()} - ${ev.end.toLocaleDateString()}`;
                         }
+
+                        const resources = this.openServiceOrder.eventAvailableResourcesLookup.get(ev.id);
+                        ev.availableResources = resources.available_resources;
+                        ev.unavailableResources = resources.unavailable_resources;
+                        ev.resourcePopoverVisible = false;
                     });
 
                     this.openServiceOrder.eventCount = data.length;
-                })
+                });
             },
             async dataSourceFunc() {
                 let data = await fetch("/api/arrangement/service_order/list?service_id=" + this.serviceId + "&state=awaiting", {
                     method: 'GET'
                 }).then(response => response.json());
+                await fetch("/api/arrangement/service_order/list?service_id=" + this.serviceId + "&state=maybe", {
+                    method: 'GET'
+                }).then(response => response.json()).then(data2 => {
+                    data.data = data.data.concat(data2.data);
+                }); 
 
                 console.log("data", data);
 
@@ -141,10 +408,36 @@
                 return {
                     columns: {
                         "id": { 
-                            isHtml: false, 
+                            isHtml: true, 
                             friendlyName: "#", 
                             isSortable: true,
-                            isSearchable: true
+                            isSearchable: true,
+                            formatter: (item) => {
+                                return "TB-" + item.id;
+                            }
+                        },
+                        "statusIndicator": {
+                            isHtml: true,
+                            friendlyName: "Status",
+                            isSortable: false,
+                            formatter: (item) => {
+                                if (item.state === "awaiting") {
+                                    return `<span class="badge badge-warning w-100 p-2"><i class='fas fa-spinner'></i> Venter svar</span>`;
+                                }
+                                if (item.state === "maybe") {
+                                    return `<span class="badge badge-secondary w-100 p-2"><i class='fas fa-question'></i> Kanskje</span>`;
+                                }
+    
+                                return `<span>${item.state}</span>`;
+                            }
+                        },
+                        "arrangement": {
+                            isHtml: true,
+                            friendlyName: "Arrangement",
+                            isSortable: true,
+                            formatter: (item) => {
+                                return `${item.arrangement.name} <span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.status.name})</span> <span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.arrangementType.name})</span> <span class='text-small text-muted'>(<i class='fas fa-mask'></i> ${item.arrangement.audience.name})</span>`;
+                            }
                         },
                         "event_count": { 
                             isHtml: false, 
@@ -157,7 +450,15 @@
                         },
                         "created": { 
                             isHtml: false, 
-                            friendlyName: "Tidsstempel",
+                            friendlyName: "Plassert",
+                            isSortable: true,
+                            formatter: (item) => {
+                                return new Date(item.created).toLocaleString();
+                            }
+                        },
+                        "time": { 
+                            isHtml: false, 
+                            friendlyName: "Fra - Til",
                             isSortable: true,
                             formatter: (item) => {
                                 const start = new Date(item.startAndEnd[0]).toLocaleString();
@@ -165,12 +466,14 @@
                                 return `${start} - ${end}`;
                             }
                         },
-                        "freetext_comment": { 
+                        "freetextComment": { 
                             isHtml: false, 
                             friendlyName: "Kommentar fra planlegger", 
                             isSortable: true,
                             isSearchable: true,
                         },
+
+
                         // "choice": { 
                         //     isHtml: true, 
                         //     friendlyName: "Send Svar", 

@@ -40,8 +40,8 @@ class SchoolRouter(CrudRouter):
             handle_zeroing_of_segment_if_moving_to_county_without_city_segments
         )
 
-    def get_queryset(self, view: Views = Views.GET) -> QuerySet:
-        qs = super().get_queryset(view)
+    def get_queryset(self, view: Views = Views.GET, request=None) -> QuerySet:
+        qs = super().get_queryset(view=view, request=request)
         qs = qs.prefetch_related("audiences")
         qs = qs.select_related("county")
         qs = qs.select_related("city_segment")

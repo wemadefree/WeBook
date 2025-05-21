@@ -721,50 +721,73 @@
                 <div class="card mb-2">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex">
-                                <div class="mb-0 wb-bg-secondary p-3 border">
-                                    <h5 class="mb-0">Bestilling #{{service_order.id}}</h5>
-                                    <div>{{service_order.service.name}}</div>
-                                    {% if service_order.state == "awaiting" %}
-                                    <div class="badge badge-warning">
-                                        <h5 class="mb-0">
-                                            Venter behandling
-                                        </h5>
+                            <div class="d-flex justify-content-between">
+                                <div class="mb-0 p-0">
+                                    <div class="d-flex">
+                                        {% if service_order.state == 'confirmed' or service_order.state == 'provisioned' %}
+                                        <span class="dot me-2 wb-bg-success">
+                                        </span>
+                                        {% elif service_order.state == 'in_revision' %}
+                                        <span class="dot me-2 wb-bg-warning">
+                                        </span>
+                                        {% elif service_order.state == 'awaiting' %}
+                                        <span class="dot me-2 wb-bg-secondary">
+                                        </span>
+                                        {% elif service_order.state == 'maybe' %}
+                                        <span class="dot me-2 wb-bg-secondary">
+                                        </span>
+                                        {% elif service_order.state == 'denied' %}
+                                        <span class="dot me-2 wb-bg-danger">
+                                        </span>
+                                        {% elif service_order.state == 'cancelled' %}
+                                        <span class="dot me-2 wb-bg-danger">
+                                        </span>
+                                        {% elif service_order.state == 'changed' %}
+                                        <span class="dot me-2 wb-bg-danger">
+                                        </span>
+                                        {% endif %}
+
+                                        <h5 class="mb-0">Bestilling #{{service_order.id}} |&nbsp; </h5>
+                                        <div class="text-muted">{{service_order.service.name}}</div>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div>
+                                    {% if service_order.state == "awaiting" %}
+                                        <div class="text-small fw-bold">
+                                            (Venter behandling)
+                                        </div>
                                     {% elif service_order.state == "cancelled" %}
-                                        <div class="badge badge-dark">
-                                            <h5 class="mb-0">
-                                                Kansellert
-                                            </h5>
+                                        <div class="text-small fw-bold">
+                                            (Kansellert)
                                         </div>
                                     {% elif service_order.state == "denied" %}
-                                        <div class="badge badge-danger">
-                                            <h5 class="mb-0">
-                                                Avvist
-                                            </h5>
+                                        <div class="text-small fw-bold">
+                                            (Avvist)
                                         </div>
                                     {% elif service_order.state == "in_revision" %}
-                                        <div class="badge badge-warning">
-                                            Revideres
+                                        <div class="text-small fw-bold">
+                                            (Revideres)
                                         </div>
                                     {% elif service_order.state == "changed" %}
-                                        <div class="badge badge-warning">
-                                            Endret, venter bekreftelse
+                                        <div class="text-small fw-bold">
+                                            (Endret, venter bekreftelse)
+                                        </div>
+                                    {% elif service_order.state == "maybe" %}
+                                        <div class="text-small fw-bold">
+                                            (Kanskje)
+                                        </div>
+                                    {% elif service_order.state == "provisioned" %}
+                                        <div class="text-small fw-bold">
+                                            (Bekreftet, ferdig behandlet)
                                         </div>
                                     {% elif service_order.state == "confirmed" %}
-                                        <div class="badge badge-success">
-                                            <h5 class="mb-0">
-                                                <i class="fas fa-check"></i>
-                                                Bekreftet
-                                            </h5>
+                                        <div class="text-small fw-bold">
+                                            (Bekreftet, ikke behandlet ennå)
                                         </div>
                                     {% endif %}
-                                </div>
-                                <div class="p-2 ms-2 me-2">
-                                    <h5>Kommentar:</h5>
-                                    <div class="bg-light">
-                                        {{ service_order.freetext_comment }}
-                                    </div>
                                 </div>
                             </div>
 
@@ -773,6 +796,16 @@
                                     Vis bestilling
                                 </button>
                             </div>
+
+                            {% if service_order.freetext_comment %}
+                            <div class="p-2 ms-2 me-2">
+                                
+                                <h5>Kommentar:</h5>
+                                <div class="bg-light">
+                                    {{ service_order.freetext_comment }}
+                                </div>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -1276,6 +1309,47 @@
 
                                         let loader = dialog.getElementById(`c_${eventSerie.id}_serviceOrders_loader`);
                                         loader.style.display = "block";
+
+                                        fetch("/api/arrangement/service_order/list?serie_id=" + eventSerie.id)
+                                            .then(a => a.json())
+                                            .then(a => {
+                                                const tbody = dialog.getElementById(`c_${eventSerie.id}_serviceOrdersTbody`);
+                                                tbody.innerHTML = "";
+
+                                                a.data.forEach(serviceOrder => {
+                                                    let tr = document.createElement("tr");
+                                                    tr.setAttribute("id", `${serviceOrder.id}`);
+                                                    tr.innerHTML = `
+                                                        <td>${serviceOrder.service.name}</td>
+                                                        <td>
+                                                            ${serviceOrder.state === "awaiting" ? "<span class='badge badge-success'>Venter svar</span>" : ""}
+                                                            ${serviceOrder.state === "denied" ? "<span class='badge badge-danger'>Avvist</span>" : ""}
+                                                            ${serviceOrder.state === "confirmed" ? "<span class='badge badge-success'>Bekreftet, venter tildeling</span>" : ""}
+                                                            ${serviceOrder.state === "maybe" ? "<span class='badge badge-warning'>Kanskje</span>" : ""}
+                                                            ${serviceOrder.state === "provisioned" ? "<span class='badge badge-success'>Tildelt</span>" : ""}
+                                                            ${serviceOrder.state === "cancelled" ? "<span class='badge badge-dark text-white'>Kansellert</span>" : ""}
+                                                            ${serviceOrder.state === "changed" ? "<span class='badge badge-warning'>Endret</span>" : ""}
+                                                            ${serviceOrder.state === "in_revision" ? "<span class='badge badge-success'>Revideres</span>" : ""}
+                                                        </td>
+                                                        <td>${serviceOrder.freetext_comment || "Ingen kommentar"}</td>
+                                                        <td>
+                                                            <btn href="#" class="btn btn-sm btn-light border border-dark wb-bg-secondary box-shadow-0 shadow-0"
+                                                                d-trigger="openEditServiceOrder" d-arg-order_pk="${serviceOrder.id}">
+                                                                Åpne
+                                                            </btn>
+                                                        </td>
+                                                    `;
+                                                    tr.onclick = () => {
+                                                        dialog._methods.triggerInspectServiceOrderDialog(dialog, { orderId: serviceOrder.id });
+                                                    };
+
+                                                    tbody.appendChild(tr);
+                                                });
+
+                                                loader.style.display = "none";
+                                            }).catch(e => {
+                                                loader.innerHTML = "<span class='text-danger'>Noe gikk galt under lasting av data. Prøv igjen senere. <i>(Statuskode: " + e.status + ")</i></span>";
+                                            });
                                     }
                                     dialog.getElementById(`c_${eventSerie.id}_showEventsTable`).onclick = () => {
                                         let eventsBody = dialog.getElementById(`c_${eventSerie.id}_eventsBody`);

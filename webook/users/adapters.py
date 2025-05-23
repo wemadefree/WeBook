@@ -47,29 +47,31 @@ class MicrosoftPersonAccountAdapter(DefaultSocialAccountAdapter):
         )
 
     def pre_social_login(self, request, sociallogin):
-        print("pre_social_login")
+        logger.info("pre_social_login")
         if sociallogin.is_existing == False:
-            print("pre_social_login: sociallogin.is_existing == False")
+            logger.info("pre_social_login: sociallogin.is_existing == False")
             matching_person = Person.objects.filter(
                 social_provider_id=sociallogin.account.uid
             ).first()
 
-            print("pre_social_login: matching_person", matching_person)
+            logger.info("pre_social_login: matching_person", matching_person)
 
             if matching_person is None:
-                print("pre_social_login: matching_person is None")
+                logger.info("pre_social_login: matching_person is None")
                 self._triggerStandardErrorPage(
                     reasoning_message="There are no registered people in the application matching the values of the given social login."
                 )
             if matching_person.user_set.exists():
-                print("pre_social_login: matching_person.user_set.exists()")
+                logger.info("pre_social_login: matching_person.user_set.exists()")
                 sociallogin.existing_user = matching_person.user_set.get()
-                print(
+                logger.info(
                     "pre_social_login: sociallogin.existing_user",
                     sociallogin.existing_user,
                 )
             sociallogin.person_id = matching_person.pk
-            print("pre_social_login: sociallogin.person_id", sociallogin.person_id)
+            logger.info(
+                "pre_social_login: sociallogin.person_id", sociallogin.person_id
+            )
 
     def is_open_for_signup(self, request, sociallogin):
         return getattr(settings, "ALLOW_SSO", False)

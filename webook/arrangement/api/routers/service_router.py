@@ -2,7 +2,6 @@ from enum import Enum
 from typing import List, Optional, Tuple
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from grpc import Status
 from ninja import Router, Schema
 from ninja.errors import HttpError
 

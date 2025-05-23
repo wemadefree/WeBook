@@ -12,6 +12,7 @@ from django.urls import reverse
 from webook.arrangement.models import Person
 from webook.users.views import SingleSignOnErrorView
 from webook.utils.context_processors import settings_context
+from webook.logger import logger
 
 
 class AccountAdapter(DefaultAccountAdapter):
@@ -90,25 +91,25 @@ class MicrosoftPersonAccountAdapter(DefaultSocialAccountAdapter):
         Override save_user to associate Person with User
         """
 
-        print("save_user")
+        logger.info("save_user")
 
         existing_user = getattr(sociallogin, "existing_user", None)
-        print("save_user: existing_user", existing_user)
+        logger.info("save_user: existing_user", existing_user)
         if existing_user is not None:
-            print("save_user: existing_user is not None")
+            logger.info("save_user: existing_user is not None")
             sociallogin.user = existing_user
             # Connect = True specifies that we want to connect the socialaccount to an existing user
             sociallogin.save(request, connect=True)
-            print("save_user: sociallogin.save(request, connect=True)")
+            logger.info("save_user: sociallogin.save(request, connect=True)")
             return existing_user
 
         if not hasattr(sociallogin, "person_id"):
-            print("save_user: sociallogin does not have a person_id")
+            logger.info("save_user: sociallogin does not have a person_id")
             self._triggerStandardErrorPage(
                 reasoning_message="Social login entity does not have a reference to the person entity."
             )
 
-        print("save_user: sociallogin.person_id", sociallogin.person_id)
+        logger.info("save_user: sociallogin.person_id", sociallogin.person_id)
 
         user = super().save_user(request, sociallogin, form)
 
@@ -120,12 +121,12 @@ class MicrosoftPersonAccountAdapter(DefaultSocialAccountAdapter):
         user.person = Person.objects.get(id=sociallogin.person_id)
         user.save()
 
-        print("save_user: user.person", user.person)
+        logger.info("save_user: user.person", user.person)
 
         delattr(sociallogin, "person_id")
         if hasattr(sociallogin, "existing_user"):
             delattr(sociallogin, "existing_user")
 
-        print("creation of user is complete")
+        logger.info("creation of user is complete")
 
         return user

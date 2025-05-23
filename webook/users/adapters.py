@@ -69,9 +69,7 @@ class MicrosoftPersonAccountAdapter(DefaultSocialAccountAdapter):
                     sociallogin.existing_user,
                 )
             sociallogin.person_id = matching_person.pk
-            logger.info(
-                "pre_social_login: sociallogin.person_id", sociallogin.person_id
-            )
+            logger.info("pre_social_login end: sociallogin", sociallogin)
 
     def is_open_for_signup(self, request, sociallogin):
         return getattr(settings, "ALLOW_SSO", False)

@@ -96,15 +96,19 @@
             });
         },
         unmounted() {
-            document.removeEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    this.hide();
-                }
-            });
+            try {
+                document.removeEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.hide();
+                    }
+                });
 
-            this.$refs.modal.removeEventListener('hidden.bs.modal', () => {
-                this.$emit('close');
-            });
+                this.$refs.modal.removeEventListener('hidden.bs.modal', () => {
+                    this.$emit('close');
+                });
+            } catch (e) {
+            }
+
         }
     }
 </script>

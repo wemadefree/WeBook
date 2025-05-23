@@ -54,7 +54,7 @@ class MicrosoftPersonAccountAdapter(DefaultSocialAccountAdapter):
                 social_provider_id=sociallogin.account.uid
             ).first()
 
-            logger.info("pre_social_login: matching_person", matching_person)
+            logger.info("pre_social_login: matching_person")
 
             if matching_person is None:
                 logger.info("pre_social_login: matching_person is None")
@@ -64,12 +64,9 @@ class MicrosoftPersonAccountAdapter(DefaultSocialAccountAdapter):
             if matching_person.user_set.exists():
                 logger.info("pre_social_login: matching_person.user_set.exists()")
                 sociallogin.existing_user = matching_person.user_set.get()
-                logger.info(
-                    "pre_social_login: sociallogin.existing_user",
-                    sociallogin.existing_user,
-                )
+                logger.info("pre_social_login: sociallogin.existing_user")
             sociallogin.person_id = matching_person.pk
-            logger.info("pre_social_login end: sociallogin", sociallogin)
+            logger.info("pre_social_login end: sociallogin")
 
     def is_open_for_signup(self, request, sociallogin):
         return getattr(settings, "ALLOW_SSO", False)
@@ -109,7 +106,7 @@ class MicrosoftPersonAccountAdapter(DefaultSocialAccountAdapter):
                 reasoning_message="Social login entity does not have a reference to the person entity."
             )
 
-        logger.info("save_user: sociallogin.person_id", sociallogin.person_id)
+        logger.info("save_user: sociallogin.person_id")
 
         user = super().save_user(request, sociallogin, form)
 
@@ -121,7 +118,7 @@ class MicrosoftPersonAccountAdapter(DefaultSocialAccountAdapter):
         user.person = Person.objects.get(id=sociallogin.person_id)
         user.save()
 
-        logger.info("save_user: user.person", user.person)
+        logger.info("save_user: user.person")
 
         delattr(sociallogin, "person_id")
         if hasattr(sociallogin, "existing_user"):

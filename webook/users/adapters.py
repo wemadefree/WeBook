@@ -33,6 +33,9 @@ class MicrosoftPersonAccountAdapter(DefaultSocialAccountAdapter):
     """
 
     def _triggerStandardErrorPage(self, reasoning_message: str):
+        logger.info("triggerStandardErrorPage")
+        logger.info("reasoning_message: " + reasoning_message)
+
         context = settings_context(_request=None)
         if getattr(settings, "DISPLAY_SSO_ERROR_REASONING", False) is True:
             context["reasoning_message"] = reasoning_message

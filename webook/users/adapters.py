@@ -32,6 +32,13 @@ class MicrosoftPersonAccountAdapter(DefaultSocialAccountAdapter):
     With custom logic requiring a Person item to exist for the Social Login to start with.
     """
 
+    # For testing purposes, you can uncomment the following lines to redirect to a local server.
+    # Normally the Oauth adapter will redirect to HTTPS.
+    # ##################################################
+    # redirect_uri_protocol = "http"
+    # def get_login_redirect_url(self, request):
+    #     return f"http://localhost:8000/accounts/microsoft/login/callback"
+
     def _triggerStandardErrorPage(self, reasoning_message: str):
         logger.info("triggerStandardErrorPage")
         logger.info("reasoning_message: " + reasoning_message)

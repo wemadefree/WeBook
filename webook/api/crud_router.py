@@ -2,6 +2,7 @@ from enum import Enum
 from functools import reduce
 import inspect
 from typing import Any, Callable, Dict, Generic, List, Optional, Type, TypeVar
+import django
 from django.http import HttpResponse
 from django.core.paginator import EmptyPage
 from django.shortcuts import get_object_or_404
@@ -588,11 +589,40 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             if self.pre_create_hook is not None:
                 (instance, payload) = self.pre_create_hook(instance, payload)
 
+            delayed_m2m_set_operations = []
+
             for key, value in dict(payload).items():
-                if value is not NOT_SET:
-                    setattr(instance, key, value)
+                if value is NOT_SET:
+                    continue
+
+                field_type = self.model._meta.get_field(key)
+
+                if type(field_type) == django.db.models.fields.related.ManyToManyField:
+                    delayed_m2m_set_operations.append((key, value))
+                else:
+                    try:
+                        setattr(instance, key, value)
+                    except Exception as e:
+                        print(
+                            f"Error setting attribute {key} on {self.model_name_singular}: {e}"
+                        )
+                        raise e
 
             instance.save()
+
+            if delayed_m2m_set_operations:
+                for key, value in delayed_m2m_set_operations:
+                    if hasattr(instance, key):
+                        attr = getattr(instance, key)
+                        if isinstance(value, list):
+                            attr.set(value)
+                        else:
+                            attr.set([value])
+                    else:
+                        raise Exception(
+                            f"Field {key} is a ManyToManyField, but not found on {self.model_name_singular}."
+                        )
+
             return instance
 
         post_func.__annotations__ = {

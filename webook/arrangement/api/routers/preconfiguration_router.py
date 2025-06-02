@@ -74,7 +74,9 @@ preconfiguration_router = PreconfigurationRouter(
 
 @preconfiguration_router.get("/tree")
 def get_tree(
-    request, root_preconfiguration_id: Optional[int] = None
+    request,
+    root_preconfiguration_id: Optional[int] = None,
+    service_id: Optional[int] = None,
 ) -> List[PreconfigurationGetSchema]:
     def transformer_hook(node, parent_node):
         node["standard_choices"] = [
@@ -87,6 +89,11 @@ def get_tree(
         include_parent_meta_on_child_nodes=True,
         root_node_id=root_preconfiguration_id,
         transformer_hook=transformer_hook,
+        qs=(
+            ServiceOrderPreconfiguration.objects.filter(service_id=service_id)
+            if service_id
+            else ServiceOrderPreconfiguration.objects.all()
+        ),
     )
 
 

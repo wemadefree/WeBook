@@ -1276,6 +1276,8 @@ class PlanSerieForm(LoginRequiredMixin, DialogView, FormView):
         else:
             context["arrangementPk"] = 0
 
+        context["serieId"] = self.request.GET.get("serieId", 0)
+        
         context["DISPLAY_LAYOUTS_WITH_REQUISITE_TEXT"] = DisplayLayout.objects.filter(
             triggers_display_layout_text=True
         )

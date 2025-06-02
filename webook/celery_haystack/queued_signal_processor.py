@@ -29,6 +29,9 @@ class QueuedSignalProcessor(RealtimeSignalProcessor):
         # Reconnect the Haystack signal processor
         super(QueuedSignalProcessor, self).teardown()
 
+    def handle_save(self, sender, instance, **kwargs):
+        pass
+
     def enqueue_save(self, sender, instance, **kwargs):
         # Enqueue the save operation
         from webook.celery_haystack.tasks import update_object, ALL_MODELS

@@ -138,8 +138,9 @@ def _get_planner_recipients(service_order: ServiceOrder) -> List[Person]:
     recipients: List[str] = []
     arrangement: Arrangement = service_order.arrangement
 
-    if arrangement.responsible.user_set.exists():
-        recipients.append(arrangement.responsible.user_set.first().person)
+    # TODO: Notification System.
+    # if arrangement.responsible.user_set.exists():
+    #     recipients.append(arrangement.responsible.user_set.first().person)
 
     return list(set(recipients))
 
@@ -157,7 +158,7 @@ def confirm_service_order(service_order_or_token: Union[ServiceOrder, str]) -> N
         change_summary.has_been_processed = True
         # Send notifications to planners
         # for planner in planners_to_notify:
-        #     notification = Notification()
+        #     notification =6 Notification()
         #     notification.to_person = planner
         #     notification.title = (
         #         f"Endringer på bestilling #{service_order.id} er bekreftet"
@@ -185,6 +186,14 @@ def confirm_service_order(service_order_or_token: Union[ServiceOrder, str]) -> N
     #         notification.icon_background_class = "text-success"
     #         notification.icon_class = "fa-check"
     #         notification.save()
+
+    for provision in service_order.provisions.all():
+        personell = provision.selected_personell.all()
+        if personell.exists():
+            event = provision.for_event
+            for person in personell:
+                event.people.add(person)
+            event.save()
 
     service_order.state = States.PROVISIONED
     service_order.save()
@@ -214,6 +223,11 @@ def open_service_order_for_revisioning(service_order: ServiceOrder) -> None:
         return
 
     service_order.state = States.IN_REVISION
+
+    for provision in service_order.provisions.all():
+        for person in provision.selected_personell.all():
+            provision.for_event.people.remove(person)
+        provision.for_event.save()
 
     service_order.save()
 
@@ -248,6 +262,12 @@ def cancel_service_order(service_order: ServiceOrder) -> None:
     notification.service_order = service_order
     notification.content = f"Ordre #{service_order.id} har blitt kansellert."
     notification.save()
+
+    # remove all persons from events
+    for provision in service_order.provisions.all():
+        for person in provision.selected_personell.all():
+            provision.for_event.people.remove(person)
+        provision.for_event.save()
 
     # for person, events in personell.items():
     #     email = person.personal_email
@@ -392,6 +412,11 @@ def add_event_to_service_order(service_order: ServiceOrder, event: Event):
     ]:
         return  # Only trigger the change process if the service order is confirmed
 
+    for provision in service_order.provisions.all():
+        for person in provision.selected_personell.all():
+            provision.for_event.people.remove(person)
+        provision.for_event.save()
+
     change_summary, created_now = _get_change_summary(service_order)
     change_summary.add_lines({"provision_id": sop.id}, change_type=ChangeType.NEW)
 
@@ -489,11 +514,12 @@ def generate_changelog_of_serie_events_in_order(service_order: ServiceOrder):
     When an edit is made to the events in a service order, and a change summary processing flow is active
     the new edit will be folded into the existing change summary.
     """
-    if service_order.state not in [States.CONFIRMED, States.CHANGED]:
+    if service_order.state not in [States.PROVISIONED, States.CHANGED]:
         return
 
     events = (
-        service_order.associated_manifest.series.last().events.all()
+        # service_order.associated_manifest.series.last().events.all()
+        service_order.events.all()
         if service_order.associated_manifest
         else [p.for_event for p in service_order.provisons.all()]
     )
@@ -588,6 +614,14 @@ def generate_changelog_of_serie_events_in_order(service_order: ServiceOrder):
             service_order.save()
             change_summary.archive()
         return
+
+    notification = ServiceNotification()
+    notification.service = service_order.service
+    notification.service_order = service_order
+    notification.content = (
+        f"Ordre #{service_order.id} er endret og må gjennomgås på nytt."
+    )
+    notification.save()
 
     change_summary.original_state_of_service_order = service_order.state
     service_order.state = States.CHANGED

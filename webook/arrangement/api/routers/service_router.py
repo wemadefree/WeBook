@@ -28,11 +28,17 @@ from webook.arrangement.api.mixin_routers.base_mixin_router import BaseMixinRout
 from webook.arrangement.api.routers.arrangement_router import ArrangementGetSchema
 from webook.arrangement.api.routers.event_router import EventGetSchema
 from webook.arrangement.api.routers.person_router import PersonGetSchema
+from webook.arrangement.facilities.service_ordering import (
+    _initialize_provisions,
+    generate_changelog_of_serie_events_in_order,
+)
 from webook.arrangement.forms.service_forms import OrderServiceForm
 from webook.arrangement.models import (
     Arrangement,
     Audience,
     Event,
+    EventSerie,
+    ServiceNotification,
     ServiceOrderEventLog,
     ServiceOrderEventLogType,
     ServiceStaff,
@@ -730,6 +736,48 @@ def get_ongoing_service_orders(request, service_id: int):
             ongoing_service_orders.append(service_order)
 
     return ongoing_service_orders
+
+
+@service_order_router.put(  # TODO: authorize planner only
+    "/{id}/move/{event_serie_id}", response=bool
+)
+def move_service_order_to_event_serie(request, id: int, event_serie_id: int):
+    """
+    Move a service order to a new event serie.
+    """
+    service_order = get_object_or_404(ServiceOrder, pk=id)
+    event_serie = get_object_or_404(EventSerie.objects.filter(id=event_serie_id))
+    service_order.associated_manifest = event_serie.serie_plan_manifest
+    service_order.events.clear()
+    service_order.events.add(*event_serie.events.all())
+
+    generate_changelog_of_serie_events_in_order(service_order)
+
+    service_order.save()
+    return True
+
+
+@service_order_router.put("/{id}/cancel", response=ServiceOrderGetSchema)
+def cancel_service_order(request, id: int):
+    """
+    Cancel a service order.
+    """
+    service_order = get_object_or_404(ServiceOrder, pk=id)
+
+    if service_order.state in [States.DENIED, States.CANCELLED]:
+        raise HttpError(400, "Service order is already cancelled or denied.")
+
+    service_order.state = States.CANCELLED
+    service_order.save()
+
+    log = ServiceOrderEventLog()
+    log.event_type = ServiceOrderEventLogType.CANCELLED
+    log.service_order = service_order
+    log.person = request.user.person
+    log.comment = f"{request.user.person} cancelled the service order."
+    log.save()
+
+    return service_order
 
 
 @service_order_router.get(

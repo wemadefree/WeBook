@@ -58,15 +58,15 @@ class SelfNestedModelMixin(models.Model):
         include_parent_meta_on_child_nodes: bool = False,
         root_node_id: Optional[int] = None,
         transformer_hook: Optional[callable] = None,
+        qs=None,
     ) -> List[Dict]:
+        qs = qs if qs is not None else cls.objects.all()
         root_items = (
-            list(cls.objects.filter(parent__isnull=True).order_by("id"))
+            list(qs.filter(parent__isnull=True).order_by("id"))
             if root_node_id is None
-            else list(
-                cls.objects.filter(parent__isnull=True, id=root_node_id).order_by("id")
-            )
+            else list(qs.filter(parent__isnull=True, id=root_node_id).order_by("id"))
         )
-        child_items = list(cls.objects.filter(parent__isnull=False).order_by("id"))
+        child_items = list(qs.filter(parent__isnull=False).order_by("id"))
 
         def populate_children(parent):
             p = {
@@ -2485,8 +2485,8 @@ class ServiceOrder(TimeStampedModel, ModelArchiveableMixin):
     def arrangement(self) -> Optional[Arrangement]:
         if self.events.exists():
             return self.events.first().arrangement
-        if self.associated_manifest and self.associated_manifest.series.exists():
-            return self.associated_manifest.series.first().arrangement
+        if self.associated_manifest and self.associated_manifest.event_series.exists():
+            return self.associated_manifest.event_series.first().arrangement
 
     @property
     def sorted_changelogs(self):
@@ -2506,6 +2506,7 @@ class ServiceOrderEventLogType(models.TextChoices):
     RESPONSE_GIVEN = "response_given", _("Response Given")
     ORDER_FINALIZED = "order_finalized", _("Order Finalized")
     PROVISIONING_PERFORMED = "provisioning_started", _("Provisioning Started")
+    CANCELLED = "cancelled", _("Cancelled")
 
 
 class ServiceOrderEventLog(TimeStampedModel, ModelArchiveableMixin):
@@ -2661,7 +2662,7 @@ class ServiceOrderChangeLine(TimeStampedModel, ModelArchiveableMixin):
     )
 
     provision = models.ForeignKey(
-        to="ServiceOrderProvision", null=True, on_delete=models.RESTRICT
+        to="ServiceOrderProvision", null=True, on_delete=models.CASCADE
     )
 
     initial_start = models.DateTimeField()
@@ -2720,8 +2721,12 @@ class ServiceOrderProvision(ModelArchiveableMixin, TimeStampedModel):
     """
 
     related_to_order = models.ForeignKey(
-        to="ServiceOrder", related_name="provisions", on_delete=models.CASCADE
+        to="ServiceOrder",
+        related_name="provisions",
+        on_delete=models.CASCADE,
+        null=True,
     )
+
     for_event = models.ForeignKey(
         to="Event", related_name="provisions", on_delete=models.CASCADE
     )

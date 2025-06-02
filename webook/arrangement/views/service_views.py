@@ -989,8 +989,8 @@ class GetChangeSummaryJsonView(ValidateTokenMixin, View):
                         "provision": line.provision.id,
                         "change_type": line.type_of_change,
                         "initial_time": get_friendly_display_of_time_range(
-                            utc_to_current(line.initial_start),
-                            utc_to_current(line.initial_end),
+                            line.initial_start,
+                            line.initial_end,
                         ),
                     }
                     for line in lines

@@ -2,6 +2,9 @@
 {% load crispy_forms_tags %}
 {% load custom_tags %}
 
+{% include "arrangement/vue/table_component.html" %}
+{% include "arrangement/vue/preconfigurations_tree_component.html" %}
+{% include "arrangement/vue/order_services_component.html" %}
 
 <div id="{{dialogId}}" title="{{object.name}}" class="{{discriminator}}">
     <h3>{{object.name}}</h3>
@@ -1546,7 +1549,6 @@
                     { 
                         $parent: dialog.dialogElement, 
                         sendTo: '{{dialogId}}', 
-                        renderInChain: true,
                         data: { whenEventName: "newServiceOrder" },
                         entity_type: "serie",
                         entity_id: serie_id 
@@ -1732,8 +1734,6 @@
                         } else {
                             toastr.success("Bestilling er plassert og avventer behandling av koordinator.");
                             response = await response.json();
-
-                            console.log("order response", response);
                         }
 
                         document.dispatchEvent(

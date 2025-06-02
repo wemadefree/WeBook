@@ -205,16 +205,6 @@
                                 "service_order": null
                             });
                         });
-
-                        console.log("orderServiceDialog.save", {
-                            "managerName": "{{managerName}}",
-                            "detail": { 
-                                dialog: "{{dialogId}}",
-                                requestedServices: serviceOrders, 
-                                csrf_token: "{{csrf_token}}", 
-                                recipientDialog: "{{recipientDialogId}}" 
-                            }
-                        });
                         
                         document.dispatchEvent(
                             new CustomEvent(`{{managerName}}.submit`, {

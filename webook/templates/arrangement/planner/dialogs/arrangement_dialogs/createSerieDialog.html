@@ -10,9 +10,8 @@
     <div class="clearfix">
         <div class="float-start">
             <h6 id="title">
-                {{object}}
                 {% if object.pk %}
-                    Rediger {{object.title}}
+                    Rediger {{object}}
                 {% else %}
                     Definer tidsplan
                 {% endif %}
@@ -28,7 +27,7 @@
 
     <div>
         <div id="step-1">
-            <input type="hidden" name="uuid" id="serie_uuid">
+            <input type="hidden" name="uuid" id="serie_uuid" />
             <form id="headMockForm">
                 <input type="submit" style="display:none;" />
                 <div class="mb-2">
@@ -137,6 +136,15 @@
 
         <div id="step-2">
             <fieldset>
+
+                <div v-if="idOfSerie && orderedServices && orderedServices.length > 0" class="alert alert-info">
+                    <h6 class="fw-bold"><i class="fas fa-info-circle"></i>&nbsp; Aktive Bestillinger.</h6>
+
+                    Det er aktive bestillinger for denne tidsplanen. Ved revidering av tider og mønster, 
+                    vil disse bestillingene bli oppdatert med de nye tidene. 
+                    De vil deretter måtte prosesseres på nytt av behandler.
+                </div>
+
                 <h5>Mønster</h5>
                 <div class="row">
                     <div class="col-3 border-end border-1">
@@ -407,25 +415,6 @@
         </div>
 
         <div id="step-services">
-            <!-- <div class="clearfix">
-                <a class="btn btn-lg btn-outline-dark btn-block shadow-0 mb-2 p-2"
-                    style="text-transform: none; font-size: larger; border-width: 0.7px;"
-                    d-trigger="triggerOrderService">
-                    <i class="fas fa-calendar-plus"></i>&nbsp;
-                    Bestill tjenester
-                </a>
-            </div>
-
-            <div class="alert alert-info mt-2">
-                Her kan du bestille tjenester for denne aktiviteten. <br>
-                Du kan også fjerne aktiviteten fra bestillinger plassert på arrangementsnivået. Fjerner du bestillinger her vil 
-                denne aktiviteten ikke være delaktige i den respektive bestillingen, men de vil fortsatt være aktuelle for andre aktiviteter/tidsplaner <br>
-            </div>
-
-            <div id="serviceOrders" class="mb-2">
-
-            </div> -->
-
             <order-services-component v-model="orderedServices">
             </order-services-component>
         </div>
@@ -472,11 +461,11 @@
         </div>
 
         <div class="float-end">
-            <a href="#" class="btn wb-btn-secondary btn-lg" id="back">
+            <a href="javascript:void(0);" class="btn wb-btn-secondary btn-lg" id="back">
                 Tilbake
             </a>
 
-            <a href="#" class="btn wb-btn-main btn-lg" id="next">
+            <a href="javascript:void(0);" class="btn wb-btn-main btn-lg" id="next">
                 Neste
             </a>
 
@@ -691,7 +680,7 @@
                     continue;
 
                 values[key] = inputEl.value;
-            }
+            } 
             
             dialog.data.vueApp = Vue.createApp({
                 components: {
@@ -699,13 +688,45 @@
                 },
                 data() {
                     return {
+                        idOfSerie: "{{ serieId }}",
                         orderedServices: dialog.data.orderedServices ? dialog.data.orderedServices : [],
+                        serieid: dialog.interior.serie_uuid.value,
+                        uuid: "",
+                        initialServiceOrderIds: [],
                     };
+                },
+                watch: {
                 },
                 computed: {},
                 methods: {},
                 mounted() {
+                    if (this.idOfSerie && this.idOfSerie !== "0") {
+                        fetch('/api/arrangement/service_order/list?serie_id=' + this.idOfSerie)
+                            .then(response => response.json())
+                            .then(async data => {
+                                this.orderedServices = data.data.map(serviceOrder => {
+                                    let preconfigurations = [];
+                                    if (serviceOrder.appliedPreconfiguration) {
+                                        serviceOrder.appliedPreconfiguration.selected = true;
+                                        preconfigurations.push(serviceOrder.appliedPreconfiguration);
+                                    }
 
+                                    return {
+                                        id: serviceOrder.id,
+                                        description: serviceOrder.description || "",
+                                        lineDescription: serviceOrder.description,
+                                        key: crypto.randomUUID(),
+                                        preconfigurations: preconfigurations,
+                                        service: serviceOrder.service,
+                                        state: serviceOrder.state,
+                                        temporalState: serviceOrder.temporalState,
+                                    }
+                                });
+
+                                this.initialServiceOrderIds = this.orderedServices.map(service => service.id);
+                            })
+                            .catch(error => console.error('Error fetching ordered services:', error));
+                    }
                 },
                 delimiters: ['[[', ']]'],
             });
@@ -728,6 +749,7 @@
                     inputElement.value = value;
                 }
             }
+
 
             dialog.data.schoolAudiences = new Map([
                 {% for audience in schoolAudiences %}
@@ -808,7 +830,7 @@
                         county.schools.forEach((school) => {
                             if (school.audiences.includes(selectedAudienceId) || selectedAudienceId == {{ audienceGroupId }}) {
                                 schoolOptions.push({
-                                     id: school.id,
+                                    id: school.id,
                                     text: school.text,
                                 })
                             }
@@ -913,9 +935,6 @@
                                 return false;
 
                             if (dialog.interior.serie_start.value >= dialog.interior.serie_end.value) {
-                                console.log(
-                                    "dialog.interior", dialog.interior
-                                )
                                 dialog.$('#invalidTimesStep1Feedback').show();
                                 return false;
                             }
@@ -1328,16 +1347,16 @@
                 serie.display_layouts = display_layouts.join(",");
                 // serie.ordered_services = dialog.data.vueApp._instance.ctx.orderedServices;
                 serie.ordered_services = dialog.data.vueApp._instance.ctx.orderedServices.map((service) => {
-                    console.log("createSerieDialog.ordered_services", service);
                     return {
-                        applied_preconfiguration: service.preconfigurations[service.preconfigurations.length - 1].id,
+                        id: service.id,
+                        applied_preconfiguration: service.preconfigurations.length > 0 ? service.preconfigurations[service.preconfigurations.length - 1].id : null,
                         service_id: service.service.id,
                         freetext_comment: service.description,
                         service_order: null
                     }
                 });
 
-                console.log("createSerieDialog.raiseSubmit", serie);
+                serie.initial_service_order_ids = dialog.data.vueApp._instance.ctx.initialServiceOrderIds;
 
                 dialog.raiseSubmitEvent({
                     serie: serie,
@@ -1588,6 +1607,14 @@
                 else
                     dialog.$('#_backingAudienceId').val(payload);
             } },
+            { eventKnownAs: "set_serie_uuid", do: (dialog, payload) => {
+                document.dispatchEvent(
+                    new CustomEvent("setSerieUuid", {
+                        bubbles: true,
+                        detail: { uuid: payload }
+                    })
+                );
+            } },
             { eventKnownAs: "setArrangementTypeFromParent", do: (dialog, payload) => {
                 if (dialog.data.arrangementTypeJsTreeSelect)
                     dialog.data.arrangementTypeJsTreeSelect.setSelected(payload);
@@ -1603,17 +1630,13 @@
                 }
             } },
             { eventKnownAs: "setServiceOrders", do: (dialog, payload) => {
-                console.log("createSerieDialog.setServiceOrders", payload);
                 if (!dialog.data.vueApp) {
-                    console.log("vue app not found, maybe not yet created");
                     dialog.data.orderedServices = payload;
                 } else {
-                    console.log("vue app found, setting orderedServices");
                     dialog.data.vueApp._instance.ctx.orderedServices = payload;
                 }
             } },
             { eventKnownAs: "newServiceOrder", do: (dialog, payload) => {
-                console.log("newServiceOrder triggered");
                 payload = payload[0];
                 payload.key = Math.random().toString(36).substring(7);
                 dialog.data.serviceOrders.push(payload);

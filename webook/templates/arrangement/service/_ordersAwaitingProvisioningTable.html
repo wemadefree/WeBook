@@ -46,6 +46,10 @@
                             friendlyName: "Arrangement",
                             isSortable: true,
                             formatter: (item) => {
+                                if (!item.arrangement) {
+                                    return "<span class='text-danger'>Ikke lenger tilgjengelig</span>";
+                                }
+
                                 return `${item.arrangement.name} <span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.status.name})</span> <span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.arrangementType.name})</span> <span class='text-small text-muted'>(<i class='fas fa-mask'></i> ${item.arrangement.audience.name})</span>`;
                             }
                         },

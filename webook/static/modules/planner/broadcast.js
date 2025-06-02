@@ -31,12 +31,8 @@ export class MessagesFacility {
     }
 
     send(recipient, payload, key = undefined) {
-        console.log(">> SEND")
-        // debugger;
         if (!this._recipients.has(recipient))
             this._recipients.set(recipient, new Recipient(recipient));
-        
-        // debugger;
         
         const subscriptionsOnRecipient = this._subscriptions.get(recipient);
         if (subscriptionsOnRecipient)
@@ -50,7 +46,6 @@ export class MessagesFacility {
         return;
         
         
-        console.log(">> send", recipient)
 
         if (this._subscriptions.get(recipient)) {
             const subscriptionsOnRecipient = this._subscriptions.get(recipient);

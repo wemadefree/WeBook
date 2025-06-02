@@ -11,6 +11,7 @@
 
     <div>
         <preconfigurations-tree-component
+            :service-id="serviceId"
             :selection-enabled="false"
             :editing-enabled="true"
             ref="tree"
@@ -53,6 +54,7 @@
                             v-model="focusedPreconfiguration.standardPreconfigurations"
                             @select-preconfiguration="node => preconfigChecked(node)"
                             :selection-enabled="true"
+                            :service-id="serviceId"
                             :root-preconfiguration-id="focusedPreconfiguration.id">
                         </preconfigurations-tree-component>
                     </div>
@@ -141,7 +143,6 @@
             },
             async preconfigurationsDataSourceFunc() {
                 let data = await fetch("/arrangement/service/" + this.serviceId + "/preconfigurations").then(response => response.json());
-                console.log("preconfigurationsDataSourceFunc data: ", data);
                 return {
                     columns: {
                         "title": {
@@ -178,7 +179,6 @@
                 this.editPreconfigurationModal.show();
             },
             openCreatePreconfigurationModal(event) {
-                console.log("openCreatePreconfigurationModal", event);
                 this.focusedPreconfiguration = { 
                     id: 0, 
                     title: "", 
@@ -193,7 +193,6 @@
                     item.selected = true;
                     return item;
                 });
-                console.log("onEditPreconfiguration", row.standard_choices);
                 this.focusedPreconfiguration = {
                     "id": row.id,
                     "title": row.text,

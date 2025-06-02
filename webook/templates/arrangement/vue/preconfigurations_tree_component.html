@@ -125,6 +125,10 @@
     let PreconfigurationsTreeComponent = {
         components: { PreconfigurationsTreeNodeComponent },
         props: {
+            serviceId: {
+                type: Number,
+                default: null
+            },
             rootPreconfigurationId: {
                 type: Number,
                 default: null
@@ -177,6 +181,8 @@
                                         });
                                     }
                                 });
+                            } else {
+                                
                             }
                         });
                     }
@@ -190,7 +196,9 @@
                             preconfiguration.children.forEach(child => {
                                 if (child.selected || selectedValues.includes(child.id)) {
                                     selected.push(child);
+                                    child.selected = true;
                                     preconfiguration.selected = true;
+                                    preconfiguration.expanded = true;
                                 }
                                 if (child.children) {
                                     child.children.forEach(subChild => {
@@ -219,8 +227,8 @@
         methods: {
             async fetchPreconfigurationTree() {
                 let url = this.rootPreconfigurationId
-                    ? `/api/arrangement/preconfiguration/tree?root_preconfiguration_id=${this.rootPreconfigurationId}`
-                    : '/api/arrangement/preconfiguration/tree';
+                    ? `/api/arrangement/preconfiguration/tree?root_preconfiguration_id=${this.rootPreconfigurationId}&service_id=${this.serviceId}`
+                    : `/api/arrangement/preconfiguration/tree?service_id=${this.serviceId}`;
 
                 let data = await fetch(url)
                     .then(response => response.json())

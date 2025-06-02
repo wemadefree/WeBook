@@ -45,7 +45,6 @@
                     let popoverHeight = $(this.$refs.popover).height();
                     let popoverTop = $(this.$refs.popover).offset().top;
                     let popoverBottom = popoverTop + popoverHeight;
-                    console.log(popoverTop, popoverBottom, popoverHeight, $(window).height());
 
                     $(this.$refs.popover).show("fade", {}, 400);
                 }
@@ -68,7 +67,11 @@
                         if (this.excludes && this.excludes.length > 0 && this.excludes.includes(event.target)) {
                             return;
                         }
-                        console.log("click outside!")
+
+                        if (!document.body.contains(event.target)) {
+                            return;
+                        }
+
                         this.internalIsVisible = false;
                         // this.$emit("update:isVisible", false);
                     }

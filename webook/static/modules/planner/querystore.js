@@ -42,29 +42,73 @@ export class QueryStore {
             throw new Error("Failed creating serie", responseData);
         }
 
-        if ("ordered_services" in serie) {
-            serie.ordered_services.filter(x => x.service_order === null).forEach(async (serviceOrder) => {
-                console.log("create serie ordered_services", serviceOrder);
-                let formData = new FormData();
-                if (serviceOrder.applied_preconfiguration)
-                    formData.append("applied_preconfiguration", serviceOrder.applied_preconfiguration);
-                formData.append("parent_type", "serie");
-                formData.append("parent_id", responseData.serie_id);
-                formData.append("service_id", serviceOrder.service_id);
-                formData.append("freetext_comment", serviceOrder.freetext_comment);
-                if (serviceOrder.service_order)
-                    formData.append("service_order", serviceOrder.service_order);
+        const serieId = responseData.serie_id;
 
-                const orderServiceResponse = await fetch('/arrangement/planner/dialogs/order_service/serie/' + responseData.serie_id, {
-                    method: 'POST',
-                    body: formData,
+        const moveServiceOrder = async (serviceOrderId, serieId) => {
+            return fetch(`/api/arrangement/service_order/${serviceOrderId}/move/${serieId}`, {
+                method: 'PUT',
+                headers: {
+                    "X-CSRFToken": csrf_token
+                },
+            }).then(response => {
+                if (!response.ok) {
+                    toastr.error("Flytting av tjenesteordre feilet. Serveren svarte med feilkode " + response.status);
+                    throw new Error("Failed moving service order", response);
+                }
+                return response.json();
+            });
+        };
+
+        if ("ordered_services" in serie) {
+            const initialServiceOrderIds = serie.initial_service_order_ids || [];
+            const removedServiceOrderIds = initialServiceOrderIds.filter(id => !serie.ordered_services.some(serviceOrder => serviceOrder.id === id));
+            
+            removedServiceOrderIds.forEach(async (serviceOrderId) => {
+                await moveServiceOrder(serviceOrderId, serieId);
+
+                await fetch(`/api/arrangement/service_order/${serviceOrderId}/cancel`, {
+                    method: 'PUT',
                     headers: {
                         "X-CSRFToken": csrf_token
                     },
+                }).then(response => {
+                    if (!response.ok) {
+                        toastr.error("Kansellering av tjenesteordre feilet. Serveren svarte med feilkode " + response.status);
+                        throw new Error("Failed cancelling service order", response);
+                    } else {
+                        toastr.success("Tjenesteordre kansellert.");
+                    }
                 });
+            });
 
-                if (orderServiceResponse.success === false)
-                    throw new Error("Failed creating service order", orderServiceResponse);
+            serie.ordered_services.filter(x => x.service_order === null).forEach(async (serviceOrder) => {
+                if (serviceOrder.id) {
+                    await moveServiceOrder(serviceOrder.id, serieId);
+                } else {
+                    let formData = new FormData();
+
+                    if (serviceOrder.applied_preconfiguration)
+                        formData.append("applied_preconfiguration", serviceOrder.applied_preconfiguration);
+                    
+                    formData.append("parent_type", "serie");
+                    formData.append("parent_id", responseData.serie_id);
+                    formData.append("service_id", serviceOrder.service_id);
+                    formData.append("freetext_comment", serviceOrder.freetext_comment);
+                    
+                    if (serviceOrder.service_order)
+                        formData.append("service_order", serviceOrder.service_order);
+
+                    const orderServiceResponse = await fetch('/arrangement/planner/dialogs/order_service/serie/' + responseData.serie_id, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            "X-CSRFToken": csrf_token
+                        },
+                    });
+
+                    if (orderServiceResponse.success === false)
+                        throw new Error("Failed creating service order", orderServiceResponse);
+                }
             });
         }
 

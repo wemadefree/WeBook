@@ -392,7 +392,6 @@
                                 response: value
                             })
                         }).then(response => response.json()).then(data => {
-                            console.log("data", data);
                         });
                     }
                 });
@@ -428,7 +427,11 @@
                             friendlyName: "Arrangement",
                             isSortable: true,
                             formatter: (item) => {
-                                return `${item.arrangement.name} <span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.status.name})</span> <span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.arrangementType.name})</span> <span class='text-small text-muted'>(<i class='fas fa-mask'></i> ${item.arrangement.audience.name})</span>`;
+                                if (!item.arrangement) {
+                                    return `<span class='text-muted'>Ingen arrangement</span>`;
+                                } else {
+                                    return `${item.arrangement.name} <span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.status.name})</span> <span class='text-small text-muted'>(<i class='fas fa-cog'></i> ${item.arrangement.arrangementType.name})</span> <span class='text-small text-muted'>(<i class='fas fa-mask'></i> ${item.arrangement.audience.name})</span>`;
+                                } 
                             }
                         },
                         "event_count": { 

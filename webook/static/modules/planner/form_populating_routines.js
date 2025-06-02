@@ -33,6 +33,7 @@ export function PopulateCreateSerieDialogFromSerie(serie, $dialogElement, dialog
         { target: '#id_display_text_en', value: serie.time.display_text_en },
     ].forEach( (mapping) => {
         $dialogElement.find( mapping.target ).val( mapping.value );
+        window.MessagesFacility.send(dialogId, mapping.value, evName);
     } );
 
     console.log("serie", serie);
@@ -178,9 +179,13 @@ export function PopulateCreateSerieDialogFromManifest(manifest, serie_uuid, $dia
         { to: '#buffer_after_end', value: manifest.after_buffer_end },
         { to: "#countySelect", value: manifest.county },
         { to: "#initialSchoolValue", value: manifest.school },
-    ].forEach( (mapping) => { $dialogElement.find(mapping.to).val(mapping.value ).trigger('change'); } );
+    ].forEach( (mapping) => { 
+        $dialogElement.find(mapping.to).val(mapping.value ).trigger('change'); 
+        const evName = "set_" + mapping.to.replace("#", "");
+        window.MessagesFacility.send(dialogId, mapping.value, evName);
+    } );
 
-    console.log("MANIFEST!", manifest)
+    console.log("PopulateCreateSerieDialogFromManifest", manifest);
 
     window.MessagesFacility.send(dialogId, manifest.audience, "setAudienceFromParent");
     window.MessagesFacility.send(dialogId, manifest.county, "setCountyFromParent");

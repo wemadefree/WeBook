@@ -438,7 +438,7 @@ USER_DEFAULT_TIMEZONE = env(
     "USER_DEFAULT_TIMEZONE",
     default=TIME_ZONE,
 )
-HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
+# HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
 
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 

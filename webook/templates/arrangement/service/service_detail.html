@@ -242,7 +242,7 @@ container-fluid
                                     [[ order.id ]]
                                 </td>
                                 <td>
-                                    [[ order.arrangement.name ]]
+                                    [[ order.arrangement ? order.arrangement.name : "Ingen" ]]
                                 </td>
                                 <td>
                                     [[ new Date(order.start_and_end[0]).toLocaleString() ]] - [[ new Date(order.start_and_end[1]).toLocaleString() ]]
@@ -350,7 +350,7 @@ container-fluid
                                     [[ order.id ]]
                                 </td>
                                 <td>
-                                    [[ order.arrangement.name ]]
+                                    [[ order.arrangement ? order.arrangement.name : "Ingen" ]]
                                 </td>
                                 <td>
                                     [[ new Date(order.start_and_end[0]).toLocaleString() ]] - [[ new Date(order.start_and_end[1]).toLocaleString() ]]
@@ -406,7 +406,7 @@ container-fluid
                                     [[ order.id ]]
                                 </td>
                                 <td>
-                                    [[ order.arrangement.name ]]
+                                    [[ order.arrangement ? order.arrangement.name : "Ingen" ]]
                                 </td>
                                 <td>
                                     [[ new Date(order.startAndEnd[0]).toLocaleString() ]] - [[ new Date(order.startAndEnd[1]).toLocaleString() ]]
@@ -439,7 +439,11 @@ container-fluid
         </div>
 
         <div class="tab-pane fade mt-3" id="preconfigurations-tab" role="tabpanel">
-            <preconfigurations-table-component :service-id="{{object.id}}" :key="preconfigTableKey" :selection-enabled="false" :editing-enabled="true">
+            <preconfigurations-table-component 
+                :service-id="{{object.id}}" 
+                :key="preconfigTableKey" 
+                :selection-enabled="false" 
+                :editing-enabled="true">
             </preconfigurations-table-component>
         </div>
         <div class="tab-pane fade mt-3" id="administration-tab" role="tabpanel">
@@ -576,7 +580,7 @@ container-fluid
                         }
                     }).then(response => {
                         if (response.ok) {
-                            toasr.success("Notifikasjonen har blitt bekreftet!");
+                            toastr.success("Notifikasjonen har blitt bekreftet!");
                             this.fetchNotifications();
                         } else {
                             console.error('Error acknowledging notification:', response);

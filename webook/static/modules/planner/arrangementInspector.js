@@ -570,6 +570,7 @@ export class ArrangementInspector {
                                 customParameters: {
                                     orderRoomDialog: 'nestedOrderRoomDialog',
                                     orderPersonDialog: 'nestedOrderPersonDialog',
+                                    serieId: context.lastTriggererDetails.event_serie_pk,
                                 }
                             });
                         },

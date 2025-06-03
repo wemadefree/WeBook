@@ -226,7 +226,7 @@
         </li>
         {% endif %}
 
-        {% if user.is_superuser or user.is_user_admin or user|has_group:"display_organizer" and ADMIN_ENABLED %}
+        {% if user.is_superuser or user.is_user_admin or user|has_group:"display_organizer" %}
         <li class="sidenav-item mb-1 pt-3">
           <span class="sidenav-subheading text-muted fw-bold">
             <i class="fas fa-tools"></i>&nbsp;
@@ -253,11 +253,13 @@
         </li>
         {% endif %}
         {% if user.is_superuser %}
+        {% if ADMIN_ENABLED %}
         <li class="sidenav-item mb-1">
           <a class="sidenav-link sidenav-link-danger-subtle" href="{% url 'admin:index' %}">
             <i class="fas fa-tools fa-fw me-3"></i><span>Django Admin Panel</span></a
           >
         </li>
+        {% endif %}
 
         <li class="sidenav-item">
           <a href="{% url 'celery_haystack:taskresult_list' %}" class="sidenav-link sidenav-link-danger-subtle">

@@ -317,10 +317,6 @@ service_router = ServiceRouter(
 
 
 @service_router.get(
-    "/my-permissions",
-    response=ServicePermissionSchema,
-)
-@service_router.get(
     "/{service_id}/notifications",
     response=List[ServiceNotificationSchema],
 )

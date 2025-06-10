@@ -387,7 +387,7 @@ def get_my_permissions_for_service(request, service_id: int):
     if not request.user or not request.user.is_authenticated:
         raise HttpError(403, "You are not allowed to manage staff for this service")
 
-    if request.user.is_superuser:
+    if request.user.is_superuser or request.user.is_service_admin:
         return ServicePermissionSchema(
             can_respond_to_orders=True,
             can_provision_orders=True,

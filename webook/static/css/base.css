@@ -780,3 +780,7 @@ a.fc-event {
 .fc-scrollgrid-section-header .fc-datagrid-cell-frame span.fc-datagrid-cell-main {
     color: black;
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}

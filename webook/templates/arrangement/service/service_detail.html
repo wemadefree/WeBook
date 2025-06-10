@@ -47,37 +47,32 @@ container-fluid
                         </h6>
     
                         <div>
-                            {% if object.is_active %}
-                            <button class="btn wb-btn-danger btn-sm mt-2" @click="deactivateService({{object.id}})">
-                                <i class="fas fa-times"></i>&nbsp;
-                                Deaktiver
-                            </button>
-                            {% else %}
-                            <button class="btn wb-btn-success btn-sm mt-2" @click="activateService({{object.id}})">
-                                <i class="fas fa-check"></i>&nbsp;
-                                Aktiver
-                            </button>
+                            {% if user.is_service_admin %}
+                                {% if object.is_active %}
+                                <button class="btn wb-btn-danger btn-sm mt-2" @click="deactivateService({{object.id}})">
+                                    <i class="fas fa-times"></i>&nbsp;
+                                    Deaktiver
+                                </button>
+                                {% else %}
+                                <button class="btn wb-btn-success btn-sm mt-2" @click="activateService({{object.id}})">
+                                    <i class="fas fa-check"></i>&nbsp;
+                                    Aktiver
+                                </button>
+                                {% endif %}
+
+                                <button class="btn wb-btn-main btn-sm mt-2 ms-2" @click="changeServiceName({{object.id}}, '{{object.name}}')">
+                                    <i class="fas fa-edit"></i>&nbsp;
+                                    Endre navn
+                                </button>
                             {% endif %}
 
-                            {% if user.is_service_admin %}
-                            <button class="btn wb-btn-main btn-sm mt-2 ms-2" @click="changeServiceName({{object.id}}, '{{object.name}}')">
-                                <i class="fas fa-edit"></i>&nbsp;
-                                Endre navn
-                            </button>
-                            {% endif %}
-                            <button class="btn btn-sm wb-btn-main mt-2 ms-2" @click="personellModalIsVisible = true">
+                            <button class="btn btn-sm wb-btn-main mt-2 ms-2" @click="personellModalIsVisible = true" v-if="permissions.can_administrate_personell">
                                 <i class="fas fa-users"></i>
                                 Personale / Utførende
                             </button>
                         </div>
                     </div>
                 </div>
-    
-                <!-- <div class="d-flex">
-                    <button class="btn wb-btn-main mt-1" @click="openAddPersonDialog()">
-                        <i class="fas fa-plus"></i>&nbsp; Administrer Personell
-                    </button>
-                </div> -->
             </nav>
         </div>
     </div>
@@ -86,7 +81,6 @@ container-fluid
         <ul class="nav nav-tabs webook-tabs " id="ex1" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" data-mdb-toggle="tab" href="#overview-tab" role="tab" aria-controls="ex1-tabs-1" aria-selected="true">
-                    <!-- <i class="fas fa-info-circle"></i>&nbsp; -->
                     Oversikt
                 </a>
             </li>
@@ -102,26 +96,21 @@ container-fluid
                     Bestillinger
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="permissions.can_administrate_personell" role ="presentation">
                 <a href="#personell-tab" class="nav-link" role="tab" data-mdb-toggle="tab" @click="triggerCalendarRender()">
                     Personalkalender
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="permissions.can_define_preconfigurations" role ="presentation">
                 <a href="#preconfigurations-tab" class="nav-link" role="tab" data-mdb-toggle="tab">
                     Prekonfigurasjoner
                 </a>
             </li>
-            <li class="nav-item" role="presentation">
+            <li class="nav-item" role="presentation" v-if="permissions.can_administrate_staff">
                 <a href="#administration-tab" role="tab" data-mdb-toggle="tab" class="nav-link">
                     Tjenestebehandlere
                 </a>
             </li>
-            <!-- <li class="nav-item" role="presentation">
-                <a href="#history-tab" role="tab" data-mdb-toggle="tab" class="nav-link">
-                    Historikk
-                </a>
-            </li> -->
         </ul>
     </div>
     
@@ -342,7 +331,6 @@ container-fluid
 
                                     </td>
                                     <th>Varighet</th>
-                                    <!-- <th>Allokerte Ressurser</th> -->
                                     <th>
                                         Valg
                                     </th>
@@ -459,12 +447,12 @@ container-fluid
             </div>
         </div>
 
-        <div class="tab-pane fade mt-3" id="personell-tab" role="tabpanel">
+        <div class="tab-pane fade mt-3" id="personell-tab" role="tabpanel" v-if="permissions.can_administrate_personell">
             <personell-calendar-component :service-id="{{object.id}}" ref="personellCalendarComponent">
             </personell-calendar-component>
         </div>
 
-        <div class="tab-pane fade mt-3" id="preconfigurations-tab" role="tabpanel">
+        <div class="tab-pane fade mt-3" id="preconfigurations-tab" role="tabpanel" v-if="permissions.can_define_preconfigurations">
             <preconfigurations-table-component 
                 :service-id="{{object.id}}" 
                 :key="preconfigTableKey" 
@@ -472,7 +460,7 @@ container-fluid
                 :editing-enabled="true">
             </preconfigurations-table-component>
         </div>
-        <div class="tab-pane fade mt-3" id="administration-tab" role="tabpanel">
+        <div class="tab-pane fade mt-3" id="administration-tab" role="tabpanel" v-if="permissions.can_administrate_staff">
             <div class="row">
                 <div class="col-12">
                     <service-staff-table-component :service-id="{{object.id}}">
@@ -558,6 +546,13 @@ container-fluid
                     orderResponseModalIsVisible: false,
                     orderResponseModalServiceOrderId: null,
                     serviceOrdersOpenedForRevisioning: null,
+                    permissions: {
+                        can_respond_to_orders: false,
+                        can_provision_orders: false,
+                        can_define_preconfigurations: false,
+                        can_administrate_personell: false,
+                        can_administrate_staff: false,
+                    }
                 };
             },
             computed: {},
@@ -579,6 +574,13 @@ container-fluid
                     setTimeout(() => {
                         this.$refs.personellCalendarComponent.initCalendar();
                     }, 200);
+                },
+                async fetchPermissions() {
+                    const permissions = await fetch('/api/arrangement/service/{{object.id}}/my-permissions')
+                        .then(response => response.json())
+                        .catch(error => console.error('Error fetching permissions:', error));
+
+                    this.permissions = permissions;
                 },
                 async fetchNotifications() {
                     const notifications = await fetch('/api/arrangement/service/{{object.id}}/notifications?only_unacknowledged=true')
@@ -912,7 +914,8 @@ container-fluid
                 ]});
         
                 this.dialogManager._makeAware();
-
+                
+                this.fetchPermissions();
                 this.fetchImmediateServiceOrders();
                 this.fetchOngoingServiceOrders();
                 this.fetchServiceOrdersOpenedForRevisioning();

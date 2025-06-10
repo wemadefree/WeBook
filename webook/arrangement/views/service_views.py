@@ -135,7 +135,12 @@ class ServiceAuthorizationMixin(UserPassesTestMixin):
         if not self.request.user.person:
             raise PermissionDenied("User does not have a person")
 
-        return self.request.user.person in self.get_service().staff.all()
+        return any(
+            [
+                staff_record.person == self.request.user.person
+                for staff_record in self.get_service().staff.all()
+            ]
+        )
 
 
 class AnyServiceAuthorizationMixin(UserPassesTestMixin):

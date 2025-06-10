@@ -104,6 +104,7 @@ class ServicePermissionSchema(BaseSchema):
 
 
 class ServiceGetStaffSchema(BaseSchema):
+    is_service_admin: bool = False
     person_id: int
     person_name: str
     can_respond_to_orders: bool
@@ -418,7 +419,7 @@ def get_my_permissions_for_service(request, service_id: int):
 def add_staff_to_service(request, service_id: int, data: ServiceAddStaffSchema):
     service = get_object_or_404(Service, pk=service_id)
 
-    # check_is_allowed_to_manage_staff(service, request.user)
+    check_is_allowed_to_manage_staff(service, request.user)
 
     person = get_object_or_404(Person, pk=data.person_id)
 
@@ -451,7 +452,7 @@ def add_staff_to_service(request, service_id: int, data: ServiceAddStaffSchema):
 def get_staff_for_service(request, service_id: int):
     service = get_object_or_404(Service, pk=service_id)
 
-    # check_is_allowed_to_manage_staff(service, request.user)
+    check_is_allowed_to_manage_staff(service, request.user)
 
     staff_records = service.staff.all().filter(is_active=True)
     staff_list = []
@@ -459,6 +460,7 @@ def get_staff_for_service(request, service_id: int):
     for staff_record in staff_records:
         staff_list.append(
             ServiceGetStaffSchema(
+                is_service_admin=staff_record.person.user_set.first().is_service_admin if staff_record.person.user_set.exists() else False,
                 person_id=staff_record.person.id,
                 person_name=staff_record.person.full_name,
                 can_respond_to_orders=staff_record.can_respond_to_orders,
@@ -481,7 +483,7 @@ def update_staff_for_service(
 ):
     service = get_object_or_404(Service, pk=service_id)
 
-    # check_is_allowed_to_manage_staff(service, request.user)
+    check_is_allowed_to_manage_staff(service, request.user)
 
     person = get_object_or_404(Person, pk=data.person_id)
     staff_record = service.staff.get(person=person)
@@ -513,7 +515,7 @@ def update_staff_for_service(
 def delete_staff_for_service(request, service_id: int, person_id: int):
     service = get_object_or_404(Service, pk=service_id)
 
-    # check_is_allowed_to_manage_staff(service, request.user)
+    check_is_allowed_to_manage_staff(service, request.user)
 
     person = get_object_or_404(Person, pk=person_id)
     staff_record = service.staff.get(person=person)
@@ -860,19 +862,20 @@ def respond_to_service_order(
 ):
     service_order = get_object_or_404(ServiceOrder, pk=id)
 
-    # if not request.user.is_superuser:
-    #     user_service_staff_record = service_order.service.staff.filter(
-    #         person=request.user.person,
-    #     )
-    #     if (
-    #         not user_service_staff_record.exists()
-    #         or not user_service_staff_record[0].is_active
-    #         or not user_service_staff_record[0].can_respond_to_orders
-    #     ):
-    #         raise HttpError(
-    #             Status.PERMISSION_DENIED,
-    #             "You are not allowed to respond to this service order",
-    #         )
+    if not request.user.is_superuser:
+        user_service_staff_record = service_order.service.staff.filter(
+            person=request.user.person,
+        )
+
+        if (
+            not user_service_staff_record.exists()
+            or not user_service_staff_record[0].is_active
+            or not user_service_staff_record[0].can_respond_to_orders
+        ):
+            raise HttpError(
+                403,
+                "You are not allowed to respond to this service order",
+            )
 
     if data.response == ServiceOrderResponseTypes.REJECTED:
         service_order.state = States.DENIED

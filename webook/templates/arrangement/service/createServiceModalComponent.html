@@ -32,29 +32,99 @@
             <div class="mt-3">
                 <label for="" class="h5">Ansvarlige</label>
                 <person-select-component v-model="staff" :show-badges="false"></person-select-component>
-                
-                <table class="table table-sm mt-2" v-if="staff && staff.length > 0">
-                    <thead>
-                        <tr class="wb-bg-secondary">
-                            <th>Person</th>
-                            <th>Full Tilgang</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="member in staff">
-                            <td>[[member.fullName]]</td>
-                            <td>
-                                <input type="checkbox" name="" id="" v-model="member.fullAccess">
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-danger btn-sm" @click="removeMember(member)">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+
+                <div style="max-height: 300px; overflow-y: scroll;">
+                    <div v-for="member in staff" class="mt-2 border p-2 rounded wb-bg-secondary ">
+                        <div class="d-flex justify-content-between">                        
+                            <div class="d-flex">
+                                <div @click="member.expanded = !member.expanded" class="cursor-pointer">
+                                    <i :class="member.expanded ? 'fas fa-chevron-down' : 'fas fa-chevron-right'"></i>
+                                </div>
+                                
+                                <div class="fw-bold ms-2">
+                                    [[member.fullName]]
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" v-model="member.fullAccess">
+                                    Full Tilgang
+                                    <span>
+                                        (
+                                        <i class="fas fa-question-circle" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Gi alle rettigheter til medlemmet. Dette vil overstyre alle andre innstillinger."></i>
+                                        )
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        
+
+                        <div v-if="member.expanded">
+                            <div>
+                                <label class="form-check-label text-small ">
+                                    <input type="checkbox" class="form-check-input" v-model="member.can_respond_to_orders">
+                                    Kan besvare forespørsler
+                                    <span>
+                                        (
+                                        <i class="fas fa-question-circle" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Gir tilgang til å tildele personell til tider på forespørsler."></i>
+                                        )
+                                    </span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" v-model="member.can_provision_orders">
+                                    Kan tildele personell
+                                    <span>
+                                        (
+                                        <i class="fas fa-question-circle" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Gir tilgang til å tildele personell til tider på forespørsler."></i>
+                                        )
+                                    </span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" v-model="member.can_define_preconfigurations">
+                                    Kan administrere prekonfigurasjoner
+                                    <span>
+                                        (
+                                        <i class="fas fa-question-circle" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Gir tilgang til å opprette og endre prekonfigurasjoner for tjenesten."></i>
+                                        )
+                                    </span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" v-model="member.can_administrate_personell">
+                                    Kan administrere personell
+                                    <span>
+                                        (
+                                        <i class="fas fa-question-circle" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Gir tilgang til å legge til og fjerne personell for tjenesten."></i>
+                                        )
+                                    </span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" v-model="member.can_administrate_staff">
+                                    Kan administrere ansvarlige
+                                    <span>
+                                        (
+                                        <i class="fas fa-question-circle" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Gir tilgang til å legge til, fjerne og endre ansvarlige for tjenesten."></i>
+                                        )
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="small text-muted mt-2">
                     Ansvarlige vil være medlemmer av denne tjenesten, og vil kunne se og besvare forespørsler som kommer inn.
@@ -123,6 +193,14 @@
             }
         },
         methods: {
+            fullAccess(member) {
+                member.can_respond_to_orders = member.fullAccess;
+                member.can_provision_orders = member.fullAccess;
+                member.can_define_preconfigurations = member.fullAccess;
+                member.can_administrate_personell = member.fullAccess;
+                member.can_administrate_staff = member.fullAccess;
+                console.log("fullAccess", member);
+            },
             async createService() {
                 if (!this.serviceName) {
                     this.showServiceNameMissingError = true;
@@ -151,15 +229,6 @@
                 });
 
                 for (const staffMember of this.staff) {
-                    console.log("body", {
-                            person_id: staffMember.id,
-                            service_id: createdService.id,
-                            can_respond_to_orders: staffMember.fullAccess || false,
-                            can_provision_orders: staffMember.fullAccess || false,
-                            can_define_preconfigurations: staffMember.fullAccess || false,
-                            can_administrate_personell: staffMember.fullAccess || false,
-                            can_administrate_staff: staffMember.fullAccess || false
-                        })
                     await fetch("/api/arrangement/service/" + createdService.id + "/staff", {
                         method: 'POST',
                         headers: {
@@ -169,11 +238,11 @@
                         body: JSON.stringify({
                             person_id: staffMember.id,
                             service_id: createdService.id,
-                            can_respond_to_orders: staffMember.fullAccess || false,
-                            can_provision_orders: staffMember.fullAccess || false,
-                            can_define_preconfigurations: staffMember.fullAccess || false,
-                            can_administrate_personell: staffMember.fullAccess || false,
-                            can_administrate_staff: staffMember.fullAccess || false
+                            can_respond_to_orders: staffMember.can_respond_to_orders || false,
+                            can_provision_orders: staffMember.can_provision_orders || false,
+                            can_define_preconfigurations: staffMember.can_define_preconfigurations || false,
+                            can_administrate_personell: staffMember.can_administrate_personell || false,
+                            can_administrate_staff: staffMember.can_administrate_staff || false
                         })
                     }).then((response) => {
                         if (!response.ok) {
@@ -217,6 +286,18 @@
         watch: {
             serviceName: function (newValue) {
                 this.showServiceNameMissingError = newValue ? false : true;
+            },
+            staff: {
+                handler: function (newValue, oldValue) {
+                    console.log("Staff changed", newValue, oldValue);
+                    for (let i = 0; i < newValue.length; i++) {
+                        console.log("fullAccess", newValue[i]?.fullAccess, oldValue[i]?.fullAccess);
+                        if (newValue[i].fullAccess !== oldValue[i]?.fullAccess) {
+                            this.fullAccess(newValue[i]);
+                        }
+                    }
+                },
+                deep: true
             }
         },
         emits: [

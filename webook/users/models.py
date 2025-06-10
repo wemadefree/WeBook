@@ -91,6 +91,9 @@ class User(AbstractUser):
     is_user_admin = models.BooleanField(
         verbose_name="User Administrator", default=False
     )
+    is_service_admin = models.BooleanField(
+        verbose_name="Service Administrator", default=False
+    )
 
     objects = CustomUserManager()
 

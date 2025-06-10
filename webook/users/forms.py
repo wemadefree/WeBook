@@ -45,6 +45,7 @@ class ComplexUserUpdateFormWithRole(ComplexUserUpdateForm):
         required=True,
     )
     is_user_admin = dj_forms.BooleanField(required=False)
+    is_service_admin = dj_forms.BooleanField(required=False)
 
     class Meta(forms.UserChangeForm.Meta):
         model = Person
@@ -58,6 +59,7 @@ class ComplexUserUpdateFormWithRole(ComplexUserUpdateForm):
             "timezone",
             "user_role",
             "is_user_admin",
+            "is_service_admin",	
         ]
 
 

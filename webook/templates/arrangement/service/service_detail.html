@@ -58,10 +58,13 @@ container-fluid
                                 Aktiver
                             </button>
                             {% endif %}
+
+                            {% if user.is_service_admin %}
                             <button class="btn wb-btn-main btn-sm mt-2 ms-2" @click="changeServiceName({{object.id}}, '{{object.name}}')">
                                 <i class="fas fa-edit"></i>&nbsp;
                                 Endre navn
                             </button>
+                            {% endif %}
                             <button class="btn btn-sm wb-btn-main mt-2 ms-2" @click="personellModalIsVisible = true">
                                 <i class="fas fa-users"></i>
                                 Personale / Utførende
@@ -142,7 +145,7 @@ container-fluid
                     </div>
                     
                     
-                    <table class="table table-sm" v-if="notifications != null">
+                    <table class="table table-sm" v-if="notifications && notifications.length > 0">
                         <thead style="background-color: ghostwhite;">
                             <tr>
                                 <th>
@@ -193,8 +196,6 @@ container-fluid
                 </div>
 
             <div class="d-flex mt-4">
-
-                
                 <div class="p-2 rounded-2 ms-2 border w-50">
                     <div class="d-flex align-items-center">
                         <div class="d-flex align-items-center">
@@ -225,77 +226,89 @@ container-fluid
                             [[immediateServiceOrders]]
                         </div>
                     </div>
-                    <table class="table table-sm" v-else>
-                        <thead style="background-color: ghostwhite;">
-                            <tr>
-                                <th class="fw-bold">#</th>
-                                <th></th>
-                                <th>Tid</th>
-                                <th>Status</th>
-                                <!-- <th>Starter innen</th> -->
-                                <th>Valg</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(order, index) in immediateServiceOrders" :key="index">
-                                <td class="fw-bold">
-                                    [[ order.id ]]
-                                </td>
-                                <td>
-                                    [[ order.arrangement ? order.arrangement.name : "Ingen" ]]
-                                </td>
-                                <td>
-                                    [[ new Date(order.start_and_end[0]).toLocaleString() ]] - [[ new Date(order.start_and_end[1]).toLocaleString() ]]
-                                </td>
-                                <td>
-                                    <span v-if="order.state == 'provisioned'" class="badge bg-light border-success text-dark">
-                                        <h6 class="mb-0">
-                                            <i class="fas fa-check text-success"></i>
-                                            Akseptert, ferdig behandlet
-                                        </h6>
-                                    </span>
+                    <div v-else>
+                        <table class="table table-sm" v-if="immediateServiceOrders.length > 0">
+                            <thead style="background-color: ghostwhite;">
+                                <tr>
+                                    <th class="fw-bold">#</th>
+                                    <th></th>
+                                    <th>Tid</th>
+                                    <th>Status</th>
+                                    <!-- <th>Starter innen</th> -->
+                                    <th>Valg</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(order, index) in immediateServiceOrders" :key="index">
+                                    <td class="fw-bold">
+                                        [[ order.id ]]
+                                    </td>
+                                    <td>
+                                        [[ order.arrangement ? order.arrangement.name : "Ingen" ]]
+                                    </td>
+                                    <td>
+                                        [[ new Date(order.start_and_end[0]).toLocaleString() ]] - [[ new Date(order.start_and_end[1]).toLocaleString() ]]
+                                    </td>
+                                    <td>
+                                        <span v-if="order.state == 'provisioned'" class="badge bg-light border-success text-dark">
+                                            <h6 class="mb-0">
+                                                <i class="fas fa-check text-success"></i>
+                                                Akseptert, ferdig behandlet
+                                            </h6>
+                                        </span>
 
-                                    <span v-if="order.state == 'awaiting'" class="badge bg-light border-warning  text-dark">
-                                        <h6 class="mb-0">
-                                            <i class="fas fa-hourglass"></i>
-                                            Venter svar
-                                        </h6>
-                                    </span>
-                                    <span v-if="order.state == 'maybe'" class="badge bg-light border-danger text-dark">
-                                        <h6 class="mb-0">
-                                            <i class="fas fa-exclamation-triangle"></i>
-                                            Kanskje
-                                        </h6>
+                                        <span v-if="order.state == 'awaiting'" class="badge bg-light border-warning  text-dark">
+                                            <h6 class="mb-0">
+                                                <i class="fas fa-hourglass"></i>
+                                                Venter svar
+                                            </h6>
+                                        </span>
+                                        <span v-if="order.state == 'maybe'" class="badge bg-light border-danger text-dark">
+                                            <h6 class="mb-0">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                Kanskje
+                                            </h6>
 
-                                    </span>
-                                    <span v-if="order.state == 'confirmed'" class="badge bg-light border-warning  text-dark">
-                                        <h6 class="mb-0">
-                                            <i class="fas fa-check"></i>
-                                            Akseptert, venter ferdigstilling
-                                        </h6>
-                                    </span>
-                                </td>
-                                <td>
-                                    <a href="#" @click="replyToServiceOrder(order.id)" v-if="order.state == 'maybe'">
-                                        <i class="fas fa-reply"></i>
-                                        Gi endelig svar
-                                    </a>
-                                    <a href="#" @click="replyToServiceOrder(order.id)" v-if="order.state == 'awaiting'">
-                                        <i class="fas fa-reply"></i>
-                                        Gi svar
-                                    </a>
-                                    <a href="#" @click="showDetailedView(order.id)" v-if="order.state == 'confirmed'">
-                                        <i class="fas fa-arrow-right"></i>
-                                        Provisjoner
-                                    </a>
-                                    <a href="#" @click="showDetailedView(order.id)" v-if="order.state == 'provisioned'">
-                                        <i class="fas fa-pen"></i>
-                                        Revidering
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                        </span>
+                                        <span v-if="order.state == 'confirmed'" class="badge bg-light border-warning  text-dark">
+                                            <h6 class="mb-0">
+                                                <i class="fas fa-check"></i>
+                                                Akseptert, venter ferdigstilling
+                                            </h6>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="#" @click="replyToServiceOrder(order.id)" v-if="order.state == 'maybe'">
+                                            <i class="fas fa-reply"></i>
+                                            Gi endelig svar
+                                        </a>
+                                        <a href="#" @click="replyToServiceOrder(order.id)" v-if="order.state == 'awaiting'">
+                                            <i class="fas fa-reply"></i>
+                                            Gi svar
+                                        </a>
+                                        <a href="#" @click="showDetailedView(order.id)" v-if="order.state == 'confirmed'">
+                                            <i class="fas fa-arrow-right"></i>
+                                            Provisjoner
+                                        </a>
+                                        <a href="#" @click="showDetailedView(order.id)" v-if="order.state == 'provisioned'">
+                                            <i class="fas fa-pen"></i>
+                                            Revidering
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div v-else class="text-center">
+                            <h5><i class="fas fa-exclamation-triangle mt-3"></i></h5>
+                            <h5>Ingen ventende bestillinger</h5>
+
+                            <span class="text-small">
+                                Her vil bestillinger som er ventende, og som starter innen de neste 20 dagene dukke opp.
+                                Disse bestillingene må behandles av tildeler, og eventuelt videre intern kommunikasjon.
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="p-2 rounded-2 ms-2 border w-50">
@@ -317,60 +330,73 @@ container-fluid
                             Laster inn data...
                         </span>
                     </div>
-                    <table class="table table-sm" v-else>
-                        <thead style="background-color: ghostwhite;">
-                            <tr>
-                                <th>
+                    <div v-else>
+                        <table class="table table-sm" v-if="ongoingServiceOrders.length > 0">
+                            <thead style="background-color: ghostwhite;">
+                                <tr>
+                                    <th>
+                                        
+                                    </th>
+                                    <th>#</th>
+                                    <td>
+
+                                    </td>
+                                    <th>Varighet</th>
+                                    <!-- <th>Allokerte Ressurser</th> -->
+                                    <th>
+                                        Valg
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr v-for="(order, index) in ongoingServiceOrders" :key="index">
+                                    <td>
+                                        <span v-if="order.state == 'provisioned'">
+                                            <i class="fas fa-check text-success"></i>
+                                        </span>
+                                        <span v-else>
+                                            <i class="fas fa-exclamation-triangle text-danger"></i>
+                                        </span>
+                                    </td>
                                     
-                                </th>
-                                <th>#</th>
-                                <td>
+                                    <td class="fw-bold">
+                                        [[ order.id ]]
+                                    </td>
+                                    <td>
+                                        [[ order.arrangement ? order.arrangement.name : "Ingen" ]]
+                                    </td>
+                                    <td>
+                                        [[ new Date(order.start_and_end[0]).toLocaleString() ]] - [[ new Date(order.start_and_end[1]).toLocaleString() ]]
+                                    </td>
+                                    <!-- <td>
+                                        [[ order.assigned_personell.join(", ") ]]
+                                    </td> -->
+                                    <td>
+                                        <a href="#" @click="replyToServiceOrder(order.id)" v-if="order.state == 'awaiting'">
+                                            <i class="fas fa-reply"></i>
+                                            Gi svar
+                                        </a>
+                                        <a href="#" @click="showDetailedView(order.id)" v-if="order.state !== 'awaiting'">
+                                            <i class="fas fa-eye"></i>
+                                            Vis mer
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                                </td>
-                                <th>Varighet</th>
-                                <!-- <th>Allokerte Ressurser</th> -->
-                                <th>
-                                    Valg
-                                </th>
-                            </tr>
-                        </thead>
+                        <div v-else>
+                            <h5 class="text-center mt-3"><i class="fas fa-calendar"></i></h5>
+                            <h5 class="text-center">Ingen pågående bestillinger</h5>
 
-                        <tbody>
-                            <tr v-for="(order, index) in ongoingServiceOrders" :key="index">
-                                <td>
-                                    <span v-if="order.state == 'provisioned'">
-                                        <i class="fas fa-check text-success"></i>
-                                    </span>
-                                    <span v-else>
-                                        <i class="fas fa-exclamation-triangle text-danger"></i>
-                                    </span>
-                                </td>
-                                
-                                <td class="fw-bold">
-                                    [[ order.id ]]
-                                </td>
-                                <td>
-                                    [[ order.arrangement ? order.arrangement.name : "Ingen" ]]
-                                </td>
-                                <td>
-                                    [[ new Date(order.start_and_end[0]).toLocaleString() ]] - [[ new Date(order.start_and_end[1]).toLocaleString() ]]
-                                </td>
-                                <!-- <td>
-                                    [[ order.assigned_personell.join(", ") ]]
-                                </td> -->
-                                <td>
-                                    <a href="#" @click="replyToServiceOrder(order.id)" v-if="order.state == 'awaiting'">
-                                        <i class="fas fa-reply"></i>
-                                        Gi svar
-                                    </a>
-                                    <a href="#" @click="showDetailedView(order.id)" v-if="order.state !== 'awaiting'">
-                                        <i class="fas fa-eye"></i>
-                                        Vis mer
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                            <span class="text-small">
+                                Her vil bestillinger som er pågående dukke opp.
+                                Disse bestillingene er i gang, og kan ikke endres.
+                                De kan imidlertid revideres, og det kan legges til eller fjernes aktiviteter.
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="p-2 rounded ms-2 border w-50"> 

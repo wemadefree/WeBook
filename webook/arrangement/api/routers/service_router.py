@@ -209,6 +209,23 @@ class PersonellMixinRouter(BaseMixinRouter):
             raise Http404("Model does not have resources")
 
 
+class ServiceAdminAuth:
+    def __init__(self):
+        pass
+
+    def authenticate(self, request):
+        if not request.user.is_authenticated:
+            return None
+
+        if request.user.is_service_admin:
+            return request.user
+
+        return None
+
+    def __call__(self, request):
+        return self.authenticate(request)
+
+
 class ServiceRouter(CrudRouter):
     def __init__(self, *args, **kwargs):
         self.list_filters = [
@@ -238,7 +255,7 @@ class ServiceRouter(CrudRouter):
         if not user.is_authenticated:
             raise Http404("User is not authenticated.")
 
-        if user.is_superuser:
+        if user.is_superuser or user.is_service_admin:
             return qs
 
         # Show only the services that the user is staff of
@@ -271,7 +288,7 @@ def personell_rel_router_authorization(
         or not users_staff_record[0].can_administrate_personell
     ):
         raise HttpError(
-            Status.PERMISSION_DENIED,
+            403,
             "You are not allowed to manage staff for this service",
         )
 
@@ -279,6 +296,8 @@ def personell_rel_router_authorization(
 service_router = ServiceRouter(
     tags=["service"],
     model=Service,
+    create_auth=ServiceAdminAuth(),
+    update_auth=ServiceAdminAuth(),
     create_schema=ServiceCreateSchema,
     update_schema=ServicePatchSchema,
     get_schema=ServiceGetSchema,
@@ -297,6 +316,10 @@ service_router = ServiceRouter(
 )
 
 
+@service_router.get(
+    "/my-permissions",
+    response=ServicePermissionSchema,
+)
 @service_router.get(
     "/{service_id}/notifications",
     response=List[ServiceNotificationSchema],

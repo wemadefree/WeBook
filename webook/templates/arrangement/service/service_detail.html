@@ -443,7 +443,10 @@ container-fluid
             <div>
                 <span id="fancyPopoverHolder"></span>
 
-                <orders-table-component :service-id="{{object.id}}"></orders-table-component>
+                <orders-table-component 
+                    :service-id="{{object.id}}"
+                    :permissions="permissions">
+                </orders-table-component>
             </div>
         </div>
 

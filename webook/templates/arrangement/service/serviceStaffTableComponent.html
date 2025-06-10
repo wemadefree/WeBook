@@ -42,7 +42,14 @@
         <tbody class="align-middle">
             <tr v-for="staffMember in staff" class="text-center" :key="staffMember.id">
                 <td>
-                    [[ staffMember.person_name ]]
+                    <div>
+                        [[ staffMember.person_name ]]
+                    </div>
+
+                    <div v-if="staffMember.is_service_admin" class="badge bg-danger">
+                        <i class="fas fa-star"></i>
+                        Tjenesteadministrator
+                    </div>
                 </td>
                 <td>
                     <div class="form-check checkbox-lg d-flex justify-content-center" >

@@ -153,6 +153,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
     update_auth = None
     get_auth = None
     list_auth = None
+    delete_auth = None
 
     pre_create_hook: Optional[Callable] = None
     pre_update_hook: Optional[Callable] = None
@@ -265,7 +266,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
         self.update_auth = update_auth
         self.get_auth = get_auth
         self.list_auth = list_auth
-        self.delete_auth = None
+        self.delete_auth = delete_auth
 
         self.create_schema = create_schema
         self.update_schema = update_schema

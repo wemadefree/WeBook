@@ -1,7 +1,7 @@
 from typing import List, Optional
 from webook.api.crud_router import CrudRouter, Views
 from webook.api.schemas.base_schema import BaseSchema, ModelBaseSchema
-from webook.arrangement.models import ServiceOrderPreconfiguration
+from webook.arrangement.models import Service, ServiceOrderPreconfiguration
 from ninja.errors import HttpError
 
 
@@ -28,6 +28,57 @@ class PreconfigurationUpdateSchema(BaseSchema):
     title: str
     message: Optional[str]
     standard_choices: Optional[List[int]]
+
+
+class CanAdministratePreconfigurationAuth:
+    def __call__(self, request):
+        if not request.user.is_authenticated:
+            return False
+
+        if request.user.is_service_admin:
+            return True
+
+        if (
+            request.path.startswith("/api/arrangement/preconfiguration")
+            and request.method == "POST"
+        ):  # Create
+            service_id = request.body.get("service_id")
+
+            if not service_id:
+                return False
+
+            service = Service.objects.filter(id=service_id).first()
+            if not service:
+                return False
+
+            staff = service.staff.filter(person=request.user.person).first()
+            return (
+                staff and staff.is_active and staff.can_administrate_preconfigurations
+            )
+
+        if (
+            request.path.startswith("/api/arrangement/preconfiguration/patch")
+            or request.path.startswith("/api/arrangement/preconfiguration/update")
+            or request.path.startswith("/api/arrangement/preconfiguration/patch")
+            or request.path.startswith("/api/arrangement/preconfiguration/delete")
+        ):
+            preconfiguration_id = request.GET.get("id")
+            if not preconfiguration_id:
+                return False
+
+            preconfiguration = ServiceOrderPreconfiguration.objects.filter(
+                id=preconfiguration_id
+            ).first()
+            if not preconfiguration:
+                return False
+
+            staff = preconfiguration.service.staff.filter(
+                person=request.user.person
+            ).first()
+
+            return staff and staff.is_active and staff.can_define_preconfigurations
+
+        return False
 
 
 class PreconfigurationRouter(CrudRouter):
@@ -69,6 +120,9 @@ preconfiguration_router = PreconfigurationRouter(
     update_schema=PreconfigurationUpdateSchema,
     get_schema=PreconfigurationGetSchema,
     response_schema=PreconfigurationGetSchema,
+    create_auth=CanAdministratePreconfigurationAuth(),
+    update_auth=CanAdministratePreconfigurationAuth(),
+    delete_auth=CanAdministratePreconfigurationAuth(),
 )
 
 

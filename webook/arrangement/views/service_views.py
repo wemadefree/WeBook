@@ -65,6 +65,7 @@ from webook.arrangement.models import (
     ServiceOrderPreconfiguration,
     ServiceOrderProcessingRequest,
     ServiceOrderProvision,
+    ServiceStaff,
     States,
 )
 from webook.arrangement.views.generic_views.archive_view import (
@@ -434,12 +435,39 @@ class ServiceOrderAllocation(DetailView):
     slug_field = "id"
     slug_url_kwarg = "id"
 
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("account_login"))
+
+        if not request.user.person:
+            raise PermissionDenied("User does not have a person associated with them")
+
+        service = self.get_service()
+        person = request.user.person
+
+        try:
+            staff_record: ServiceStaff = service.staff.get(
+                person=person,
+            )
+        except ServiceStaff.DoesNotExist:
+            raise PermissionDenied(
+                "You are not authorized to allocate this service order. "
+                "Please contact the service administrator."
+            )
+
+        if not staff_record.can_provision_orders:
+            raise PermissionDenied(
+                "You do not have permission to provision orders for this service. "
+            )
+
+        return super().dispatch(request, *args, **kwargs)
+
     def get_template_names(self) -> List[str]:
         template_name = "arrangement/service/allocation.html"
         return template_name
 
     def get_service(self) -> Service:
-        return Service.objects.get(id=self.kwargs.get("pk"))
+        return Service.objects.get(id=self.kwargs.get("id"))
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)

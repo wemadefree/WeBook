@@ -129,10 +129,8 @@
             <span class="text-muted">
                 (Fra den [[ openServiceOrder?.startAndEnd[0] ]] til [[ openServiceOrder?.startAndEnd[1] ]])
             </span>
-
-
-
         </template>
+
         <template #modal-footer>
             <div class="d-flex justify-content-between align-items-center">
                 <div class="me-4">
@@ -155,10 +153,6 @@
                         Godta
                     </button>
                 </div>
-
-                <!-- <div>
-                    <button type="button" class="btn wb-btn-secondary" @click="hideOrderResponseModal()">Lukk</button>
-                </div> -->
             </div>
         </template>
 
@@ -171,18 +165,18 @@
                      @open-order-response-modal="openOrderResponseModal"
                      ref="tableComponent">
                      
-                     <template #no-results>
-                        <div  class="text-center mt-2">
-                            <h4>
-                                <i class="fas fa-clipboard-check text-success"></i>
-                                Ingen bestillinger i kø
-                            </h4>
+        <template #no-results>
+            <div  class="text-center mt-2">
+                <h4>
+                    <i class="fas fa-clipboard-check text-success"></i>
+                    Ingen bestillinger i kø
+                </h4>
 
-                            <p>
-                                Bestillinger vil dukke opp her når planlegger plasserer de på arrangementer.
-                            </p>
-                        </div>
-                     </template>
+                <p>
+                    Bestillinger vil dukke opp her når planlegger plasserer de på arrangementer.
+                </p>
+            </div>
+        </template>
     </table-component>
 </template>
 
@@ -195,7 +189,8 @@
             PreconfigurationsTreeComponent,
         },
         props: {
-            serviceId: Number
+            serviceId: Number,
+            permissions: Object,
         },
         emits: [ "orderStateHasChanged" ],
         data() {
@@ -467,25 +462,19 @@
                             isSortable: true,
                             isSearchable: true,
                         },
-
-
-                        // "choice": { 
-                        //     isHtml: true, 
-                        //     friendlyName: "Send Svar", 
-                        //     isComponent: true, 
-                        //     componentName: 'tri-state-toggle',
-                        //     isSortable: false,
-                        // },
                     },
-                    actions: {
-                        "openOrderResponseModal": { type: 'main', content: '<i class="fas fa-reply"></i>&nbsp; Besvar', isContentHtml: true },
-                    },
+                    actions: this.permissions.can_respond_to_orders ? {
+                        "openOrderResponseModal": { 
+                            type: 'main', 
+                            content: '<i class="fas fa-reply"></i>&nbsp; Besvar', 
+                            isContentHtml: true 
+                        },
+                    } : {},
                     data: data.data
                 };
             }
         },
         template: '#vuec-orders-queue-table-component',
         delimiters: [ '[[', ']]'],
-
     }
 </script>

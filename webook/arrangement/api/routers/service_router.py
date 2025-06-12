@@ -273,10 +273,15 @@ def personell_rel_router_authorization(
     parent_instance: Service = None,
     related_instance: Optional[Person] = None,
 ):
-    if request.user.is_superuser or operation in [
-        M2MRelRouterOperation.LIST,
-        M2MRelRouterOperation.GET,
-    ]:
+    if (
+        request.user.is_superuser
+        or request.user.is_service_admin
+        or operation
+        in [
+            M2MRelRouterOperation.LIST,
+            M2MRelRouterOperation.GET,
+        ]
+    ):
         return
 
     if not request.user.person:
@@ -369,7 +374,7 @@ def check_is_allowed_to_manage_staff(service: Service, user: User) -> None:
     if not user or not user.is_authenticated:
         throw_not_allowed()
 
-    if user.is_superuser:
+    if user.is_superuser or user.is_service_admin:
         return
 
     service_staff_record = service.staff.filter(person__id=user.person.id)
@@ -460,7 +465,11 @@ def get_staff_for_service(request, service_id: int):
     for staff_record in staff_records:
         staff_list.append(
             ServiceGetStaffSchema(
-                is_service_admin=staff_record.person.user_set.first().is_service_admin if staff_record.person.user_set.exists() else False,
+                is_service_admin=(
+                    staff_record.person.user_set.first().is_service_admin
+                    if staff_record.person.user_set.exists()
+                    else False
+                ),
                 person_id=staff_record.person.id,
                 person_name=staff_record.person.full_name,
                 can_respond_to_orders=staff_record.can_respond_to_orders,

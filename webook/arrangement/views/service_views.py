@@ -129,7 +129,7 @@ class ServiceAuthorizationMixin(UserPassesTestMixin):
         raise Exception("Get service not implemented")
 
     def test_func(self) -> bool:
-        if self.request.user.is_superuser:
+        if self.request.user.is_superuser or self.request.user.is_service_admin:
             return True
 
         if not self.request.user.person:
@@ -150,9 +150,7 @@ class ServiceAuthorizationMixin(UserPassesTestMixin):
 #         )
 
 
-class ServicesDashboardView(
-    LoginRequiredMixin, TemplateView
-):
+class ServicesDashboardView(LoginRequiredMixin, TemplateView):
     template_name = "arrangement/service/list.html"
 
 

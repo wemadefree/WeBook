@@ -143,15 +143,15 @@ class ServiceAuthorizationMixin(UserPassesTestMixin):
         )
 
 
-class AnyServiceAuthorizationMixin(UserPassesTestMixin):
-    def test_func(self) -> bool:
-        return (
-            self.request.user.is_superuser or self.request.user.is_service_coordinator
-        )
+# class AnyServiceAuthorizationMixin(UserPassesTestMixin):
+#     def test_func(self) -> bool:
+#         return (
+#             self.request.user.is_superuser or self.request.user.is_service_coordinator
+#         )
 
 
 class ServicesDashboardView(
-    LoginRequiredMixin, AnyServiceAuthorizationMixin, TemplateView
+    LoginRequiredMixin, TemplateView
 ):
     template_name = "arrangement/service/list.html"
 

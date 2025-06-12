@@ -48,7 +48,7 @@
 
                             <div>
                                 <label class="form-check-label">
-                                    <input type="checkbox" class="form-check-input" v-model="member.fullAccess">
+                                    <input type="checkbox" class="form-check-input" v-model="member.fullAccess" @change="fullAccess(member)">
                                     Full Tilgang
                                     <span>
                                         (
@@ -286,18 +286,6 @@
         watch: {
             serviceName: function (newValue) {
                 this.showServiceNameMissingError = newValue ? false : true;
-            },
-            staff: {
-                handler: function (newValue, oldValue) {
-                    console.log("Staff changed", newValue, oldValue);
-                    for (let i = 0; i < newValue.length; i++) {
-                        console.log("fullAccess", newValue[i]?.fullAccess, oldValue[i]?.fullAccess);
-                        if (newValue[i].fullAccess !== oldValue[i]?.fullAccess) {
-                            this.fullAccess(newValue[i]);
-                        }
-                    }
-                },
-                deep: true
             }
         },
         emits: [

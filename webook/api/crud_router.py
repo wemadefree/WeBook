@@ -585,7 +585,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
         def post_func(request, payload: self.create_schema) -> int:
             instance = self.model()
 
-            self.ensure_authorization(view=Views.CREATE, request=request, instance=None)
+            self.ensure_authorization(view=Views.CREATE, request=request, instance=payload)
 
             if self.pre_create_hook is not None:
                 (instance, payload) = self.pre_create_hook(instance, payload)

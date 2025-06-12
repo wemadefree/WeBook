@@ -448,6 +448,10 @@ class ServiceOrderAllocation(DetailView):
         service = self.get_service()
         person = request.user.person
 
+        if request.user.is_superuser or request.user.is_service_admin:
+            # Superusers and service admins can always allocate service orders
+            return super().dispatch(request, *args, **kwargs)
+
         try:
             staff_record: ServiceStaff = service.staff.get(
                 person=person,
@@ -470,7 +474,8 @@ class ServiceOrderAllocation(DetailView):
         return template_name
 
     def get_service(self) -> Service:
-        return Service.objects.get(id=self.kwargs.get("id"))
+        service_order = self.get_object()
+        return service_order.service
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)

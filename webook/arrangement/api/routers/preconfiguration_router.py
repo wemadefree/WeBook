@@ -91,20 +91,27 @@ class PreconfigurationRouter(CrudRouter):
         request=None,
         instance: Optional[ServiceOrderPreconfiguration] = None,
     ):
-        if request.user.is_superuser or view in [
-            Views.GET,
-            Views.LIST,
-            Views.EXPORT,
-            Views.SEARCH,
-        ]:
+        if (
+            request.user.is_superuser
+            or request.user.is_service_admin
+            or view
+            in [
+                Views.GET,
+                Views.LIST,
+                Views.EXPORT,
+                Views.SEARCH,
+            ]
+        ):
             return
 
-        if instance is None:
-            raise Exception("Instance is None, not expected to be None here.")
+        if view == Views.CREATE:
+            service = Service.objects.filter(id=instance.service_id).first()
+        else:
+            service = instance.service if instance else None
+            if instance is None:
+                raise Exception("Instance is None, not expected to be None here.")
 
-        users_service_staff_record = instance.service.staff.filter(
-            person=request.user.person
-        )
+        users_service_staff_record = service.staff.filter(person=request.user.person)
         if (
             not users_service_staff_record.exists()
             or not users_service_staff_record.first().is_active

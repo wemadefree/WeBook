@@ -871,7 +871,7 @@ def respond_to_service_order(
 ):
     service_order = get_object_or_404(ServiceOrder, pk=id)
 
-    if not request.user.is_superuser:
+    if not request.user.is_superuser and not request.user.is_service_admin:
         user_service_staff_record = service_order.service.staff.filter(
             person=request.user.person,
         )

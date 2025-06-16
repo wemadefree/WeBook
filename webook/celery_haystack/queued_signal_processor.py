@@ -1,5 +1,6 @@
 import logging
 from haystack.signals import RealtimeSignalProcessor
+from webook.tasks.tasks_manager import TASK_MANAGER
 
 
 class QueuedSignalProcessor(RealtimeSignalProcessor):
@@ -43,7 +44,11 @@ class QueuedSignalProcessor(RealtimeSignalProcessor):
                 )
             return
 
-        update_object.delay(id=instance.id, model_name=instance.__class__.__name__)
+        # update_object.delay(id=instance.id, model_name=instance.__class__.__name__)
+        TASK_MANAGER.stage_task(
+            task_name="update_object",
+            payload={"id": instance.id, "model_name": instance.__class__.__name__},
+        )
 
     def enqueue_delete(self, sender, instance, **kwargs):
         # Enqueue the delete operation
@@ -55,4 +60,8 @@ class QueuedSignalProcessor(RealtimeSignalProcessor):
             )
             return
 
-        remove_object.delay(id=instance.id, model=instance.__class__.__name__)
+        # remove_object.delay(id=instance.id, model=instance.__class__.__name__)
+        TASK_MANAGER.stage_task(
+            task_name="remove_object",
+            payload={"id": instance.id, "model_name": instance.__class__.__name__},
+        )

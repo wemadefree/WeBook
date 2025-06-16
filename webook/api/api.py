@@ -58,7 +58,14 @@ api = NinjaAPI(
     # If django_auth goes first, CSRF will be checked. This messes up if you're using the onlinebooking
     # app.
     auth=[JWTBearer(), django_auth],
-    openapi_extra={"tags": []},
+    openapi_extra={
+        "tags": [
+            {
+                "name": "Tasks Backend",
+                "description": "Background task management and execution. Staged tasks will be executed by the task manager, using the configured Provider.",
+            },
+        ]
+    },
 )
 api.add_router("/login", login_router)
 api.add_router("/service_accounts", service_account_router)

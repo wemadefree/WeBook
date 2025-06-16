@@ -66,8 +66,6 @@ def execute_task(request, task_id: int) -> bool:
     """
     Endpoint to execute a specific task.
     """
-    # This is a placeholder implementation
-    # In a real application, you would trigger the execution of the task
     try:
         TASK_MANAGER.execute_task(task_id)
         return True

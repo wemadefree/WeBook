@@ -26,3 +26,17 @@ def remove_object(id: int, model_name: str):
         connections[alias].get_unified_index().get_index(
             instance.__class__
         ).remove_object(instance)
+
+@task(name="update_index", description="Update indexes in Elastic")
+def update_index():
+    from haystack import connections
+
+    for alias in connections.connections_info.keys():
+        connections[alias].get_unified_index().update_all()
+
+@task(name="rebuild_index", description="Rebuild the entire index in Elastic")
+def rebuild_index():
+    from haystack import connections
+
+    for alias in connections.connections_info.keys():
+        connections[alias].get_unified_index().rebuild()

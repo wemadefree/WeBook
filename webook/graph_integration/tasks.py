@@ -2,7 +2,9 @@ from argparse import ArgumentError
 from datetime import datetime
 import time
 from typing import List, Tuple
-from celery import shared_task
+
+# from celery import shared_task
+from webook.tasks.tasks_manager import task, TASK_MANAGER
 import uuid
 from webook import logger
 from webook.arrangement.models import Event, EventSerie, Person
@@ -27,7 +29,10 @@ class Operation(Enum):
     IGNORE = "ignore"
 
 
-@shared_task(name="subscribe_person_to_webook_calendar")
+@task(
+    name="subscribe_person_to_webook_calendar",
+    description="Subscribe a person to their WeBook calendar",
+)
 def subscribe_person_to_webook_calendar(person_pk: int):
     """
     Subscribe to the WeBook personal calendar for the given user, if it is not already subscribed.
@@ -42,7 +47,10 @@ def subscribe_person_to_webook_calendar(person_pk: int):
     synchronize_user_calendar.delay(person.user_set.first().pk)
 
 
-@shared_task(name="unsubscribe_person_from_webook_calendar")
+@task(
+    name="unsubscribe_person_from_webook_calendar",
+    description="Unsubscribe a person from their WeBook calendar",
+)
 def unsubscribe_person_from_webook_calendar(person_pk: int):
     """
     Unsubscribe from the WeBook personal calendar for the given user, deleting the calendar in Graph / Outlook and WeBook.
@@ -55,7 +63,10 @@ def unsubscribe_person_from_webook_calendar(person_pk: int):
     asyncio.run(cal_sync.unsubscribe_person_from_webook_calendar(person))
 
 
-@shared_task(name="synchronize_user_calendar")
+@task(
+    name="synchronize_user_calendar",
+    description="Synchronize a user's calendar in Graph / Outlook",
+)
 def synchronize_user_calendar(user_pk: int):
     """
     Synchronize a WeBook calendar for a given user in Graph / Outlook.
@@ -77,7 +88,10 @@ def synchronize_user_calendar(user_pk: int):
     )
 
 
-@shared_task(name="synchronize_all_user_calendars")
+@task(
+    name="synchronize_all_user_calendars",
+    description="Synchronize all user calendars in Graph / Outlook",
+)
 def synchronize_all_user_calendars():
     """Synchronize all user calendars in Graph / Outlook
 
@@ -104,7 +118,10 @@ def synchronize_all_user_calendars():
         synchronize_user_calendar.delay(user.pk)
 
 
-@shared_task(name="synchronize_event_to_graph")
+@task(
+    name="synchronize_event_to_graph",
+    description="Synchronize a specific WeBook event to Graph / Outlook",
+)
 def synchronize_event_to_graph(event_pk: int):
     """
     Synchronize a specific WeBook event to Graph / Outlook.
@@ -134,7 +151,10 @@ def synchronize_event_to_graph(event_pk: int):
     )
 
 
-@shared_task(name="synchronize_serie_to_graph")
+@task(
+    name="synchronize_serie_to_graph",
+    description="Synchronize a specific WeBook event series to Graph / Outlook",
+)
 def synchronize_serie_to_graph(serie_pk: int):
     """
     Synchronize a specific WeBook event to Graph / Outlook.

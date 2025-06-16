@@ -289,12 +289,15 @@ class TaskManager:
             task_callable(*args, **kwargs)
             task_execution = TaskExecution.objects.get(id=task_id)
             task_execution.status = TaskExecutionState.COMPLETED
+            task_execution.result = "Task executed successfully"
+            task_execution.completed_at = datetime.now()
             task_execution.save()
             return True
         except Exception as e:
             task_execution = TaskExecution.objects.get(id=task_id)
             task_execution.status = TaskExecutionState.FAILED
             task_execution.result = str(e)
+            task_execution.completed_at = datetime.now()
             task_execution.save()
             return False
 

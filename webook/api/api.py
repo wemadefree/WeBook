@@ -34,6 +34,8 @@ from webook.users.api.user_router import router as user_router
 from webook.users.api.group_router import group_router
 from webook.graph_integration.api.graph_router import router as graph_integration_router
 
+from webook.tasks.api.tasks_router import tasks_router
+
 # from webook.users.api.group_router import group_router
 from webook.api.scopes_router import api_scopes_router
 from webook.arrangement.api.routers.report_router import report_router
@@ -88,6 +90,8 @@ api.add_router("/arrangement/report", report_router)
 
 api.add_router("/screenshow/display_layout", display_layout_router)
 api.add_router("/screenshow/display_layout_setting", display_layout_setting_router)
+
+api.add_router("/tasks", tasks_router)
 
 api.add_router("/users", user_router)
 api.add_router("/groups", group_router)

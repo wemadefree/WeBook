@@ -125,6 +125,7 @@ LOCAL_APPS = [
     "webook.onlinebooking.apps.OnlinebookingConfig",
     "webook.graph_integration.apps.GraphIntegrationConfig",
     "webook.celery_haystack.apps.CeleryHaystackConfig",
+    "webook.tasks.apps.TaskConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -476,3 +477,11 @@ ALERT_TEXT_ALL_USERS = env("ALERT_TEXT_ALL_USERS", default=None)
 
 ADMIN_ENABLED = env("ADMIN_ENABLED", default=False)
 APP_BASE_URL = env("APP_BASE_URL", default="http://localhost:8000")
+
+GOOGLE_PROJECT_ID = env("GOOGLE_PROJECT_ID", default=None)
+GOOGLE_CLOUD_TASK_QUEUE_NAME = env(
+    "GOOGLE_CLOUD_TASK_QUEUE_NAME", default="webook-queue"
+)
+GOOGLE_PROJECT_LOCATION = env(
+    "GOOGLE_PROJECT_LOCATION", default="europe-west1"
+)

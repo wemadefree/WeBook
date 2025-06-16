@@ -1,8 +1,8 @@
-# from celery import shared_task
-# import django.apps
+from celery import shared_task
+import django.apps
 
-# ALL_MODELS = django.apps.apps.get_models()
-# MODEL_DICT = {model.__name__: model for model in ALL_MODELS}
+ALL_MODELS = django.apps.apps.get_models()
+MODEL_DICT = {model.__name__: model for model in ALL_MODELS}
 
 
 # @shared_task

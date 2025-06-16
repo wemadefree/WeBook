@@ -35,7 +35,7 @@ class QueuedSignalProcessor(RealtimeSignalProcessor):
 
     def enqueue_save(self, sender, instance, **kwargs):
         # Enqueue the save operation
-        from webook.celery_haystack.tasks import update_object, ALL_MODELS
+        from webook.celery_haystack.tasks import ALL_MODELS
 
         if instance.__class__.__name__ not in ALL_MODELS:
             if instance.__class__.__name__ not in ["Migration", "Site"]:
@@ -52,7 +52,7 @@ class QueuedSignalProcessor(RealtimeSignalProcessor):
 
     def enqueue_delete(self, sender, instance, **kwargs):
         # Enqueue the delete operation
-        from webook.celery_haystack.tasks import remove_object, ALL_MODELS
+        from webook.celery_haystack.tasks import ALL_MODELS
 
         if instance.__class__.__name__ not in ALL_MODELS:
             logging.warning(

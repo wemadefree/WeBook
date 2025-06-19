@@ -1,3 +1,4 @@
+import inspect
 import json
 from typing import Any, Dict, List, Optional
 from .models import TaskExecution, TaskExecutionState
@@ -13,10 +14,17 @@ class RegisteredTask:
     Represents a registered task with its callable and metadata.
     """
 
-    def __init__(self, callable, name: str, description: Optional[str] = None):
+    def __init__(
+        self,
+        callable,
+        name: str,
+        description: Optional[str] = None,
+        parameters: Optional[List[Dict[str, Any]]] = None,
+    ):
         self.callable = callable
         self.name = name
         self.description = description
+        self.parameters = parameters or []
 
     def __call__(self, *args, **kwargs):
         return self.callable(*args, **kwargs)
@@ -239,7 +247,7 @@ class TaskManager:
         return [x for x in self.task_registry.values()]
 
     def stage_task(
-        self, task_name: str, payload: Dict[str, Any], *args, **kwargs
+        self, task_name: str, parameters: Dict[str, Any], *args, **kwargs
     ) -> TaskExecution:
         """
         Send task to the backend / provider. The provider will trigger execution of the task (execute_task)
@@ -260,7 +268,7 @@ class TaskManager:
         response: TaskExeuctionCreateResponse = self.backend.create_http_task(
             target_url=execution_url,
             task_name=task_execution.task_name,
-            payload=payload,
+            payload=parameters,
         )
 
         if response.success:
@@ -339,18 +347,32 @@ def task(
     description: Optional[str] = None,
 ):
     def decorator(func):
+        signature = inspect.signature(func)
+
+        if name in TASK_MANAGER.task_registry:
+            raise ValueError(f"Task with name '{name}' is already registered.")
+
+        TASK_MANAGER.task_registry[name] = RegisteredTask(
+            callable=decorator,
+            name=name,
+            description=description,
+            parameters=[
+                {
+                    "name": param.name,
+                    "type": str(param.annotation),
+                    "default": (
+                        param.default
+                        if param.default is not inspect.Parameter.empty
+                        else None
+                    ),
+                }
+                for param in signature.parameters.values()
+            ],
+        )
+
         def wrapper(*args, **kwargs):
             return func(*args, **kwargs)
 
         return wrapper
-
-    if name in TASK_MANAGER.task_registry:
-        raise ValueError(f"Task with name '{name}' is already registered.")
-
-    TASK_MANAGER.task_registry[name] = RegisteredTask(
-        callable=decorator,
-        name=name,
-        description=description,
-    )
 
     return decorator

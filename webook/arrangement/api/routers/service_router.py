@@ -636,7 +636,12 @@ class HistoricServiceOrdersOnlyFilter(QueryFilter):
         if not value:
             return qs
 
-        return qs.filter(Q(state=States.DENIED) | Q(state=States.PROVISIONED))
+        # TODO: Likely possible to optimize, but this is a #QuickFix
+        l = [x for x in qs.all() if x.temporal_state == TemporalStates.HISTORICAL]
+        qs = qs.filter(
+            id__in=[x.id for x in l]
+        )
+        return qs
 
 
 class ArrangementServiceOrderFilter(QueryFilter):

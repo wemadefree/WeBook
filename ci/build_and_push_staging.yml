@@ -5,6 +5,8 @@ steps:
       - '--no-cache'
       - '-t'
       - europe-west1-docker.pkg.dev/$PROJECT_ID/wemadefree/webook-nm-development
+      - '--file'
+      - Dockerfile.cloudrun
       - .
 images:
   - europe-west1-docker.pkg.dev/$PROJECT_ID/wemadefree/webook-nm-development

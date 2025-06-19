@@ -21,11 +21,12 @@ ALLOWED_HOSTS = env.list(
     ],
 )
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost",
-]
-
-
+CSRF_TRUSTED_ORIGINS = env.list(
+    "CSRF_TRUSTED_ORIGINS",
+    default=[
+        "http://localhost",
+    ]
+)
 # CACHES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#caches

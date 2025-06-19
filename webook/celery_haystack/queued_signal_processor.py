@@ -47,7 +47,7 @@ class QueuedSignalProcessor(RealtimeSignalProcessor):
         # update_object.delay(id=instance.id, model_name=instance.__class__.__name__)
         TASK_MANAGER.stage_task(
             task_name="update_object",
-            payload={"id": instance.id, "model_name": instance.__class__.__name__},
+            parameters={"id": instance.id, "model_name": instance.__class__.__name__},
         )
 
     def enqueue_delete(self, sender, instance, **kwargs):
@@ -63,5 +63,5 @@ class QueuedSignalProcessor(RealtimeSignalProcessor):
         # remove_object.delay(id=instance.id, model=instance.__class__.__name__)
         TASK_MANAGER.stage_task(
             task_name="remove_object",
-            payload={"id": instance.id, "model_name": instance.__class__.__name__},
+            parameters={"id": instance.id, "model_name": instance.__class__.__name__},
         )

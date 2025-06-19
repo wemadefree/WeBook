@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from django.db.models.query import QuerySet
 from django.http import HttpResponse
 from webook.api.schemas.base_schema import BaseSchema, ModelBaseSchema
@@ -15,6 +15,7 @@ tasks_router = Router(tags=["Tasks Backend"])
 class TaskSchema(BaseSchema):
     name: str
     description: Optional[str] = None
+    parameters: Optional[List[Dict[str, Any]]] = None
 
 
 @tasks_router.get("/get-tasks", response=List[TaskSchema])
@@ -23,7 +24,7 @@ def get_tasks(request) -> List[TaskSchema]:
     Endpoint to retrieve a list of tasks.
     """
     return [
-        TaskSchema(name=t.name, description=t.description)
+        TaskSchema(name=t.name, description=t.description, parameters=t.parameters)
         for t in TASK_MANAGER.list_tasks()
     ]
 
@@ -37,7 +38,7 @@ def start_task(request, task_name: str) -> bool:
     if not TASK_MANAGER.task_exists(task_name):
         return HttpResponse(status=404, content=f"Task '{task_name}' not found.")
     try:
-        TASK_MANAGER.stage_task(task_name=task_name, payload=None)
+        TASK_MANAGER.stage_task(task_name=task_name, parameters=None)
         return True
     except Exception as e:
         return HttpResponse(status=500, content=f"Failed to stage task: {str(e)}")

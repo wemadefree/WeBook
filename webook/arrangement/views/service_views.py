@@ -670,7 +670,6 @@ class GetProvisionsJsonView(ValidateTokenMixin, ListView, JSONResponseMixin):
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         data = self.get_data()
-        provision_one = data[0]
 
         provisions = [
             {
@@ -687,7 +686,7 @@ class GetProvisionsJsonView(ValidateTokenMixin, ListView, JSONResponseMixin):
                     if provision.for_event.arrangement.location
                     else "Ingen lokasjon"
                 ),
-                "rooms": [{room.name} for room in provision.for_event.rooms.all()],
+                "rooms": [room.name for room in provision.for_event.rooms.all()],
                 "start": utc_to_current(provision.for_event.start).strftime(
                     "%Y.%m.%d %H:%M"
                 ),
@@ -706,6 +705,7 @@ class GetProvisionsJsonView(ValidateTokenMixin, ListView, JSONResponseMixin):
             }
             for provision in data
         ]
+
         provisions = sorted(provisions, key=lambda p: p["provision_id"])
 
         return JsonResponse(provisions, safe=False)

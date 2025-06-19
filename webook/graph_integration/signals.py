@@ -6,6 +6,7 @@ from .tasks import (
     synchronize_user_calendar,
     synchronize_event_to_graph,
 )
+from webook.tasks.tasks_manager import TASK_MANAGER
 
 from webook.arrangement.models import Event, EventSerie, PlanManifest
 
@@ -19,7 +20,10 @@ def on_event_handler(sender, instance, created, **kwargs):
 
     instance.refresh_from_db()
 
-    synchronize_event_to_graph.delay(instance.pk)
+    TASK_MANAGER.stage_task(
+        task_name="synchronize_event_to_graph",
+        parameters={"event_pk": instance.pk},
+    )
 
 
 @receiver(post_save, sender=PlanManifest)
@@ -36,7 +40,10 @@ def on_plan_manifest_handler(sender, instance, created, **kwargs):
     for person in people:
         user = person.user_set.first()
         if user:
-            synchronize_serie_to_graph(event_serie.pk)
+            TASK_MANAGER.stage_task(
+                task_name="synchronize_serie_to_graph",
+                parameters={"serie_pk": event_serie.pk},
+            )
 
 
 @receiver(post_save, sender=EventSerie)
@@ -45,4 +52,8 @@ def on_event_serie_handler(sender, instance, created, **kwargs):
     for person in people:
         user = person.user_set.first()
         if user:
-            synchronize_user_calendar.delay(user.pk)
+            # synchronize_user_calendar.delay(user.pk)
+            TASK_MANAGER.stage_task(
+                task_name="synchronize_user_calendar",
+                parameters={"user_pk": user.pk},
+            )

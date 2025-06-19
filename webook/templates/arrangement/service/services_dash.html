@@ -151,24 +151,24 @@
                             </span>
                         </td>
                         <td>
-                            <button class="btn wb-btn-white wb-bg-info text-white btn-sm wb-bg-main " style="background-color: var(--SUCCESS-COLOR);" @click="goToService(service)">
-                                <i class="fas fa-arrow-right"></i>
+                            <button class="btn wb-btn-main wb-bg-main text-white btn-sm " @click="goToService(service)">
+                                Åpne
                             </button>
         
-                            <button class="btn wb-btn-white wb-bg-main text-white btn-sm ms-2" style="background-color: var(--MAIN-COLOR);" @click="editPersonellForService(service)">
+                            <!-- <button class="btn wb-btn-white wb-bg-main text-white btn-sm ms-2" style="background-color: var(--MAIN-COLOR);" @click="editPersonellForService(service)">
                                 <i class="fas fa-users"></i>
-                            </button>
+                            </button> -->
 
                             <!-- <button class="btn wb-btn-white wb-bg-main text-white btn-sm ms-2" style="background-color: var(--MAIN-COLOR);" @click="">
                                 <i class="fas fa-user-shield"></i>
                             </button> -->
         
-                            <button class="btn  wb-btn-white wb-bg-danger text-white btn-sm ms-2" style="background-color: var(--DANGER-COLOR);" v-if="service.isActive" @click="toggleServiceActiveState(service)">
-                                <i class="fas fa-times"></i>
+                            <button class="btn  wb-btn-danger wb-bg-danger text-white btn-sm ms-2" style="background-color: var(--DANGER-COLOR);" v-if="service.isActive" @click="toggleServiceActiveState(service)">
+                                <i class="fas fa-times"></i> Deaktiver
                             </button>
         
-                            <button class="btn wb-btn-white wb-bg-success text-white btn-sm ms-2" style="background-color: var(--SUCCESS-COLOR);" v-else @click="toggleServiceActiveState(service)">
-                                <i class="fas fa-check"></i>
+                            <button class="btn wb-btn-success wb-bg-success text-white btn-sm ms-2" style="background-color: var(--SUCCESS-COLOR);" v-else @click="toggleServiceActiveState(service)">
+                                <i class="fas fa-check"></i> Aktiver
                             </button>
                         </td>
                     </tr>

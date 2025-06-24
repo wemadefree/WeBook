@@ -257,12 +257,15 @@ class TaskManager:
         task_execution.status = TaskExecutionState.PENDING
         task_execution.task_name = f"{task_name}"
         task_execution.parameters = parameters
+        task_execution.execution_url = (
+            f"{self.execution_ep_url}?task_uuid={task_execution.uuid}"
+        )
         task_execution.save()
 
-        execution_url = f"{self.execution_ep_url}?task_uuid={task_execution.uuid}"
-
         response: TaskExeuctionCreateResponse = self.backend.create_http_task(
-            target_url=execution_url, task_name=task_execution.task_name, payload=None
+            target_url=task_execution.execution_url,
+            task_name=task_execution.task_name,
+            payload=None,
         )
 
         if response.success:
@@ -330,7 +333,7 @@ TASK_MANAGER = TaskManager(
         project_id=settings.GOOGLE_PROJECT_ID,
         location=settings.GOOGLE_PROJECT_LOCATION,
     ),
-    execution_ep_url="http://localhost:8000/api/tasks/execute-task",
+    execution_ep_url=f"{settings.APP_BASE_URL}/api/tasks/execute-task",
 )
 
 

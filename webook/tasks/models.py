@@ -22,6 +22,7 @@ class TaskExecution(models.Model):
         default=TaskExecutionState.PENDING,
     )
 
+    execution_url = models.URLField(null=True, blank=True)
     parameters = models.JSONField(default=dict, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

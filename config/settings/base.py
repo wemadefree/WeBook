@@ -482,6 +482,4 @@ GOOGLE_PROJECT_ID = env("GOOGLE_PROJECT_ID", default=None)
 GOOGLE_CLOUD_TASK_QUEUE_NAME = env(
     "GOOGLE_CLOUD_TASK_QUEUE_NAME", default="webook-queue"
 )
-GOOGLE_PROJECT_LOCATION = env(
-    "GOOGLE_PROJECT_LOCATION", default="europe-west1"
-)
+GOOGLE_PROJECT_LOCATION = env("GOOGLE_PROJECT_LOCATION", default="europe-west1")

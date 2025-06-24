@@ -43,4 +43,6 @@ django-celery-beat==2.7.0
 msgraph-sdk==1.12.0
 redlock==1.2.0
 
+django-storages[google]==1.14.6
+
 google-cloud-tasks==2.19.3

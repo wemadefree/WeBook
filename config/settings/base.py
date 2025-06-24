@@ -207,6 +207,18 @@ STATICFILES_FINDERS = [
     "npm.finders.NpmFinder",
 ]
 
+if env("USE_GCS_STATIC", default=False) and env("GS_BUCKET_NAME", default=None):
+    GS_BUCKET_NAME = env("GS_BUCKET_NAME", default=None)
+    STATIC_URL = env("/static/", default="/static/")
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        },
+    }
+
 # MEDIA
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-root

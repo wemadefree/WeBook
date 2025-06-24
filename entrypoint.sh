@@ -4,4 +4,4 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py collectstatic --noinput
 # exec "$@"
-gunicorn --preload -b 0.0.0.0:8080 config.wsgi:application --threads 6 -w 6
+gunicorn --preload -b 0.0.0.0:8080 config.wsgi:application --threads 8 -w 1

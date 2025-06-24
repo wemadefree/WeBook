@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 
 class TaskExecutionState(models.TextChoices):
@@ -9,6 +10,8 @@ class TaskExecutionState(models.TextChoices):
 
 
 class TaskExecution(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+
     task_name = models.CharField(max_length=255)
     backend_task_id = models.CharField(
         max_length=255, unique=True, null=True, blank=True

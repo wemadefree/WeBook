@@ -62,17 +62,23 @@ def get_task_status(request, task_id: int) -> str:
     return TASK_MANAGER.get_task_status(task_id)
 
 
-@tasks_router.post("/execute-task", response=bool)
-def execute_task(request, task_id: int) -> bool:
+@tasks_router.post("/execute-task", response=bool, auth=None)
+def execute_task(request, task_uuid: str) -> bool:
     """
     Endpoint to execute a specific task.
     """
-    task_execution = TaskExecution.objects.filter(id=task_id).first()
+
+    task_execution = TaskExecution.objects.filter(uuid=task_uuid).first()
+    if not task_execution:
+        return HttpResponse(
+            status=404, content=f"Task with UUID '{task_uuid}' not found."
+        )
+
     task_execution.status = TaskExecutionState.RUNNING
     task_execution.save()
 
     try:
-        TASK_MANAGER.execute_task(task_id)
+        TASK_MANAGER.execute_task(task_execution.id)
         return True
     except Exception as e:
         task_execution.status = TaskExecutionState.FAILED

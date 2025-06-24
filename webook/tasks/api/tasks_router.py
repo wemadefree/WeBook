@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Optional
+from uuid import UUID
 from django.db.models.query import QuerySet
 from django.http import HttpResponse
 from webook.api.schemas.base_schema import BaseSchema, ModelBaseSchema
@@ -18,6 +19,35 @@ class TaskSchema(BaseSchema):
     parameters: Optional[List[Dict[str, Any]]] = None
 
 
+class TaskExecutionSchema(BaseSchema):
+    uuid: UUID
+    task_name: str
+    status: TaskExecutionState
+    parameters: Dict[str, Any] = {}
+    result: Optional[str] = None
+    created_at: str
+    updated_at: str
+    completed_at: Optional[str] = None
+
+    @classmethod
+    def from_model(cls, task_execution: TaskExecution) -> "TaskExecutionSchema":
+        return cls(
+            id=task_execution.id,
+            uuid=task_execution.uuid,
+            task_name=task_execution.task_name,
+            status=task_execution.status,
+            parameters=task_execution.parameters,
+            result=task_execution.result,
+            created_at=task_execution.created_at.isoformat(),
+            updated_at=task_execution.updated_at.isoformat(),
+            completed_at=(
+                task_execution.completed_at.isoformat()
+                if task_execution.completed_at
+                else None
+            ),
+        )
+
+
 @tasks_router.get("/get-tasks", response=List[TaskSchema])
 def get_tasks(request) -> List[TaskSchema]:
     """
@@ -29,37 +59,48 @@ def get_tasks(request) -> List[TaskSchema]:
     ]
 
 
-@tasks_router.get("/stage-task", response=bool)
-def start_task(request, task_name: str) -> bool:
+@tasks_router.post("/stage-task", response=str)
+def start_task(request, task_name: str, task_params: dict = {}) -> str:
     """
     Endpoint to start a task.
     """
 
+    task_params = {k: v for k, v in request.GET.items() if k != "task_name"}
+
     if not TASK_MANAGER.task_exists(task_name):
         return HttpResponse(status=404, content=f"Task '{task_name}' not found.")
     try:
-        TASK_MANAGER.stage_task(task_name=task_name, parameters=None)
-        return True
+        task_execution = TASK_MANAGER.stage_task(
+            task_name=task_name, parameters=task_params
+        )
+        return str(task_execution.uuid)
     except Exception as e:
         return HttpResponse(status=500, content=f"Failed to stage task: {str(e)}")
 
 
-@tasks_router.get("/get-pending-tasks", response=List[str])
-def get_pending_tasks(request) -> List[str]:
+@tasks_router.get("/get-pending-tasks", response=List[TaskExecutionSchema])
+def get_pending_tasks(request) -> List[TaskExecutionSchema]:
     """
     Endpoint to get a list of pending tasks.
     """
-    return TaskExecution.objects.filter(status="pending").values_list(
-        "task_name", flat=True
-    )
+    pending_tasks = TaskExecution.objects.filter(status="pending")
+
+    return [TaskExecutionSchema.from_model(task) for task in pending_tasks]
 
 
-@tasks_router.get("/task-status/{task_id}", response=str)
-def get_task_status(request, task_id: int) -> str:
+@tasks_router.get("/task/{task_id}", response=TaskExecutionSchema)
+def get_task_execution_record(request, task_uuid: str) -> TaskExecutionSchema:
     """
-    Endpoint to get the status of a specific task.
+    Endpoint to get the execution record of a specific task by its ID.
     """
-    return TASK_MANAGER.get_task_status(task_id)
+
+    task_execution = TaskExecution.objects.filter(uuid=task_uuid).first()
+    if not task_execution:
+        return HttpResponse(
+            status=404, content=f"Task with UUID '{task_uuid}' not found."
+        )
+
+    return TaskExecutionSchema.from_model(task_execution)
 
 
 @tasks_router.post("/execute-task", response=bool, auth=None)
@@ -78,7 +119,7 @@ def execute_task(request, task_uuid: str) -> bool:
     task_execution.save()
 
     try:
-        TASK_MANAGER.execute_task(task_execution.id)
+        TASK_MANAGER.execute_task(task_execution)
         return True
     except Exception as e:
         task_execution.status = TaskExecutionState.FAILED

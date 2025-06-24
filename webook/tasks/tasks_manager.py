@@ -59,7 +59,7 @@ class AbstractTaskBackend(ABC):
     def create_http_task(
         self,
         target_url: str,
-        payload: Dict[str, Any],
+        payload: Dict[str, Any] = None,
         scheduled_seconds_from_now: Optional[int] = None,
         *args,
         **kwargs,
@@ -255,20 +255,14 @@ class TaskManager:
         kwargs.setdefault("task_name", task_name)
         task_execution = TaskExecution.objects.create()
         task_execution.status = TaskExecutionState.PENDING
-        task_execution.task_name = f"{task_name}_{task_execution.id}"
+        task_execution.task_name = f"{task_name}"
+        task_execution.parameters = parameters
         task_execution.save()
 
-        querystr = [
-            f"{key}={value}" for key, value in kwargs.items() if value is not None
-        ]
-        execution_url = (
-            f"{self.execution_ep_url}/{task_execution.id}/execute?{'&'.join(querystr)}"
-        )
+        execution_url = f"{self.execution_ep_url}?task_uuid={task_execution.uuid}"
 
         response: TaskExeuctionCreateResponse = self.backend.create_http_task(
-            target_url=execution_url,
-            task_name=task_execution.task_name,
-            payload=parameters,
+            target_url=execution_url, task_name=task_execution.task_name, payload=None
         )
 
         if response.success:
@@ -283,26 +277,24 @@ class TaskManager:
 
             raise Exception("Failed to stage task execution")
 
-    def execute_task(self, task_id: int, *args, **kwargs) -> bool:
+    def execute_task(self, task_execution: TaskExecution) -> bool:
         """
         Execute a specific task.
 
         :param task_id: The ID of the task to execute.
         :return: True if the task was executed successfully, False otherwise.
         """
-        task_callable = self.task_registry.get(task_id)
-        if not task_callable:
-            raise TaskNotFoundError(task_id)
+        task = self.task_registry.get(task_execution.task_name)
+        if not task:
+            raise TaskNotFoundError(task_execution.task_name)
         try:
-            task_callable(*args, **kwargs)
-            task_execution = TaskExecution.objects.get(id=task_id)
+            output = task.callable(**task_execution.parameters)
             task_execution.status = TaskExecutionState.COMPLETED
-            task_execution.result = "Task executed successfully"
+            task_execution.result = json.dumps(output) if output else None
             task_execution.completed_at = datetime.now()
             task_execution.save()
             return True
         except Exception as e:
-            task_execution = TaskExecution.objects.get(id=task_id)
             task_execution.status = TaskExecutionState.FAILED
             task_execution.result = str(e)
             task_execution.completed_at = datetime.now()
@@ -338,7 +330,7 @@ TASK_MANAGER = TaskManager(
         project_id=settings.GOOGLE_PROJECT_ID,
         location=settings.GOOGLE_PROJECT_LOCATION,
     ),
-    execution_ep_url="http://localhost:8000/api/tasks/execute",
+    execution_ep_url="http://localhost:8000/api/tasks/execute-task",
 )
 
 
@@ -347,13 +339,16 @@ def task(
     description: Optional[str] = None,
 ):
     def decorator(func):
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+
         signature = inspect.signature(func)
 
         if name in TASK_MANAGER.task_registry:
             raise ValueError(f"Task with name '{name}' is already registered.")
 
         TASK_MANAGER.task_registry[name] = RegisteredTask(
-            callable=decorator,
+            callable=wrapper,
             name=name,
             description=description,
             parameters=[
@@ -369,9 +364,6 @@ def task(
                 for param in signature.parameters.values()
             ],
         )
-
-        def wrapper(*args, **kwargs):
-            return func(*args, **kwargs)
 
         return wrapper
 

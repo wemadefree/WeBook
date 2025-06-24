@@ -21,9 +21,13 @@ class TaskExecution(models.Model):
         choices=TaskExecutionState.choices,
         default=TaskExecutionState.PENDING,
     )
+
+    parameters = models.JSONField(default=dict, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     completed_at = models.DateTimeField(null=True, blank=True)
+
     result = models.TextField(null=True, blank=True)
 
     class Meta:

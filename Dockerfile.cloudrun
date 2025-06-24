@@ -31,6 +31,8 @@ COPY . .
 # Install frontend dependencies
 RUN npm install
 
+RUN mkdir -p $APP_HOME/staticfiles
+
 ENTRYPOINT ["./entrypoint.sh"]
 # Run the web service on container startup. Here we use the gunicorn
 # webserver, with one worker process and 8 threads.

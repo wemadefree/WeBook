@@ -7,6 +7,7 @@ from webook.arrangement.models import Person
 from webook.graph_integration.models import GraphCalendar, SyncedEvent
 from ninja import Router
 import webook.graph_integration.tasks as tasks
+from webook.tasks.tasks_manager import TASK_MANAGER
 
 
 class GraphCalendarSubscribeSchema(BaseSchema):
@@ -66,7 +67,12 @@ def subscribe_to_calendar(request, payload: GraphCalendarSubscribeSchema):
             status=409, content="Person is already subscribed to a calendar"
         )
 
-    tasks.subscribe_person_to_webook_calendar.delay(payload.person_id)
+    # tasks.subscribe_person_to_webook_calendar.delay(payload.person_id)
+
+    TASK_MANAGER.stage_task(
+        task_name="subscribe_person_to_webook_calendar",
+        parameters={"person_pk": request.user.id},
+    )
 
     return HttpResponse(status=202, content="Task started")
 
@@ -84,6 +90,11 @@ def destroy_graph_calendar(request, person_id: int):
     if person_id != request.user.person.id and request.user.is_superuser is False:
         return HttpResponse(status=403, content="You do not have permission to do this")
 
-    print("set task!", tasks.unsubscribe_person_from_webook_calendar.delay(person_id))
+    # print("set task!", tasks.unsubscribe_person_from_webook_calendar.delay(person_id))
+
+    TASK_MANAGER.stage_task(
+        task_name="unsubscribe_person_from_webook_calendar",
+        parameters={"person_pk": person_id},
+    )
 
     return HttpResponse(status=204, content="Task started")

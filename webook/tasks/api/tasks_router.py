@@ -3,6 +3,7 @@ from uuid import UUID
 from django.db.models.query import QuerySet
 from django.http import HttpResponse
 from webook.api.schemas.base_schema import BaseSchema, ModelBaseSchema
+from webook.api.session_auth import AuthAgent
 from webook.arrangement.models import Person
 from webook.graph_integration.models import GraphCalendar, SyncedEvent
 from ninja import Router
@@ -48,7 +49,7 @@ class TaskExecutionSchema(BaseSchema):
         )
 
 
-@tasks_router.get("/get-tasks", response=List[TaskSchema])
+@tasks_router.get("/get-tasks", response=List[TaskSchema], auth=AuthAgent())
 def get_tasks(request) -> List[TaskSchema]:
     """
     Endpoint to retrieve a list of tasks.
@@ -59,7 +60,7 @@ def get_tasks(request) -> List[TaskSchema]:
     ]
 
 
-@tasks_router.post("/stage-task", response=str)
+@tasks_router.post("/stage-task", response=str, auth=AuthAgent())
 def start_task(request, task_name: str, task_params: dict = {}) -> str:
     """
     Endpoint to start a task.
@@ -78,7 +79,9 @@ def start_task(request, task_name: str, task_params: dict = {}) -> str:
         return HttpResponse(status=500, content=f"Failed to stage task: {str(e)}")
 
 
-@tasks_router.get("/get-pending-tasks", response=List[TaskExecutionSchema])
+@tasks_router.get(
+    "/get-pending-tasks", response=List[TaskExecutionSchema], auth=AuthAgent()
+)
 def get_pending_tasks(request) -> List[TaskExecutionSchema]:
     """
     Endpoint to get a list of pending tasks.
@@ -88,7 +91,7 @@ def get_pending_tasks(request) -> List[TaskExecutionSchema]:
     return [TaskExecutionSchema.from_model(task) for task in pending_tasks]
 
 
-@tasks_router.get("/task/{task_id}", response=TaskExecutionSchema)
+@tasks_router.get("/task/{task_id}", response=TaskExecutionSchema, auth=AuthAgent())
 def get_task_execution_record(request, task_uuid: str) -> TaskExecutionSchema:
     """
     Endpoint to get the execution record of a specific task by its ID.

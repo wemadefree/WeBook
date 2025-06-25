@@ -122,7 +122,12 @@ def execute_task(request, task_uuid: str) -> bool:
     task_execution.save()
 
     try:
-        TASK_MANAGER.execute_task(task_execution)
+        is_success = TASK_MANAGER.execute_task(task_execution)
+        if not is_success:
+            return HttpResponse(
+                status=500,
+                content="Task execution failed. See task record for details.",
+            )
         return True
     except Exception as e:
         task_execution.status = TaskExecutionState.FAILED

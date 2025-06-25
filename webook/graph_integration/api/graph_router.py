@@ -71,7 +71,7 @@ def subscribe_to_calendar(request, payload: GraphCalendarSubscribeSchema):
 
     TASK_MANAGER.stage_task(
         task_name="subscribe_person_to_webook_calendar",
-        parameters={"person_pk": request.user.id},
+        parameters={"person_pk": payload.person_id},
     )
 
     return HttpResponse(status=202, content="Task started")

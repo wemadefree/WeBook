@@ -24,8 +24,5 @@ COPY . .
 RUN npm install
 RUN chmod +x ./entrypoint.sh
 
-RUN python manage.py collectstatic --noinput
-
 ENTRYPOINT ["./entrypoint.sh"]
-
-
+CMD ["gunicorn", "--preload", "-b", "0.0.0.0:8080", "config.wsgi:application", "--threads", "6", "-w", "6"]

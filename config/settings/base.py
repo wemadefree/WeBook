@@ -477,6 +477,11 @@ HAYSTACK_SIGNAL_PROCESSOR = (
     "webook.celery_haystack.queued_signal_processor.QueuedSignalProcessor"
 )
 
+TASK_BACKEND = env(
+    "TASK_BACKEND",
+    default="local",
+)
+
 AZURE_TENANT_ID = env("AZURE_TENANT_ID", default=None)
 AZURE_CLIENT_ID = env("AZURE_CLIENT_ID", default=None)
 AZURE_CLIENT_SECRET = env("AZURE_CLIENT_SECRET", default=None)

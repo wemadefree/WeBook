@@ -7,6 +7,12 @@ from google.cloud import tasks_v2
 from google.protobuf import timestamp_pb2
 from datetime import datetime
 from django.conf import settings
+from queue import Queue
+from threading import Thread
+import httpx
+from time import sleep
+from dataclasses import dataclass
+import uuid
 
 
 class RegisteredTask:
@@ -91,6 +97,93 @@ class AbstractTaskBackend(ABC):
         :return: True if the task was canceled successfully, False otherwise.
         """
         pass
+
+
+@dataclass
+class LocalTaskBackend(AbstractTaskBackend):
+    """
+    Local task backend
+    """
+
+    queue: Queue
+    task_meta = {}
+
+    def __init__(self):
+        print("Initializing LocalTaskBackend...")
+        self.queue = Queue()
+        self.queue_worker_thread = Thread(target=self.queue_worker)
+        self.queue_worker_thread.daemon = True
+        self.queue_worker_thread.start()
+
+    def queue_worker(self):
+        while True:
+            sleep(0.5)
+
+            if self.queue.empty():
+                continue
+
+            task = self.queue.get()
+            if not task:
+                continue
+
+            uuid = task.get("uuid")
+            target_url = task.get("target_url")
+
+            if not uuid or not target_url:
+                print("Invalid task data, skipping...")
+                continue
+
+            execute_response: httpx.Response = httpx.post(url=target_url)
+
+            self.task_meta[uuid] = (
+                TaskExecutionState.COMPLETED
+                if execute_response.status_code == 200
+                else TaskExecutionState.FAILED
+            )
+
+            if execute_response.status_code != 200:
+                print(
+                    f"Failed to execute task {uuid} at {target_url}. Status code: {execute_response.status_code}"
+                )
+            else:
+                print(
+                    f"Task {uuid} executed successfully at {target_url}. Response: {execute_response.text}"
+                )
+
+    def create_http_task(
+        self,
+        target_url: str,
+        payload: Dict[str, Any] = None,
+        scheduled_seconds_from_now: Optional[int] = None,
+        *args,
+        **kwargs,
+    ) -> TaskExeuctionCreateResponse:
+        task_uuid = uuid.uuid4()
+        self.queue.put(
+            {
+                "uuid": task_uuid,
+                "target_url": target_url,
+                "payload": payload,
+            }
+        )
+
+        result = TaskExeuctionCreateResponse()
+        result.success = True
+        result.task_id = task_uuid
+        result.status = TaskExecutionState.PENDING
+
+        self.task_meta[task_uuid] = TaskExecutionState.PENDING
+
+        return result
+
+    def get_task_status(self, task_id) -> TaskExecutionState:
+        return self.task_meta.get(task_id, TaskExecutionState.PENDING)
+
+    def cancel_task(self, task_id):
+        if self.task_meta.get(task_id) == TaskExecutionState.PENDING:
+            self.task_meta[task_id] = TaskExecutionState.FAILED
+            return True
+        return False
 
 
 class GoogleCloudTaskBackend(AbstractTaskBackend):
@@ -290,19 +383,19 @@ class TaskManager:
         task = self.task_registry.get(task_execution.task_name)
         if not task:
             raise TaskNotFoundError(task_execution.task_name)
+
         try:
             output = task.callable(**task_execution.parameters)
             task_execution.status = TaskExecutionState.COMPLETED
             task_execution.result = json.dumps(output) if output else None
-            task_execution.completed_at = datetime.now()
-            task_execution.save()
-            return True
         except Exception as e:
             task_execution.status = TaskExecutionState.FAILED
             task_execution.result = str(e)
+        finally:
             task_execution.completed_at = datetime.now()
             task_execution.save()
-            return False
+
+        return task_execution.status == TaskExecutionState.COMPLETED
 
     def get_task_status(self, task_id: int) -> TaskExecutionState:
         """
@@ -327,12 +420,18 @@ class TaskManager:
         return self.backend.cancel_task(task_id)
 
 
-TASK_MANAGER = TaskManager(
-    backend=GoogleCloudTaskBackend(
+TASK_BACKEND = (
+    GoogleCloudTaskBackend(
         queue_name=settings.GOOGLE_CLOUD_TASK_QUEUE_NAME,
         project_id=settings.GOOGLE_PROJECT_ID,
         location=settings.GOOGLE_PROJECT_LOCATION,
-    ),
+    )
+    if settings.TASK_BACKEND == "google_cloud"
+    else LocalTaskBackend()
+)
+
+TASK_MANAGER = TaskManager(
+    backend=TASK_BACKEND,
     execution_ep_url=f"{settings.APP_BASE_URL}/api/tasks/execute-task",
 )
 

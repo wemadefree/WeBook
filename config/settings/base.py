@@ -208,6 +208,7 @@ STATICFILES_FINDERS = [
 ]
 
 if env("USE_GCS_STATIC", default=False) and env("GS_BUCKET_NAME", default=None):
+    GS_QUERYSTRING_AUTH = env.bool("GS_QUERYSTRING_AUTH", default=False)
     GS_BUCKET_NAME = env("GS_BUCKET_NAME", default=None)
     STATIC_URL = env("/static/", default="/static/")
     STORAGES = {

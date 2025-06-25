@@ -44,7 +44,11 @@ def subscribe_person_to_webook_calendar(person_pk: int):
 
     _: GraphCalendar = asyncio.run(cal_sync.subscribe_person_to_webook_calendar(person))
 
-    synchronize_user_calendar.delay(person.user_set.first().pk)
+    # synchronize_user_calendar.delay(person.user_set.first().pk)
+    TASK_MANAGER.stage_task(
+        task_name="synchronize_user_calendar",
+        parameters={"user_pk": person.user_set.first().pk},
+    )
 
 
 @task(

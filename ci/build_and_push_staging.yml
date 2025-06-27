@@ -4,9 +4,42 @@ steps:
       - build
       - '--no-cache'
       - '-t'
-      - europe-west1-docker.pkg.dev/$PROJECT_ID/wemadefree/webook-nm-development
+      - $_CI_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_CI_SERVICE_NAME:$COMMIT_SHA
       - '--file'
       - Dockerfile.cloudrun
       - .
+    id: Build
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - '$_CI_GCR_HOSTNAME/$PROJECT_ID/integrations/$REPO_NAME/$_CI_SERVICE_NAME:$COMMIT_SHA'
+    id: Push
+  # - name: $_CI_GCR_HOSTNAME/$PROJECT_ID/integrations/$REPO_NAME/$_CI_SERVICE_NAME:$COMMIT_SHA
+  #   entrypoint: bash
+  #   args:
+  #     - '-c'
+  #     - |
+  #       python manage.py migrate --noinput
+  #       python manage.py collectstatic --noinput --verbosity 2
+  #   id: Migrate and Collect Static
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    args:
+      - run
+      - services
+      - update
+      - $_CI_SERVICE_NAME
+      - '--platform=managed'
+      - '--image=$_CI_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_CI_SERVICE_NAME:$COMMIT_SHA''
+      - '--labels=$_CI_LABELS'
+      - '--region=$_CI_DEPLOY_REGION'
+      - '--quiet'
+    id: Deploy Cloud Run Service
+    entrypoint: gcloud
 images:
-  - europe-west1-docker.pkg.dev/$PROJECT_ID/wemadefree/webook-nm-development
+  - $_CI_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_CI_SERVICE_NAME:$COMMIT_SHA
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/webook-$_ENV-connection-string/versions/latest
+      env: CONNECTION_STRING
+    - versionName: projects/$PROJECT_ID/secrets/webook-$_ENV-secret-key/versions/latest
+      env: SECRET_KEY

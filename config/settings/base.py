@@ -207,7 +207,7 @@ STATICFILES_FINDERS = [
     "npm.finders.NpmFinder",
 ]
 
-if env("USE_GCS_STATIC", default=False) and env("GS_BUCKET_NAME", default=None):
+if env("USE_GCS_STATIC", default=False) and env("GS_STATIC_BUCKET_NAME", default=None):
     GS_QUERYSTRING_AUTH = env.bool("GS_QUERYSTRING_AUTH", default=False)
     GS_STATIC_BUCKET_NAME = env("GS_STATIC_BUCKET_NAME", default=None)
     GS_UPLOADS_BUCKET_NAME = env("GS_UPLOADS_BUCKET_NAME", default=None)
@@ -223,7 +223,7 @@ if env("USE_GCS_STATIC", default=False) and env("GS_BUCKET_NAME", default=None):
             "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
             "OPTIONS": {
                 "bucket_name": GS_STATIC_BUCKET_NAME,
-            }
+            },
         },
     }
 

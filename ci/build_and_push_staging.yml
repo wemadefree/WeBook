@@ -29,7 +29,7 @@ steps:
       - update
       - $_CI_SERVICE_NAME
       - '--platform=managed'
-      - '--image=$_CI_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_CI_SERVICE_NAME:$COMMIT_SHA''
+      - '--image=$_CI_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_CI_SERVICE_NAME:$COMMIT_SHA'
       - '--labels=$_CI_LABELS'
       - '--region=$_CI_DEPLOY_REGION'
       - '--quiet'

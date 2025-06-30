@@ -754,7 +754,6 @@
                     return;
                 }
 
-
                 let qualifiedEvent = {
                     _uuid:                      dialog.interior.event_uuid.value,
                     title:                      dialog.interior.title.value,
@@ -797,7 +796,7 @@
 
                     ordered_services: dialog.data.vueApp._instance.ctx.orderedServices.map((service) => {
                         return {
-                            applied_preconfiguration: service.preconfigurations[service.preconfigurations.length - 1].id,
+                            applied_preconfiguration: service.preconfigurations.length > 0 ? service.preconfigurations[service.preconfigurations.length - 1].id : null,
                             service_id: service.service.id,
                             freetext_comment: service.description,
                             service_order: null

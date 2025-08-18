@@ -241,6 +241,12 @@
                         <div>
                             <input type="radio" id="radio_timeAreaMethod_stopWithin" name="timeAreaMethod" value="1">
                             Stopp innen: <input type="date" id="area_stopWithin" required>
+
+                            <div style="display: none;" id="area_stopWithinInvalidFeedback">
+                                <div class="alert alert-danger">
+                                    Sluttdato kan ikke være mer enn ett år frem i tid.
+                                </div>
+                            </div>
                         </div>
     
                         <div>
@@ -645,6 +651,27 @@
                     timearea_method_radio.parentNode.parentNode.appendChild(alert_div)
 
                     return false;
+                }
+
+                const endDate = dialogElement.querySelector('#area_stopWithin');
+                if (endDate && endDate.value) {
+                    const today = new Date();
+                    const oneYearFromNow = new Date(today);
+                    oneYearFromNow.setFullYear(today.getFullYear() + 1); 
+                    if (new Date(endDate.value) > oneYearFromNow) {
+                        ValidatorFunctions.__watchInputForValidityChange(endDate);
+
+                        if (endDate.parentNode.querySelector('#area_stopWithinInvalidFeedback') !== null) {
+                            endDate.parentNode.querySelector('#area_stopWithinInvalidFeedback').remove();
+                        }
+
+                        let alertText = document.createElement('div');
+                        alertText.id = "area_stopWithinInvalidFeedback";
+                        alertText.innerHTML = "<span class='text-danger form_alert'>Sluttdato kan ikke være mer enn ett år frem i tid.</span>";
+                        endDate.parentNode.appendChild(alertText);
+
+                        return false;
+                    }
                 }
             }
 
@@ -1195,6 +1222,19 @@
                 let already_active_radio = dialog.$('input:radio[name="' + pattern.sub_routed_by + '"]:checked').val();
                 if (already_active_radio !== undefined && already_active_radio !== "") {
                     dialog.activatePatternSubroute({ subroute: pattern.sub_routes[already_active_radio]} )
+                }
+            });
+
+            $('#area_stopWithin').on('change', (event) => {
+                const maxDate = new Date(((new Date()).setFullYear(new Date().getFullYear() + 1)));
+                const setDate = new Date(event.target.value);
+
+                if (setDate > maxDate) {
+                    event.target.classList.add("is-invalid");
+                    dialog.$('#area_stopWithinInvalidFeedback').show();
+                } else {
+                    event.target.classList.remove("is-invalid");
+                    dialog.$('#area_stopWithinInvalidFeedback').hide();
                 }
             });
         },

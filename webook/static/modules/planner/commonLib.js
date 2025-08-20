@@ -278,6 +278,10 @@ export class ArrangementStore extends BaseStore {
 
         let filterMap = new Map(filterSet.map( (slug) => [ slug.id, true ]));
 
+        if (Array.isArray(locations) && locations.length > 0 && filterMap.size > 0) {
+            filterMap = new Map(locations.map( (slug) => [ slug, true ]));
+        }
+
         const mapTypeFilter = (types) => types !== undefined && types.length > 0 ? new Map(types.map(i => [i, true])) : undefined;
 
         let arrangementTypesMap =   mapTypeFilter(arrangement_types);
@@ -299,6 +303,7 @@ export class ArrangementStore extends BaseStore {
                 isWithinFilter = false;
             }
 
+            arrangement.slug_list = [ ...arrangement.slug_list.filter((slug) => !!slug), arrangement.location_slug ];
             if (filterMap.size > 0) {
                 let match = false;
 
@@ -308,6 +313,10 @@ export class ArrangementStore extends BaseStore {
                         match = true;
                         break;
                     }
+                }
+
+                if (arrangement.slug_list.length === 0 && filterMap.has(arrangement.location_slug)) {
+                    match = true;
                 }
 
                 isWithinFilter = match;

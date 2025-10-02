@@ -7,7 +7,7 @@ unidecode==1.1.1 # https://pypi.org/project/Unidecode/
 
 # Django
 # ------------------------------------------------------------------------------
-django==4.2.10  # https://www.djangoproject.com/
+Django==5.2.6  # https://www.djangoproject.com/
 django-environ==0.4.5  # https://github.com/joke2k/django-environ
 django-model-utils==4.0.0  # https://github.com/jazzband/django-model-utils
 django-allauth==64.2.1  # https://github.com/pennersr/django-allauth
@@ -16,7 +16,7 @@ django-autoslug==1.9.8  # https://github.com/justinmayer/django-autoslug/
 
 # Custom base packages
 # ------------------------------------------------------------------------------
-django-npm
+django-npm==1.0.1
 anytree
 python-dateutil
 django-colorfield
@@ -39,7 +39,7 @@ django-haystack[elasticsearch]==3.3.0
 email-validator==2.2.0
 celery[redis]==5.4.0
 django-celery-results==2.5.1
-django-celery-beat==2.7.0
+django-celery-beat==2.8.1
 msgraph-sdk==1.12.0
 redlock==1.2.0
 

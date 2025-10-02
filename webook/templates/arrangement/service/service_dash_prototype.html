@@ -46,9 +46,9 @@
                         <i class="fas fa-calendar-alt"></i>
                         Mine Tjenester</h1>
                     <h6 class="mb-0">
-                        <a href="{% url 'arrangement:services_dashboard' %}" class="text-reset">Tjenestebehandling</a>
+                        <a href="{% url 'arrangement:services_dashboard' %}" class="text-reset">Tjenestebestilling</a>
                         <span>&nbsp;/&nbsp;</span>
-                        <a href="{% url 'arrangement:services_dashboard' %}" class="text-reset active"><u>Min Oversikt</u></a>
+                        <a href="{% url 'arrangement:services_dashboard' %}" class="text-reset active"><u>Mine Tjenester</u></a>
                     </h6>
                 </div>
             </div>
@@ -67,170 +67,8 @@
             </div>
         </nav>
     </div>
-    
-    <ul class="nav nav-tabs webook-tabs mt-0 mb-3">
-        <li class="nav-item">
-            <a class="nav-link active" data-mdb-toggle="tab" href="#orders-list">
-                Bestillinger
-            </a>
-        </li>
 
-
-        <li class="nav-item">
-            <a class="nav-link" data-mdb-toggle="tab" href="#my-services-list">
-                Mine Tjenester
-            </a>
-        </li>
-    </ul>
-
-    <div class="tab-content" id="tabs-content">
-        <div class="tab-pane fade show active" id="orders-list">
-
-        <div>
-            <div class="d-flex justify-content-between">
-                <div class="d-flex mb-2 align-items-center">
-                    <div class="me-3">
-                        <h5 class="fw-bold mb-0">
-                            <i class="fas fa-filter"></i>
-                            Filter:
-                        </h5>
-                    </div>
-
-                    <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                        <label class="form-check-label" for="flexCheckDefault">Venter svar</label>
-                    </div>
-                    <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                        <label class="form-check-label" for="flexCheckDefault">Kanskje</label>
-                    </div>
-                    <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                        <label class="form-check-label" for="flexCheckDefault">I behandling</label>
-                    </div>
-                    <div class="form-check me-3">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                        <label class="form-check-label" for="flexCheckDefault">Fullført</label>
-                    </div>
-
-                    <h5 class="fw-bold mb-0 me-3 ms-3">
-                        <i class="fas fa-filter"></i>
-                        Sorter:
-                    </h5>
-
-                    <select name="" id="" class="me-3">
-                        <option value="">Nyeste først</option>
-                        <option value="">Eldste først</option>
-                    </select>
-                </div>
-
-
-                <div>
-                    <div class="me-3 d-flex align-items-center">
-
-
-                        <h5 class="fw-bold mb-0 ms-3 me-3">
-                            <i class="fas fa-search"></i>
-                            Søk:
-                        </h5>
-
-                        <div>
-                            <input type="search" class="form-control" id="">
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="row g-3">
-                <div class="col-lg-3 col-md-6 col-sm-12"  v-for="order in serviceOrders" :key="order.id">
-                    <div class="border border-1 border rounded-4 border-dark">
-                        <div class="d-flex border-1 border-dark border-bottom  wb-bg-secondary justify-content-between p-2">
-                            <h5 class="fw-bold mb-0">
-                                #[[ order.id ]] |
-
-                                [[order.arrangement.name]]
-                            </h5>
-
-                            <h5 class="fw-bold mb-0">
-                                <div class="badge badge-success" v-if="order.state === 'confirmed'">
-                                    Ferdigbehandlet
-                                </div>
-                                <div class="badge badge-light"  v-else>
-                                    [[ order.state ]]
-                                </div>
-                            </h5>
-                        </div>
-
-                        <div class="p-2">
-                            <div class="d-flex justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <h5 class="fw-bold mb-0 me-2">
-                                        <i class="fas fa-calendar"></i>
-                                    </h5>
-
-                                    [[ new Date(order.startAndEnd[0]).toLocaleDateString() ]] - [[ new Date(order.startAndEnd[1]).toLocaleDateString() ]]
-                                </div>
-
-                                <div class="d-flex align-items-center">
-                                    <h5 class="fw-bold mb-0 me-2">
-                                        <i class="fas fa-clock"></i>
-                                    </h5>
-
-                                    [[ new Date(order.startAndEnd[0]).toLocaleTimeString() ]] - [[ new Date(order.startAndEnd[1]).toLocaleTimeString() ]]
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h6 class="mb-0">
-                                        <i class="fas fa-tools"></i>
-                                        [[ order.service.name ]]
-                                    </h6>
-                                </div>
-
-                                <div>
-                                    <h6 class="mb-0">
-                                        <i class="fas fa-user"></i>
-                                        [[ order.arrangement.responsible.fullName ]]
-                                    </h6>
-                                </div>
-                                
-                                <!-- <div>
-                                    <a href="">
-                                        <i class="fas fa-eye"></i> Mer informasjon
-                                    </a>
-                                </div> -->
-                            </div>
-
-                            <div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="d-flex justify-content-between text-small text-muted border-top border-dark ps-2 pe-2 pt-1 pb-1">
-                            <div>
-                                Plassert:
-                                [[ order.created ]]
-                            </div>
-
-
-                            <div>
-                                <a href="">
-                                    <i class="fas fa-eye"></i> Mer informasjon
-                                </a>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        </div>
-
-        <div class="tab-pane fade" id="my-services-list">
+    <div class="row">
         <div class="col-12">
             <table class="table table-sm">
                 <thead>
@@ -360,8 +198,153 @@
                 </tfoot>
             </table>
         </div>
-        </div>
+        <!-- <div class="col-4">
+            <h5>Kommende</h5>
+            <table class="table table-sm">
+                <tbody>
+                    <tr>
+                        <td>
+                            #1
+                        </td>
+                        <td>
+                            01.01.2024
+                        </td>
+                        <td>
+                            <div class="badge badge-warning">Venter Provisjonering</div>
+                        </td>
+                        <td>
+                            Tjeneste
+                        </td>
+                        <td>
+                            <a href="#">
+                                <i class="fas fa-arrow-right"></i>
+                                Til tildeling
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            #2
+                        </td>
+                        <td>
+                            01.01.2024
+                        </td>
+                        <td>
+                            <div class="badge badge-warning">Venter Provisjonering</div>
+                        </td>
+                        <td>
+                            Tjeneste
+                        </td>
+                        <td>
+                            <a href="#">
+                                <i class="fas fa-arrow-right"></i>
+                                Til tildeling
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            #3
+                        </td>
+                        <td>
+                            01.01.2024
+                        </td>
+                        <td>
+                            <div class="badge badge-warning">Venter Provisjonering</div>
+                        </td>
+                        <td>
+                            Tjeneste
+                        </td>
+                        <td>
+                            <a href="#">
+                                <i class="fas fa-arrow-right"></i>
+                                Til tildeling
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            #4
+                        </td>
+                        <td>
+                            01.01.2024
+                        </td>
+                        <td>
+                            <div class="badge badge-success">Provisjonert</div>
+                        </td>
+                        <td>
+                            Tjeneste
+                        </td>
+                        <td>
+                            <a href="#">
+                                <i class="fas fa-arrow-right"></i>
+                                Vis bestilling
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div> -->
     </div>
+
+<!-- 
+    <div class="mt-5">
+        <h4>
+            <i class="fas fa-clock me-2"></i>
+            Aktivitetslogg
+        </h4>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fas fa-calendar-alt"></i>&nbsp;
+                    Tjeneste
+                </span>
+                <select name="" id="" class="form-control">
+                    <option value="">En Tjeneste</option>
+                </select>
+            </div>
+
+            <div class="input-group ms-2">
+                <span class="input-group-text">
+                    <i class="fas fa-archive"></i>&nbsp;
+                    Type
+                </span>
+                <select name="" id="" class="form-control">
+                    <option value="">En Type</option>
+                </select>
+            </div>
+
+            <div class="input-group ms-2">
+                <span class="input-group-text">
+                    <i class="fas fa-user"></i>&nbsp; 
+                    Person
+                </span>
+                <select name="" id="" class="form-control">
+                    <option value="">En Person</option>
+                </select>
+            </div>
+        </div>
+
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>
+                        Tidspunkt
+                    </th>
+                    <th>
+                        Type
+                    </th>
+                    <th>
+                        Beskrivelse
+                    </th>
+                    <th>
+                        Utførende person
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div> -->
 </template>
 
 <script>
@@ -381,7 +364,6 @@
         data() {
             return {
                 services: [],
-                serviceOrders: [],
                 totalAwaitingAnswer: 0,
                 totalMaybe: 0,
                 totalInProvisioning: 0,
@@ -434,30 +416,10 @@
                                 console.error("Error fetching service count summaries:", error);
                                 toastr.error("Kunne ikke hente tallgrunnlag for tjenester: " + error.message);
                             });
-
-                        this.services.forEach(service => {
-                            this.getServiceOrders(service.id).then(orders => {
-                                this.serviceOrders.push(...orders);
-                            });
-                        });
                     }).catch(error => {
                         console.error("Error fetching services:", error);
                         toastr.error("Kunne ikke hente tjenester: " + error.message);
                     });                
-            },
-            async getServiceOrders(serviceId) {
-                return await fetch("/api/arrangement/service_order/list?service_id=" + serviceId, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}',
-                    }
-                }).then(response => response.json()).then(data => {
-                    return data.data;
-                }).catch(error => {
-                    console.error("Error fetching service orders:", error);
-                    toastr.error("Kunne ikke hente bestillinger for tjeneste: " + error.message);
-                });
             },
             toggleServiceActiveState(service) {
                 Swal.fire({

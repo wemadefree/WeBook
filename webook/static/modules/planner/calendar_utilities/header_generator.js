@@ -46,31 +46,16 @@ export class StandardGenerator {
     }
 
     week(date) {
-        // Refer to: https://stackoverflow.com/questions/9045868/javascript-date-getweek
-        /*getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.meanfreepath.com */
-        let newYear = new Date(date.getFullYear(),0,1);
-        let day = newYear.getDay(); //the day of week the year begins on
-        day = (day >= 0 ? day : day + 7);
-        let daynum = Math.floor((date.getTime() - newYear.getTime() - 
-        (date.getTimezoneOffset()-newYear.getTimezoneOffset())*60000)/86400000) + 1;
-        let weeknum;
-        //if the year starts before the middle of a week
-        if(day < 4) {
-            weeknum = Math.floor((daynum+day-1)/7) + 1;
-            if(weeknum > 52) {
-                let nYear = new Date(date.getFullYear() + 1,0,1);
-                let nday = nYear.getDay();
-                nday = nday >= 0 ? nday : nday + 7;
-                /*if the next year starts before the middle of
-                    the week, it is week #1 of that year*/
-                weeknum = nday < 4 ? 1 : 53;
-            }
+        var target  = date;
+        var dayNr   = (date.getDay() + 6) % 7;
+        target.setDate(target.getDate() - dayNr + 3);
+        var firstThursday = target.valueOf();
+        target.setMonth(0, 1);
+        if (target.getDay() != 4) {
+            target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
         }
-        else {
-            weeknum = Math.floor((daynum+day-1)/7);
-        }
-
-        return `Uke ${weeknum}, ${date.toLocaleString("default", { month: "long"})} ${date.getFullYear()}`;
+        const weekNum = 1 + Math.ceil((firstThursday - target) / 604800000);
+        return `Uke ${weekNum}, ${date.toLocaleString("default", { month: "long"})} ${date.getFullYear()}`;
     }
 
     day(date) {

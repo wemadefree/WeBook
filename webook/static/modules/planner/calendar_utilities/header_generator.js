@@ -46,7 +46,7 @@ export class StandardGenerator {
     }
 
     week(date) {
-        var target  = date;
+        var target  = new Date(date.valueOf());
         var dayNr   = (date.getDay() + 6) % 7;
         target.setDate(target.getDate() - dayNr + 3);
         var firstThursday = target.valueOf();
@@ -54,8 +54,10 @@ export class StandardGenerator {
         if (target.getDay() != 4) {
             target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
         }
+
         const weekNum = 1 + Math.ceil((firstThursday - target) / 604800000);
-        return `Uke ${weekNum}, ${date.toLocaleString("default", { month: "long"})} ${date.getFullYear()}`;
+
+        return `Uke ${weekNum}, ${date.toLocaleString("default", { month: "long" })} ${date.getFullYear()}`;
     }
 
     day(date) {

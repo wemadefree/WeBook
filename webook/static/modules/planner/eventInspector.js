@@ -58,21 +58,33 @@ export class EventInspector {
                             }
 
                             let collisionText = "";
-                            let subtext = "Forandringer på selve aktiviteten har blitt lagret, men aktiviteter for rigging har ikke blitt opprettet."
+                            const subtext = "Ingen endringer ble lagret.";
+                            let collision = null;
                             if (response.main_event_is_in_collision === true) {
                                 collisionText = "aktiviteten"
-                                subtext = "";
+                                collision = response.main_event_collision;
                             }
                             else if (response.post_buffer_event_is_in_collision === true) {
                                 collisionText = "riggetid etter aktiviteten"
+                                collision = response.post_buffer_event_collision;
                             }
                             else if (response.pre_buffer_event_is_in_collision) {
                                 collisionText = "riggetid før aktiviteten"
+                                collision = response.pre_buffer_event_collision;
+                            }
+
+                            let collisionDetails = "";
+                            if (collision !== null) {
+                                const formatDateTime = function (value) {
+                                    return value ? value.replace("T", " ").slice(0, 16) : "";
+                                }
+
+                                collisionDetails = `\nKolliderer med: ${collision.event_b_title} (${formatDateTime(collision.event_b_start)} - ${formatDateTime(collision.event_b_end)}) i ${collision.contested_resource_name}.`;
                             }
 
                             Swal.fire(
                                 'Kollisjon',
-                                `Endringen kunne ikke lagres da ${collisionText} er i en kollisjon med en annen aktivitet på en eksklusiv ressurs.\n${subtext}`,
+                                `Endringen kunne ikke lagres da ${collisionText} er i en kollisjon med en annen aktivitet på en eksklusiv ressurs.\n${subtext}${collisionDetails}`,
                                 'warning'
                             )
 

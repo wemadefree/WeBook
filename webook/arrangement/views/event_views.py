@@ -48,6 +48,23 @@ from webook.utils.serie_calculator import calculate_serie
 from webook.utils.utc_to_current import utc_to_current
 
 
+def _serialize_collision_record(record: Any) -> Any:
+    if record is None:
+        return None
+
+    return {
+        "event_a_title": record.event_a_title,
+        "event_a_start": record.event_a_start.isoformat(),
+        "event_a_end": record.event_a_end.isoformat(),
+        "event_b_title": record.event_b_title,
+        "event_b_start": record.event_b_start.isoformat(),
+        "event_b_end": record.event_b_end.isoformat(),
+        "contested_resource_id": record.contested_resource_id,
+        "contested_resource_name": record.contested_resource_name,
+        "is_rigging": record.is_rigging,
+    }
+
+
 class CreateEventSerieJsonFormView(
     LoginRequiredMixin, PlannerAuthorizationMixin, JsonFormView
 ):
@@ -72,6 +89,46 @@ class CreateEventJsonFormView(
     form_class = CreateEventForm
     model = Event
 
+    def form_valid(self, form: CreateEventForm) -> HttpResponse:
+        with transaction.atomic():
+            form.save()
+
+            main_event_is_in_collision = getattr(form, "main_collision", False)
+            pre_buffer_event_is_in_collision = getattr(
+                form, "pre_buffer_collision", False
+            )
+            post_buffer_event_is_in_collision = getattr(
+                form, "post_buffer_collision", False
+            )
+
+            is_in_collision = (
+                main_event_is_in_collision
+                or pre_buffer_event_is_in_collision
+                or post_buffer_event_is_in_collision
+            )
+
+            if is_in_collision:
+                transaction.set_rollback(True)
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "main_event_is_in_collision": main_event_is_in_collision,
+                        "pre_buffer_event_is_in_collision": pre_buffer_event_is_in_collision,
+                        "post_buffer_event_is_in_collision": post_buffer_event_is_in_collision,
+                        "main_event_collision": _serialize_collision_record(
+                            getattr(form, "main_collision_record", None)
+                        ),
+                        "pre_buffer_event_collision": _serialize_collision_record(
+                            getattr(form, "pre_buffer_collision_record", None)
+                        ),
+                        "post_buffer_event_collision": _serialize_collision_record(
+                            getattr(form, "post_buffer_collision_record", None)
+                        ),
+                    }
+                )
+
+        return JsonResponse({"success": True})
+
 
 create_event_json_view = CreateEventJsonFormView.as_view()
 
@@ -86,31 +143,45 @@ class UpdateEventJsonFormView(
     form_class = UpdateEventForm
 
     def form_valid(self, form: UpdateEventForm) -> HttpResponse:
-        form.save()
+        with transaction.atomic():
+            form.save()
 
-        main_event_is_in_collision = getattr(form, "main_collision", False)
-        pre_buffer_event_is_in_collision = getattr(form, "pre_buffer_collision", False)
-        post_buffer_event_is_in_collision = getattr(
-            form, "post_buffer_collision", False
-        )
+            main_event_is_in_collision = getattr(form, "main_collision", False)
+            pre_buffer_event_is_in_collision = getattr(
+                form, "pre_buffer_collision", False
+            )
+            post_buffer_event_is_in_collision = getattr(
+                form, "post_buffer_collision", False
+            )
 
-        is_in_collision = (
-            main_event_is_in_collision
-            or pre_buffer_event_is_in_collision
-            or post_buffer_event_is_in_collision
-        )
+            is_in_collision = (
+                main_event_is_in_collision
+                or pre_buffer_event_is_in_collision
+                or post_buffer_event_is_in_collision
+            )
 
-        if not is_in_collision:
-            return JsonResponse({"success": True})
+            if is_in_collision:
+                # Undo all writes performed in form.save() when a collision is detected.
+                transaction.set_rollback(True)
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "main_event_is_in_collision": main_event_is_in_collision,
+                        "pre_buffer_event_is_in_collision": pre_buffer_event_is_in_collision,
+                        "post_buffer_event_is_in_collision": post_buffer_event_is_in_collision,
+                        "main_event_collision": _serialize_collision_record(
+                            getattr(form, "main_collision_record", None)
+                        ),
+                        "pre_buffer_event_collision": _serialize_collision_record(
+                            getattr(form, "pre_buffer_collision_record", None)
+                        ),
+                        "post_buffer_event_collision": _serialize_collision_record(
+                            getattr(form, "post_buffer_collision_record", None)
+                        ),
+                    }
+                )
 
-        return JsonResponse(
-            {
-                "success": False,
-                "main_event_is_in_collision": main_event_is_in_collision,
-                "pre_buffer_event_is_in_collision": pre_buffer_event_is_in_collision,
-                "post_buffer_event_is_in_collision": post_buffer_event_is_in_collision,
-            }
-        )
+        return JsonResponse({"success": True})
 
 
 update_event_json_view = UpdateEventJsonFormView.as_view()

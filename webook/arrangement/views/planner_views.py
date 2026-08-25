@@ -8,7 +8,7 @@ from typing import Any, Dict
 from dateutil import parser
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import exceptions, serializers
-from django.db import connection
+from django.db import connection, transaction
 from django.db.models import query
 from django.db.models.query import QuerySet
 from django.forms import BaseModelForm
@@ -165,34 +165,84 @@ class PlanCreateEvent(LoginRequiredMixin, CreateView):
     ]
 
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        super().post(request, *args, **kwargs)
-        return JsonResponse({"id": self.object.id})
+        form = self.get_form()
+        if not form.is_valid():
+            return JsonResponse({"success": False, "errors": form.errors})
 
-    def get_success_url(self) -> str:
-        people = self.request.POST.get("people")
-        rooms = self.request.POST.get("rooms")
-        loose_requisitions = self.request.POST.get("loose_requisitions")
-
-        obj = self.object
-
-        if people is not None and len(people) > 0:
-            people = people.split(",")
-            for personId in people:
-                obj.people.add(Person.objects.get(id=personId))
-
-        if rooms is not None and len(rooms) > 0:
-            rooms = rooms.split(",")
-            for roomId in rooms:
-                obj.rooms.add(Room.objects.get(id=roomId))
-
-        if loose_requisitions is not None and len(loose_requisitions) > 0:
-            loose_requisitions = loose_requisitions.split(",")
-            for lreqId in loose_requisitions:
-                obj.loose_requisitions.add(
-                    LooseServiceRequisition.objects.get(id=lreqId)
+        room_ids = self._parse_pk_list(request.POST.get("rooms"))
+        potential_collision = analyze_collisions(
+            [
+                EventDTO(
+                    id=None,
+                    title=form.cleaned_data["title"],
+                    start=form.cleaned_data["start"],
+                    end=form.cleaned_data["end"],
+                    rooms=room_ids,
+                    before_buffer_title=None,
+                    before_buffer_date_offset=None,
+                    before_buffer_start=None,
+                    before_buffer_end=None,
+                    after_buffer_title=None,
+                    after_buffer_date_offset=None,
+                    after_buffer_start=None,
+                    after_buffer_end=None,
                 )
+            ]
+        )
 
-        obj.save()
+        if len(potential_collision) > 0:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "main_event_is_in_collision": True,
+                    "pre_buffer_event_is_in_collision": False,
+                    "post_buffer_event_is_in_collision": False,
+                }
+            )
+
+        with transaction.atomic():
+            self.object = form.save()
+            self._attach_many_to_many_relations(
+                event=self.object,
+                people_ids=self._parse_pk_list(request.POST.get("people")),
+                room_ids=room_ids,
+                loose_requisition_ids=self._parse_pk_list(
+                    request.POST.get("loose_requisitions")
+                ),
+            )
+
+        return JsonResponse({"success": True, "id": self.object.id})
+
+    @staticmethod
+    def _parse_pk_list(raw_value: Any) -> list[int]:
+        if raw_value is None:
+            return []
+
+        value = str(raw_value).strip()
+        if value == "":
+            return []
+
+        return [int(pk) for pk in value.split(",") if pk]
+
+    @staticmethod
+    def _attach_many_to_many_relations(
+        event: Event,
+        people_ids: list[int],
+        room_ids: list[int],
+        loose_requisition_ids: list[int],
+    ) -> None:
+        if people_ids:
+            event.people.set(Person.objects.filter(id__in=people_ids))
+
+        if room_ids:
+            event.rooms.set(Room.objects.filter(id__in=room_ids))
+
+        if loose_requisition_ids:
+            event.loose_requisitions.set(
+                LooseServiceRequisition.objects.filter(id__in=loose_requisition_ids)
+            )
+
+        event.save()
 
 
 plan_create_event = PlanCreateEvent.as_view()

@@ -430,6 +430,32 @@ class ContextSynchronicityManager {
         this.arrangement_id = arrangement_id;
     }
 
+    _showCollisionWarning(response) {
+        let collisionText = "aktiviteten";
+        const subtext = "Ingen endringer ble lagret.";
+
+        if (response.main_event_is_in_collision === true) {
+            collisionText = "aktiviteten";
+        }
+        else if (response.post_buffer_event_is_in_collision === true) {
+            collisionText = "riggetid etter aktiviteten";
+        }
+        else if (response.pre_buffer_event_is_in_collision === true) {
+            collisionText = "riggetid før aktiviteten";
+        }
+
+        const text = `Endringen kunne ikke lagres da ${collisionText} er i en kollisjon med en annen aktivitet på en eksklusiv ressurs.\n${subtext}`;
+
+        if (typeof Swal !== "undefined" && Swal.fire !== undefined) {
+            Swal.fire("Kollisjon", text, "warning");
+            return;
+        }
+
+        if (typeof toastr !== "undefined" && toastr.warning !== undefined) {
+            toastr.warning(text);
+        }
+    }
+
     /* Retrieve all events from upstream, and push into planner */
     getEventsOnSource () {
         let planner = this.planner;
@@ -527,7 +553,13 @@ class ContextSynchronicityManager {
                     "X-CSRFToken": this.csrf_token
                 },
                 credentials: 'same-origin',
-            });
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success === false) {
+                        this._showCollisionWarning(data);
+                    }
+                });
         }
         else {
             fetch('/arrangement/planner/create_event', {
@@ -539,7 +571,14 @@ class ContextSynchronicityManager {
                 credentials: 'same-origin',
             }).then(response => response.json())
               .then(data => {
-                  this.uuid_to_id_map.set(event.id, data.id);
+                  if (data.success === false) {
+                      this._showCollisionWarning(data);
+                      return;
+                  }
+
+                  if (data.id !== undefined) {
+                      this.uuid_to_id_map.set(event.id, data.id);
+                  }
               });
 
         }

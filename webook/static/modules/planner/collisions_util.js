@@ -152,11 +152,12 @@ export class CollisionsUtil {
             }
 
             const isSameDay = _getComparableDate(date_a) === _getComparableDate(date_b);
+            const locale = document.documentElement.lang || navigator.language || "en";
             if (isSameDay) {
-                dateCompareText = `${date_a.toLocaleDateString("nb-NO", date_options)} ${date_a.toLocaleTimeString("nb-NO", time_options)}-${date_b.toLocaleTimeString("nb-NO", time_options)}`;
+                dateCompareText = `${date_a.toLocaleDateString(locale, date_options)} ${date_a.toLocaleTimeString(locale, time_options)}-${date_b.toLocaleTimeString(locale, time_options)}`;
             }
             else {
-                dateCompareText = `${date_a.toLocaleDateString("nb-NO", date_options)} ${date_a.toLocaleTimeString("nb-NO", time_options)} - ${date_b.toLocaleDateString("nb-NO", date_options)} ${date_b.toLocaleTimeString("nb-NO", time_options)}`;
+                dateCompareText = `${date_a.toLocaleDateString(locale, date_options)} ${date_a.toLocaleTimeString(locale, time_options)} - ${date_b.toLocaleDateString(locale, date_options)} ${date_b.toLocaleTimeString(locale, time_options)}`;
             }
 
             return dateCompareText;

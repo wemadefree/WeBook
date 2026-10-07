@@ -1,12 +1,8 @@
-{% extends "common/meta_base.html" %}
+{% extends "common/form_view.html" %}
 {% load static i18n %}
 {% load crispy_forms_tags %}
 
-
-{% block content %}
-    <form method="post">
-        {% csrf_token %}
-        
+{% block form_fields %}
         <div class="form-group">
             <div>
                 <div class="row">
@@ -70,19 +66,4 @@
                 placeholder="{% trans 'Name of the location' %}..."/>
         </div>
         
-        <div class="mt-3">
-            <a class="btn wb-btn-secondary me-2" onClick="window.history.back(); return false;">
-                <i class="fas fa-times"></i>&nbsp;
-                {% trans "Cancel" %}
-            </a>
-            <div class="float-end">
-                <button type="submit" class="btn btn-lg btn-webook" value="submit" name="submit"
-                    data-mdb-toggle="tooltip" title="{% trans 'Create a new audience based on your input' %}">
-                    <i class="fas fa-check"></i>&nbsp;
-                    {% trans "Save" %}
-                </button>
-            </div>
-
-        </div>
-    </form>
 {% endblock %}

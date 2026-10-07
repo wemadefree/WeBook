@@ -1,3 +1,5 @@
+{% load i18n %}
+
 {% include "arrangement/vue/dialog-component.html" %}
 {% include "arrangement/vue/select_main_planner_base.html" %}
 
@@ -8,11 +10,11 @@
             <div>
                 <label class="d-block form-label">
                     <i class="fas fa-star"></i>
-                    Hovedplanlegger
+                    {% trans "Main planner" %}
                 </label>
         
                 <div>
-                    [[ modelValue?.full_name || 'Ingen valgt' ]]
+                    [[ modelValue?.full_name || '{% trans "None selected" %}' ]]
                 </div>
         
                 <button class="wb-btn-main"
@@ -20,7 +22,7 @@
                     ref="trigger"
                     type="button">
         
-                    Velg hovedplanlegger
+                    {% trans "Select main planner" %}
                 </button>
             </div>
             <div>
@@ -29,7 +31,7 @@
                     <template v-slot:header>
                         <h5>
                             <i class="fas fa-user"></i>&nbsp;
-                            Velg hovedplanlegger
+                            {% trans "Select main planner" %}
                         </h5>
                     </template>
 

@@ -1,35 +1,68 @@
 {% extends "common/meta_base.html" %}
 {% load static i18n %}
 
+{% block section_title_block %}
+    {{ object.name }}
+{% endblock %}
+
+{% block beneath_breadcrumbs_block %}
+    <a class="btn wb-btn-secondary"
+        href="{% url 'arrangement:organizationtype_delete' object.slug %}">
+        <i class="fas fa-archive"></i>&nbsp; {% trans "Archive" %}
+    </a>
+    <a class="btn wb-btn-main"
+        href="{% url 'arrangement:organizationtype_edit' object.slug %}">
+        <i class="fas fa-edit"></i>&nbsp; {% trans "Edit" %}
+    </a>
+{% endblock %}
+
 {% block content %}
-    <table class="table table-sm">
-        <thead>
-            <tr>
-                <th class="h5 ms-0"> <em>{{ object.name }}</em> {% trans "Organizations" %}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if object.organizations.all|length > 0 %}
-                {% for item in object.organizations.all %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'arrangement:organization_detail' item.slug %}">
-                                <i class="fas fa-link"></i>
-                                {{item.name}}
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            
-            {% else %}
-                <tr>
-                    <td>
-                        <div class="alert alert-info mb-0">
-                            <i class="fas fa-question-circle"></i> {% trans "There are no organizations registered of this type. You can select this type when creating a new organization, and it will appear here." %}
-                        </div>
-                    </td>
-                </tr>
-            {% endif %}
-        </tbody>
-    </table>
+    {% with organizations=object.organizations.all %}
+    <div class="row g-4 align-items-start">
+        <div class="col-12 col-lg-4">
+            <section class="border rounded-2 overflow-hidden">
+                <div class="wb-bg-secondary border-bottom px-4 py-3">
+                    <h2 class="h5 mb-0"><i class="fas fa-layer-group me-2"></i>{% trans "Type details" %}</h2>
+                </div>
+                <div class="p-4 bg-white">
+                    <div class="text-muted small mb-1">{% trans "Name" %}</div>
+                    <div class="h6 mb-4">{{ object.name }}</div>
+
+                    <div class="text-muted small mb-1">{% trans "Organizations" %}</div>
+                    <div class="h6 mb-0">{{ organizations|length }}</div>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-12 col-lg-8">
+            <section class="border rounded-2 overflow-hidden">
+                <div class="wb-bg-secondary border-bottom px-4 py-3">
+                    <h2 class="h5 mb-0"><i class="fas fa-building me-2"></i>{% trans "Organizations of this type" %}</h2>
+                </div>
+
+                {% if organizations %}
+                <div class="list-group list-group-light list-group-small rounded-0">
+                    {% for item in organizations %}
+                    <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between px-4 py-3"
+                        href="{% url 'arrangement:organization_detail' item.slug %}">
+                        <span><i class="fas fa-building me-2 text-muted"></i>{{ item.name }}</span>
+                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="table-empty-state m-3" role="status">
+                    <i class="fas fa-building-circle-xmark" aria-hidden="true"></i>
+                    <div>
+                        <h3 class="h6 mb-1">{% trans "No organizations" %}</h3>
+                        <p class="mb-0 text-muted">
+                            {% trans "There are no organizations registered with this type yet." %}
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+            </section>
+        </div>
+    </div>
+    {% endwith %}
 {% endblock %}

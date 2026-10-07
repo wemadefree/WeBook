@@ -36,7 +36,7 @@ def get_section_manifest():
             detail_url="arrangement:location_detail",
             create_url="arrangement:location_create",
             edit_url="arrangement:location_edit",
-            delete_url="arrangement:location_delete",
+            archive_url="arrangement:location_delete",
             list_url="arrangement:location_list",
         ),
     )
@@ -150,8 +150,8 @@ class LocationDeleteView(
     model = Location
     slug_field = "slug"
     slug_url_kwarg = "slug"
-    template_name = "common/delete_view.html"
-    view_meta = ViewMeta.Preset.delete(Location)
+    template_name = "common/archive_view.html"
+    view_meta = ViewMeta.Preset.archive(Location)
 
     def get_success_url(self) -> str:
         return reverse("arrangement:location_list")

@@ -4,15 +4,19 @@
         {% for crumb in tree %}
             {% if not crumb.skip_render %}
                 {% if crumb.siblings|length == 0 %}
-                <li class="breadcrumb-item">
-                    {{ crumb.as_html | safe }}
+                <li class="breadcrumb-item{% if crumb.is_active %} active{% endif %}"{% if crumb.is_active %} aria-current="page"{% endif %}>
+                    {% if crumb.is_active %}
+                        <span>{{ crumb.icon_html | safe }}{{ crumb.title }}</span>
+                    {% else %}
+                        {{ crumb.as_html | safe }}
+                    {% endif %}
                 </li>
                 {% else %}
 
-                <li class="breadcrumb-item">
+                <li class="breadcrumb-item{% if crumb.is_active %} active{% endif %}"{% if crumb.is_active %} aria-current="page"{% endif %}>
                     <a
-                        href="{{crumb.url}} {{crumb.joined_html_class}}"
-                        class="dropdown-toggle"
+                        href="{{ crumb.url }}"
+                        class="dropdown-toggle {{ crumb.joined_html_classes }}"
                         data-mdb-toggle="dropdown"
                         aria-expanded="false">
                         {{ crumb.icon_html | safe }}
@@ -21,7 +25,7 @@
                     <ul class="dropdown-menu">
                         {% for sibling in crumb.siblings %}
                             <li>
-                                <a class="dropdown-item {{crumb.joined_html_class}}" href="{{sibling.url}}">
+                                <a class="dropdown-item {{ crumb.joined_html_classes }}" href="{{ sibling.url }}">
                                     {{ sibling.icon_html | safe }}
                                     {{sibling.title}}
                                 </a>

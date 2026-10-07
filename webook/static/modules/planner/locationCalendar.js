@@ -269,7 +269,7 @@ export class LocationCalendar extends FullCalendarBased {
                         this._bindInspectorTrigger(arg.el);
                 },
                 navLinks: false,
-                locale: 'nb',
+                locale: document.documentElement.lang || navigator.language || 'en',
                 eventSources: [
                     {
                         events: async (start, end, startStr, endStr, timezone) => {

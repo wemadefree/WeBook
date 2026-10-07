@@ -56,29 +56,29 @@
         <li class="nav-item" role="presentation">
           <button class="nav-link text-center" id="overview-tab" data-mdb-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">
             <span class="h6 mb-0"><i class="fas fa-eye"></i></span>
-            &nbsp; <span class="h6">Oversikt</span></button>
+            &nbsp; <span class="h6">{% trans "Overview" %}</span></button>
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link active text-center" id="planner-tab" data-mdb-toggle="tab" href="#planner" role="tab" aria-controls="planner" aria-selected="true"
               onclick="calendarManager.redraw();">
             <span class="h6 mb-0"><i class="fas fa-calendar"></i></span>
-            &nbsp; <span class="h6">Planlegging</span></button>
+            &nbsp; <span class="h6">{% trans "Planning" %}</span></button>
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="planners-tab" data-mdb-toggle="tab" href="#planners" role="tab" aria-controls="planners" aria-selected="false">
             <span class="h6 mb-0"><i class="fas fa-users"></i></span>
-            &nbsp; <span class="h6">Planleggere</span>
+            &nbsp; <span class="h6">{% trans "Planners" %}</span>
           </button>
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="notes-tab" data-mdb-toggle="tab" href="#notes" role="tab" aria-controls="notes" aria-selected="false">
             <span class="h6 mb-0"><i class="fas fa-comments"></i></span>
-            &nbsp; <span class="h6">Notater</span></button>
+            &nbsp; <span class="h6">{% trans "Notes" %}</span></button>
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="receipts-tab" data-mdb-toggle="tab" href="#receipts" role="tab" aria-controls="receipts" aria-selected="false">
             <span class="h6 mb-0"><i class="fas fa-receipt"></i></span>
-            &nbsp; <span class="h6">Kvitteringer & Bestillinger</span>
+            &nbsp; <span class="h6">{% trans "Receipts & Orders" %}</span>
           </button>
         </li>
       </ul>
@@ -114,7 +114,7 @@
         <div class="col-lg-6 col-md-12 mb-4">
           <div class="text-center card border"  style="box-shadow: none;">
             <div class="p-2 text-center">
-              <h2 class="h3 mb-0 text-muted fw-bolder">Bestillinger</h2>
+              <h2 class="h3 mb-0 text-muted fw-bolder">{% trans "Orders" %}</h2>
             </div>
             
             <div class="progress mb-3">
@@ -128,7 +128,7 @@
               <a class="btn btn-lg btn-white rounded-0" style="box-shadow: none;"
                 onclick="triggerTabClick('receipts-tab')">
                 <i class="fas fa-list"></i>
-                Vis bestillinger
+                {% trans "View orders" %}
               </a>
               <!-- <button class="btn btn-lg btn-white rounded-0 rounded-bottom" style="box-shadow: none;">
                 <i class="fas fa-cogs"></i>

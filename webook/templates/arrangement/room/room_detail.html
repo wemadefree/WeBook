@@ -6,53 +6,73 @@
 {% endblock %}
 
 {% block beneath_breadcrumbs_block %}
-    <a class="btn btn-webook">
-        <i class="fa fa-trash"></i>&nbsp; {% trans "Delete" %}
+    <a class="btn wb-btn-secondary"
+        href="{% url 'arrangement:room_delete' object.slug %}">
+        <i class="fa fa-archive"></i>&nbsp; {% trans "Archive" %}
     </a>
-    <a class="btn btn-webook"
-    href="{% url 'arrangement:room_edit' object.slug %}">
+    <a class="btn wb-btn-main"
+        href="{% url 'arrangement:room_edit' object.slug %}">
         <i class="fa fa-edit"></i>&nbsp; {% trans "Edit" %}
     </a>
 {% endblock %}
 {% block content %}
 
-    <section>
-
-        <div class="alert alert-warning">
+    {% if object.is_disabled %}
+        <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
             <strong>
-                <i class="fas fa-exclamation-triangle"></i>&nbsp;
+                <i class="fas fa-exclamation-triangle"></i>
                 Rommet er deaktivert og ikke tilgjengelig for booking.
             </strong>
         </div>
+    {% endif %}
 
-    </section>
-
-    <section>
-        <div class="row">
-            <div class="col-6">
-                <div class="text-center">
-                    <h4><i class="fas fa-building h3"></i> <strong>{% trans "Location" %}</strong></h4>
-                    <h4 class="mb-2">{{object.location.name}}</h4>
-                    <a class="mt-3 btn btn-info"
+    <section class="room-detail-summary border rounded-2 overflow-hidden mb-4">
+        <div class="wb-bg-secondary border-bottom px-4 py-3">
+            <h2 class="h5 mb-0"><i class="fas fa-door-open me-2"></i>{% trans "Room details" %}</h2>
+        </div>
+        <div class="row g-0 bg-white">
+            <div class="col-12 col-md-6 p-4 border-end-md">
+                <div class="d-flex align-items-start gap-3">
+                    <i class="fas fa-building fs-4 mt-1" aria-hidden="true"></i>
+                    <div>
+                        <div class="text-muted small mb-1">{% trans "Location" %}</div>
+                        <div class="h5 mb-3">{{ object.location.name }}</div>
+                        <a class="btn btn-sm wb-btn-secondary"
                     href="{% url 'arrangement:location_detail' object.location.slug %}">
-                        {% trans "Go To" %}
-                    </a>
+                            <i class="fas fa-arrow-right"></i>&nbsp; {% trans "View location" %}
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="col-6">
-                <div class="text-center">
-                    <h4><i class="fas fa-users h3"></i> <strong>{% trans "Max Occupants" %}</strong></h4>
-                    <h4 class="mb-2">{{object.max_capacity}}</h4>
+            <div class="col-12 col-md-6 p-4">
+                <div class="d-flex align-items-start gap-3">
+                    <i class="fas fa-users fs-4 mt-1" aria-hidden="true"></i>
+                    <div>
+                        <div class="text-muted small mb-1">{% trans "Maximum occupants" %}</div>
+                        <div class="h5 mb-3">{{ object.max_capacity }}</div>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% if object.is_exclusive %}
+                                <span class="badge wb-bg-secondary text-dark">{% trans "Exclusive" %}</span>
+                            {% endif %}
+                            {% if object.has_screen %}
+                                <span class="badge wb-bg-secondary text-dark"><i class="fas fa-display"></i>&nbsp; {% trans "Screen" %}</span>
+                            {% endif %}
+                            {% if object.is_disabled %}
+                                <span class="badge bg-warning text-dark">{% trans "Disabled" %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="mt-5 mb-5">
-        <div class="row">
-            <div class="col-12">
+    <section class="border rounded-2 overflow-hidden mb-5">
+        <div class="wb-bg-secondary border-bottom px-4 py-3">
+            <h2 class="h5 mb-0"><i class="fas fa-calendar-alt me-2"></i>{% trans "Room calendar" %}</h2>
+        </div>
+        <div class="bg-white p-3">
                 <div id="room_calendar"></div>
-            </div>
         </div>
     </section>
 

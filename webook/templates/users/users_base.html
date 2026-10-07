@@ -19,7 +19,7 @@ container-fluid
 {% url "account_reset_password" as account_reset_password_url %}
 
 <div>
-  <div class="mt-5 pb-0 mb-0">
+  <div class="user-dashboard-header pt-4 pb-0 mb-0">
     {% if request.user.profile_picture %}
     <div class=" d-inline">
       <img src="{{ request.user.profile_picture.url }}" class="border border-4 border-light mb-4" style="width:400px">
@@ -27,13 +27,12 @@ container-fluid
     {% endif %}
   
 
-    <h1 class="fw-bold ps-0 pb-1 pt-1 mb-0 header-fonted">
-      Velkommen tilbake, {{ request.user.person.full_name }}
+    <p class="user-welcome-label mb-1">Velkommen tilbake</p>
+    <h1 class="user-welcome-title mb-0 header-fonted">
+      {{ request.user.person.full_name }}
     </h1>
-    <div class="d-inline-block h5 mb-0">
-    </div>
 
-    <ul class="nav webook-tabs nav-tabs mb-3 mt-0" id="myTab0" role="tablist">
+    <ul class="nav webook-tabs nav-tabs mb-3 mt-3" id="myTab0" role="tablist">
       <a class="nav-link {% if request.get_full_path == overview_url %}active{% endif %}"
           id="v-tabs-overview-tab"
           href="{% url 'users:detail' request.user.slug  %}"

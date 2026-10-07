@@ -1,20 +1,17 @@
-{% extends "common/meta_base.html" %}
+{% extends "common/form_view.html" %}
 {% load static i18n %}
 {% load crispy_forms_tags %}
 
 {% block section_title_block %}
-{% if object.pk != 0 %}
-{{ object.location.name }} / {{ object.name }}
+{% if form.instance.pk %}
+{{ form.instance.location.name }} / {{ form.instance.name }}
 {% else %}
 Nytt rom
 {% endif %}
 {% endblock %}
 
 
-{% block content %}
-<form method="post">
-    {% csrf_token %}
-
+{% block form_fields %}
     {{ form.location }}
 
     <div class="form-group mt-2 pt-3 pb-2">
@@ -49,7 +46,7 @@ Nytt rom
 
     <div class="form-group mt-2 pt-3 pb-2">
         <div class="form-check form-switch">
-            {% if object.is_exclusive %}
+            {% if form.is_exclusive.value %}
             <input class="form-check-input" name="{{form.is_exclusive.name}}" type="checkbox" role="switch" id="{{form.is_exclusive.id_for_label}}" checked />
             {% else %}
             <input class="form-check-input" name="{{form.is_exclusive.name}}" type="checkbox" role="switch" id="{{form.is_exclusive.id_for_label}}" />
@@ -58,7 +55,7 @@ Nytt rom
         </div>
 
         <div class="form-check form-switch">
-            {% if object.has_screen %}
+            {% if form.has_screen.value %}
             <input class="form-check-input" name="{{form.has_screen.name}}" type="checkbox" role="switch"
                 id="{{form.has_screen.id_for_label}}" checked />
             {% else %}
@@ -68,8 +65,9 @@ Nytt rom
             <label class="form-check-label" for="{{form.has_screen.id_for_label}}">Har Skjerm?</label>
         </div>
 
+        {% if form.is_disabled %}
         <div class="form-check form-switch">
-            {% if object.is_disabled %}
+            {% if form.is_disabled.value %}
             <input class="form-check-input" name="{{form.is_disabled.name}}" type="checkbox" role="switch"
                 id="{{form.is_disabled.id_for_label}}" checked />
             {% else %}
@@ -78,24 +76,18 @@ Nytt rom
             {% endif %}
             <label class="form-check label" for="{{form.is_disabled.id_for_label}}">Er deaktivert?</label>
         </div>
+        {% endif %}
     </div>
+{% endblock %}
 
-    <div class="mt-3">
-        <button type="reset" class="btn wb-bg-secondary shadow-0">
-            <i class="fas fa-redo"></i>&nbsp;
-            {% trans "Reset Form" %}
-        </button>
-
-        <div class="float-end">
-            <button class="btn wb-btn-secondary" onClick="window.history.back();return false;">
-                <i class="fas fa-times"></i>&nbsp;
-                {% trans "Cancel" %}
-            </button>
-            <button type="submit" class="btn wb-btn-main">
-                <i class="fas fa-check"></i>&nbsp;
-                {% trans "Save" %}
-            </button>
-        </div>
-    </div>
-</form>
+{% block form_actions %}
+    <button type="reset" class="btn wb-btn-secondary me-auto">
+        <i class="fas fa-redo"></i>&nbsp; {% trans "Reset Form" %}
+    </button>
+    <a class="btn wb-btn-secondary" href="{{ RETURN_URL }}">
+        <i class="fas fa-times"></i>&nbsp; {% trans "Cancel" %}
+    </a>
+    <button type="submit" class="btn wb-btn-main">
+        <i class="fas fa-check"></i>&nbsp; {% trans "Save" %}
+    </button>
 {% endblock %}

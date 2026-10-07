@@ -1,3 +1,4 @@
+{% load i18n %}
 {% include "arrangement/vue/room_presets_component.html" %}
 {% include "arrangement/vue/dialog-component.html" %}
 {% include "arrangement/vue/dialogs/order_room_dialog.html" %}
@@ -6,13 +7,13 @@
     <div class="border rounded box-shadow-2 wb-bg-secondary p-4 mt-4">
         <label for="" class="form-label">
             <i class="fas fa-building"></i>&nbsp;
-            Rom
+            {% trans "Rooms" %}
         </label>
         <div class="d-flex align-items-center">
             <button type="button" 
                 class="wb-btn-main"
                 @click="dialogIsVisible = !dialogIsVisible">
-                Velg rom
+                {% trans "Select rooms" %}
             </button>
             <order-room-dialog-component
                 @update:is-visible="(value) => dialogIsVisible = value"
@@ -21,7 +22,7 @@
                 :chain-to="'#' + dialogId">
             </order-room-dialog-component>
 
-            <h5 class="ms-1 me-1 mb-0">eller</h5>
+            <h5 class="ms-1 me-1 mb-0">{% trans "or" %}</h5>
 
             <room-preset-select-component
                 v-model="allSelectedPresets">
@@ -29,7 +30,7 @@
         </div>
         
         <div v-show="allSelectedRooms.filter(x => !x.is_part_of_preset).length">
-            <h5 class="mt-3">Valgte Rom</h5>
+            <h5 class="mt-3">{% trans "Selected rooms" %}</h5>
             <div id="roomChips" class="chipsList" >
                 
                 <span v-for="room in allSelectedRooms.filter(x => !x.is_part_of_preset)">
@@ -51,14 +52,14 @@
 
 
         <div v-if="allSelectedPresets.length">
-            <h5 class="mt-3">Valgte Presets</h5>
+            <h5 class="mt-3">{% trans "Selected presets" %}</h5>
             <span v-for="preset in allSelectedPresets">
                 <div class="bg-white p-2 rounded-3 me-2 mt-1 border border-dark">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <button class="btn btn-white border border-dark wb-bg-secondary shadow-0" @click="preset.isExpanded = !preset.isExpanded"
                                 data-toggle="tooltip" type="button"
-                                :title="preset.isExpanded ? 'Skjul rom' : 'Vis rom'">
+                                :title="preset.isExpanded ? '{% trans 'Hide rooms' %}' : '{% trans 'Show rooms' %}'">
                                 <i :class="['fas', preset.isExpanded ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
                             </button>
 
@@ -67,10 +68,10 @@
 
                         <div class="border border-dark rounded-3 secondary-dotted-bg-pattern ps-2 pe-2 fw-bolder text-dark" v-if="preset.rooms.filter(x => x.is_removed).length">
                             <i class="fas fa-exclamation-triangle"></i>
-                            [[preset.rooms.filter(x => x.is_removed).length]] rom ekskludert
+                            [[preset.rooms.filter(x => x.is_removed).length]] {% trans "rooms excluded" %}
                         </div>
 
-                        <button class="btn btn-white shadow-0" type="button" data-toggle="tooltip" title="Fjern preset fra arrangement"
+                        <button class="btn btn-white shadow-0" type="button" data-toggle="tooltip" title="{% trans 'Remove preset from arrangement' %}"
                             @click="allSelectedPresets = allSelectedPresets.filter(x => x.id != preset.id); updateRoomsDialogState();">
                             <i class="fas fa-times text-danger"></i>
                         </button>

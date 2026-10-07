@@ -1,5 +1,6 @@
 {% load static i18n %}
 
+{% if object_list %}
 <table class="table table-sm table-striped text-center mt-2">
     <thead>
         <tr>
@@ -42,3 +43,12 @@
         {% endfor %}
     </tbody>
 </table>
+{% else %}
+<div class="table-empty-state" role="status">
+    <i class="fas fa-user-group" aria-hidden="true"></i>
+    <div>
+        <h3 class="h6 mb-1">{% trans "No members" %}</h3>
+        <p class="mb-0 text-muted">{% trans "No people are registered as members of this organization yet." %}</p>
+    </div>
+</div>
+{% endif %}

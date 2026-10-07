@@ -26,7 +26,7 @@
             role="tab"
             data-mdb-toggle="tab">
             <i class="fas fa-calendar"></i>
-            Kalender
+            {% trans "Calendar" %}
         </a>
     </li>
     <!-- Rooms -->
@@ -36,7 +36,7 @@
             role="tab"
             data-mdb-toggle="tab">
             <i class="fas fa-table"></i>
-            Rom
+            {% trans "Rooms" %}
         </a>
     </li>
 </ul>
@@ -50,7 +50,7 @@
             <button class="btn btn-lg btn-webook mb-2"
             data-mdb-toggle="modal"
             data-mdb-target="#createRoomModal">
-                <i class="fa fa-plus"></i>&nbsp; Nytt Rom
+                <i class="fa fa-plus"></i>&nbsp; {% trans "New room" %}
             </button>
         </div>
         
@@ -74,7 +74,7 @@
             <span class="badge badge-success">
                 <i class="fas fa-plus"></i>
             </span>
-            Nytt rom
+            {% trans "New room" %}
         </h5>
         <button
           type="button"
@@ -87,28 +87,28 @@
         <form id="createNewRoomDialogForm">
             <input type="hidden" name="location" value="{{ object.id }}" />
             <div class="form-group">
-                <label>Lokasjon</label>
+                <label>{% trans "Location" %}</label>
                 <input type="text" class="form-control" value="{{ object.name }}" disabled/>
             </div>
 
             <div class="form-group mt-3">
-                <label>Maks Antall Personer</label>
+                <label>{% trans "Maximum occupants" %}</label>
                 <input type="number" name="max_capacity" class="form-control" value="0" />
             </div>
 
             <div class="form-group mt-3">
-                <label>Navn</label>
+                <label>{% trans "Name" %}</label>
                 <input type="text" class="form-control" name="name" id="roomNameInput"/>
             </div>
 
             <div class="form-group mt-3">
-                <label>Navn (Engelsk)</label>
+                <label>{% trans "Name (English)" %}</label>
                 <input type="text" class="form-control" name="name_en" id="roomNameEnInput">
             </div>
 
             <div class="form-group mt-3">
                 <div class="form-check form-switch">
-                    <label>Er Eksklusiv?</label>
+                    <label>{% trans "Is exclusive?" %}</label>
                     <input class="form-check-input" name="is_exclusive" type="checkbox" role="switch" id="roomIsExclusive" />
                 </div>
             </div>
@@ -126,7 +126,7 @@
             {% trans "Cancel" %}
         </button>
         <button type="button" class="btn wb-btn-main" onclick="createNewRoom()"><i class="fas fa-check"></i>&nbsp; Opprett Rom</button>
-        <button type="button" class="btn wb-btn-main" onclick="createNewRoom(false /* dont close after save*/)">Opprett, og ny</button>
+        <button type="button" class="btn wb-btn-main" onclick="createNewRoom(false /* dont close after save*/)">{% trans "Create and add another" %}</button>
       </div>
     </div>
   </div>
@@ -162,7 +162,7 @@
             },
             // height: 600,
             navLinks:true,
-            locale: 'nb',
+            locale: document.documentElement.lang || navigator.language || 'en',
 
             events: async function (info) {
                 return await fetch('{% url "arrangement:events_on_location_source" %}?location={{ object.slug }}&start=' + info.start.toISOString() + '&end=' + info.end.toISOString())

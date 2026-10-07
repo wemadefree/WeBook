@@ -1,3 +1,4 @@
+{% load i18n %}
 {% include "arrangement/vue/stepper.html" %}
 {% include "arrangement/vue/display-layout-select-component.html" %}
 {% include "arrangement/vue/rooms-select.html" %}
@@ -64,7 +65,7 @@
 
         <template v-slot:header>
             <h3 class="mb-0 fw-bold">
-                <i class="fas fa-calendar-plus"></i> Nytt Arrangement
+                <i class="fas fa-calendar-plus"></i> {% trans "New arrangement" %}
             </h3>
         </template>
 
@@ -74,25 +75,25 @@
                     <div class="col-lg-8 col-md-6 col-sm-12">
                         <div class="row">
                             <div class="col-6">
-                                <label>Tittel *</label>
+                                <label>{% trans "Title" %} *</label>
                                 <input type="text" class="form-control" v-model="arrangement.title">
                                 <div class="text-danger" v-if="validationRules.stepOne.showFormErrors && !validationRules.stepOne.title.condition()">
-                                    * Tittel er påkrevd
+                                    * {% trans "Title is required" %}
                                 </div>
                             </div>
                             <div class="col-6">
-                                <label>Tittel (Engelsk)</label>
+                                <label>{% trans "Title" %} ({% trans "English" %})</label>
                                 <input type="text" class="form-control" v-model="arrangement.title_en">
                             </div>
                         </div>
 
                         <div class="row mt-2">
                             <div class="col-6">
-                                <label>Forventet Besøkende</label>
+                                <label>{% trans "Expected visitors" %}</label>
                                 <input type="number" v-model="arrangement.expected_visitors" class="form-control">
                             </div>
                             <div class="col-6">
-                                <label>Billettinfo</label>
+                                <label>{% trans "Ticket information" %}</label>
                                 <input type="text" v-model="arrangement.ticket_code" class="form-control">
                             </div>
                         </div>
@@ -101,11 +102,11 @@
                             <div class="col-6">
                                 <div class="row">
                                     <div class="col-4">
-                                        <label class="d-block">Hovedplanlegger</label>
+                                        <label class="d-block">{% trans "Main planner" %}</label>
                                         <select-main-planner-s2 v-model:selected="arrangement.mainPlanner" />
                                     </div>
                                     <div class="col-8">
-                                        <label class="d-block">Medplanleggere</label>
+                                        <label class="d-block">{% trans "Co-planners" %}</label>
                                         <select-main-planner-s2 v-model:selected="arrangement.planners" :multiple="true" />
                                     </div>
                                 </div>
@@ -113,16 +114,16 @@
                             <div class="col-6">
                                 <div class="row mt-2">
                                     <div class="col-4">
-                                        <label>Lokasjon *</label>
+                                        <label>{% trans "Location" %} *</label>
                                         <location-select v-model:selected="arrangement.location" V-IsRequired="true"></location-select>
 
                                         <div class="text-danger" v-if="validationRules.stepOne.showFormErrors && !validationRules.stepOne.location.condition()">
-                                            * Lokasjon er påkrevd
+                                            * {% trans "Location is required" %}
                                         </div>
 
                                     </div>
                                     <div class="col-8">
-                                        <label>Rom</label>
+                                        <label>{% trans "Rooms" %}</label>
                                         <rooms-select v-model:selected="arrangement.rooms"></rooms-select>
                                     </div>
                                 </div>
@@ -139,9 +140,9 @@
                         <div>
                             <tree-select-component
                                 :is-open="false"
-                                label="Målgruppe *"
+                                label="{% trans 'Audience' %} *"
                                 json-url="{% url 'arrangement:audience_tree' %}"
-                                button-label="Velg målgruppe"
+                                button-label="{% trans 'Select audience' %}"
                                 icon="fas fa-users"
                                 v-model="arrangement.audience">
 
@@ -155,9 +156,9 @@
                         <div>
                             <tree-select-component
                                 :is-open="false"
-                                label="Arrangementstype *"
+                                label="{% trans 'Arrangement type' %} *"
                                 json-url="{% url 'arrangement:arrangement_type_tree_list' %}"
-                                button-label="Velg arrangementstype"
+                                button-label="{% trans 'Select arrangement type' %}"
                                 icon="fas fa-cog"
                                 v-model="arrangement.arrangement_type">
 
@@ -171,9 +172,9 @@
                         <div>
                             <tree-select-component
                                 :is-open="false"
-                                label="Status"
+                                label="{% trans 'Status' %}"
                                 json-url="{% url 'arrangement:statustype_tree' %}"
-                                button-label="Velg status"
+                                button-label="{% trans 'Select status' %}"
                                 icon="fas fa-cog"
                                 v-model="arrangement.status_type">
 
@@ -181,12 +182,12 @@
                         </div>
 
                         <div class="mt-2">
-                            <label for="meeting_place">Møtested (Norsk)</label>
+                            <label for="meeting_place">{% trans "Meeting place" %} ({% trans "Norwegian" %})</label>
                             <input type="text" id="meeting_place" v-model="arrangement.meeting_place" class="form-control">
                         </div>
 
                         <div class="mt-1">
-                            <label for="meeting_place_en">Møtested (Engelsk)</label>
+                            <label for="meeting_place_en">{% trans "Meeting place" %} ({% trans "English" %})</label>
                             <input type="text" id="meeting_place_en" v-model="arrangement.meeting_place_en" class="form-control">
                         </div>
                     </div>
@@ -514,7 +515,7 @@
 
 <script>
     function toDisplayString(date) {
-        return date.toLocaleDateString('nb-NO', {
+        return date.toLocaleDateString(document.documentElement.lang || navigator.language || 'en', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',

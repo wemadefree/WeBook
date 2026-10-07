@@ -1,6 +1,7 @@
 :root {
     --MAIN-COLOR: #231f20;
     --SECONDARY-COLOR: #f6f6f0 ;
+    --ACCENT-COLOR: #c64b55;
     --MAIN-HOVER: white;
     --SECONDARY-HOVER: var(--MAIN-COLOR);
     
@@ -21,6 +22,30 @@ html, body {
     height: 100%!important;
 }
 
+#top-navbar {
+    min-height: 3.75rem;
+    border-top: 0.25rem solid var(--MAIN-COLOR);
+}
+
+.top-navbar-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.top-navbar-menu-button {
+    display: inline-grid;
+    width: 2.5rem;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    place-items: center;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+}
+
 .select2-dropdown--below {
     z-index: 5000000000000 !important;
 }
@@ -38,8 +63,65 @@ html, body {
     font-weight: bolder;
 }
 
+.wb-form-dialog {
+    max-width: calc(100vw - 2rem) !important;
+    border: 1px solid var(--BORDER-STANDARD-COLOR) !important;
+    border-radius: 0.5rem !important;
+    box-shadow: rgba(60, 64, 67, 0.2) 0 2px 6px !important;
+    overflow: hidden;
+    padding: 0 !important;
+}
+
+.wb-form-dialog .ui-dialog-titlebar {
+    display: flex;
+    align-items: center;
+    min-height: 4rem;
+    margin: 0;
+    padding: 1rem 1.25rem;
+    border: 0;
+    border-bottom: 1px solid var(--BORDER-STANDARD-COLOR);
+    border-radius: 0;
+    background-color: var(--SECONDARY-COLOR);
+}
+
+.wb-form-dialog .ui-dialog-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.wb-form-dialog .ui-dialog-titlebar-close {
+    position: static;
+    width: 2rem;
+    height: 2rem;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border-radius: 0.25rem;
+    background-color: transparent;
+}
+
+.wb-form-dialog .ui-dialog-content {
+    padding: 1.25rem !important;
+    background-color: white;
+}
+
+.wb-form-dialog label.h5 {
+    font-size: 1rem;
+    font-weight: 500 !important;
+}
+
+.wb-form-dialog .form-control-lg {
+    min-height: 2.75rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 1rem;
+}
+
 .icons-selector .selector-popup {
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+
+body > .icons-selector.selector-popup-wrap {
+    z-index: 100000000003 !important;
 }
 
 .card {
@@ -50,12 +132,74 @@ html, body {
     background-color: var(--SECONDARY-COLOR);
 }
 
+.section-header-band {
+    margin-inline: -0.75rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--BORDER-STANDARD-COLOR);
+    background-color: var(--SECONDARY-COLOR);
+}
+
+.section-header-title {
+    margin: 0 0 0.375rem;
+    color: var(--ACTIVE-TEXT-COLOR);
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
 .crumbs-without-margin-bottom ol.breadcrumb {
-    margin-bottom: 0rem!important;
+    margin-bottom: 0 !important;
+    color: #666;
+    font-size: 1rem;
+}
+
+.crumbs-without-margin-bottom .breadcrumb-item a {
+    color: var(--MAIN-COLOR);
+    text-decoration: none;
+}
+
+.crumbs-without-margin-bottom .breadcrumb-item a:hover,
+.crumbs-without-margin-bottom .breadcrumb-item a:focus-visible {
+    color: var(--MAIN-COLOR);
+    text-decoration: underline;
+}
+
+.crumbs-without-margin-bottom .breadcrumb-item.active {
+    color: #666;
+    font-weight: 500;
+}
+
+.crumbs-without-margin-bottom .breadcrumb-item + .breadcrumb-item::before {
+    color: var(--WEAK-TEXT-COLOR);
+}
+
+.section-header-actions:not(:empty) {
+    margin-top: 1rem;
+}
+
+.section-content-spacer {
+    height: 1.5rem;
+}
+
+.user-dashboard-header {
+    border-bottom: 1px solid var(--BORDER-STANDARD-COLOR);
+}
+
+.user-welcome-label {
+    color: #666;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.user-welcome-title {
+    color: var(--ACTIVE-TEXT-COLOR);
+    font-size: 1.75rem;
+    font-weight: 500;
+    line-height: 1.2;
 }
 
 li.jstree-node:not(.jstree-leaf) > .jstree-icon.jstree-ocl {
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Angle_right_font_awesome.svg/512px-Angle_right_font_awesome.svg.png');
+    background-image: url('https://storage.googleapis.com/assets.nasjonalmuseet.webook.no/icons/angle-right.svg');
     background-size: 22px 22px;
     background-position: center !important;
     background-repeat: no-repeat;
@@ -63,6 +207,70 @@ li.jstree-node:not(.jstree-leaf) > .jstree-icon.jstree-ocl {
 }
 li.jstree-node.jstree-open:not(.jstree-leaf) > .jstree-icon.jstree-ocl {
     transform: rotate(90deg);
+}
+
+.entity-tree-panel {
+    width: min(100%, 60rem);
+}
+
+.entity-tree-toolbar .input-group {
+    max-width: 32rem;
+}
+
+.entity-tree-body {
+    max-height: clamp(24rem, 58vh, 42rem);
+    overflow: auto;
+    scrollbar-gutter: stable;
+}
+
+.entity-tree-body .jstree-default .jstree-anchor {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    border-radius: 0.25rem;
+}
+
+.entity-tree-body .jstree-default .jstree-anchor:hover,
+.entity-tree-body .jstree-default .jstree-hovered {
+    background: var(--SECONDARY-COLOR);
+    box-shadow: none;
+}
+
+.entity-tree-body .jstree-default .jstree-clicked {
+    background: #e4e4df;
+    box-shadow: none;
+}
+
+.entity-tree-actions {
+    display: inline-flex;
+    gap: 0.125rem;
+    margin-left: 0.5rem;
+    opacity: 0;
+    transition: opacity 120ms ease;
+}
+
+.jstree-node:hover > .entity-tree-actions,
+.jstree-anchor:focus + .entity-tree-actions,
+.entity-tree-actions:focus-within {
+    opacity: 1;
+}
+
+.entity-tree-action {
+    display: inline-grid;
+    width: 1.75rem;
+    height: 1.75rem;
+    place-items: center;
+    border: 0;
+    border-radius: 0.25rem;
+    background: transparent;
+    color: var(--MAIN-COLOR);
+}
+
+.entity-tree-action:hover,
+.entity-tree-action:focus-visible {
+    background: white;
+    outline: 1px solid var(--BORDER-STANDARD-COLOR);
 }
 
 .dropdown-menu.show {
@@ -313,8 +521,49 @@ html, body {
     color: var(--SECONDARY-HOVER);
 }
 
+.pagination .page-item.active .page-link {
+    background-color: var(--MAIN-COLOR) !important;
+    border-color: var(--MAIN-COLOR) !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: var(--MAIN-COLOR) !important;
+    border-color: var(--MAIN-COLOR) !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
 .wb-std-tabs {
     border-bottom: solid 1px grey;
+}
+
+.room-preset-room-picker {
+    max-height: clamp(16rem, 45vh, 30rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    padding: 1rem;
+    border: 1px solid var(--BORDER-STANDARD-COLOR);
+    border-radius: 0.25rem;
+    background-color: var(--SECONDARY-COLOR);
+}
+
+.room-preset-room-picker:focus {
+    outline: 2px solid var(--MAIN-COLOR);
+    outline-offset: 2px;
+}
+
+.room-preset-room-picker .form-check:last-child {
+    margin-bottom: 0;
+}
+
+@media (min-width: 768px) {
+    .room-detail-summary .border-end-md {
+        border-right: 1px solid var(--BORDER-STANDARD-COLOR);
+    }
 }
 
 .wb-std-tabs > .nav-link {
@@ -386,6 +635,25 @@ html, body {
 
 .interactiveTable tr:hover {
     background-color: var(--SECONDARY-COLOR);
+}
+
+.table-empty-state {
+    display: flex;
+    min-height: 9rem;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    border: 1px solid var(--BORDER-STANDARD-COLOR);
+    border-radius: 0.25rem;
+    background-color: var(--SECONDARY-COLOR);
+    color: var(--ACTIVE-TEXT-COLOR);
+    text-align: left;
+}
+
+.table-empty-state > i {
+    color: #777;
+    font-size: 1.5rem;
 }
 
 

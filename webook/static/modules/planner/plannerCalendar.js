@@ -43,19 +43,19 @@ export class PlannerCalendar extends FullCalendarBased {
             this.viewButtons = new Map([
                 [1, {
                     "key": 1, 
-                    "title": "Dag", 
+                    "title": window.WEBOOK_I18N?.day || "Day",
                     "isParent": false,
                     "view": "listDay",
                 }],
                 [2, {
                     "key": 2,
-                    "title": "Uke",
+                    "title": window.WEBOOK_I18N?.week || "Week",
                     "isParent": false,
                     "view": "listWeek",
                 }],
                 [3, {
                     "key": 3,
-                    "title": "Måned",
+                    "title": window.WEBOOK_I18N?.month || "Month",
                     "isParent": false,
                     "view": "listMonth"
                 }]
@@ -65,7 +65,7 @@ export class PlannerCalendar extends FullCalendarBased {
             this.viewButtons = new Map([
                 [1, {
                     "key": 1,
-                    "title": "Dag",
+                    "title": window.WEBOOK_I18N?.day || "Day",
                     "isParent": true,
                     "view": "timeGridDay",
                     "parent": undefined,
@@ -73,7 +73,7 @@ export class PlannerCalendar extends FullCalendarBased {
                 }],
                 [2, {
                     "key": 2,
-                    "title": "Måned",
+                    "title": window.WEBOOK_I18N?.month || "Month",
                     "isParent": true,
                     "view": "dayGridMonth",
                     "parent": undefined,
@@ -81,7 +81,7 @@ export class PlannerCalendar extends FullCalendarBased {
                 }],
                 [3, {
                     "key": 3,
-                    "title": "Tidslinje",
+                    "title": window.WEBOOK_I18N?.timeline || "Timeline",
                     "isParent": false,
                     "view": "timelineMonth",
                     "parent": 2,
@@ -89,7 +89,7 @@ export class PlannerCalendar extends FullCalendarBased {
                 }],
                 [4, {
                     "key": 4,
-                    "title": "Grid",
+                    "title": window.WEBOOK_I18N?.grid || "Grid",
                     "isParent": false,
                     "view": "dayGridMonth",
                     "parent": 2,
@@ -97,7 +97,7 @@ export class PlannerCalendar extends FullCalendarBased {
                 }],
                 [5, {
                     "key": 5,
-                    "title": "Uke",
+                    "title": window.WEBOOK_I18N?.week || "Week",
                     "isParent": true,
                     "view": "timeGridWeek",
                     "parent": undefined,
@@ -105,7 +105,7 @@ export class PlannerCalendar extends FullCalendarBased {
                 }],
                 [6, {
                     "key": 6,
-                    "title": "År",
+                    "title": window.WEBOOK_I18N?.year || "Year",
                     "isParent": false,
                     "view": "timelineYear",
                     "afterClick": () => {
@@ -477,24 +477,24 @@ export class PlannerCalendar extends FullCalendarBased {
                 height: this.height,
                 maxTime: "23:00",
                 slotEventOverlap: false,
-                locale: 'nb',
+                locale: document.documentElement.lang || navigator.language || 'en',
                 views: {
                     customTimeGridMonth: {
                         type: "timeGrid",
                         duration: { month: 1 },
-                        buttonText: "Tidsgrid Måned"
+                        buttonText: `${window.WEBOOK_I18N?.grid || "Grid"} ${window.WEBOOK_I18N?.month || "Month"}`
                     },
                     calendarDayGridMonth: {
                         type: 'dayGridMonth',
-                        buttonText: 'Kalender'
+                        buttonText: window.WEBOOK_I18N?.calendar || 'Calendar'
                     },
                     customTimelineMonth: {
                         type: 'timelineMonth',
-                        buttonText: 'Tidslinje - Måned'
+                        buttonText: `${window.WEBOOK_I18N?.timeline || "Timeline"} - ${window.WEBOOK_I18N?.month || "Month"}`
                     },
                     customTimelineYear: {
                         type: 'timelineYear',
-                        buttonText: 'Tidslinje - År'
+                        buttonText: `${window.WEBOOK_I18N?.timeline || "Timeline"} - ${window.WEBOOK_I18N?.year || "Year"}`
                     }
                 },
                 datesSet: (dateInfo) => {
@@ -776,7 +776,7 @@ export class PlannerCalendar extends FullCalendarBased {
             if (this.renderContextMenu) {
                 let items = {
                     arrangement_inspector: {
-                        name: "<i class='fas fa-search'></i>&nbsp; Inspiser arrangement",
+                        name: `<i class='fas fa-search'></i>&nbsp; ${window.WEBOOK_MESSAGES?.contextInspectArrangement || "Inspect arrangement"}`,
                         isHtmlName: true,
                         callback: (key, opt) => {
                             if (!opt.event || opt.event.backgroundColor !== "prussianblue") {
@@ -792,7 +792,7 @@ export class PlannerCalendar extends FullCalendarBased {
                         }
                     },
                     event_inspector: {
-                        name: "<i class='fas fa-search'></i>&nbsp; Inspiser tidspunkt",
+                        name: `<i class='fas fa-search'></i>&nbsp; ${window.WEBOOK_MESSAGES?.contextInspectTime || "Inspect time"}`,
                         isHtmlName: true,
                         callback: (key, opt) => {
                             if (!opt.event || opt.event.backgroundColor !== "prussianblue") {
@@ -806,7 +806,7 @@ export class PlannerCalendar extends FullCalendarBased {
                 if (this.showAdministrativeActionsInContextMenu) {
                     items["section_sep_1"] = "---------";
                     items["delete_arrangement"] = {
-                        name: "<i class='fas fa-trash'></i>&nbsp; Slett arrangement",
+                        name: `<i class='fas fa-trash'></i>&nbsp; ${window.WEBOOK_MESSAGES?.contextDeleteArrangement || "Delete arrangement"}`,
                         isHtmlName: true,
                         callback: (key, opt) => {
                             Swal.fire({
@@ -834,7 +834,7 @@ export class PlannerCalendar extends FullCalendarBased {
                         }
                     };
                     items["delete_event"] = {
-                        name: "<i class='fas fa-trash'></i>&nbsp; Slett aktivitet",
+                        name: `<i class='fas fa-trash'></i>&nbsp; ${window.WEBOOK_MESSAGES?.contextDeleteActivity || "Delete activity"}`,
                         isHtmlName: true,
                         callback: (key, opt) => {
                             Swal.fire({

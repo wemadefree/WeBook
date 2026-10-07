@@ -87,6 +87,14 @@ class RoomUpdateView(
     template_name = "arrangement/room/room_form.html"
     model = Room
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["RETURN_URL"] = self.object.location.get_absolute_url()
+        return context
+
+    def get_success_url(self) -> str:
+        return self.object.location.get_absolute_url()
+
 
 room_update_view = RoomUpdateView.as_view()
 
@@ -106,6 +114,9 @@ class RoomCreateView(
     template_name = "arrangement/room/room_form.html"
     model = Room
 
+    def get_success_url(self) -> str:
+        return self.object.location.get_absolute_url()
+
 
 room_create_view = RoomCreateView.as_view()
 
@@ -116,11 +127,16 @@ class RoomDeleteView(
     model = Room
     slug_field = "slug"
     slug_url_kwarg = "slug"
-    template_name = "common/delete_view.html"
-    view_meta = ViewMeta.Preset.delete(Room)
+    template_name = "common/archive_view.html"
+    view_meta = ViewMeta.Preset.archive(Room)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["RETURN_URL"] = self.object.location.get_absolute_url()
+        return context
 
     def get_success_url(self) -> str:
-        return reverse("arrangement:room_list")
+        return self.object.location.get_absolute_url()
 
 
 room_delete_view = RoomDeleteView.as_view()

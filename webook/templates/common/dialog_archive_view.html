@@ -1,0 +1,18 @@
+{% load static i18n %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+
+        <h4>{% trans "Archive this item?" %}</h4>
+        <p>
+            {% if ENTITY_NAME %}
+                {% trans "Archive" %} <i>'{{ ENTITY_NAME }}'</i>?
+            {% endif %}
+            {% trans "It will be hidden from active lists, but its existing references and history will be retained." %}
+        </p>
+
+        <a class="btn wb-btn-secondary cancel-button" href="{{ RETURN_URL }}"><i class="fas fa-times"></i>&nbsp; {% trans "Cancel" %}</a>
+        <button class="btn wb-btn-main float-end" type="submit"><i class="fas fa-archive"></i>&nbsp; {% trans "Archive" %}</button>
+    </form>
+{% endblock %}

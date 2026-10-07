@@ -48,7 +48,7 @@ def get_section_manifest():
             detail_url=None,
             create_url="arrangement:statustype_create",
             edit_url="arrangement:statustype_update",
-            delete_url="arrangement:statustype_delete",
+            archive_url="arrangement:statustype_delete",
             list_url="arrangement:statustype_list",
         ),
     )
@@ -132,8 +132,8 @@ class StatusTypeDeleteView(
     ArchiveView,
 ):
     model = StatusType
-    view_meta = ViewMeta.Preset.delete(StatusType)
-    template_name = "common/dialog_delete_view.html"
+    view_meta = ViewMeta.Preset.archive(StatusType)
+    template_name = "common/dialog_archive_view.html"
 
     def get_success_url(self) -> str:
         return reverse("arrangement:statustype_list")

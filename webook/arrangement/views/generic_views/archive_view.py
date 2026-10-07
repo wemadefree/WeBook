@@ -22,6 +22,9 @@ class ArchiveView(DeleteView):
         success_url = self.get_success_url()
         return HttpResponseRedirect(success_url)
 
+    def post(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
 
 class JsonArchiveView(ArchiveView):
     """

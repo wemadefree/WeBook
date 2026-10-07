@@ -68,23 +68,30 @@
                 <td>
                     {% if CRUDL_MAP.detail_url %}
                         <a class="btn btn-sm noBoxShadow wb-text-main" href="{% url CRUDL_MAP.detail_url row.slug %}"
-                            data-mdb-toggle="tooltip" title="Show this {{ ENTITY_NAME_SINGULAR }}">
+                            data-mdb-toggle="tooltip" title="{% trans 'Show' %} {{ ENTITY_NAME_SINGULAR }}">
                             <i class="fa fa-eye"></i>&nbsp;
                             {% trans "Show" %}
                         </a>
                     {% endif %}
                     {% if CRUDL_MAP.edit_url %}
                         <a class="btn btn-sm noBoxShadow wb-text-main" href="{% url CRUDL_MAP.edit_url row.slug %}"
-                            data-mdb-toggle="tooltip" title="Edit this {{ ENTITY_NAME_SINGULAR }}">
+                            data-mdb-toggle="tooltip" title="{% trans 'Edit' %} {{ ENTITY_NAME_SINGULAR }}">
                             <i class="fa fa-edit"></i>&nbsp;
                             {% trans "Edit" %}
                         </a>
                     {% endif %}
                     {% if CRUDL_MAP.delete_url %}
                         <a class="btn btn-sm noBoxShadow wb-text-main" href="{% url CRUDL_MAP.delete_url row.slug %}"
-                            data-mdb-toggle="tooltip" title="Delete this {{ ENTITY_NAME_SINGULAR }}">
+                            data-mdb-toggle="tooltip" title="{% trans 'Delete' %} {{ ENTITY_NAME_SINGULAR }}">
                             <i class="fa fa-trash"></i>&nbsp;
                             {% trans "Delete" %}
+                        </a>
+                    {% endif %}
+                    {% if CRUDL_MAP.archive_url %}
+                        <a class="btn btn-sm noBoxShadow wb-text-main" href="{% url CRUDL_MAP.archive_url row.slug %}"
+                            data-mdb-toggle="tooltip" title="{% trans 'Archive' %} {{ ENTITY_NAME_SINGULAR }}">
+                            <i class="fa fa-archive"></i>&nbsp;
+                            {% trans "Archive" %}
                         </a>
                     {% endif %}
                 </td>
@@ -100,7 +107,12 @@
 
 <script>
     $(document).ready(function () {
-        const dt = $('#entitiesTable').DataTable( {
+        const tableElement = document.getElementById('entitiesTable');
+        if (!tableElement) {
+            return;
+        }
+
+        const dt = $(tableElement).DataTable( {
             dom: 'Brtip',
             buttons: [
                 { extend: 'copy', className: 'wb-btn-white text-dark' },
@@ -113,10 +125,6 @@
         document.getElementById('datatable-search-input').addEventListener('input', (e) => {
            dt.search(e.target.value).draw();
         })
-
-        $('.wb-btn-secondary').each(function () { 
-            $(this).removeClass("btn-secondary");
-        });
     })
 </script>
 

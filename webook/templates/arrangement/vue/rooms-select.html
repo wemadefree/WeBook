@@ -12,6 +12,7 @@ When room ids come in, the component will check if all the rooms in a preset are
 
 {% endcomment %}
 
+{% load i18n %}
 {% include "arrangement/vue/select2.html" %}
 
 <template id="vuec-rooms-select">
@@ -20,7 +21,7 @@ When room ids come in, the component will check if all the rooms in a preset are
         :options="rooms" 
         :multiple="true" 
         :selected="selectedRooms" 
-        placeholder="Velg rom og presets">
+        placeholder="{% trans 'Select rooms and presets' %}">
 
     </select>
 </template>

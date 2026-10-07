@@ -16,15 +16,13 @@
             <input type="color" name="{{form.color.name}}" id="" value="{{ form.color.value }}">
         </div>
 
-        <div class="clearfix">
-            <div class="form-group mt-3 float-end">
-                <button class="btn wb-btn-secondary" onClick="window.history.back(); return false;">
-                    Avbryt
-                </button>
-                <button class="btn wb-btn-main" type="submit">
-                    Lagre
-                </button>
-            </div>
+        <div class="d-flex flex-wrap justify-content-end gap-2 mt-4 pt-3 border-top">
+            <button class="btn wb-btn-secondary cancel-button" onClick="window.history.back(); return false;">
+                <i class="fas fa-times"></i>&nbsp; {% trans "Cancel" %}
+            </button>
+            <button class="btn wb-btn-main" type="submit">
+                <i class="fas fa-check"></i>&nbsp; {% trans "Save" %}
+            </button>
         </div>
     </form>
 {% endblock %}

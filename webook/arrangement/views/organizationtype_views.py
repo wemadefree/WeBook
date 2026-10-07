@@ -33,7 +33,7 @@ def get_section_manifest():
             detail_url="arrangement:organizationtype_detail",
             create_url="arrangement:organizationtype_create",
             edit_url="arrangement:organizationtype_edit",
-            delete_url="arrangement:organizationtype_delete",
+            archive_url="arrangement:organizationtype_delete",
             list_url="arrangement:organizationtype_list",
         ),
     )
@@ -126,11 +126,11 @@ class OrganizationTypeDeleteView(
     model = OrganizationType
     slug_field = "slug"
     slug_url_kwarg = "slug"
-    template_name = "common/delete_view.html"
-    view_meta = ViewMeta.Preset.delete(OrganizationType)
+    template_name = "common/archive_view.html"
+    view_meta = ViewMeta.Preset.archive(OrganizationType)
 
     def get_success_url(self) -> str:
-        return reverse("arrangement:organization_list")
+        return reverse("arrangement:organizationtype_list")
 
 
 organization_type_delete_view = OrganizationTypeDeleteView.as_view()

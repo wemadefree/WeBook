@@ -19,10 +19,10 @@
     <div class="clearfix">
         <div class="float-start">
             <h6>
-                Definer aktivitet
+                {% trans "Define event" %}
             </h6>
             <h5 class="fw-bold">
-                <i class="fas fa-calendar-plus"></i>&nbsp; Aktivitet navn
+                <i class="fas fa-calendar-plus"></i>&nbsp; {% trans "Event name" %}
             </h5>
         </div>
         <div id="stepper" class="float-end stepper-rail"></div>
@@ -37,19 +37,19 @@
                 <input type="hidden" name="uuid" id="event_uuid" />
                 
                 <div class="form-group mb-2">
-                    <label class="form-label" for="title">Tittel <i>(Norsk)</i></label>
+                    <label class="form-label" for="title">{% trans "Title" %} <i>({% trans "Norwegian" %})</i></label>
                     <input type="text" id="title" name="title" class="form-control form-control-lg" required />
                 </div>
 
                 <div class="form-group mb-2">
-                    <label class="form-label" for="title_en">Tittel <i>(Engelsk)</i></label>
+                    <label class="form-label" for="title_en">{% trans "Title" %} <i>({% trans "English" %})</i></label>
                     <input type="text" id="title_en" name="title_en" class="form-control form-control-lg" />
                 </div>
 
                 <div class="form-group mb-2">
                     <label>
                         <i class="fas fa-users"></i>&nbsp;
-                        Målgruppe
+                        {% trans "Audience" %}
                     </label>
                     <div id="audience_jstree_select" class="dialog-popover-left-fix"></div>
                     
@@ -62,10 +62,10 @@
                     <div id="school_options" style="display: none;">
                         <div class="form-group mt-2">
                             <label>
-                                Fylke
+                                {% trans "County" %}
                             </label>
                             <select name="" id="countySelect" class="form-control">
-                                <option value="0">Ingen fylke valgt</option>
+                                <option value="0">{% trans "No county selected" %}</option>
                                 {% for county in counties %}
                                     <option value="{{county.id}}">{{county.name}}</option>
                                 {% endfor %}
@@ -74,12 +74,12 @@
 
                         <div class="form-group mt-2">
                             <label>
-                                Skole
+                                {% trans "School" %}
                             </label>
 
                             <input type="hidden" name="" id="initialSchoolValue">
                             <select name="" id="schoolSelect" class="form-control">
-                                <option value="">Velg skole</option>
+                                <option value="">{% trans "Select school" %}</option>
                             </select>
                         </div>
                     </div>
@@ -88,7 +88,7 @@
                 <div class="form-group mb-2">
                     <label>
                         <i class="fas fa-cog"></i>&nbsp;
-                        Arrangementstype
+                        {% trans "Arrangement type" %}
                     </label>
                     <div id="arrangement_type_jstree_select" class="dialog-popover-left-fix"></div>
                     {% if form.arrangement_type.errors|length > 0 %}
@@ -101,7 +101,7 @@
                 <div class="form-group mb-2">
                     <label>
                         <i class="fas fa-cog"></i>&nbsp;
-                        Status
+                        {% trans "Status" %}
                     </label>
                     <div id="status_type_jstree_select" class="dialog-popover-left-fix"></div>
                     {% if form.status_type.errors|length > 0 %}
@@ -112,7 +112,7 @@
                 </div>
     
                 <div class="form-group mt-2">
-                    <label for="" class="form-label">Fra</label>
+                    <label for="" class="form-label">{% trans "From" %}</label>
                     <div class="row">
                         <div class="col-6">
                             <div class="form-outline">
@@ -128,7 +128,7 @@
                 </div>
     
                 <div class="form-group mt-2">
-                    <label for="" class="form-label">Til</label>
+                    <label for="" class="form-label">{% trans "To" %}</label>
                     <div class="row">
                         <div class="col-6">
                             <div class="form-outline">
@@ -146,7 +146,7 @@
                 <div class="alert alert-danger mt-3"
                     style="display:none;"
                     id="eventTimesInvalidFeedback">
-                    Oppgitte tider er ugyldige
+                    {% trans "The specified times are invalid" %}
                 </div>
             </form>
         </div>
@@ -156,14 +156,14 @@
 
                 <label for="" class="d-block form-label">
                     <i class="fas fa-star"></i>
-                    Hovedplanlegger
+                    {% trans "Main planner" %}
                 </label>
                 <h5 class="mb-2" id="mainPlannerName"></h5>
                 <button class="wb-btn-main"
                     id="setMainPlannerButton"
                     type="button"
                     d-trigger="triggerSetPlanner">
-                    Velg hovedplanlegger
+                    {% trans "Select main planner" %}
                 </button>
             </div>
             {% comment %} <div class="form-group mb-2">
@@ -178,13 +178,13 @@
             <div class="border rounded box-shadow-2 wb-bg-secondary p-4">
                 <label for="{{form.responsible.id_for_label}}" class="form-label">
                     <i class="fas fa-users"></i>&nbsp;
-                    Personer
+                    {% trans "People" %}
                 </label>
                 <div>
                     <button class="wb-btn-main"
                             type="button"
                             d-trigger="triggerAddPeople">
-                        Velg personer
+                        {% trans "Select people" %}
                     </button>
                 </div>  
                 <div id="selectedPeopleWrapper" class="chipsList"></div>
@@ -193,13 +193,13 @@
             <div class="border rounded box-shadow-2 wb-bg-secondary p-4 mt-4">
                 <label for="" class="form-label">
                     <i class="fas fa-building"></i>&nbsp;
-                    Rom
+                    {% trans "Rooms" %}
                 </label>
                 <div>
                     <button class="wb-btn-main"
                         type="button"
                         d-trigger="triggerAddRooms">
-                        Velg rom
+                        {% trans "Select rooms" %}
                     </button>
                 </div>
                 <div id="selectedRoomsWrapper" class="chipsList"></div>
@@ -208,7 +208,7 @@
             <div class="form-group mb-2">
                 <label class="form-label" for="ticket_code">
                     <i class="fas fa-receipt"></i>&nbsp;
-                    Billettinfo
+                    {% trans "Ticket information" %}
                 </label>
                 <input type="text" id="ticket_code" name="ticket_code" class="form-control form-control-lg" />
             </div>
@@ -216,7 +216,7 @@
             <div class="form-group mb-2">
                 <label class="form-label" for="expected_visitors">
                     <i class="fas fa-users"></i>
-                    Forventet besøkende
+                    {% trans "Expected visitors" %}
                 </label>
                 <input type="text" id="expected_visitors" name="expected_visitors" class="form-control form-control-lg" required />
             </div>
@@ -459,10 +459,10 @@
 
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen målgruppe valgt ennå",
-                selectFirstTimeButtonText: 'Velg målgruppe',
-                changeSelectedValueButtonText: 'Endre målgruppe',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No audience selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select audience" %}',
+                changeSelectedValueButtonText: '{% trans "Change audience" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save selection" %}',
             });
 
             dialog.$('#schoolSelect').select2({
@@ -532,10 +532,10 @@
 
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen arrangementstype valgt ennå",
-                selectFirstTimeButtonText: 'Velg arrangementstype',
-                changeSelectedValueButtonText: 'Endre arrangementstype',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No arrangement type selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select arrangement type" %}',
+                changeSelectedValueButtonText: '{% trans "Change arrangement type" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save selection" %}',
             });
             dialog.data.statusTypeJsTreeSelect = new JSTreeSelect({
                 element: dialog.querySelector('#status_type_jstree_select'),
@@ -554,10 +554,10 @@
                     
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen status valgt ennå",
-                selectFirstTimeButtonText: 'Velg status',
-                changeSelectedValueButtonText: 'Endre status',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No status selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select status" %}',
+                changeSelectedValueButtonText: '{% trans "Change status" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save selection" %}',
             });
 
             dialog.$("#fromTime").on("change", (event) => {

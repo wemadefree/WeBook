@@ -43,7 +43,7 @@ def get_section_manifest():
             detail_url=None,
             create_url="arrangement:audience_create",
             edit_url="arrangement:audience_edit",
-            delete_url="arrangement:audience_delete",
+            archive_url="arrangement:audience_delete",
             list_url="arrangement:audience_list",
         ),
     )
@@ -161,8 +161,8 @@ class AudienceDeleteView(
     ArchiveView,
 ):
     model = Audience
-    view_meta = ViewMeta.Preset.delete(Audience)
-    template_name = "common/dialog_delete_view.html"
+    view_meta = ViewMeta.Preset.archive(Audience)
+    template_name = "common/dialog_archive_view.html"
 
     def get_success_url(self) -> str:
         return reverse("arrangement:audience_list")

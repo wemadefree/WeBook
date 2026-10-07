@@ -43,7 +43,7 @@ def get_section_manifest():
             detail_url=None,
             create_url="arrangement:arrangement_type_create",
             edit_url="arrangement:arrangement_type_edit",
-            delete_url="arrangement:arrangement_type_delete",
+            archive_url="arrangement:arrangement_type_delete",
             list_url="arrangement:arrangement_type_list",
         ),
     )
@@ -147,8 +147,8 @@ class ArrangementTypeDeleteView(
     DialogView,
 ):
     model = ArrangementType
-    view_meta = ViewMeta.Preset.delete(ArrangementType)
-    template_name = "common/dialog_delete_view.html"
+    view_meta = ViewMeta.Preset.archive(ArrangementType)
+    template_name = "common/dialog_archive_view.html"
 
     def get_success_url(self) -> str:
         return reverse("arrangement:arrangement_type_list")

@@ -6,9 +6,9 @@
 
         {% comment %} {% if user.person is None %}     {% endcomment %}
             <div class="alert alert-danger">
-                <h5>Ingen tilknyttet person</h5>
-                Denne brukeren har ingen tilknyttet person og kan dermed ikke benytte SSO.
-                SSO verdier er tilknyttet personen, ikke brukeren.
+                <h5>{% trans "No associated person" %}</h5>
+                {% trans "This user has no associated person and cannot use SSO." %}
+                {% trans "SSO values are associated with the person, not the user." %}
             </div>
         {% comment %} {%endif%} {% endcomment %}
     </div>

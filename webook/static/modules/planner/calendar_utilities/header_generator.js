@@ -40,7 +40,8 @@ export class StandardGenerator {
     }
 
     month(date) {
-        let text = `${date.toLocaleString("default", { month: "long" })} ${date.getFullYear()}`;
+        const locale = document.documentElement.lang || navigator.language || "en";
+        let text = `${date.toLocaleString(locale, { month: "long" })} ${date.getFullYear()}`;
         text = text.replace(/^./, text[0].toUpperCase());
         return text;
     }
@@ -57,7 +58,9 @@ export class StandardGenerator {
 
         const weekNum = 1 + Math.ceil((firstThursday - target) / 604800000);
 
-        return `Uke ${weekNum}, ${date.toLocaleString("default", { month: "long" })} ${date.getFullYear()}`;
+        const locale = document.documentElement.lang || navigator.language || "en";
+        const weekPrefix = window.WEBOOK_I18N?.weekPrefix || "Week";
+        return `${weekPrefix} ${weekNum}, ${date.toLocaleString(locale, { month: "long" })} ${date.getFullYear()}`;
     }
 
     day(date) {

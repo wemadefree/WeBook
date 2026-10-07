@@ -570,11 +570,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             if self.pre_create_hook is not None:
                 (instance, payload) = self.pre_create_hook(instance, payload)
 
-            for key, value in dict(payload).items():
-                if value is not NOT_SET:
-                    setattr(instance, key, value)
-
-            instance.save()
+            self.apply_payload(instance, payload)
             return instance
 
         post_func.__annotations__ = {
@@ -588,14 +584,30 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
     def get_retrieve_func(self):
         # @decorate_view(transaction.non_atomic_requests(using="default"))
         def retrieve_func(request, id: int) -> self.get_schema:
-            try:
-                return self.model.get(id=id)
-            except self.model.DoesNotExist:
-                raise HttpResponse(status=404)
+            return get_object_or_404(self.get_queryset(Views.GET), id=id)
 
         retrieve_func.__name__ = f"get_{self.model_name_singular.lower()}"
 
         return retrieve_func
+
+    def apply_payload(self, instance, payload) -> None:
+        many_to_many_values = {}
+        many_to_many_fields = {
+            field.name for field in instance._meta.many_to_many
+        }
+
+        for key, value in dict(payload).items():
+            if value is NOT_SET:
+                continue
+            if key in many_to_many_fields:
+                many_to_many_values[key] = value
+            else:
+                setattr(instance, key, value)
+
+        instance.save()
+
+        for key, value in many_to_many_values.items():
+            getattr(instance, key).set(value)
 
     def __transform_data_to_export(self, data: List) -> List:
         if hasattr(self, "transform_to_export"):
@@ -842,15 +854,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             if self.pre_update_hook is not None:
                 self.pre_update_hook(instance, payload)
 
-            for key, value in dict(payload).items():
-                if value is not NOT_SET:
-                    if type(value) == list:
-                        related_field = getattr(instance, key)
-                        related_field.set(value)
-                    else:
-                        setattr(instance, key, value)
-
-            instance.save()
+            self.apply_payload(instance, payload)
 
             return OperationResultSchema[self.get_schema](
                 operation=OperationType.UPDATE,
@@ -872,10 +876,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             if self.pre_update_hook is not None:
                 self.pre_update_hook(instance, payload)
 
-            for key, value in dict(payload).items():
-                if value is not NOT_SET:
-                    setattr(instance, key, value)
-            instance.save()
+            self.apply_payload(instance, payload)
 
             return OperationResultSchema[self.get_schema](
                 operation=OperationType.UPDATE,

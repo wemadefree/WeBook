@@ -117,18 +117,18 @@
             </span>
         </div>
 
-        <h5 class="mt-4">Tjenestetilbydere:</h5>
+        <h5 class="mt-4">{% trans "Service providers:" %}</h5>
 
         {% if ORDER is None %}
             {% if PROVIDERS.all|length == 0 %}
             <div class="alert alert-light" style="background-color: ghostwhite;">
                 <h3 class="text-center"><i class="fas fa-exclamation"></i></h3>
-                <h4 class="fw-bold text-center">Ingen bedrifter registrert som leverer {{LREQ.type_to_order}}</h4>
-                <h5 class="small text-center">Du må registrere en bedrift som kan tilby {{LREQ.type_to_order}} før bestillingen kan gjennomføres</h5>
+                <h4 class="fw-bold text-center">{% trans "No companies are registered to provide" %} {{LREQ.type_to_order}}</h4>
+                <h5 class="small text-center">{% trans "You must register a company that can provide" %} {{LREQ.type_to_order}} {% trans "before this order can be completed." %}</h5>
             </div>
             {% else %}
                 <div class="alert alert-info">
-                    Choose one service provider to order this service from
+                    {% trans "Choose a service provider for this order" %}
                 </div>
                 <table class="table table-sm">
                     <thead>

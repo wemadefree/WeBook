@@ -6,17 +6,18 @@ from webook.crumbinator.crumb_node import CrumbNode
 
 
 class SectionCrudlPathMap:
-    def __init__(self, detail_url: str, create_url: str, edit_url: str, delete_url: str, list_url: str) -> None:
-        self.detail_url = detail_url
-        self.create_url = create_url
-        self.edit_url = edit_url
-        self.delete_url = delete_url
-        self.list_url = list_url
-
-    create_url = None
-    edit_url = None
-    delete_url = None
-    list_url = None
+	def __init__(self, detail_url: str = None, create_url: str = None, edit_url: str = None, delete_url: str = None, list_url: str = None, archive_url: str = None) -> None:
+		self.detail_url = detail_url
+		self.create_url = create_url
+		self.edit_url = edit_url
+		self.delete_url = delete_url
+		self.archive_url = archive_url
+		self.list_url = list_url
+	create_url = None
+	edit_url = None
+	delete_url = None
+	archive_url = None
+	list_url = None
 
 
 class SectionManifest:
@@ -128,6 +129,17 @@ class ViewMeta:
 			name = f"{_('Delete')} {entity_class.entity_name_singular}"
 			return ViewMeta(
 				current_crumb_icon="fas fa-trash",
+				subtitle=name,
+				current_crumb_title=name,
+				entity_name_attribute=getattr(entity_class, "instance_name_attribute_name"),
+			)
+
+		@staticmethod
+		def archive(entity_class):
+			ViewMeta.Preset._sanity_check_entity_class(entity_class)
+			name = f"{_('Archive')} {entity_class.entity_name_singular}"
+			return ViewMeta(
+				current_crumb_icon="fas fa-archive",
 				subtitle=name,
 				current_crumb_title=name,
 				entity_name_attribute=getattr(entity_class, "instance_name_attribute_name"),

@@ -1,3 +1,5 @@
+{% load i18n %}
+
 {% include "arrangement/vue/dialogs/upload-files-dialog.html" %}
 
 
@@ -11,7 +13,7 @@
 
     <div v-if="files.length == 0">
         <div class="alert wb-bg-secondary">
-            <h4 class="text-center">Ingen filer lastet opp her ennå!</h4>
+            <h4 class="text-center">{% trans "No files have been uploaded here yet!" %}</h4>
             <div class="row" v-if="isUploadEnabled">
                 <div class="col text-center">
                     <button class="btn wb-btn-main text-center shadow-0 mb-2 center" 
@@ -19,7 +21,7 @@
                         @click="modalVisibilityFlags.uploadFilesDialog = true;">
                         
                         <i class="fas fa-upload"></i>
-                        Last opp
+                        {% trans "Upload" %}
                     </buttons>
                 </div>
             </div>
@@ -37,7 +39,7 @@
             </div>
             <div class="col-2">
                 <button class="float-end btn wb-btn-main" v-if="isUploadEnabled" @click="modalVisibilityFlags.uploadFilesDialog = true;"
-                    data-mdb-toggle="tooltip" title="Last opp fil(er)">
+                    data-mdb-toggle="tooltip" title="{% trans 'Upload file(s)' %}">
                     <i class="fas fa-upload"></i>
                 </button>
             </div>
@@ -51,21 +53,21 @@
                     <td class="text-end">
                         <a href="#"
                             data-mdb-toggle="tooltip"
-                            title="Slett denne filen"
+                            title="{% trans 'Delete this file' %}"
                             class="btn btn-round wb-btn-secondary h5 mb-0 border border-dark"
                             @click="deleteFile(file)"
                             data-mdb-toggle="tooltip"
-                            title="Slett denne filen">
+                            title="{% trans 'Delete this file' %}">
             
                             <i class="fas fa-trash"></i>
                         </a>
             
                         <a data-mdb-toggle="tooltip"
                             class=" btn btn-round wb-btn-secondary ms-3 me-3 h5 mb-0 border border-dark"
-                            title="Last ned denne filen"
+                            title="{% trans 'Download this file' %}"
                             :href="'/media/' + [[file.path]]"
                             data-mdb-toggle="tooltip"
-                            title="Last ned denne filen"
+                            title="{% trans 'Download this file' %}"
                             download>
             
                             <i class="fas fa-download"></i>

@@ -205,7 +205,7 @@ export class JSTreeSelect {
         if (this.isSearchable) {
             let searchInput = document.createElement("input");
             searchInput.setAttribute("type", "search");
-            searchInput.setAttribute("placeholder", "Søk...");
+            searchInput.setAttribute("placeholder", window.WEBOOK_MESSAGES?.search || "Search...");
             searchInput.classList.add("form-control", "mb-1");
             
             searchInput.addEventListener("input", (event) => { 

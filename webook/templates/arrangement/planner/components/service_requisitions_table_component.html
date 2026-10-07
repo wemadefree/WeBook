@@ -1,4 +1,6 @@
-<h3>Bestillinger</h3>
+{% load i18n %}
+
+<h3>{% trans "Orders" %}</h3>
 <div class="alert alert-light p-0">
     <em class="small">
         <!-- Merk at når du gjennomfører en bestilling så settes det en lås på de hendelsene det gjelder!
@@ -10,9 +12,9 @@
         <tr>
             <th></th>
             <th class="fw-bold">Status</th>
-            <th class="fw-bold">Tjenestetype</th>
-            <th class="fw-bold">Kommentar</th>
-            <th class="fw-bold">Valg</th>
+            <th class="fw-bold">{% trans "Service type" %}</th>
+            <th class="fw-bold">{% trans "Comment" %}</th>
+            <th class="fw-bold">{% trans "Options" %}</th>
         </tr>
     </thead>
 
@@ -25,32 +27,32 @@
                     {% if object.generated_requisition_record is None %}
                         <span class="badge badge-light"
                                 data-toggle="tooltip"
-                                title="Denne bestillingen er løs, det vil si at den ikke er gjennomført, bare satt opp">
-                            Løs bestilling
+                                title="{% trans 'This order is loose, meaning it has been set up but not completed.' %}">
+                            {% trans "Loose order" %}
                         </span>
                     {% elif object.generated_requisition_record.confirmation_receipt.state == "confirmed" %}
                         <span class="badge badge-success"
                                 data-toggle="tooltip"
-                                title="Bestillingen har blitt rekvirert og akseptert av mottager">
-                            Akseptert
+                                title="{% trans 'The order has been requisitioned and accepted by the recipient.' %}">
+                            {% trans "Accepted" %}
                         </span>
                     {% elif object.generated_requisition_record.confirmation_receipt.state == "denied" %}
                         <span class="badge badge-danger"
                                 data-toggle="tooltip"
-                                title="Mottagende bedrift har avslått denne bestillingen">
-                            Avslått
+                                title="{% trans 'The receiving company has declined this order.' %}">
+                            {% trans "Declined" %}
                         </span>
                     {% elif object.generated_requisition_record.confirmation_receipt.state == "pending" %}
                         <span class="badge badge-warning"
                                 data-toggle="tooltip"
-                                title="Kontakten for denne bedriften har ennå ikke svart på denne bestillingen">
-                            Venter svar
+                                title="{% trans 'The contact for this company has not responded to this order yet.' %}">
+                            {% trans "Awaiting response" %}
                         </span>
                     {% elif object.generated_requisition_record.confirmation_receipt.state == "cancelled" %}
                         <span class="badge badge-warning"
                                 data-toggle="tooltip"
-                                title="Bestillingen har blitt kansellert av en planlegger">
-                            Kansellert
+                                title="{% trans 'This order has been cancelled by a planner.' %}">
+                            {% trans "Cancelled" %}
                         </span>
                     {% else %}
                         {{object.generated_requisition_record.confirmation_receipt.state}}
@@ -68,7 +70,7 @@
                             data-mdb-toggle="dropdown"
                             aria-expanded="false">
                             
-                            Valg
+                            {% trans "Options" %}
 
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -76,7 +78,7 @@
                                 <li>
                                     <a class="dropdown-item requisitionServiceBtn" value="{{object.pk}}">
                                         <i class="fas fa-envelope"></i>&nbsp;
-                                        Utfør bestilling
+                                        {% trans "Place order" %}
                                     </a>
                                 </li>
                                 <!-- <li>
@@ -89,9 +91,9 @@
 
                                 <li>
                                     <a class="dropdown-item requisitionServiceBtn" value="{{object.pk}}"
-                                        data-mdb-toggle="tooltip" title="Vis bestillingen i ny side">
+                                        data-mdb-toggle="tooltip" title="{% trans 'View the order in a new page' %}">
                                         <i class="fas fa-eye"></i>&nbsp;
-                                        Åpne bestilling
+                                        {% trans "Open order" %}
                                     </a>
                                 </li>
 
@@ -99,7 +101,7 @@
                                     <a class="dropdown-item" href="" onclick="resetServiceRequisition( {{object.pk}} )"
                                         data-mdb-toggle="tooltip" title="Dette vil kansellere den nåværende forespørselen, og tillate deg å forespørre en ny tilbydder eller gjøre endringer.">
                                         <i class="fas fa-recycle"></i>&nbsp;
-                                        Åpne for ny gjennomførelse
+                                        {% trans "Reopen for processing" %}
                                     </a>
                                 </li>
 
@@ -107,7 +109,7 @@
                                     <li> 
                                         <button class="dropdown-item" onclick="cancelServiceRequisition( {{object.pk}} )">
                                             <i class="fas fa-times"></i>&nbsp;
-                                            Kanseller
+                                            {% trans "Cancel" %}
                                         </button> 
                                     </li>
                                 {% endif %}

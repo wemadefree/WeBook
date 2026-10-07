@@ -215,7 +215,7 @@ class ArrangementDeleteView(
     current_crumb_title = _("Delete Arrangement")
     section_subtitle = _("Edit Arrangement")
     template_name = "arrangement/delete_view.html"
-    view_meta = ViewMeta.Preset.delete(Arrangement)
+    view_meta = ViewMeta.Preset.archive(Arrangement)
 
 
 arrangement_delete_view = ArrangementDeleteView.as_view()

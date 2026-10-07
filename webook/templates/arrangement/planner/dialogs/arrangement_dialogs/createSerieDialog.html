@@ -13,13 +13,13 @@
             <h6 id="title">
                 {{object}}
                 {% if object.pk %}
-                    Rediger {{object.title}}
+                    {% trans "Edit" %} {{object.title}}
                 {% else %}
-                    Definer tidsplan
+                    {% trans "Define schedule" %}
                 {% endif %}
             </h6>
             <h5 class="fw-bold">
-                <i class="fas fa-calendar-plus"></i>&nbsp; Tidsplan
+                <i class="fas fa-calendar-plus"></i>&nbsp; {% trans "Schedule" %}
             </h5>
         </div>
         <div id="stepper" class="float-end stepper-rail"></div>
@@ -34,45 +34,45 @@
                 <input type="submit" style="display:none;" />
                 <div class="mb-2">
                     <div class="form-group">
-                        <label class="form-label" for="serie_title">Tittel på norsk</label>
+                        <label class="form-label" for="serie_title">{% trans "Title in Norwegian" %}</label>
                         <input type="text" id="serie_title" class="form-control form-control-lg" 
                             required/>
                     </div>    
                     <div class="form-group">
-                        <label class="form-label" for="serie_title_en">Tittel på engelsk</label>
+                        <label class="form-label" for="serie_title_en">{% trans "Title in English" %}</label>
                         <input type="text" id="serie_title_en" class="form-control form-control-lg" />
                     </div>
                 </div>
     
                 <div class="row mb-2">
                     <div class="col-6">
-                        <label class="form-label" for="serie_start">Start </label>
+                        <label class="form-label" for="serie_start">{% trans "Start" %}</label>
                         <input type="time" class="form-control form-control-lg" id="serie_start" required />
                     </div>
                     <div class="col-6">
-                        <label class="form-label" for="serie_end">Slutt</label>
+                        <label class="form-label" for="serie_end">{% trans "End" %}</label>
                         <input type="time" class="form-control form-control-lg" id="serie_end" required />
                     </div>
                 </div>
 
                 <div class="alert alert-danger mt-3" id="invalidTimesStep1Feedback"
                     style="display: none;">
-                    Ugyldige tider
+                    {% trans "Invalid times" %}
                 </div>
 
                 <div class="form-group mb-2">
-                    <label class="form-label" for="serie_ticket_code">Billettinfo</label>
+                    <label class="form-label" for="serie_ticket_code">{% trans "Ticket information" %}</label>
                     <input type="text" id="serie_ticket_code" class="form-control form-control-lg" />
                 </div>        
                 <div class="form-group mb-2">
-                    <label class="form-label" for="serie_expected_visitors">Forventet besøkende</label>
+                    <label class="form-label" for="serie_expected_visitors">{% trans "Expected visitors" %}</label>
                     <input type="text" id="serie_expected_visitors" class="form-control form-control-lg" min="0" required/>
                 </div>
 
                 <div class="form-group mb-2">
                     <label>
                         <i class="fas fa-users"></i>&nbsp;
-                        Målgruppe
+                        {% trans "Audience" %}
                     </label>
                     <div id="audience_jstree_select" class="dialog-popover-left-fix"></div>
                     
@@ -85,10 +85,10 @@
                     <div id="school_options" style="display: none;">
                         <div class="form-group mt-2">
                             <label>
-                                Fylke
+                                {% trans "County" %}
                             </label>
                             <select name="" id="countySelect" class="form-control">
-                                <option value="0">Ingen fylke valgt</option>
+                                <option value="0">{% trans "No county selected" %}</option>
                                 {% for county in counties %}
                                     <option value="{{county.id}}">{{county.name}}</option>
                                 {% endfor %}
@@ -97,12 +97,12 @@
 
                         <div class="form-group mt-2">
                             <label>
-                                Skole
+                                {% trans "School" %}
                             </label>
 
                             <input type="hidden" name="" id="initialSchoolValue">
                             <select name="" id="schoolSelect" class="form-control" style="width: 100%;">
-                                <option value="">Velg skole</option>
+                                <option value="">{% trans "Select school" %}</option>
                             </select>
                         </div>
                     </div>
@@ -111,7 +111,7 @@
                 <div class="form-group mb-2">
                     <label>
                         <i class="fas fa-cog"></i>&nbsp;
-                        Arrangementstype
+                        {% trans "Arrangement type" %}
                     </label>
                     <div id="arrangement_type_jstree_select" class="dialog-popover-left-fix"></div>
                     {% if form.arrangement_type.errors|length > 0 %}
@@ -124,7 +124,7 @@
                 <div class="form-group mb-2">
                     <label>
                         <i class="fas fa-cog"></i>&nbsp;
-                        Status
+                        {% trans "Status" %}
                     </label>
                     <div id="status_type_jstree_select" class="dialog-popover-left-fix"></div>
                     {% if form.status_type.errors|length > 0 %}
@@ -138,22 +138,22 @@
 
         <div id="step-2">
             <fieldset>
-                <h5>Mønster</h5>
+                <h5>{% trans "Pattern" %}</h5>
                 <div class="row">
                     <div class="col-3 border-end border-1">
                         <form id="patternMockForm">
                             <input type="submit" style="display:none;" />
                             <div>
-                                <input type="radio" name="pattern" id="radio_pattern_daily" value="1" checked required/><label>&nbsp; Daglig</label>
+                                <input type="radio" name="pattern" id="radio_pattern_daily" value="1" checked required/><label>&nbsp; {% trans "Daily" %}</label>
                             </div>
                             <div>
-                                <input type="radio" name="pattern" id="radio_pattern_weekly" value="2"/><label>&nbsp; Ukentlig</label>
+                                <input type="radio" name="pattern" id="radio_pattern_weekly" value="2"/><label>&nbsp; {% trans "Weekly" %}</label>
                             </div>
                             <div>
-                                <input type="radio" name="pattern" id="radio_pattern_monthly" value="3"/><label>&nbsp; Månedlig</label>
+                                <input type="radio" name="pattern" id="radio_pattern_monthly" value="3"/><label>&nbsp; {% trans "Monthly" %}</label>
                             </div>
                             <div>
-                                <input type="radio" name="pattern" id="radio_pattern_yearly" value="4"/><label>&nbsp; Årlig</label>
+                                <input type="radio" name="pattern" id="radio_pattern_yearly" value="4"/><label>&nbsp; {% trans "Yearly" %}</label>
                             </div>
                         </form>
                     </div>
@@ -710,10 +710,10 @@
 
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen målgruppe valgt ennå",
-                selectFirstTimeButtonText: 'Velg målgruppe',
-                changeSelectedValueButtonText: 'Endre målgruppe',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No audience selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select audience" %}',
+                changeSelectedValueButtonText: '{% trans "Change audience" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save selection" %}',
             });
 
             dialog.$('#schoolSelect').select2({
@@ -783,10 +783,10 @@
 
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen arrangementstype valgt ennå",
-                selectFirstTimeButtonText: 'Velg arrangementstype',
-                changeSelectedValueButtonText: 'Endre arrangementstype',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No arrangement type selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select arrangement type" %}',
+                changeSelectedValueButtonText: '{% trans "Change arrangement type" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save selection" %}',
             });
 
             dialog.data.statusTypeJsTreeSelect = new JSTreeSelect({
@@ -806,10 +806,10 @@
                     
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen status valgt ennå",
-                selectFirstTimeButtonText: 'Velg status',
-                changeSelectedValueButtonText: 'Endre status',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No status selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select status" %}',
+                changeSelectedValueButtonText: '{% trans "Change status" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save selection" %}',
             });
 
             if (dialog.interior.serie_uuid.value !== undefined) {

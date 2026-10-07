@@ -33,7 +33,7 @@ def get_section_manifest():
             detail_url="arrangement:organization_detail",
             create_url="arrangement:organization_create",
             edit_url="arrangement:organization_edit",
-            delete_url="arrangement:organization_delete",
+            archive_url="arrangement:organization_delete",
             list_url="arrangement:organization_list",
         ),
     )
@@ -145,8 +145,8 @@ class OrganizationDeleteView(
     model = Organization
     slug_field = "slug"
     slug_url_kwarg = "slug"
-    template_name = "common/delete_view.html"
-    view_meta = ViewMeta.Preset.delete(Organization)
+    template_name = "common/archive_view.html"
+    view_meta = ViewMeta.Preset.archive(Organization)
 
     def get_success_url(self) -> str:
         return reverse("arrangement:organization_list")

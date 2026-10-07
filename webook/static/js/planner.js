@@ -432,7 +432,7 @@ class ContextSynchronicityManager {
 
     _showCollisionWarning(response) {
         let collisionText = "aktiviteten";
-        const subtext = "Ingen endringer ble lagret.";
+        const subtext = window.WEBOOK_MESSAGES?.noChangesSaved || "No changes were saved.";
 
         if (response.main_event_is_in_collision === true) {
             collisionText = "aktiviteten";

@@ -1,13 +1,12 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-25 13:12+0000\n"
+"POT-Creation-Date: 2026-10-07 07:28+0000\n"
 "PO-Revision-Date: 2024-10-25 14:11+0043\n"
 "Last-Translator: Magnus Harlem <magnus@wemade.no>\n"
 "Language-Team: \n"
@@ -24,12 +23,10 @@ msgid "API"
 msgstr "API"
 
 #: webook/arrangement/facilities/confirmation_request/confirmation_request_facility.py:62
-#| msgid "Resource Confirmation Receipts"
 msgid "Request of confirmation"
 msgstr "Kvitteringer på ressursrekvisisjon"
 
 #: webook/arrangement/facilities/confirmation_request/confirmation_request_facility.py:67
-#| msgid "Requested By"
 msgid "Request cancelled"
 msgstr "Forespurt Av"
 
@@ -38,611 +35,724 @@ msgid "Request denial receipt"
 msgstr "Kvittering på avslått ressursrekvisisjon"
 
 #: webook/arrangement/facilities/confirmation_request/confirmation_request_facility.py:77
-#| msgid "Resource Confirmation Receipts"
 msgid "Request confirmation receipt"
 msgstr "Kvitteringer på ressursrekvisisjon"
 
-#: webook/arrangement/models.py:145
-#| msgid "Account"
+#: webook/arrangement/models.py:146
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:650
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:77
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:88
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:65
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:734
 msgid "County"
 msgstr "Konto"
 
-#: webook/arrangement/models.py:153
-#| msgid "Create Audience"
+#: webook/arrangement/models.py:154
 msgid "Selected Audience"
 msgstr "Opprett Målgruppe"
 
-#: webook/arrangement/models.py:161
+#: webook/arrangement/models.py:162
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:109
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:667
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:89
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:100
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:77
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:751
 msgid "School"
 msgstr "Skole"
 
-#: webook/arrangement/models.py:169
+#: webook/arrangement/models.py:170
 msgid "City Segment"
 msgstr "Bydel"
 
-#: webook/arrangement/models.py:182
-#| msgid "Create room"
+#: webook/arrangement/models.py:183
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:553
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:547
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:567
 msgid "Created by"
 msgstr "Opprettet av"
 
-#: webook/arrangement/models.py:190
-#| msgid "Update"
+#: webook/arrangement/models.py:191
 msgid "Updated by"
 msgstr "Oppdatert av"
 
-#: webook/arrangement/models.py:224
+#: webook/arrangement/models.py:241
 msgid "Icon Class"
 msgstr "Ikon Klasse"
 
-#: webook/arrangement/models.py:284
+#: webook/arrangement/models.py:301
 msgid "Is archived"
 msgstr "Er Arkivert"
 
-#: webook/arrangement/models.py:287
+#: webook/arrangement/models.py:304
 msgid "Archived by"
 msgstr "Arkivert Av"
 
-#: webook/arrangement/models.py:294
+#: webook/arrangement/models.py:311
 msgid "Archived when"
 msgstr "Arkivert Når"
 
-#: webook/arrangement/models.py:302
-msgid "Ticket Information"
-msgstr "Billettinfo"
+#: webook/arrangement/models.py:319
+msgid "Ticket Code"
+msgstr "Billettkode"
 
-#: webook/arrangement/models.py:311
+#: webook/arrangement/models.py:328
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:158
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:195
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:202
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:240
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:68
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:220
+#: webook/templates/arrangement/planner/edit-event-dialog.html:152
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:139
+#: webook/templates/arrangement/planner/event-info-dialog.html:202
+#: webook/templates/arrangement/planner/planner-base-dialog.html:92
 msgid "Expected visitors"
 msgstr "Forventet Antall Besøkende"
 
-#: webook/arrangement/models.py:314
+#: webook/arrangement/models.py:331
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:163
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:229
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:236
+#: webook/templates/arrangement/planner/event-info-dialog.html:208
 msgid "Actual visitors"
 msgstr "Faktisk Antall Besøkende"
 
-#: webook/arrangement/models.py:370 webook/arrangement/models.py:379
-#: webook/arrangement/models.py:572
+#: webook/arrangement/models.py:387 webook/arrangement/models.py:396
+#: webook/arrangement/models.py:589
 #: webook/arrangement/views/audience_views.py:38
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:195
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:290
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:667
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:64
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:75
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:52
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:305
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:751
+#: webook/templates/arrangement/planner/edit-event-dialog.html:111
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:97
+#: webook/templates/arrangement/planner/event-info-dialog.html:253
+#: webook/templates/arrangement/planner/planner-base-dialog.html:143
+#: webook/templates/arrangement/planner/planner_calendar.html:159
 msgid "Audience"
 msgstr "Målgruppe"
 
-#: webook/arrangement/models.py:371 webook/arrangement/models.py:380
-#| msgid "Audience"
+#: webook/arrangement/models.py:388 webook/arrangement/models.py:397
+#: webook/templates/arrangement/planner/planner_calendar.html:339
+#: webook/templates/arrangement/planner/planner_calendar_v2.html:141
+#: webook/templates/base.html:217
 msgid "Audiences"
 msgstr "Målgrupper"
 
-#: webook/arrangement/models.py:373 webook/arrangement/models.py:403
-#: webook/arrangement/models.py:438 webook/arrangement/models.py:464
-#: webook/arrangement/models.py:549 webook/arrangement/models.py:728
-#: webook/arrangement/models.py:785 webook/arrangement/models.py:811
-#: webook/arrangement/models.py:831 webook/arrangement/models.py:881
-#: webook/arrangement/models.py:991 webook/screenshow/models.py:73
+#: webook/arrangement/models.py:390 webook/arrangement/models.py:420
+#: webook/arrangement/models.py:455 webook/arrangement/models.py:481
+#: webook/arrangement/models.py:566 webook/arrangement/models.py:748
+#: webook/arrangement/models.py:808 webook/arrangement/models.py:834
+#: webook/arrangement/models.py:854 webook/arrangement/models.py:904
+#: webook/arrangement/models.py:1014 webook/screenshow/models.py:73
 #: webook/screenshow/models.py:112
-#: webook/templates/arrangement/organization/organization_detail.html:31
-#: webook/templates/arrangement/organization/organization_form.html:37
-#: webook/templates/arrangement/person/partials/_organization_member_list.html:7
-#: webook/templates/arrangement/person/person_detail.html:68
+#: webook/templates/arrangement/location/location_detail.html:100
+#: webook/templates/arrangement/organization/organization_detail.html:34
+#: webook/templates/arrangement/organization/organization_form.html:33
+#: webook/templates/arrangement/organizationtype/organizationtype_detail.html:28
+#: webook/templates/arrangement/person/partials/_organization_member_list.html:8
+#: webook/templates/arrangement/person/person_detail.html:67
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:125
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:131
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:125
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:142
 #: webook/templates/arrangement/planner/dialogs/edit_event.html:117
 #: webook/templates/arrangement/planner/dialogs/edit_event.html:138
 #: webook/templates/arrangement/room/partials/_location_room_list.html:7
 #: webook/templates/screenshow/layout/layout_form.html:15
 #: webook/templates/screenshow/screen/screen_form.html:16
+#: webook/templates/user_management/user_list.html:42
 #: webook/utils/crudl/view_mixins.py:16
 #: webook/utils/crudl_utils/view_mixins.py:13
 #: webook/utils/meta/meta_view_mixins.py:52
 msgid "Name"
 msgstr "Navn"
 
-#: webook/arrangement/models.py:375 webook/arrangement/models.py:405
-#: webook/arrangement/models.py:551
-#| msgid "English"
+#: webook/arrangement/models.py:392 webook/arrangement/models.py:422
+#: webook/arrangement/models.py:568
 msgid "Name(English)"
 msgstr "Navn (Engelsk)"
 
-#: webook/arrangement/models.py:400 webook/arrangement/models.py:409
-#| msgid "Arrangement"
+#: webook/arrangement/models.py:417 webook/arrangement/models.py:426
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:207
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:303
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:102
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:114
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:91
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:319
+#: webook/templates/arrangement/planner/edit-event-dialog.html:124
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:110
+#: webook/templates/arrangement/planner/event-info-dialog.html:265
+#: webook/templates/arrangement/planner/planner-base-dialog.html:159
 msgid "Arrangement type"
 msgstr "Arrangementstype"
 
-#: webook/arrangement/models.py:401 webook/arrangement/models.py:410
-#| msgid "Arrangements"
+#: webook/arrangement/models.py:418 webook/arrangement/models.py:427
+#: webook/templates/arrangement/planner/planner_calendar.html:168
+#: webook/templates/arrangement/planner/planner_calendar.html:323
+#: webook/templates/arrangement/planner/planner_calendar_v2.html:150
 msgid "Arrangement types"
 msgstr "Arrangementtyper"
 
-#: webook/arrangement/models.py:432 webook/arrangement/models.py:435
-#| msgid "Status in short"
+#: webook/arrangement/models.py:449 webook/arrangement/models.py:452
 msgid "Status type"
 msgstr "Statustype"
 
-#: webook/arrangement/models.py:433 webook/arrangement/models.py:436
-#| msgid "Statistics"
+#: webook/arrangement/models.py:450 webook/arrangement/models.py:453
 msgid "Status types"
 msgstr "Statustyper"
 
-#: webook/arrangement/models.py:469 webook/screenshow/models.py:48
-#| msgid "Room Resources"
+#: webook/arrangement/models.py:486 webook/screenshow/models.py:48
 msgid "Room Preset"
 msgstr "Rom Preset"
 
-#: webook/arrangement/models.py:470
+#: webook/arrangement/models.py:487
 #: webook/arrangement/views/room_preset_views.py:54
-#| msgid "Room Resources"
 msgid "Room Presets"
 msgstr "Rom Presets"
 
-#: webook/arrangement/models.py:517 webook/arrangement/models.py:685
-#: webook/arrangement/models.py:1448
-#: webook/templates/arrangement/calendar/arrangement_calendar.html:14
+#: webook/arrangement/models.py:534 webook/arrangement/models.py:702
+#: webook/arrangement/models.py:1473
+#: webook/templates/arrangement/calendar/arrangement_calendar.html:15
 msgid "Arrangement"
 msgstr "Arrangement"
 
-#: webook/arrangement/models.py:518 webook/arrangement/models.py:686
+#: webook/arrangement/models.py:535 webook/arrangement/models.py:703
 #: webook/templates/arrangement/audience/audience_detail.html:15
+#: webook/templates/arrangement/planner/planner_calendar.html:53
+#: webook/templates/arrangement/planner/planner_calendar.html:125
+#: webook/templates/base.html:229
 msgid "Arrangements"
 msgstr "Arrangementer"
 
-#: webook/arrangement/models.py:558 webook/arrangement/models.py:705
-#: webook/arrangement/models.py:731 webook/arrangement/models.py:774
+#: webook/arrangement/models.py:575 webook/arrangement/models.py:722
+#: webook/arrangement/models.py:751 webook/arrangement/models.py:794
 #: webook/templates/arrangement/location/location_detail.html:90
-#: webook/templates/arrangement/room/room_detail.html:24
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:183
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:283
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:137
+#: webook/templates/arrangement/planner/edit-event-dialog.html:67
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:47
+#: webook/templates/arrangement/planner/planner-base-dialog.html:117
+#: webook/templates/arrangement/room/room_detail.html:38
 msgid "Location"
 msgstr "Lokasjon"
 
-#: webook/arrangement/models.py:564 webook/arrangement/models.py:1497
+#: webook/arrangement/models.py:581 webook/arrangement/models.py:1522
 msgid "Meeting Place"
 msgstr "Møtested"
 
-#: webook/arrangement/models.py:567 webook/arrangement/models.py:1500
+#: webook/arrangement/models.py:584 webook/arrangement/models.py:1525
 msgid "Meeting Place (English)"
 msgstr "Møtested (Engelsk)"
 
-#: webook/arrangement/models.py:578
+#: webook/arrangement/models.py:595
 #: webook/arrangement/views/arrangementtype_views.py:39
-#| msgid "Arrangement"
 msgid "Arrangement Type"
 msgstr "Arrangement"
 
-#: webook/arrangement/models.py:584
+#: webook/arrangement/models.py:601
 msgid "Starts"
 msgstr "Starter"
 
-#: webook/arrangement/models.py:585
+#: webook/arrangement/models.py:602
 msgid "Ends"
 msgstr "Slutter"
 
-#: webook/arrangement/models.py:627 webook/arrangement/models.py:860
+#: webook/arrangement/models.py:644 webook/arrangement/models.py:883
 msgid "Timeline Events"
 msgstr "Tidslinje Aktiviteter"
 
-#: webook/arrangement/models.py:631 webook/arrangement/models.py:1248
-#: webook/arrangement/models.py:1460 webook/arrangement/models.py:1778
+#: webook/arrangement/models.py:648 webook/arrangement/models.py:1273
+#: webook/arrangement/models.py:1485 webook/arrangement/models.py:1820
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:90
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:87
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:102
 #: webook/templates/arrangement/planner/dialogs/edit_event.html:37
+#: webook/templates/arrangement/planner/event-info-dialog.html:119
+#: webook/templates/arrangement/planner/plan_arrangement.html:76
 msgid "Notes"
 msgstr "Notater"
 
-#: webook/arrangement/models.py:636 webook/arrangement/models.py:1464
-#: webook/arrangement/models.py:1892
+#: webook/arrangement/models.py:653 webook/arrangement/models.py:1489
+#: webook/arrangement/models.py:1934
 msgid "Responsible"
 msgstr "Ansvarlig"
 
-#: webook/arrangement/models.py:642
+#: webook/arrangement/models.py:659
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:246
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:248
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:208
+#: webook/templates/arrangement/planner/plan_arrangement.html:70
+#: webook/templates/user_management/list.html:38
 msgid "Planners"
 msgstr "Planleggere"
 
-#: webook/arrangement/models.py:654 webook/arrangement/models.py:1487
-#: webook/arrangement/models.py:1930
+#: webook/arrangement/models.py:671 webook/arrangement/models.py:1512
+#: webook/arrangement/models.py:1972
 msgid "Screen Display Text"
 msgstr "Tekst på skjerm"
 
-#: webook/arrangement/models.py:657 webook/arrangement/models.py:1490
-#: webook/arrangement/models.py:1933
+#: webook/arrangement/models.py:674 webook/arrangement/models.py:1515
+#: webook/arrangement/models.py:1975
 msgid "Screen Display Text(English)"
 msgstr "Tekst på skjerm (Engelsk)"
 
-#: webook/arrangement/models.py:665
+#: webook/arrangement/models.py:682
 msgid "People Participants"
 msgstr "Persondeltakere"
 
-#: webook/arrangement/models.py:670
+#: webook/arrangement/models.py:687
 msgid "Organization Participants"
 msgstr "Organisasjondeltakere"
 
-#: webook/arrangement/models.py:674
+#: webook/arrangement/models.py:691
 msgid "Show on multimedia screen"
 msgstr "Vis på multimedia skjerm"
 
-#: webook/arrangement/models.py:678 webook/screenshow/models.py:92
+#: webook/arrangement/models.py:695 webook/screenshow/models.py:92
 #: webook/screenshow/views/layout_view.py:17
 msgid "Display Layout"
 msgstr "Visningslayout"
 
-#: webook/arrangement/models.py:706 webook/arrangement/models.py:732
-#: webook/templates/arrangement/calendar/arrangement_calendar.html:21
+#: webook/arrangement/models.py:723 webook/arrangement/models.py:752
+#: webook/templates/arrangement/calendar/arrangement_calendar.html:22
+#: webook/templates/arrangement/planner/planner_calendar.html:60
+#: webook/templates/arrangement/planner/planner_calendar.html:130
+#: webook/templates/base.html:183
 msgid "Locations"
 msgstr "Lokasjoner"
 
-#: webook/arrangement/models.py:756 webook/arrangement/models.py:788
-#: webook/templates/arrangement/room/room_form.html:28
+#: webook/arrangement/models.py:776 webook/arrangement/models.py:811
+#: webook/templates/arrangement/room/room_form.html:25
 msgid "Room"
 msgstr "Rom"
 
-#: webook/arrangement/models.py:757 webook/arrangement/models.py:789
-#: webook/arrangement/models.py:1453 webook/arrangement/views/room_views.py:31
+#: webook/arrangement/models.py:777 webook/arrangement/models.py:812
+#: webook/arrangement/models.py:1478 webook/arrangement/views/room_views.py:31
+#: webook/templates/arrangement/location/location_detail.html:39
 #: webook/templates/arrangement/planner/dialogs/allocate_rooms.html:15
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1075
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:193
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:197
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:431
 #: webook/templates/arrangement/planner/dialogs/edit_event.html:126
+#: webook/templates/arrangement/planner/edit-event-dialog.html:74
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:51
+#: webook/templates/arrangement/planner/event-info-dialog.html:214
+#: webook/templates/arrangement/planner/planner-base-dialog.html:126
+#: webook/templates/arrangement/room_presets/form.html:8
+#: webook/templates/arrangement/vue/room_and_preset_selector_component.html:10
 msgid "Rooms"
 msgstr "Rom"
 
-#: webook/arrangement/models.py:769
-#| msgid "English"
+#: webook/arrangement/models.py:789
 msgid "Name English"
 msgstr "Navn på Engelsk"
 
-#: webook/arrangement/models.py:779
+#: webook/arrangement/models.py:800
 msgid "Is Exclusive"
 msgstr "Er Eksklusiv"
 
-#: webook/arrangement/models.py:780
+#: webook/arrangement/models.py:801
 msgid "Has Screen"
 msgstr "Har Skjerm"
 
-#: webook/arrangement/models.py:782 webook/arrangement/models.py:933
-#: webook/arrangement/models.py:1168 webook/arrangement/models.py:1253
+#: webook/arrangement/models.py:802
+msgid "Is Disabled"
+msgstr "Er deaktivert"
+
+#: webook/arrangement/models.py:805 webook/arrangement/models.py:956
+#: webook/arrangement/models.py:1191 webook/arrangement/models.py:1278
 msgid "Business Hours"
 msgstr "Arbeidstider"
 
-#: webook/arrangement/models.py:808
-#| msgid "Articles"
+#: webook/arrangement/models.py:831
 msgid "Article"
 msgstr "Artikler"
 
-#: webook/arrangement/models.py:809 webook/arrangement/models.py:1459
+#: webook/arrangement/models.py:832 webook/arrangement/models.py:1484
 msgid "Articles"
 msgstr "Artikler"
 
-#: webook/arrangement/models.py:828 webook/arrangement/models.py:834
-#: webook/arrangement/models.py:1243
-#: webook/templates/arrangement/organization/organization_detail.html:38
+#: webook/arrangement/models.py:851 webook/arrangement/models.py:857
+#: webook/arrangement/models.py:1268
+#: webook/templates/arrangement/organization/organization_detail.html:39
 msgid "Organization Type"
 msgstr "Organisasjonstype"
 
-#: webook/arrangement/models.py:829 webook/arrangement/models.py:835
+#: webook/arrangement/models.py:852 webook/arrangement/models.py:858
 #: webook/arrangement/views/organizationtype_views.py:29
 msgid "Organization Types"
 msgstr "Organisasjonstyper"
 
-#: webook/arrangement/models.py:859
-#| msgid "Timeline Events"
+#: webook/arrangement/models.py:882
 msgid "Timeline Event"
 msgstr "Tidslinje Hendelse"
 
-#: webook/arrangement/models.py:862 webook/arrangement/models.py:1019
+#: webook/arrangement/models.py:885 webook/arrangement/models.py:1042
 msgid "Content"
 msgstr "Innhold"
 
-#: webook/arrangement/models.py:863
+#: webook/arrangement/models.py:886
 msgid "Stamp"
 msgstr "Stempel"
 
-#: webook/arrangement/models.py:878 webook/arrangement/models.py:1290
+#: webook/arrangement/models.py:901 webook/arrangement/models.py:1315
 msgid "Service Type"
 msgstr "Tjenestetype"
 
-#: webook/arrangement/models.py:879
+#: webook/arrangement/models.py:902
 #: webook/arrangement/views/servicetype_views.py:34
 msgid "Service Types"
 msgstr "Tjenestetyper"
 
-#: webook/arrangement/models.py:922
+#: webook/arrangement/models.py:945
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:99
 msgid "Monday"
 msgstr "Mandag"
 
-#: webook/arrangement/models.py:923
+#: webook/arrangement/models.py:946
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:100
 msgid "Tuesday"
 msgstr "Tirsdag"
 
-#: webook/arrangement/models.py:924
+#: webook/arrangement/models.py:947
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:101
 msgid "Wednesday"
 msgstr "Onsdag"
 
-#: webook/arrangement/models.py:925
+#: webook/arrangement/models.py:948
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:102
 msgid "Thursday"
 msgstr "Torsdag"
 
-#: webook/arrangement/models.py:926
+#: webook/arrangement/models.py:949
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:103
 msgid "Friday"
 msgstr "Fredag"
 
-#: webook/arrangement/models.py:927
+#: webook/arrangement/models.py:950
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:104
 msgid "Saturday"
 msgstr "Lørdag"
 
-#: webook/arrangement/models.py:928
+#: webook/arrangement/models.py:951
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:105
 msgid "Sunday"
 msgstr "Søndag"
 
-#: webook/arrangement/models.py:929
+#: webook/arrangement/models.py:952
 msgid "Holiday"
 msgstr "Helligdag"
 
-#: webook/arrangement/models.py:932
-#| msgid "Business Hours"
+#: webook/arrangement/models.py:955
 msgid "Business Hour"
 msgstr "Arbeidstider"
 
-#: webook/arrangement/models.py:936
+#: webook/arrangement/models.py:959
 msgid "Day Of Week"
 msgstr "Ukesdag"
 
-#: webook/arrangement/models.py:939
+#: webook/arrangement/models.py:962
 msgid "Start Of Business Hours"
 msgstr "Start av arbeidstider"
 
-#: webook/arrangement/models.py:941
+#: webook/arrangement/models.py:964
 msgid "End Of Business Hours"
 msgstr "Slutt av arbeidstider"
 
-#: webook/arrangement/models.py:944
+#: webook/arrangement/models.py:967
 msgid "Valid From"
 msgstr "Tilgjengelig Fra"
 
-#: webook/arrangement/models.py:947
+#: webook/arrangement/models.py:970
 msgid "Valid Through"
 msgstr "Tilgjengelig Gjennom"
 
-#: webook/arrangement/models.py:951 webook/arrangement/models.py:1102
-#| msgid "Notes"
+#: webook/arrangement/models.py:974 webook/arrangement/models.py:1125
 msgid "Note"
 msgstr "Notater"
 
-#: webook/arrangement/models.py:981
+#: webook/arrangement/models.py:1004
+#: webook/templates/arrangement/location/location_detail.html:29
+#: webook/templates/arrangement/person/person_detail.html:45
+#: webook/templates/arrangement/planner/planner_calendar.html:109
 msgid "Calendar"
 msgstr "Kalender"
 
-#: webook/arrangement/models.py:982
+#: webook/arrangement/models.py:1005
 #: webook/arrangement/views/calendar_views.py:29
 msgid "Calendars"
 msgstr "Kalendere"
 
-#: webook/arrangement/models.py:986
+#: webook/arrangement/models.py:1009
 msgid "Owner"
 msgstr "Eier"
 
-#: webook/arrangement/models.py:992
+#: webook/arrangement/models.py:1015
 msgid "Is Personal"
 msgstr "Er Personlig"
 
-#: webook/arrangement/models.py:995
+#: webook/arrangement/models.py:1018
 msgid "People Resources"
 msgstr "Personressurser"
 
-#: webook/arrangement/models.py:997
+#: webook/arrangement/models.py:1020
 msgid "Room Resources"
 msgstr "Romressurser"
 
-#: webook/arrangement/models.py:1021
+#: webook/arrangement/models.py:1044
 msgid "Has personal information"
 msgstr "Inneholder personopplysninger"
 
-#: webook/arrangement/models.py:1091
+#: webook/arrangement/models.py:1114
 msgid "Code"
 msgstr "Kode"
 
-#: webook/arrangement/models.py:1094
+#: webook/arrangement/models.py:1117
 msgid "Requested By"
 msgstr "Forespurt Av"
 
-#: webook/arrangement/models.py:1096
+#: webook/arrangement/models.py:1119
 msgid "SentTo"
 msgstr "Sendt Til"
 
-#: webook/arrangement/models.py:1098
+#: webook/arrangement/models.py:1121
 msgid "SentWhen"
 msgstr "Sendt Når"
 
-#: webook/arrangement/models.py:1107
+#: webook/arrangement/models.py:1130
 msgid "Reason of denial"
 msgstr "Begrunnelse for avslag"
 
-#: webook/arrangement/models.py:1144 webook/arrangement/models.py:1177
+#: webook/arrangement/models.py:1167 webook/arrangement/models.py:1202
+#: webook/templates/arrangement/planner/components/people_to_requisition_component.html:13
 msgid "Person"
 msgstr "Person"
 
-#: webook/arrangement/models.py:1145 webook/arrangement/models.py:1178
-#: webook/arrangement/models.py:1451
+#: webook/arrangement/models.py:1168 webook/arrangement/models.py:1203
+#: webook/arrangement/models.py:1476
 #: webook/arrangement/views/person_views.py:43
-#: webook/templates/arrangement/calendar/arrangement_calendar.html:39
+#: webook/templates/arrangement/calendar/arrangement_calendar.html:40
 #: webook/templates/arrangement/planner/dialogs/allocate_people.html:15
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1080
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:178
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:182
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:466
 #: webook/templates/arrangement/planner/dialogs/edit_event.html:105
+#: webook/templates/arrangement/planner/planner_calendar.html:67
+#: webook/templates/arrangement/planner/planner_calendar.html:135
+#: webook/templates/base.html:197
 msgid "People"
 msgstr "Personer"
 
-#: webook/arrangement/models.py:1148
+#: webook/arrangement/models.py:1171
 msgid "Social ID"
 msgstr "Social ID"
 
-#: webook/arrangement/models.py:1151
-#| msgid "Personal Email"
+#: webook/arrangement/models.py:1174
 msgid "Social Email"
 msgstr "Personlig E-Post"
 
-#: webook/arrangement/models.py:1158
-#: webook/templates/arrangement/organization/organization_detail.html:186
-#: webook/templates/arrangement/person/person_detail.html:73
+#: webook/arrangement/models.py:1181
+#: webook/templates/arrangement/organization/organization_detail.html:168
+#: webook/templates/arrangement/person/person_detail.html:70
 msgid "Personal Email"
 msgstr "Personlig E-Post"
 
-#: webook/arrangement/models.py:1160
-#: webook/templates/arrangement/organization/organization_detail.html:173
-#: webook/templates/arrangement/person/person_form.html:15
+#: webook/arrangement/models.py:1183
+#: webook/templates/arrangement/organization/organization_detail.html:155
+#: webook/templates/arrangement/person/person_form.html:11
 #: webook/users/forms.py:105
 msgid "First Name"
 msgstr "Fornavn"
 
-#: webook/arrangement/models.py:1162
-#: webook/templates/arrangement/organization/organization_detail.html:177
-#: webook/templates/arrangement/person/person_form.html:27
+#: webook/arrangement/models.py:1185
+#: webook/templates/arrangement/organization/organization_detail.html:159
+#: webook/templates/arrangement/person/person_form.html:23
 #: webook/users/forms.py:107
 msgid "Middle Name"
 msgstr "Mellomnavn"
 
-#: webook/arrangement/models.py:1164
-#: webook/templates/arrangement/organization/organization_detail.html:181
-#: webook/templates/arrangement/person/person_form.html:37
+#: webook/arrangement/models.py:1187
+#: webook/templates/arrangement/organization/organization_detail.html:163
+#: webook/templates/arrangement/person/person_form.html:33
 #: webook/users/forms.py:109
 msgid "Last Name"
 msgstr "Etternavn"
 
-#: webook/arrangement/models.py:1165
-#: webook/templates/arrangement/organization/organization_detail.html:191
+#: webook/arrangement/models.py:1188
+#: webook/templates/arrangement/organization/organization_detail.html:173
 msgid "Birth Date"
 msgstr "Fødselsdato"
 
-#: webook/arrangement/models.py:1234 webook/arrangement/models.py:1259
-#: webook/arrangement/models.py:1296
+#: webook/arrangement/models.py:1259 webook/arrangement/models.py:1284
+#: webook/arrangement/models.py:1321
 msgid "Organization"
 msgstr "Organisasjon"
 
-#: webook/arrangement/models.py:1235 webook/arrangement/models.py:1258
+#: webook/arrangement/models.py:1260 webook/arrangement/models.py:1283
 #: webook/arrangement/views/organization_views.py:29
-#: webook/templates/arrangement/organizationtype/organizationtype_detail.html:8
+#: webook/templates/arrangement/organizationtype/organizationtype_detail.html:31
 msgid "Organizations"
 msgstr "Organisasjoner"
 
-#: webook/arrangement/models.py:1238
-#: webook/templates/arrangement/organization/organization_detail.html:24
+#: webook/arrangement/models.py:1263
+#: webook/templates/arrangement/organization/organization_detail.html:29
 msgid "Organization Number"
 msgstr "Organisasjonsnummer"
 
-#: webook/arrangement/models.py:1250
-#: webook/templates/arrangement/organization/organization_detail.html:57
+#: webook/arrangement/models.py:1275
+#: webook/templates/arrangement/organization/organization_detail.html:52
 msgid "Members"
 msgstr "Medlemmer"
 
-#: webook/arrangement/models.py:1285
-#| msgid "ServiceName"
+#: webook/arrangement/models.py:1310
 msgid "Service contact"
 msgstr "Kontakt for tjeneste"
 
-#: webook/arrangement/models.py:1351 webook/arrangement/models.py:1770
+#: webook/arrangement/models.py:1376 webook/arrangement/models.py:1812
 msgid "Event"
 msgstr "Hendelse"
 
-#: webook/arrangement/models.py:1352
-#| msgid "Event"
+#: webook/arrangement/models.py:1377
 msgid "Events"
 msgstr "Aktivitet"
 
-#: webook/arrangement/models.py:1413
+#: webook/arrangement/models.py:1438
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1120
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:27
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:45
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:40
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:45
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:640
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:682
 #: webook/templates/arrangement/planner/dialogs/edit_event.html:75
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:26
+#: webook/templates/arrangement/planner/event-info-dialog.html:180
+#: webook/templates/arrangement/planner/event-info-dialog.html:182
+#: webook/templates/arrangement/planner/event-info-dialog.html:186
+#: webook/templates/arrangement/planner/event-info-dialog.html:189
+#: webook/templates/arrangement/planner/planner-base-dialog.html:78
+#: webook/templates/arrangement/planner/planner-base-dialog.html:85
 msgid "Title"
 msgstr "Tittel"
 
-#: webook/arrangement/models.py:1415
-#| msgid "English"
+#: webook/arrangement/models.py:1440
+#: webook/templates/arrangement/planner/edit-event-dialog.html:25
 msgid "Title (English)"
 msgstr "Tittel (Engelsk)"
 
-#: webook/arrangement/models.py:1419
+#: webook/arrangement/models.py:1444
 msgid "Is the result of a collision resolution"
 msgstr "Er resultat av en kollisjonsoppløsning"
 
-#: webook/arrangement/models.py:1425
+#: webook/arrangement/models.py:1450
 msgid "Start before collision resolution"
 msgstr "Start før kollisjonsoppløsning"
 
-#: webook/arrangement/models.py:1428
+#: webook/arrangement/models.py:1453
 msgid "End before collision resolution"
 msgstr "Slutt før kollisjonsoppløsning"
 
-#: webook/arrangement/models.py:1431
+#: webook/arrangement/models.py:1456
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1121
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:49
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:34
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:36
 msgid "Start"
 msgstr "Start"
 
-#: webook/arrangement/models.py:1432
+#: webook/arrangement/models.py:1457
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1122
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:53
+#: webook/templates/arrangement/planner/dialogs/new_serie.html:42
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:40
 msgid "End"
 msgstr "Slutt"
 
-#: webook/arrangement/models.py:1433
+#: webook/arrangement/models.py:1458
 msgid "AllDay"
 msgstr "Hele dagen"
 
-#: webook/arrangement/models.py:1435
+#: webook/arrangement/models.py:1460
 msgid "SequenceGuid"
 msgstr "Sekvens GUID"
 
-#: webook/arrangement/models.py:1439
-#| msgid "Primary"
+#: webook/arrangement/models.py:1464
 msgid "Primary Color"
 msgstr "Primærfarge"
 
-#: webook/arrangement/models.py:1442
+#: webook/arrangement/models.py:1467
 msgid "Is Locked"
 msgstr "Er Låst"
 
-#: webook/arrangement/models.py:1444
-#| msgid "Requisitioning"
+#: webook/arrangement/models.py:1469
 msgid "Requisitions Finished"
 msgstr "Rekvireringer er utført"
 
-#: webook/arrangement/models.py:1456
+#: webook/arrangement/models.py:1481
 msgid "Loose service requisitions"
 msgstr "Myke Tjenesterekvisisjoner"
 
-#: webook/arrangement/models.py:1481 webook/screenshow/models.py:93
+#: webook/arrangement/models.py:1506 webook/screenshow/models.py:93
 msgid "Display Layouts"
 msgstr "Skjermvisning Layouts"
 
-#: webook/arrangement/models.py:1767
+#: webook/arrangement/models.py:1535
+msgid "Original Date"
+msgstr "Opprinnelig dato"
+
+#: webook/arrangement/models.py:1809
 msgid "Receipt"
 msgstr "Kvittering"
 
-#: webook/arrangement/models.py:1775
+#: webook/arrangement/models.py:1817
 msgid "Service Provider"
 msgstr "Tjenestetilbyder"
 
-#: webook/arrangement/models.py:1780
+#: webook/arrangement/models.py:1822
 msgid "Associated People"
 msgstr "Assosierte Personer"
 
-#: webook/arrangement/models.py:1809
+#: webook/arrangement/models.py:1851
 msgid "Has been locked"
 msgstr "Er låst"
 
-#: webook/arrangement/models.py:1834
-#| msgid "Timeline Events"
+#: webook/arrangement/models.py:1876
 msgid "Affected Events"
 msgstr "Affekterte Aktiviteter"
 
-#: webook/arrangement/models.py:1838
+#: webook/arrangement/models.py:1880
 msgid "Is Fulfilled"
 msgstr "Er gjennomført"
 
-#: webook/arrangement/models.py:1859
+#: webook/arrangement/models.py:1901
 msgid "Ignore colliding activities"
 msgstr "Ignorer kolliderende aktiviteter"
 
-#: webook/arrangement/models.py:1862
+#: webook/arrangement/models.py:1904
 msgid "Remove contested resources from activity on collisions"
 msgstr "Fjern konflikterende ressurser fra aktiviteter i kollisjon"
 
-#: webook/arrangement/models.py:2037
+#: webook/arrangement/models.py:2108
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:16
 #: webook/templates/arrangement/planner/dialogs/order_service.html:27
+#: webook/templates/arrangement/requisitioneer/loose_requisitions/loose_requisitions_on_event.html:27
 msgid "Comment"
 msgstr "Kommentar"
 
-#: webook/arrangement/models.py:2039
+#: webook/arrangement/models.py:2110
 msgid "Type to order"
 msgstr "Type som skal bestilles"
 
-#: webook/arrangement/models.py:2042
+#: webook/arrangement/models.py:2113
 msgid "Is Open for Ordering"
 msgstr "Kan motta bestillinger"
 
@@ -656,18 +766,17 @@ msgstr "Rediger Arrangement"
 msgid "Delete Arrangement"
 msgstr "Slett Arrangement"
 
-#: webook/arrangement/views/calendar_views.py:203
+#: webook/arrangement/views/calendar_views.py:201
 msgid "Calendar Samples"
 msgstr "Eksempel kalendere"
 
-#: webook/arrangement/views/calendar_views.py:215
-#: webook/arrangement/views/calendar_views.py:216
+#: webook/arrangement/views/calendar_views.py:213
+#: webook/arrangement/views/calendar_views.py:214
 #: webook/templates/arrangement/calendar/calendars_list.html:7
 msgid "Arrangement Calendar"
 msgstr "Arrangementskalender"
 
-#: webook/arrangement/views/calendar_views.py:234
-#| msgid "Calendar"
+#: webook/arrangement/views/calendar_views.py:232
 msgid "Drill Calendar"
 msgstr "Kalender"
 
@@ -683,17 +792,26 @@ msgid "No URL to redirect to. Provide a success_url."
 msgstr "Ingen URL å redirigere til. Definer en success_url."
 
 #: webook/arrangement/views/planner_views.py:100
-#| msgid "Warning:"
+#: webook/templates/arrangement/planner/plan_arrangement.html:65
 msgid "Planning"
 msgstr "Planlegging"
 
 #: webook/arrangement/views/requisition_views.py:52
-#| msgid "Requisitioning"
 msgid "Requisitions"
 msgstr "Rekvisisjoner"
 
 #: webook/arrangement/views/status_type_views.py:44
-#| msgid "Statistics"
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:219
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:315
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:114
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:127
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:104
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:332
+#: webook/templates/arrangement/planner/planner-base-dialog.html:175
+#: webook/templates/arrangement/planner/planner_calendar.html:177
+#: webook/templates/arrangement/planner/planner_calendar.html:307
+#: webook/templates/arrangement/planner/planner_calendar_v2.html:159
+#: webook/templates/base.html:223
 msgid "Status"
 msgstr "Status"
 
@@ -714,7 +832,6 @@ msgid "Shown Items"
 msgstr "Viste Entiteter"
 
 #: webook/screenshow/models.py:16
-#| msgid "Room Name"
 msgid "Room Based"
 msgstr "Rommets Navn"
 
@@ -727,12 +844,10 @@ msgid "Folder Path"
 msgstr "Sti"
 
 #: webook/screenshow/models.py:20
-#| msgid "Last Name"
 msgid "Generated Name"
 msgstr "Generert Navn"
 
 #: webook/screenshow/models.py:25 webook/screenshow/views/screen_view.py:15
-#| msgid "People Resources"
 msgid "Screen Resource"
 msgstr "Skjermressurs"
 
@@ -740,13 +855,11 @@ msgstr "Skjermressurs"
 #: webook/screenshow/models.py:83
 #: webook/templates/screenshow/group/group_form.html:31
 #: webook/templates/screenshow/layout/layout_form.html:29
-#| msgid "People Resources"
 msgid "Screen Resources"
 msgstr "Skjermressurser"
 
 #: webook/screenshow/models.py:44
 #: webook/templates/screenshow/group/group_form.html:16
-#| msgid "Room Name"
 msgid "Group Name"
 msgstr "Gruppenavn"
 
@@ -758,7 +871,6 @@ msgstr "Skjerm Gruppe Navn (Engelsk)"
 #: webook/templates/screenshow/group/group_form.html:73
 #: webook/templates/screenshow/layout/layout_form.html:79
 #: webook/templates/screenshow/screen/screen_form.html:36
-#| msgid "Entity"
 msgid "Quantity"
 msgstr "Entitet"
 
@@ -782,12 +894,10 @@ msgid "Items Shown"
 msgstr "Entiteter Vist"
 
 #: webook/screenshow/models.py:76
-#| msgid "Room Name"
 msgid "Is Room Based"
 msgstr "Er basert på rom"
 
 #: webook/screenshow/models.py:77
-#| msgid "Event"
 msgid "All Events"
 msgstr "Alle aktiviteter"
 
@@ -805,15 +915,15 @@ msgstr "Innstilling for skjermvisning"
 
 #: webook/screenshow/models.py:113
 msgid "HTML Template"
-msgstr ""
+msgstr "HTML-mal"
 
 #: webook/screenshow/models.py:114
 msgid "CSS Template"
-msgstr ""
+msgstr "CSS-mal"
 
 #: webook/screenshow/models.py:115
 msgid "File Output Path"
-msgstr ""
+msgstr "Filutdatasti"
 
 #: webook/screenshow/models.py:119
 msgid "Display Layout Settings"
@@ -855,9 +965,9 @@ msgid ""
 "to contact us through the channels listed beneath. In the meantime, try "
 "refreshing."
 msgstr ""
-"Vi sporer og loggfører disse feilene automatisk, men hvis problemet vedvarer"
-" så kontakt oss gjerne via de kanalene listet opp under. I mellomtiden kan "
-"du prøve å laste siden inn på nytt."
+"Vi sporer og loggfører disse feilene automatisk, men hvis problemet vedvarer "
+"så kontakt oss gjerne via de kanalene listet opp under. I mellomtiden kan du "
+"prøve å laste siden inn på nytt."
 
 #: webook/templates/account/account_inactive.html:5
 #: webook/templates/account/account_inactive.html:8
@@ -869,6 +979,7 @@ msgid "This account is inactive."
 msgstr "Denne kontoen er inaktiv."
 
 #: webook/templates/account/email.html:7 webook/templates/account/email.html:8
+#: webook/templates/user_management/user_list.html:53
 msgid "Email"
 msgstr "E-Post"
 
@@ -907,8 +1018,7 @@ msgstr "Advarsel:"
 #: webook/templates/account/email.html:55
 msgid ""
 "You currently do not have any e-mail address set up. You should really add "
-"an e-mail address so you can receive notifications, reset your password, "
-"etc."
+"an e-mail address so you can receive notifications, reset your password, etc."
 msgstr ""
 "Du har ikke satt opp noen epost adresse ennå. Du burde legge til en epost "
 "adresse slik at du kan motta notifikasjoner, resette passord, osv."
@@ -954,7 +1064,7 @@ msgstr ""
 
 #: webook/templates/account/login.html:7
 msgid "Logg inn med..."
-msgstr ""
+msgstr "Logg inn med..."
 
 #: webook/templates/account/login.html:32
 #, python-format
@@ -967,7 +1077,7 @@ msgstr ""
 
 #: webook/templates/account/logout.html:5
 #: webook/templates/account/logout.html:13
-#: webook/templates/account/logout.html:22 webook/templates/base.html:293
+#: webook/templates/account/logout.html:22 webook/templates/base.html:357
 msgid "Sign Out"
 msgstr "Logg ut"
 
@@ -990,8 +1100,8 @@ msgstr "Gjenopprett Passord"
 
 #: webook/templates/account/password_reset.html:15
 msgid ""
-"Forgotten your password? Enter your e-mail address below, and we'll send you"
-" an e-mail allowing you to reset it."
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail allowing you to reset it."
 msgstr ""
 "Glemt passordet ditt? Skriv inn epost adressen din under, og så sender vi "
 "deg en epost som vil hjelpe deg med å resette passordet ditt."
@@ -1021,8 +1131,8 @@ msgstr "Ugyldig Token"
 #, python-format
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
-"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password "
-"reset</a>."
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
 msgstr ""
 "Linken for gjenoppretting av passord var ugyldig, Muligens fordi den "
 "allerede har blitt brukt.  Vennligst forespør en <a "
@@ -1054,9 +1164,10 @@ msgstr "Registrer"
 #, python-format
 msgid ""
 "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
-msgstr "Har du allerde en konto? Hvis så, <a href=\"%(login_url)s\">logg inn</a>."
+msgstr ""
+"Har du allerde en konto? Hvis så, <a href=\"%(login_url)s\">logg inn</a>."
 
-#: webook/templates/account/signup.html:22 webook/templates/base.html:298
+#: webook/templates/account/signup.html:22 webook/templates/base.html:362
 msgid "Sign Up"
 msgstr "Registrer"
 
@@ -1086,7 +1197,7 @@ msgstr ""
 "mottar eposten innen et par minutter."
 
 #: webook/templates/account/verification_sent.html:12
-#: webook/templates/base.html:297
+#: webook/templates/base.html:361
 msgid "Sign In"
 msgstr "Logg inn"
 
@@ -1113,11 +1224,11 @@ msgstr ""
 #: webook/templates/account/verified_email_required.html:20
 #, python-format
 msgid ""
-"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your "
-"e-mail address</a>."
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your e-"
+"mail address</a>."
 msgstr ""
-"<strong>Merk:</strong> du kan fortsatt <a href=\"%(email_url)s\">endre epost"
-" adressen din</a>."
+"<strong>Merk:</strong> du kan fortsatt <a href=\"%(email_url)s\">endre epost "
+"adressen din</a>."
 
 #: webook/templates/arrangement/arrangement/arrangement_form.html:16
 #: webook/templates/arrangement/arrangement/arrangement_form.html:45
@@ -1141,7 +1252,7 @@ msgstr "Hva skal dette arrangementet hete?"
 #: webook/templates/arrangement/arrangement/arrangement_form.html:31
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:131
 msgid "Name of the arrangement"
-msgstr "Arrangementets navn"
+msgstr "Slett Arrangement"
 
 #: webook/templates/arrangement/arrangement/arrangement_form.html:48
 msgid "This is a reference to the Audience entity"
@@ -1158,24 +1269,20 @@ msgstr "Hvilken målgruppe er dette arrangementet rettet mot?"
 #: webook/templates/arrangement/arrangement/arrangement_form.html:79
 #: webook/templates/arrangement/arrangement/arrangement_form.html:109
 #: webook/templates/arrangement/arrangement/arrangement_form.html:191
-#| msgid "This is a reference to the Audience entity"
 msgid "This is a reference to the arrangement type entity"
 msgstr "Dette er en referanse til en arrangement type"
 
 #: webook/templates/arrangement/arrangement/arrangement_form.html:83
 #: webook/templates/arrangement/arrangement/arrangement_form.html:113
 #: webook/templates/arrangement/arrangement/arrangement_form.html:195
-#| msgid "Go to organization types in a new tab"
 msgid "Go to arrangement types in a new tab"
 msgstr "Åpne arrangement typer  i en ny fane"
 
 #: webook/templates/arrangement/arrangement/arrangement_form.html:89
-#| msgid "When does this arrangement start?"
 msgid "At what location does this arrangement occurr?"
 msgstr "På hvilken lokasjon foregår dette arrangementet?"
 
 #: webook/templates/arrangement/arrangement/arrangement_form.html:119
-#| msgid "When does this arrangement start?"
 msgid "What kind of arrangement is this?"
 msgstr "Hva slags type arrangement er dette?"
 
@@ -1188,27 +1295,28 @@ msgid "When does this arrangement end?"
 msgstr "Når slutter dette arrangementet?"
 
 #: webook/templates/arrangement/arrangement/arrangement_form.html:201
-#| msgid "Add person to this arrangement"
 msgid "Who is responsible for this arrangement?"
 msgstr "Hvem er ansvarlig for dette arrangementet?"
 
 #: webook/templates/arrangement/arrangement/arrangement_form.html:223
 #: webook/templates/arrangement/arrangement/dialogs/add_planner_dialog.html:21
-#: webook/templates/arrangement/arrangementtype/arrangement_type_form.html:61
-#: webook/templates/arrangement/audience/audience_form.html:60
-#: webook/templates/arrangement/location/location_form.html:46
-#: webook/templates/arrangement/organization/organization_form.html:76
-#: webook/templates/arrangement/organizationtype/organizationtype_form.html:21
-#: webook/templates/arrangement/person/person_form.html:82
+#: webook/templates/arrangement/arrangementtype/arrangement_type_form.html:66
+#: webook/templates/arrangement/audience/audience_form.html:62
+#: webook/templates/arrangement/location/location_form.html:36
+#: webook/templates/arrangement/organization/organization_detail.html:122
+#: webook/templates/arrangement/organization/organization_form.html:68
 #: webook/templates/arrangement/planner/dialogs/allocate_people.html:23
 #: webook/templates/arrangement/planner/dialogs/allocate_rooms.html:23
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:787
 #: webook/templates/arrangement/planner/dialogs/color_selection.html:21
-#: webook/templates/arrangement/planner/dialogs/edit_event.html:168
+#: webook/templates/arrangement/planner/dialogs/edit_event.html:167
 #: webook/templates/arrangement/planner/dialogs/order_service.html:35
 #: webook/templates/arrangement/requisitioneer/requisition_dialog.html:45
-#: webook/templates/arrangement/room/room_form.html:93
-#: webook/templates/arrangement/room_presets/form.html:28
-#: webook/templates/arrangement/servicetype/servicetype_form.html:29
+#: webook/templates/arrangement/room/room_form.html:91
+#: webook/templates/arrangement/room_presets/form.html:23
+#: webook/templates/arrangement/servicetype/servicetype_form.html:19
+#: webook/templates/arrangement/statustype/statustype_form.html:24
+#: webook/templates/common/form_view.html:29
 #: webook/templates/screenshow/group/group_form.html:98
 #: webook/templates/screenshow/layout/layout_form.html:114
 #: webook/templates/screenshow/screen/screen_form.html:80
@@ -1216,36 +1324,52 @@ msgid "Save"
 msgstr "Lagre"
 
 #: webook/templates/arrangement/arrangement/arrangement_form.html:227
-#: webook/templates/arrangement/arrangementtype/arrangement_type_form.html:55
-#: webook/templates/arrangement/audience/audience_form.html:53
+#: webook/templates/arrangement/arrangementtype/arrangement_type_form.html:62
+#: webook/templates/arrangement/audience/audience_form.html:58
+#: webook/templates/arrangement/calendar/calendar.html:206
 #: webook/templates/arrangement/confirmation/deny_confirmation_request.html:25
 #: webook/templates/arrangement/location/location_detail.html:126
-#: webook/templates/arrangement/location/location_form.html:33
-#: webook/templates/arrangement/organization/organization_detail.html:201
-#: webook/templates/arrangement/organization/organization_form.html:63
-#: webook/templates/arrangement/organizationtype/organizationtype_form.html:15
+#: webook/templates/arrangement/location/location_form.html:28
+#: webook/templates/arrangement/organization/organization_detail.html:121
+#: webook/templates/arrangement/organization/organization_detail.html:181
+#: webook/templates/arrangement/organization/organization_form.html:60
 #: webook/templates/arrangement/person/associate_person_with_user.html:63
-#: webook/templates/arrangement/person/person_form.html:76
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:112
 #: webook/templates/arrangement/planner/dialogs/allocate_people.html:22
 #: webook/templates/arrangement/planner/dialogs/allocate_rooms.html:22
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1229
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1253
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1355
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1383
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1407
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:1010
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:1120
 #: webook/templates/arrangement/planner/dialogs/color_selection.html:20
-#: webook/templates/arrangement/planner/dialogs/edit_event.html:167
+#: webook/templates/arrangement/planner/dialogs/edit_event.html:166
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:180
 #: webook/templates/arrangement/planner/dialogs/order_service.html:34
+#: webook/templates/arrangement/planner/planner_calendar.html:112
 #: webook/templates/arrangement/requisitioneer/requisition_dialog.html:44
-#: webook/templates/arrangement/room/room_form.html:89
+#: webook/templates/arrangement/room/room_form.html:88
 #: webook/templates/arrangement/room_presets/form.html:15
-#: webook/templates/arrangement/servicetype/servicetype_form.html:15
+#: webook/templates/arrangement/servicetype/servicetype_form.html:11
+#: webook/templates/arrangement/statustype/statustype_form.html:21
+#: webook/templates/base.html:13 webook/templates/common/archive_view.html:27
 #: webook/templates/common/delete_view.html:13
-#: webook/templates/common/dialog_delete_view.html:12
+#: webook/templates/common/dialog_archive_view.html:15
+#: webook/templates/common/form_view.html:26
 #: webook/templates/screenshow/group/group_form.html:102
 #: webook/templates/screenshow/layout/layout_form.html:118
 #: webook/templates/screenshow/screen/screen_form.html:84
+#: webook/templates/user_management/list.html:149
+#: webook/templates/user_management/list.html:171
+#: webook/templates/user_management/list.html:201
+#: webook/templates/user_management/list.html:234
 msgid "Cancel"
 msgstr "Avbryt"
 
 #: webook/templates/arrangement/arrangement/arrangement_form.html:231
-#: webook/templates/arrangement/room/room_form.html:83
+#: webook/templates/arrangement/room/room_form.html:85
 #: webook/templates/screenshow/group/group_form.html:92
 #: webook/templates/screenshow/layout/layout_form.html:108
 #: webook/templates/screenshow/screen/screen_form.html:74
@@ -1259,7 +1383,6 @@ msgstr "Legg til planlegger"
 #: webook/templates/arrangement/arrangement/dialogs/dialog_plan_arrangement.html:18
 #: webook/templates/arrangement/planner/dialogs/icons_dialog.html:7
 #: webook/templates/arrangement/planner/plan_arrangement.html:204
-#| msgid "Icon"
 msgid "Icons"
 msgstr "Ikon"
 
@@ -1270,13 +1393,11 @@ msgstr "Brukermanual"
 
 #: webook/templates/arrangement/arrangement/dialogs/dialog_plan_arrangement.html:23
 #: webook/templates/arrangement/planner/plan_arrangement.html:209
-#| msgid "New Servicetype"
 msgid "New event"
 msgstr "Ny aktivitet"
 
 #: webook/templates/arrangement/arrangement/dialogs/dialog_plan_arrangement.html:24
 #: webook/templates/arrangement/planner/plan_arrangement.html:210
-#| msgid "New arrangement"
 msgid "New repeating event"
 msgstr "Ny repeterende aktivitet"
 
@@ -1307,7 +1428,6 @@ msgstr "april"
 #: webook/templates/arrangement/arrangement/dialogs/dialog_plan_arrangement.html:194
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_plan_arrangement.html:170
 #: webook/templates/arrangement/planner/plan_arrangement.html:411
-#| msgid "Primary"
 msgid "may"
 msgstr "Primær"
 
@@ -1332,7 +1452,6 @@ msgstr "august"
 #: webook/templates/arrangement/arrangement/dialogs/dialog_plan_arrangement.html:198
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_plan_arrangement.html:174
 #: webook/templates/arrangement/planner/plan_arrangement.html:415
-#| msgid "Members"
 msgid "september"
 msgstr "september"
 
@@ -1345,72 +1464,80 @@ msgstr "oktober"
 #: webook/templates/arrangement/arrangement/dialogs/dialog_plan_arrangement.html:200
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_plan_arrangement.html:176
 #: webook/templates/arrangement/planner/plan_arrangement.html:417
-#| msgid "Members"
 msgid "november"
 msgstr "november"
 
 #: webook/templates/arrangement/arrangement/dialogs/dialog_plan_arrangement.html:201
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_plan_arrangement.html:177
 #: webook/templates/arrangement/planner/plan_arrangement.html:418
-#| msgid "Members"
 msgid "december"
 msgstr "desember"
 
 #: webook/templates/arrangement/arrangement/dialogs/dialog_plan_arrangement.html:251
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_plan_arrangement.html:227
 #: webook/templates/arrangement/planner/plan_arrangement.html:468
-#: webook/templates/common/dialog_list_view.html:18
+#: webook/templates/common/dialog_list_view.html:12
+#: webook/templates/common/dialog_list_view.html:288
 #: webook/templates/common/list_view.html:11
 #: webook/templates/common/tree_list_view.html:12
-#| msgid "Create room"
+#: webook/templates/common/tree_list_view.html:186
+#: webook/utils/meta/meta_types.py:97
+#: webook/utils/meta_utils/section_manifest.py:111
 msgid "Create"
 msgstr "Opprett"
 
 #: webook/templates/arrangement/arrangement/dialogs/dialog_plan_arrangement.html:252
-#: webook/templates/arrangement/location/location_detail.html:15
-#: webook/templates/arrangement/organization/organization_detail.html:11
-#: webook/templates/arrangement/person/person_detail.html:14
+#: webook/templates/arrangement/organization/organization_detail.html:15
+#: webook/templates/arrangement/organizationtype/organizationtype_detail.html:15
+#: webook/templates/arrangement/person/person_detail.html:15
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:16
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_plan_arrangement.html:228
 #: webook/templates/arrangement/planner/plan_arrangement.html:469
-#: webook/templates/arrangement/room/partials/_location_room_list.html:51
-#: webook/templates/arrangement/room/room_detail.html:14
+#: webook/templates/arrangement/room/room_detail.html:15
+#: webook/templates/common/dialog_list_view.html:78
+#: webook/templates/common/dialog_list_view.html:80
+#: webook/templates/common/list_view.html:78
 #: webook/templates/common/list_view.html:80
-#: webook/templates/common/tree_list_view.html:241
+#: webook/templates/common/tree_list_view.html:291
+#: webook/templates/common/tree_list_view.html:332
 #: webook/templates/screenshow/group/group_detail.html:11
 #: webook/templates/screenshow/layout/layout_detail.html:11
 #: webook/templates/screenshow/screen/screen_detail.html:11
 #: webook/templates/screenshow/screen/screen_list.html:45
+#: webook/utils/meta/meta_types.py:129
+#: webook/utils/meta_utils/section_manifest.py:158
 msgid "Edit"
 msgstr "Rediger"
 
 #: webook/templates/arrangement/arrangement/dialogs/dialog_plan_arrangement.html:253
-#: webook/templates/arrangement/location/location_detail.html:11
-#: webook/templates/arrangement/organization/organization_detail.html:7
-#: webook/templates/arrangement/person/person_detail.html:10
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:36
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:11
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1045
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1228
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_plan_arrangement.html:229
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:1009
 #: webook/templates/arrangement/planner/plan_arrangement.html:470
-#: webook/templates/arrangement/room/partials/_location_room_list.html:45
-#: webook/templates/arrangement/room/room_detail.html:10
 #: webook/templates/common/delete_view.html:14
-#: webook/templates/common/dialog_delete_view.html:13
+#: webook/templates/common/dialog_list_view.html:85
+#: webook/templates/common/dialog_list_view.html:87
+#: webook/templates/common/list_view.html:85
 #: webook/templates/common/list_view.html:87
-#: webook/templates/common/tree_list_view.html:249
 #: webook/templates/screenshow/group/group_detail.html:7
 #: webook/templates/screenshow/layout/layout_detail.html:7
 #: webook/templates/screenshow/screen/screen_detail.html:7
 #: webook/templates/screenshow/screen/screen_list.html:51
+#: webook/utils/meta/meta_types.py:113
+#: webook/utils/meta_utils/section_manifest.py:129
 msgid "Delete"
 msgstr "Slett"
 
 #: webook/templates/arrangement/arrangement/dialogs/dialog_plan_arrangement.html:254
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_plan_arrangement.html:230
 #: webook/templates/arrangement/planner/plan_arrangement.html:471
-#| msgid "My Info"
 msgid "Info"
 msgstr "Info"
 
 #: webook/templates/arrangement/arrangementtype/arrangement_type_detail.html:9
-#| msgid "Arrangements"
 msgid "Arrangement Types"
 msgstr "Arrangement typer"
 
@@ -1424,51 +1551,52 @@ msgstr ""
 "typen når du oppretter nytt arrangement, og arrangementet vil etter "
 "opprettelse vises her."
 
-#: webook/templates/arrangement/arrangementtype/arrangement_type_form.html:59
-msgid "Create a new arrangement type based on your input"
-msgstr "Opprett nytt arrangement basert på din inndata"
-
-#: webook/templates/arrangement/audience/audience_form.html:58
-#: webook/templates/arrangement/location/location_form.html:44
-#: webook/templates/arrangement/organization/organization_form.html:75
-#: webook/templates/arrangement/person/person_form.html:80
-#: webook/templates/arrangement/servicetype/servicetype_form.html:27
-msgid "Create a new audience based on your input"
-msgstr "Opprett en ny målgruppe basert på din inndata"
-
-#: webook/templates/arrangement/calendar/arrangement_calendar.html:8
+#: webook/templates/arrangement/calendar/arrangement_calendar.html:9
 msgid "Legend"
 msgstr "Legende"
 
-#: webook/templates/arrangement/calendar/arrangement_calendar.html:12
+#: webook/templates/arrangement/calendar/arrangement_calendar.html:13
 msgid "Dimension"
 msgstr "Dimensjon"
 
-#: webook/templates/arrangement/calendar/arrangement_calendar.html:24
-#: webook/templates/arrangement/calendar/arrangement_calendar.html:42
+#: webook/templates/arrangement/calendar/arrangement_calendar.html:25
+#: webook/templates/arrangement/calendar/arrangement_calendar.html:43
 msgid "Include"
 msgstr "Inkluder"
 
-#: webook/templates/arrangement/calendar/arrangement_calendar.html:24
-#: webook/templates/arrangement/calendar/arrangement_calendar.html:42
+#: webook/templates/arrangement/calendar/arrangement_calendar.html:25
+#: webook/templates/arrangement/calendar/arrangement_calendar.html:43
 msgid "only"
 msgstr "bare"
 
-#: webook/templates/arrangement/calendar/arrangement_calendar.html:24
+#: webook/templates/arrangement/calendar/arrangement_calendar.html:25
 msgid "the checked locations"
 msgstr "de avkryssede lokasjonene"
 
-#: webook/templates/arrangement/calendar/arrangement_calendar.html:42
+#: webook/templates/arrangement/calendar/arrangement_calendar.html:43
 msgid "the checked people"
 msgstr "de avkryssede personene"
 
-#: webook/templates/arrangement/calendar/arrangement_calendar.html:57
+#: webook/templates/arrangement/calendar/arrangement_calendar.html:58
 msgid "Update"
 msgstr "Oppdater"
 
-#: webook/templates/arrangement/calendar/arrangement_calendar.html:60
+#: webook/templates/arrangement/calendar/arrangement_calendar.html:61
 msgid "Reset"
 msgstr "Reset"
+
+#: webook/templates/arrangement/calendar/calendar.html:24
+#: webook/templates/arrangement/planner/planner_calendar.html:37
+#: webook/templates/arrangement/planner/planner_calendar.html:111
+msgid "Today"
+msgstr "I dag"
+
+#: webook/templates/arrangement/calendar/calendar.html:31
+#: webook/templates/arrangement/calendar/calendar.html:205
+#: webook/templates/arrangement/planner/planner_calendar.html:41
+#: webook/templates/arrangement/planner/planner_calendar.html:547
+msgid "Go to date"
+msgstr "Gå til dato"
 
 #: webook/templates/arrangement/calendar/calendars_list.html:9
 msgid ""
@@ -1477,6 +1605,8 @@ msgid ""
 msgstr "Eksempel på en kalender rettet mot å vise alle arrangementer"
 
 #: webook/templates/arrangement/calendar/calendars_list.html:12
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1040
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1183
 msgid "Open"
 msgstr "Åpne"
 
@@ -1509,7 +1639,6 @@ msgid "Go to login"
 msgstr "Gå til innlogging"
 
 #: webook/templates/arrangement/confirmation/view_confirmation_request.html:11
-#| msgid "Service Provider"
 msgid "Service Order"
 msgstr "Tjenestetilbyder"
 
@@ -1533,91 +1662,150 @@ msgstr "Godta forespørsel"
 msgid "Deny request"
 msgstr "Avslå forespørsel"
 
+#: webook/templates/arrangement/location/location_detail.html:53
 #: webook/templates/arrangement/location/location_detail.html:77
 msgid "New room"
 msgstr "Nytt rom"
 
 #: webook/templates/arrangement/location/location_detail.html:95
-msgid "Maximum Occupancy"
-msgstr "Maks Antall Mennesker"
-
-#: webook/templates/arrangement/location/location_detail.html:100
-msgid "Room Name"
-msgstr "Rommets Navn"
+#: webook/templates/arrangement/room/room_detail.html:51
+msgid "Maximum occupants"
+msgstr "Maksimalt antall personer"
 
 #: webook/templates/arrangement/location/location_detail.html:105
-#| msgid "Room Name"
-msgid "Room Name (English)"
-msgstr "Rommets Navn (Engelsk)"
+msgid "Name (English)"
+msgstr "Navn (engelsk)"
 
-#: webook/templates/arrangement/location/location_detail.html:128
-msgid "Create room"
-msgstr "Opprett rom"
+#: webook/templates/arrangement/location/location_detail.html:111
+msgid "Is exclusive?"
+msgstr "Er eksklusiv?"
 
 #: webook/templates/arrangement/location/location_detail.html:129
-#| msgid "Create room, and new"
-msgid "Create and new"
+#, fuzzy
+#| msgid "Create and new"
+msgid "Create and add another"
 msgstr "Opprett rom, og ny"
 
-#: webook/templates/arrangement/location/location_form.html:21
-#: webook/templates/arrangement/person/person_form.html:70
+#: webook/templates/arrangement/location/location_form.html:15
+#: webook/templates/arrangement/person/person_form.html:66
 msgid "Name of the location"
 msgstr "Lokasjonens navn"
 
-#: webook/templates/arrangement/location/location_form.html:38
-#: webook/templates/arrangement/organization/organization_form.html:69
-#: webook/templates/arrangement/servicetype/servicetype_form.html:21
-msgid "Save and then create a new audience"
-msgstr "Lagre målgruppe, og ny"
-
-#: webook/templates/arrangement/location/location_form.html:39
-#: webook/templates/arrangement/organization/organization_form.html:70
-#: webook/templates/arrangement/room_presets/form.html:21
-#: webook/templates/arrangement/servicetype/servicetype_form.html:22
-#| msgid "Create room, and new"
+#: webook/templates/arrangement/location/location_form.html:32
+#: webook/templates/arrangement/organization/organization_form.html:64
+#: webook/templates/arrangement/room_presets/form.html:19
+#: webook/templates/arrangement/servicetype/servicetype_form.html:15
 msgid "Save, and new"
 msgstr "Opprett, og ny"
 
-#: webook/templates/arrangement/organization/organization_detail.html:66
+#: webook/templates/arrangement/organization/organization_detail.html:11
+#: webook/templates/arrangement/organizationtype/organizationtype_detail.html:11
+#: webook/templates/arrangement/person/person_detail.html:11
+#: webook/templates/arrangement/room/room_detail.html:11
+#: webook/templates/common/archive_view.html:15
+#: webook/templates/common/archive_view.html:28
+#: webook/templates/common/dialog_archive_view.html:10
+#: webook/templates/common/dialog_archive_view.html:16
+#: webook/templates/common/dialog_list_view.html:92
+#: webook/templates/common/dialog_list_view.html:94
+#: webook/templates/common/list_view.html:92
+#: webook/templates/common/list_view.html:94
+#: webook/templates/common/tree_list_view.html:294
+#: webook/templates/common/tree_list_view.html:338
+#: webook/utils/meta_utils/section_manifest.py:140
+msgid "Archive"
+msgstr "Arkiver"
+
+#: webook/templates/arrangement/organization/organization_detail.html:25
+msgid "Organization details"
+msgstr "Organisasjonsdetaljer"
+
+#: webook/templates/arrangement/organization/organization_detail.html:55
 msgid "Register a new member"
 msgstr "Registrer et nytt medlem"
 
-#: webook/templates/arrangement/organization/organization_detail.html:87
-msgid "Register services this organization can provide"
-msgstr "Registrer tjenester denne organisasjonen kan tilby"
+#: webook/templates/arrangement/organization/organization_detail.html:66
+#: webook/templates/arrangement/planner/event-info-dialog.html:148
+msgid "Services"
+msgstr "Tjenester"
 
-#: webook/templates/arrangement/organization/organization_detail.html:112
+#: webook/templates/arrangement/organization/organization_detail.html:67
+msgid "Services this organization can provide"
+msgstr "Tjenester denne organisasjonen kan tilby"
+
+#: webook/templates/arrangement/organization/organization_detail.html:71
+msgid "Register service"
+msgstr "Registrer tjeneste"
+
+#: webook/templates/arrangement/organization/organization_detail.html:94
 msgid "Which services can this organization provide?"
 msgstr "Hvilke tjenester kan denne organisasjonen tilby?"
 
-#: webook/templates/arrangement/organization/organization_detail.html:159
+#: webook/templates/arrangement/organization/organization_detail.html:104
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:15
+#: webook/templates/arrangement/planner/dialogs/order_service.html:22
+#: webook/templates/arrangement/requisitioneer/loose_requisitions/loose_requisitions_on_event.html:28
+msgid "Service type"
+msgstr "Tjenestetype"
+
+#: webook/templates/arrangement/organization/organization_detail.html:141
 msgid "Register Member"
 msgstr "Registrer Medlem"
 
-#: webook/templates/arrangement/organization/organization_detail.html:198
-msgid "Register"
-msgstr "Register"
-
-#: webook/templates/arrangement/organization/organization_detail.html:199
-#| msgid "Create room, and new"
+#: webook/templates/arrangement/organization/organization_detail.html:183
 msgid "Register, and new"
 msgstr "Registrer, og ny"
 
-#: webook/templates/arrangement/organization/organization_form.html:19
-#| msgid "Organization Number"
+#: webook/templates/arrangement/organization/organization_detail.html:184
+msgid "Register"
+msgstr "Register"
+
+#: webook/templates/arrangement/organization/organization_form.html:15
 msgid "Organization number"
 msgstr "Organisasjonsnummer"
 
-#: webook/templates/arrangement/organizationtype/organizationtype_detail.html:28
-msgid ""
-"There are no organizations registered of this type. You can select this type"
-" when creating a new organization, and it will appear here."
-msgstr ""
-"Det er ingen organisasjoner registrert av denne typen. Du kan velge denne "
-"typen når du oppretter en organisasjon, og organisasjonen vil så vises her."
+#: webook/templates/arrangement/organization/services_overview.html:8
+msgid "Service"
+msgstr "Tjeneste"
+
+#: webook/templates/arrangement/organization/services_overview.html:9
+#: webook/templates/arrangement/person/partials/_organization_member_list.html:16
+#: webook/templates/arrangement/planner/components/people_to_requisition_component.html:14
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:17
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:73
+#: webook/templates/arrangement/requisitioneer/loose_requisitions/loose_requisitions_on_event.html:29
+msgid "Options"
+msgstr "Valgmuligheter"
+
+#: webook/templates/arrangement/organization/services_overview.html:18
+msgid "Remove from services"
+msgstr "Fjern fra tjenester"
+
+#: webook/templates/arrangement/organization/services_overview.html:29
+msgid "No services"
+msgstr "Ingen tjenester"
+
+#: webook/templates/arrangement/organization/services_overview.html:30
+msgid "This organization has no registered services yet."
+msgstr "Denne organisasjonen har ingen registrerte tjenester ennå."
+
+#: webook/templates/arrangement/organizationtype/organizationtype_detail.html:25
+msgid "Type details"
+msgstr "Typedetaljer"
+
+#: webook/templates/arrangement/organizationtype/organizationtype_detail.html:40
+msgid "Organizations of this type"
+msgstr "Organisasjoner av denne typen"
+
+#: webook/templates/arrangement/organizationtype/organizationtype_detail.html:57
+msgid "No organizations"
+msgstr "Ingen organisasjoner"
+
+#: webook/templates/arrangement/organizationtype/organizationtype_detail.html:59
+msgid "There are no organizations registered with this type yet."
+msgstr "Det er ingen organisasjoner registrert med denne typen ennå."
 
 #: webook/templates/arrangement/person/associate_person_with_user.html:7
-#| msgid "Welcome back!"
 msgid "Go back"
 msgstr "Gå tilbake"
 
@@ -1626,7 +1814,6 @@ msgid "Eligible users"
 msgstr "Kvalifiserte Brukere"
 
 #: webook/templates/arrangement/person/associate_person_with_user.html:26
-#| msgid "Verify Your E-mail Address"
 msgid "Search for user by email address"
 msgstr "Bekreft e-post adressen din"
 
@@ -1634,212 +1821,1225 @@ msgstr "Bekreft e-post adressen din"
 msgid "Associate chosen user with"
 msgstr "Knytt valgt bruker med"
 
-#: webook/templates/arrangement/person/partials/_organization_member_list.html:10
+#: webook/templates/arrangement/person/partials/_organization_member_list.html:11
 msgid "Has associated user?"
 msgstr "Har tilkoblet bruker?"
 
-#: webook/templates/arrangement/person/partials/_organization_member_list.html:12
+#: webook/templates/arrangement/person/partials/_organization_member_list.html:13
 msgid "Does this person have an associated user in this application?"
 msgstr "Har denne personen en tilkoblet bruker i denne applikasjonen?"
 
-#: webook/templates/arrangement/person/partials/_organization_member_list.html:15
-#: webook/templates/arrangement/room/partials/_location_room_list.html:11
-msgid "Options"
-msgstr "Valgmuligheter"
-
-#: webook/templates/arrangement/person/partials/_organization_member_list.html:29
+#: webook/templates/arrangement/person/partials/_organization_member_list.html:30
 msgid "Go to this persons page"
 msgstr "Gå til denne personens side"
 
-#: webook/templates/arrangement/person/partials/_organization_member_list.html:33
+#: webook/templates/arrangement/person/partials/_organization_member_list.html:34
 msgid ""
 "Remove this person from this organization. This does not delete the person."
 msgstr ""
 "Fjern denne personen fra organisasjonen. Dette vil ikke slette personen fra "
 "systemet."
 
-#: webook/templates/arrangement/person/partials/_organization_member_list.html:37
+#: webook/templates/arrangement/person/partials/_organization_member_list.html:38
 msgid ""
-"Anonymize this person, removing all PII while retaining relational "
-"integrity."
+"Anonymize this person, removing all PII while retaining relational integrity."
 msgstr ""
 "Anonymiser denne personen, fjern all personlig identifiserbar informasjon "
 "men ivareta relasjonell integritet."
 
-#: webook/templates/arrangement/person/person_detail.html:78
+#: webook/templates/arrangement/person/partials/_organization_member_list.html:50
+msgid "No members"
+msgstr "Ingen medlemmer"
+
+#: webook/templates/arrangement/person/partials/_organization_member_list.html:51
+msgid "No people are registered as members of this organization yet."
+msgstr ""
+"Ingen personer er registrert som medlemmer av denne organisasjonen ennå."
+
+#: webook/templates/arrangement/person/person_detail.html:32
+#: webook/templates/arrangement/planner/plan_arrangement.html:59
+msgid "Overview"
+msgstr "Oversikt"
+
+#: webook/templates/arrangement/person/person_detail.html:64
+msgid "Personal information"
+msgstr "Personopplysninger"
+
+#: webook/templates/arrangement/person/person_detail.html:73
 msgid "Date of birth"
 msgstr "Fødselsdato"
 
-#: webook/templates/arrangement/person/person_detail.html:84
-#| msgid "Has associated user?"
-msgid "Has user?"
-msgstr "Har tilkoblet bruker?"
+#: webook/templates/arrangement/person/person_detail.html:76
+msgid "User account"
+msgstr "Brukerkonto"
 
-#: webook/templates/arrangement/person/person_detail.html:144
-#: webook/templates/arrangement/person/person_detail.html:185
+#: webook/templates/arrangement/person/person_detail.html:78
+msgid "Connected"
+msgstr "Tilknyttet"
+
+#: webook/templates/arrangement/person/person_detail.html:80
+msgid "Not connected"
+msgstr "Ikke tilknyttet"
+
+#: webook/templates/arrangement/person/person_detail.html:89
+msgid "User and sign-in"
+msgstr "Bruker og innlogging"
+
+#: webook/templates/arrangement/person/person_detail.html:94
+msgid "No user account"
+msgstr "Ingen brukerkonto"
+
+#: webook/templates/arrangement/person/person_detail.html:95
+msgid ""
+"This person has no user account yet. Accounts are created when the person "
+"signs in through SSO, or this person can be connected to an existing user."
+msgstr ""
+"Denne personen har ingen brukerkonto ennå. Kontoer opprettes når personen "
+"logger inn gjennom SSO, eller personen kan knyttes til en eksisterende "
+"bruker."
+
+#: webook/templates/arrangement/person/person_detail.html:99
+msgid "Connect this person to a user"
+msgstr "Knytt personen til en bruker"
+
+#: webook/templates/arrangement/person/person_detail.html:105
+msgid "Connected to a user account"
+msgstr "Tilknyttet en brukerkonto"
+
+#: webook/templates/arrangement/person/person_detail.html:106
+msgid "This person can use the connected sign-in account."
+msgstr "Denne personen kan bruke den tilknyttede innloggingskontoen."
+
+#: webook/templates/arrangement/person/person_detail.html:115
+msgid "Single sign-on"
+msgstr "Single sign-on"
+
+#: webook/templates/arrangement/person/person_detail.html:128
+#: webook/templates/arrangement/person/person_detail.html:173
 msgid "Object ID"
 msgstr "Objekt ID"
 
-#: webook/templates/arrangement/person/person_detail.html:148
-#: webook/templates/arrangement/person/person_detail.html:189
+#: webook/templates/arrangement/person/person_detail.html:131
+#: webook/templates/arrangement/person/person_detail.html:177
 msgid "User Principal Name"
 msgstr "User Principal Name"
 
-#: webook/templates/arrangement/person/person_detail.html:158
-#| msgid "This person is not a member of any organizations"
+#: webook/templates/arrangement/person/person_detail.html:140
 msgid "This person is a member of the following organizations:"
 msgstr "Denne personen er medlem av følgende organisasjoner"
 
-#: webook/templates/arrangement/person/person_detail.html:172
+#: webook/templates/arrangement/person/person_detail.html:154
 msgid "This person is not a member of any organizations"
 msgstr "Denne personen er ikke medlem av noen organisasjoner"
 
-#: webook/templates/arrangement/person/person_form.html:21
+#: webook/templates/arrangement/person/person_detail.html:162
+msgid "Person calendar"
+msgstr "Personkalender"
+
+#: webook/templates/arrangement/person/person_form.html:17
 msgid "First name"
 msgstr "Fornavn"
 
-#: webook/templates/arrangement/person/person_form.html:33
+#: webook/templates/arrangement/person/person_form.html:29
 msgid "Middle name"
 msgstr "Mellomnavn"
 
-#: webook/templates/arrangement/person/person_form.html:33
+#: webook/templates/arrangement/person/person_form.html:29
 #: webook/templates/screenshow/group/group_form.html:59
 #: webook/templates/screenshow/layout/layout_form.html:55
 msgid "Optional"
 msgstr "Valgfritt"
 
-#: webook/templates/arrangement/person/person_form.html:43
+#: webook/templates/arrangement/person/person_form.html:39
 msgid "Last name"
 msgstr "Etternavn"
 
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:17
+msgid "Arrangement title"
+msgstr "Arrangementstype"
+
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:41
+msgid "Cascade changes & synchronization"
+msgstr "valgt for synkronisering"
+
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:49
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:27
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:253
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:158
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:159
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:286
+#: webook/templates/arrangement/planner/planner-base-dialog.html:105
+#: webook/templates/arrangement/vue/select_main_planner_dialog.html:13
+msgid "Main planner"
+msgstr "Hovedplanlegger"
+
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:79
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:233
+msgid "Time slots"
+msgstr "Tidspunkter"
+
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:101
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:97
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1087
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:90
+#: webook/templates/arrangement/planner/event-info-dialog.html:107
+msgid "Files"
+msgstr "Filer"
+
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:112
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:258
+msgid "Service orders"
+msgstr "Tjenestetilbyder"
+
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:131
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:151
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:142
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:213
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:45
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:307
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:45
+#: webook/templates/arrangement/planner/event-info-dialog.html:186
+#: webook/templates/arrangement/planner/event-info-dialog.html:189
+#: webook/templates/arrangement/planner/event-info-dialog.html:229
+#: webook/templates/arrangement/planner/planner-base-dialog.html:85
+#: webook/templates/arrangement/planner/planner-base-dialog.html:190
+msgid "English"
+msgstr "Engelsk"
+
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:138
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:159
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:223
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:64
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:212
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:506
+#: webook/templates/arrangement/planner/edit-event-dialog.html:147
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:134
+#: webook/templates/arrangement/planner/planner-base-dialog.html:96
+msgid "Ticket information"
+msgstr "Billettinformasjon"
+
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:144
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:146
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:151
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:177
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:178
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:184
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:213
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:285
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:292
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:307
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:314
+#: webook/templates/arrangement/planner/event-info-dialog.html:224
+#: webook/templates/arrangement/planner/event-info-dialog.html:229
+#: webook/templates/arrangement/planner/planner-base-dialog.html:185
+#: webook/templates/arrangement/planner/planner-base-dialog.html:190
+msgid "Meeting place"
+msgstr "Møtested"
+
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:156
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:194
+msgid "Visitors"
+msgstr "Besøkende"
+
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:197
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:866
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:511
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:714
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:464
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:918
+#: webook/templates/arrangement/planner/edit-event-dialog.html:113
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:99
+#: webook/templates/arrangement/planner/event-info-dialog.html:255
+#: webook/templates/arrangement/planner/planner-base-dialog.html:145
+msgid "Select audience"
+msgstr "Velg målgruppe"
+
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:209
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:885
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:532
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:787
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:537
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:937
+#: webook/templates/arrangement/planner/edit-event-dialog.html:126
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:112
+#: webook/templates/arrangement/planner/event-info-dialog.html:267
+#: webook/templates/arrangement/planner/planner-base-dialog.html:161
+msgid "Select arrangement type"
+msgstr "Velg arrangementstype"
+
+#: webook/templates/arrangement/planner/arrangement-info-dialog.html:221
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:904
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:553
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:810
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:559
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:956
+#: webook/templates/arrangement/planner/edit-event-dialog.html:139
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:125
+#: webook/templates/arrangement/planner/event-info-dialog.html:279
+#: webook/templates/arrangement/planner/planner-base-dialog.html:177
+msgid "Select status"
+msgstr "Velg status"
+
+#: webook/templates/arrangement/planner/components/people_requisitions_table_component.html:3
+msgid "Person resource receipts"
+msgstr "Personressurser"
+
+#: webook/templates/arrangement/planner/components/people_requisitions_table_component.html:7
+msgid ""
+"A person must be requisitioned before they can be contacted. Active "
+"requisitions are shown here; the table below lets you start a requisition."
+msgstr ""
+"En person må rekvireres før vedkommende kan kontaktes. Aktive rekvireringer "
+"vises her, mens tabellen nedenfor lar deg starte en rekvirering."
+
+#: webook/templates/arrangement/planner/components/people_requisitions_table_component.html:13
+msgid "No active receipts"
+msgstr "Ingen aktive kvitteringer"
+
+#: webook/templates/arrangement/planner/components/people_requisitions_table_component.html:21
+msgid "Recipient"
+msgstr "Mottaker"
+
+#: webook/templates/arrangement/planner/components/people_requisitions_table_component.html:22
+msgid "Sent"
+msgstr "Sendt Til"
+
+#: webook/templates/arrangement/planner/components/people_to_requisition_component.html:4
+msgid "People to requisition"
+msgstr "Personer som skal rekvireres"
+
+#: webook/templates/arrangement/planner/components/people_to_requisition_component.html:7
+msgid "Click 'Send request' to send a request to this person."
+msgstr ""
+"Klikk på «Send forespørsel» for å sende en forespørsel til denne personen."
+
+#: webook/templates/arrangement/planner/components/people_to_requisition_component.html:23
+msgid "Send request"
+msgstr "Send forespørsel"
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:3
+#: webook/templates/arrangement/planner/dialogs/edit_event.html:49
+#: webook/templates/arrangement/planner/plan_arrangement.html:117
+#: webook/templates/arrangement/requisitioneer/loose_requisitions/loose_requisitions_on_event.html:20
+msgid "Orders"
+msgstr "Bestillinger"
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:30
+msgid "This order is loose, meaning it has been set up but not completed."
+msgstr ""
+"Denne bestillingen er løs, det vil si at den er satt opp, men ikke "
+"gjennomført."
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:31
+msgid "Loose order"
+msgstr "Løs bestilling"
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:36
+msgid "The order has been requisitioned and accepted by the recipient."
+msgstr "Bestillingen er rekvirert og akseptert av mottakeren."
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:37
+#: webook/templates/arrangement/requisitioneer/order_service_form.html:70
+msgid "Accepted"
+msgstr "Akseptert"
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:42
+msgid "The receiving company has declined this order."
+msgstr "Mottakerbedriften har avslått denne bestillingen."
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:43
+msgid "Declined"
+msgstr "Avslått"
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:48
+msgid "The contact for this company has not responded to this order yet."
+msgstr "Kontakten for dette selskapet har ikke svart på bestillingen ennå."
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:49
+msgid "Awaiting response"
+msgstr "Venter på svar"
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:54
+msgid "This order has been cancelled by a planner."
+msgstr "Bestillingen er kansellert av en planlegger."
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:55
+#: webook/templates/arrangement/requisitioneer/order_service_form.html:93
+msgid "Cancelled"
+msgstr "Avbryt"
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:81
+msgid "Place order"
+msgstr "Utfør bestilling"
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:94
+msgid "View the order in a new page"
+msgstr "Vis bestillingen på en ny side"
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:96
+msgid "Open order"
+msgstr "Åpne bestilling"
+
+#: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:104
+msgid "Reopen for processing"
+msgstr "Åpne for ny gjennomføring"
+
 #: webook/templates/arrangement/planner/dialogs/allocate_people.html:7
-#| msgid "Associated People"
 msgid "Allocate people"
 msgstr "Tildel Personer"
 
 #: webook/templates/arrangement/planner/dialogs/allocate_rooms.html:7
-#| msgid "All Rooms"
 msgid "Allocate rooms"
 msgstr "Tildel Rom"
 
 #: webook/templates/arrangement/planner/dialogs/allocate_rooms.html:46
-#| msgid "Maximum Occupancy"
 msgid "Max Occupancy: "
 msgstr "Maks Antall Mennesker"
 
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementCascadeTreeDialog.html:7
+msgid "Synchronization"
+msgstr "Synkronisering"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementCascadeTreeDialog.html:16
+msgid "About synchronization"
+msgstr "Om synkronisering"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementCascadeTreeDialog.html:18
+msgid ""
+"From here you can synchronize values from the arrangement to its activities. "
+"Each node in the tree is an activity. Expand a node to see which fields can "
+"be overwritten. Nodes marked with a check match the arrangement, while nodes "
+"marked with an X differ from it."
+msgstr ""
+"Her kan du synkronisere verdier fra arrangementet til aktivitetene. Hver "
+"node i treet er en aktivitet. Utvid en node for å se hvilke felt som kan "
+"overskrives. Noder med et hakemerke samsvarer med arrangementet, mens noder "
+"med en X avviker fra det."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementCascadeTreeDialog.html:20
+msgid ""
+"Select which fields on which activities should be overwritten by checking "
+"the boxes. When synchronization runs, the arrangement value is written to "
+"the selected activity fields."
+msgstr ""
+"Velg hvilke felt på hvilke aktiviteter som skal overskrives ved å krysse av "
+"i boksene. Når synkroniseringen kjøres, skrives arrangementets verdi inn i "
+"de valgte aktivitetsfeltene."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementCascadeTreeDialog.html:25
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementCascadeTreeDialog.html:30
+msgid "Select all visible items (can be combined with search)"
+msgstr "Velg alle synlige elementer (kan kombineres med søk)"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementCascadeTreeDialog.html:27
+msgid "Select all"
+msgstr "Velg alle"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementCascadeTreeDialog.html:32
+msgid "Clear all selections"
+msgstr "Fjern alle valg"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementCascadeTreeDialog.html:36
+#: webook/templates/arrangement/vue/js_tree_select_component.html:30
+#: webook/templates/arrangement/vue/js_tree_select_component.html:45
+#: webook/templates/arrangement/vue/notes/note-list.html:33
+#: webook/templates/arrangement/vue/table_component.html:11
+#: webook/templates/base.html:12 webook/templates/common/tree_list_view.html:47
+msgid "Search"
+msgstr "Søk"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementCascadeTreeDialog.html:42
+#: webook/templates/user_management/list.html:49
+msgid "of"
+msgstr "av"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementCascadeTreeDialog.html:42
+msgid "selected for synchronization"
+msgstr "valgt for synkronisering"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementCascadeTreeDialog.html:47
+msgid "Synchronize selected items"
+msgstr "Synkroniser valgte elementer"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:8
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:115
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:653
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:695
+#: webook/templates/arrangement/planner/dialogs/edit_event.html:80
+#: webook/templates/arrangement/planner/edit-event-dialog.html:33
+msgid "From"
+msgstr "Fra"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:8
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:959
+#: webook/templates/arrangement/planner/event-info-dialog.html:38
+msgid "to"
+msgstr "til"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:15
+msgid "Synchronize values from the arrangement to its activities"
+msgstr "Synkroniser verdier fra arrangementet til aktivitetene"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:17
+msgid "Cascade changes and synchronization"
+msgstr "Kaskadeendringer og synkronisering"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:37
+msgid "Change"
+msgstr "Endre"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:49
+msgid "Next activity"
+msgstr "Neste aktivitet"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:67
+msgid "Arrangement information"
+msgstr "Arrangementsinformasjon"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:77
+msgid "Time plans & activities"
+msgstr "Tidsplaner og aktiviteter"
+
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:148
-#| msgid "Name of the arrangement"
 msgid "Name of the arrangement (in english)"
-msgstr "Arrangementets navn (engelsk)"
+msgstr "Navn på arrangementet (på engelsk)"
 
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:165
-msgid "Ticket Information"
-msgstr "Billettinfo"
-
-#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:202
-msgid "Forventet antall besøkende"
-msgstr ""
+msgid "Ticket code"
+msgstr "Billettkode"
 
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:219
 msgid "Meeting place (english)"
 msgstr "Møtested (Engelsk)"
 
-#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:236
-msgid "Faktisk antall besøkende"
-msgstr ""
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:266
+msgid "Add planner(s)"
+msgstr "Legg til planleggere"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:273
+msgid "Remove selected planners"
+msgstr "Fjern valgte planleggere"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:326
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:247
+#: webook/templates/base.html:268
+msgid "Screen display"
+msgstr "Skjermvisning"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:330
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:251
+msgid "Displayed on screen"
+msgstr "Vises på skjerm"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:357
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:689
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:784
+msgid "Cancel / Close"
+msgstr "Avbryt / lukk"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:363
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:695
+msgid "Save changes"
+msgstr "Lagre endringer"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:378
+msgid "New time plan"
+msgstr "Ny tidsplan"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:382
+msgid "New simple activity"
+msgstr "Ny enkel aktivitet"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:391
+msgid "Time plans"
+msgstr "Tidsplaner"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:396
+msgid "Activities"
+msgstr "Aktiviteter"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:416
+msgid "Total recurring activities"
+msgstr "Totalt antall gjentakende aktiviteter"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:425
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:483
+msgid "Loading..."
+msgstr "Laster ..."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:427
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:485
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1113
+msgid "Loading data..."
+msgstr "Laster inn data ..."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:433
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:491
+#: webook/templates/arrangement/vue/table_component.html:179
+msgid "Previous"
+msgstr "Forrige"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:445
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:503
+#: webook/templates/arrangement/vue/table_component.html:209
+msgid "Next"
+msgstr "Neste"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:460
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:73
+#: webook/templates/arrangement/planner/event-info-dialog.html:95
+msgid "Activity"
+msgstr "Aktivitet"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:463
+msgid "Part of a series?"
+msgstr "Del av en serie?"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:474
+msgid "Total activities"
+msgstr "Totalt antall aktiviteter"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:517
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:591
+msgid "No notes have been written yet!"
+msgstr "Ingen notater er skrevet ennå!"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:524
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:535
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:529
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:598
+#: webook/templates/arrangement/vue/notes/note-list.html:20
+msgid "New note"
+msgstr "Nytt notat"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:551
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:545
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:565
+msgid "Contains"
+msgstr "Inneholder"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:551
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:545
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:565
+msgid "Personally identifiable information"
+msgstr "Personidentifiserende informasjon"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:553
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:547
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:567
+msgid "on"
+msgstr "den"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:586
+#: webook/templates/arrangement/vue/files-list.html:43
+msgid "Upload file(s)"
+msgstr "Last opp fil(er)"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:596
+msgid "File"
+msgstr "Fil"
 
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:607
+#: webook/templates/arrangement/vue/files-list.html:57
+#: webook/templates/arrangement/vue/files-list.html:61
 msgid "Delete this file"
 msgstr "Slett denne filen"
 
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:616
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:374
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:398
+#: webook/templates/arrangement/vue/files-list.html:68
+#: webook/templates/arrangement/vue/files-list.html:71
 msgid "Download this file"
 msgstr "Last ned denne filen"
 
-#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:264
-msgid "Vises på skjerm:"
-msgstr ""
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:629
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:410
+#: webook/templates/arrangement/vue/files-list.html:16
+msgid "No files have been uploaded here yet!"
+msgstr "Ingen filer er lastet opp her ennå!"
 
-#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:292
-#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:314
-msgid "Møtested"
-msgstr ""
-
-#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:815
-msgid "Edit this serie"
-msgstr "Rediger denne serien"
-
-#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:821
-msgid "Remove this serie from the arrangement to be"
-msgstr "Fjern denne serien fra arrangementet"
-
-#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:894
-msgid "Edit this recurring activity"
-msgstr "Rediger denne repeterende aktiviteten"
-
-#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:901
-msgid "Remove this recurring activity from the arrangement to be"
-msgstr "Fjern denne serien fra arrangementet"
-
-#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:334
-msgid "Vises på:"
-msgstr ""
-
-#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:453
-#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:1057
-msgid "Remove this room from the activity"
-msgstr "Fjern rommet fra aktiviteten"
-
-#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:490
-#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:1078
-msgid "Remove this person from the activity"
-msgstr "Fjern personen fra aktiviteten"
-
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:637
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:418
 #: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/uploadFilesDialog.html:38
+#: webook/templates/arrangement/vue/files-list.html:24
 msgid "Upload"
 msgstr "Last opp"
 
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:654
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:671
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:818
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:738
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:756
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:857
+#: webook/templates/arrangement/vue/select_main_planner_dialog.html:17
+msgid "None selected"
+msgstr "Ingen valgt"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:865
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:510
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:713
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:463
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:917
+msgid "No audience selected yet"
+msgstr "Ingen målgruppe valgt ennå"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:867
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:512
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:715
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:465
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:919
+msgid "Change audience"
+msgstr "Endre målgruppe"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:868
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:887
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:906
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:513
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:534
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:555
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:716
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:789
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:812
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:466
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:539
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:561
+msgid "Save selection"
+msgstr "Lagre valg"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:884
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:531
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:786
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:536
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:936
+msgid "No arrangement type selected yet"
+msgstr "Ingen arrangementstype valgt ennå"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:886
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:533
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:788
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:538
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:938
+msgid "Change arrangement type"
+msgstr "Endre arrangementstype"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:903
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:552
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:809
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:558
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:955
+msgid "No status selected yet"
+msgstr "Ingen status valgt ennå"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:905
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:554
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:811
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:560
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:957
+msgid "Change status"
+msgstr "Endre status"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:960
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1252
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1354
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1382
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1406
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:1119
+#: webook/templates/arrangement/planner/planner_calendar.html:113
+msgid "Yes"
+msgstr "Ja"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:960
+msgid "No"
+msgstr "Nei"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:983
+msgid "Click a row to open the activity"
+msgstr "Trykk på en rad for å åpne aktiviteten"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:991
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1196
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1216
+msgid "Something went wrong while loading data. Please try again later."
+msgstr "Noe gikk galt under innlasting av data. Prøv igjen senere."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1054
+msgid "No responsible person"
+msgstr "Ingen ansvarlig"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1059
+msgid "No audience"
+msgstr "Ingen målgruppe"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1064
+msgid "No arrangement type"
+msgstr "Ingen arrangementstype"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1069
+msgid "No status"
+msgstr "Ingen status"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1076
+msgid "No rooms"
+msgstr "Ingen rom"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1081
+msgid "No people"
+msgstr "Ingen personer"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1092
+msgid "Upload..."
+msgstr "Last opp ..."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1106
+msgid "Occurrences"
+msgstr "Forekomster"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1106
+msgid "Click to expand or collapse"
+msgstr "Trykk for å vise eller skjule"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1123
+#: webook/templates/common/dialog_list_view.html:50
+#: webook/templates/common/list_view.html:50
+msgid "Actions"
+msgstr "Valg"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1196
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1216
+msgid "Status code"
+msgstr "Statuskode"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1222
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1246
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1348
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1376
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1400
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:1003
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:1113
+#: webook/templates/common/delete_view.html:8
+msgid "Are you sure?"
+msgstr "Er du sikker?"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1223
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:1004
+msgid "Are you sure you want to delete this note?"
+msgstr "Er du sikker på at du vil slette dette notatet?"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1247
+msgid "The activity cannot be recovered after deletion."
+msgstr "Aktiviteten kan ikke gjenopprettes etter sletting."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1349
+msgid "The series and its activities cannot be recovered after deletion."
+msgstr "Serien og aktivitetene i den kan ikke gjenopprettes etter sletting."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1377
+msgid ""
+"The arrangement and its activities will be deleted and cannot be recovered."
+msgstr "Arrangementet og aktivitetene i det slettes og kan ikke gjenopprettes."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/arrangementInfoDialog.html:1401
+msgid "The file cannot be recovered after deletion."
+msgstr "Filen kan ikke gjenopprettes etter sletting."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:12
+msgid "Plan new arrangement"
+msgstr "Planlegg nytt arrangement"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:27
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:285
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:40
+#: webook/templates/arrangement/planner/planner-base-dialog.html:185
+msgid "Norwegian"
+msgstr "Norsk"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:80
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:91
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:68
+msgid "No county selected"
+msgstr "Ingen fylke valgt"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:93
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:423
+msgid "No school selected"
+msgstr "Ingen skole valgt"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:163
+msgid "Please select a main planner"
+msgstr "Velg en hovedplanlegger"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:171
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:166
+#: webook/templates/arrangement/vue/select_main_planner_dialog.html:25
+#: webook/templates/arrangement/vue/select_main_planner_dialog.html:34
+msgid "Select main planner"
+msgstr "Velg hovedplanlegger"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:184
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:188
+msgid "Select people"
+msgstr "Velg personer"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:199
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:203
+#: webook/templates/arrangement/vue/room_and_preset_selector_component.html:16
+msgid "Select rooms"
+msgstr "Velg rom"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:214
+msgid "Select planners"
+msgstr "Velg planleggere"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:262
+#: webook/templates/arrangement/room/room_detail.html:58
+#: webook/templates/screenshow/screen/screen_detail.html:24
+msgid "Screen"
+msgstr "Skjerm"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:264
+msgid "Shown on screen:"
+msgstr "Vises på skjerm:"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:295
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:317
+msgid "This overrides the location/room shown on the screen."
+msgstr "Dette overstyrer lokasjonen/rommet som vises på skjermen."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:365
+#: webook/templates/arrangement/planner/planner_calendar.html:76
+#: webook/templates/arrangement/planner/planner_calendar_v2.html:117
+msgid "Create arrangement"
+msgstr "Opprett arrangement"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:476
+#: webook/templates/arrangement/vue/select_main_planner_base.html:53
+#: webook/templates/arrangement/vue/table_component.html:156
+msgid "No results"
+msgstr "Ingen resultater"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:847
+msgid "Edit this serie"
+msgstr "Rediger denne serien"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:853
+msgid "Remove this serie from the arrangement to be"
+msgstr "Fjern denne serien fra arrangementet"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:926
+msgid "Edit this recurring activity"
+msgstr "Rediger denne repeterende aktiviteten"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createArrangementDialog.html:933
+msgid "Remove this recurring activity from the arrangement to be"
+msgstr "Fjern denne serien fra arrangementet"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:18
+msgid "Define schedule"
+msgstr "Definer tidsplan"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:22
+msgid "Schedule"
+msgstr "Tidsplan"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:37
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:22
+msgid "Title in Norwegian"
+msgstr "Tittel på norsk"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:42
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:28
+msgid "Title in English"
+msgstr "Tittel på engelsk"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:60
+msgid "Invalid times"
+msgstr "Ugyldige tider"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:105
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:82
+msgid "Select school"
+msgstr "Velg skole"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:141
+msgid "Pattern"
+msgstr "Mønster"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:147
+#: webook/templates/arrangement/planner/dialogs/new_serie.html:69
+msgid "Daily"
+msgstr "Daglig"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:150
+#: webook/templates/arrangement/planner/dialogs/new_serie.html:72
+msgid "Weekly"
+msgstr "Ukentlig"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:153
+#: webook/templates/arrangement/planner/dialogs/new_serie.html:75
+msgid "Monthly"
+msgstr "Månedlig"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/createSerieDialog.html:156
+#: webook/templates/arrangement/planner/dialogs/new_serie.html:78
+msgid "Yearly"
+msgstr "Årlig"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:22
+msgid "Define event"
+msgstr "Definer aktivitet"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:25
+msgid "Event name"
+msgstr "Aktivitetsnavn"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:131
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:659
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:701
+#: webook/templates/arrangement/planner/dialogs/edit_event.html:92
+#: webook/templates/arrangement/planner/edit-event-dialog.html:49
+msgid "To"
+msgstr "Til"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:149
+msgid "The specified times are invalid"
+msgstr "De angitte tidene er ugyldige"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/dialog_create_event_arrangement.html:334
+msgid "Vises på:"
+msgstr "Vises på:"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:10
+msgid "repeating"
+msgstr "gjentakende"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:13
+msgid "until"
+msgstr "til"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:22
+#: webook/templates/arrangement/planner/event-info-dialog.html:46
+msgid "Created"
+msgstr "Opprettet"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:22
+msgid "by"
+msgstr "av"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:22
+#: webook/templates/arrangement/planner/event-info-dialog.html:46
+msgid "Last updated"
+msgstr "Sist oppdatert"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:30
+msgid "Belongs to arrangement"
+msgstr "Tilhører arrangement"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:44
+#: webook/templates/arrangement/planner/event-info-dialog.html:68
+msgid "Go to arrangement"
+msgstr "Gå til arrangementet"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:55
+msgid ""
+"When editing, this activity will be separated from the series and will no "
+"longer be considered part of it."
+msgstr ""
+"Ved redigering skilles aktiviteten fra serien og regnes ikke lenger som en "
+"del av den."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:56
+msgid ""
+"You can edit the series from the arrangement view: open Time slots and edit "
+"it there."
+msgstr ""
+"Du kan redigere serien fra arrangementsvisningen ved å åpne Tidspunkter og "
+"redigere den der."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:78
+msgid "Rooms & people"
+msgstr "Rom og personer"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:107
+#: webook/templates/arrangement/planner/edit-event-dialog.html:97
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:78
+#: webook/templates/arrangement/planner/event-info-dialog.html:124
+msgid "Details"
+msgstr "Detaljer"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:119
+msgid "Setup & teardown"
+msgstr "Opprigg og nedrigg"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:132
+msgid "Schools"
+msgstr "Skoler"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:197
+#: webook/templates/arrangement/planner/event-info-dialog.html:193
+msgid "Start date and time"
+msgstr "Startdato og -tid"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:206
+#: webook/templates/arrangement/planner/event-info-dialog.html:197
+msgid "End date and time"
+msgstr "Sluttdato og -tid"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:296
+msgid "Change main planner"
+msgstr "Endre hovedplanlegger"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:362
+msgid "From the arrangement"
+msgstr "Fra arrangementet"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:367
+msgid "This file is part of the arrangement and can only be deleted there."
+msgstr "Denne filen tilhører arrangementet og kan bare slettes der."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:436
+msgid "Add rooms"
+msgstr "Legg til rom"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:453
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:1056
+msgid "Remove this room from the activity"
+msgstr "Fjern rommet fra aktiviteten"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:471
+msgid "Add people"
+msgstr "Legg til personer"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:490
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:1077
+msgid "Remove this person from the activity"
+msgstr "Fjern personen fra aktiviteten"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:550
+msgid ""
+"This note is from the arrangement and can only be edited or deleted there."
+msgstr ""
+"Dette notatet kommer fra arrangementet og kan bare redigeres eller slettes "
+"der."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:610
+msgid ""
+"Setup and teardown are created as separate events before and after this "
+"activity."
+msgstr ""
+"Opprigg og nedrigg opprettes som separate hendelser før og etter aktiviteten."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:612
+msgid ""
+"If you change the activity times, those changes will also be reflected here."
+msgstr "Hvis du endrer tidene for aktiviteten, vises endringene også her."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:613
+msgid ""
+"Conversely, changing the times here will update the setup and teardown "
+"activities."
+msgstr ""
+"Omvendt vil endringer av tidene her oppdatere opprigg- og "
+"nedriggsaktivitetene."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:624
+msgid "Setup"
+msgstr "Opprigg"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:630
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:673
+msgid "Open activity"
+msgstr "Åpne aktivitet"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:645
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:687
+#: webook/templates/arrangement/planner/dialogs/new_serie.html:129
+msgid "Date"
+msgstr "Dato"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:669
+msgid "Teardown"
+msgstr "Nedrigg"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:713
+msgid ""
+"This event is a setup or teardown event for another event, so you cannot "
+"define setup or teardown times for it."
+msgstr ""
+"Denne hendelsen er en opprigg- eller nedriggshendelse for en annen hendelse, "
+"så du kan ikke angi opprigg- eller nedriggstider for den."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:716
+msgid ""
+"To change setup or teardown times, edit the time of this activity. The "
+"change will be reflected in the setup or teardown times defined on the main "
+"activity."
+msgstr ""
+"Hvis du vil endre opprigg- eller nedriggstidene, redigerer du tiden for "
+"denne aktiviteten. Endringen gjenspeiles i opprigg- eller nedriggstidene som "
+"er angitt for hovedaktiviteten."
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:724
+msgid "Open main activity"
+msgstr "Åpne hovedaktiviteten"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:777
+msgid "Delete this activity"
+msgstr "Slett denne aktiviteten"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:920
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:939
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:958
+msgid "Save choices"
+msgstr "Lagre valg"
+
+#: webook/templates/arrangement/planner/dialogs/arrangement_dialogs/inspectEventDialog.html:1114
+msgid "This event cannot be recovered."
+msgstr "Hendelsen kan ikke gjenopprettes."
+
 #: webook/templates/arrangement/planner/dialogs/color_selection.html:7
-#| msgid "Color Legend"
 msgid "Color selection"
 msgstr "Fargevelger"
 
 #: webook/templates/arrangement/planner/dialogs/edit_event.html:7
-#| msgid "Edit Arrangement"
 msgid "Edit event"
 msgstr "Rediger aktivitet"
 
 #: webook/templates/arrangement/planner/dialogs/edit_event.html:25
-#| msgid "Edit Location"
 msgid "Event Information"
 msgstr "Informasjon vedrørende aktivitet"
-
-#: webook/templates/arrangement/planner/dialogs/edit_event.html:49
-msgid "Orders"
-msgstr "Bestillinger"
 
 #: webook/templates/arrangement/planner/dialogs/edit_event.html:75
 #: webook/templates/arrangement/planner/dialogs/edit_event.html:80
 #: webook/templates/arrangement/planner/dialogs/edit_event.html:92
-#| msgid "Requested By"
 msgid "Required"
 msgstr "Obligatorisk"
 
-#: webook/templates/arrangement/planner/dialogs/edit_event.html:80
-msgid "From"
-msgstr "Fra"
+#: webook/templates/arrangement/planner/dialogs/edit_event.html:108
+msgid "Search for a person..."
+msgstr "Søk etter person..."
 
-#: webook/templates/arrangement/planner/dialogs/edit_event.html:92
-msgid "To"
-msgstr "Til"
+#: webook/templates/arrangement/planner/dialogs/edit_event.html:129
+msgid "Search for a room..."
+msgstr "Søk etter rom..."
 
-#: webook/templates/arrangement/planner/dialogs/edit_event.html:455
+#: webook/templates/arrangement/planner/dialogs/edit_event.html:150
+msgid ""
+"People and rooms will be reserved during the requisitioning phase. The "
+"people and rooms defined here will not be requisitioned or requested for "
+"confirmation until you start requisitioning, so there are no commitments or "
+"consequences before that point."
+msgstr ""
+"Personer og rom reserveres i rekvireringsfasen. Personene og rommene som er "
+"definert her, blir ikke rekvirert eller forespurt om bekreftelse før du "
+"starter rekvireringen. Det medfører derfor ingen bindinger eller "
+"konsekvenser før dette tidspunktet."
+
+#: webook/templates/arrangement/planner/dialogs/edit_event.html:454
 msgid "Event updated!"
 msgstr "Aktivitet oppdatert!"
 
-#: webook/templates/arrangement/planner/dialogs/edit_event.html:459
+#: webook/templates/arrangement/planner/dialogs/edit_event.html:458
 msgid "Event created!"
 msgstr "Aktivitet opprettet!"
 
@@ -1868,18 +3068,12 @@ msgid "Close"
 msgstr "Lukk"
 
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:7
-#| msgid "New arrangement"
 msgid "New recurring event"
 msgstr "Ny repeterende aktivitet"
 
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:20
-#| msgid "Timeline"
 msgid "Time"
 msgstr "Tid"
-
-#: webook/templates/arrangement/planner/dialogs/new_serie.html:42
-msgid "Slutt"
-msgstr ""
 
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:50
 msgid "Color"
@@ -1889,23 +3083,8 @@ msgstr "Farge"
 msgid "Pattern for recurring area"
 msgstr "Mønster for gjentagelse"
 
-#: webook/templates/arrangement/planner/dialogs/new_serie.html:69
-msgid "Daily"
-msgstr "Daglig"
-
-#: webook/templates/arrangement/planner/dialogs/new_serie.html:72
-msgid "Weekly"
-msgstr "Ukentlig"
-
-#: webook/templates/arrangement/planner/dialogs/new_serie.html:75
-msgid "Monthly"
-msgstr "Månedlig"
-
-#: webook/templates/arrangement/planner/dialogs/new_serie.html:78
-msgid "Yearly"
-msgstr "Årlig"
-
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:87
+#: webook/templates/arrangement/planner/dialogs/new_serie.html:97
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:136
 msgid "Every"
 msgstr "Hver"
@@ -1915,20 +3094,16 @@ msgid "day"
 msgstr "dag"
 
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:92
-#: webook/utils/manifest_describe.py:43
+#: webook/utils/manifest_describe.py:112
 msgid "Every weekday"
 msgstr "Hver ukedag"
-
-#: webook/templates/arrangement/planner/dialogs/new_serie.html:97
-msgid "Skjer hver"
-msgstr ""
 
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:97
 msgid "week at"
 msgstr "uke på"
 
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:112
-#| msgid "AllDay"
+#: webook/templates/arrangement/planner/planner_calendar.html:103
 msgid "Day"
 msgstr "Dag"
 
@@ -1957,11 +3132,8 @@ msgstr "Skjer hver"
 msgid "year"
 msgstr "år"
 
-#: webook/templates/arrangement/planner/dialogs/new_serie.html:129
-msgid "Dato"
-msgstr ""
-
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:141
+#: webook/templates/base.html:24
 msgid "in"
 msgstr "i"
 
@@ -1970,7 +3142,6 @@ msgid "Area of recurrence"
 msgstr "Gjentagelsesområde"
 
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:154
-#| msgid "Birth Date"
 msgid "Start Date"
 msgstr "Startdato"
 
@@ -1999,7 +3170,6 @@ msgid "months into the future"
 msgstr "måneder inn i fremtiden"
 
 #: webook/templates/arrangement/planner/dialogs/new_serie.html:181
-#| msgid "Create Arrangement"
 msgid "Create recurring event"
 msgstr "Opprett repeterende aktivitet"
 
@@ -2064,9 +3234,104 @@ msgstr "siste"
 msgid "Order service"
 msgstr "Bestill tjeneste"
 
-#: webook/templates/arrangement/planner/dialogs/order_service.html:22
-msgid "Tjenestetype"
+#: webook/templates/arrangement/planner/edit-event-dialog.html:13
+msgid "Plan event"
+msgstr "Planlegg aktivitet"
+
+#: webook/templates/arrangement/planner/edit-event-dialog.html:20
+msgid "Title (Norwegian)"
+msgstr "Tittel (norsk)"
+
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:14
+msgid "Plan recurring event"
+msgstr "Planlegg gjentakende aktivitet"
+
+#: webook/templates/arrangement/planner/edit-serie-dialog.html:82
+msgid "Copied from arrangement"
+msgstr "Kopiert fra arrangement"
+
+#: webook/templates/arrangement/planner/event-info-dialog.html:34
+msgid "recurring"
+msgstr "gjentakende"
+
+#: webook/templates/arrangement/planner/event-info-dialog.html:54
+msgid "Belongs to arrangement:"
+msgstr "Tilhører arrangementet:"
+
+#: webook/templates/arrangement/planner/event-info-dialog.html:78
+msgid ""
+"When edited, this activity will be separated from the series and will no "
+"longer be considered part of it."
 msgstr ""
+"Ved redigering skilles denne aktiviteten fra serien og regnes ikke lenger "
+"som en del av den."
+
+#: webook/templates/arrangement/planner/event-info-dialog.html:79
+msgid "You can edit the series from the arrangement view under time slots."
+msgstr "Du kan redigere serien fra arrangementvisningen under tidspunkter."
+
+#: webook/templates/arrangement/planner/event-info-dialog.html:136
+msgid "Rigging"
+msgstr "Opprigg og nedrigg"
+
+#: webook/templates/arrangement/planner/plan_arrangement.html:81
+msgid "Receipts & Orders"
+msgstr "Kvitteringer og bestillinger"
+
+#: webook/templates/arrangement/planner/plan_arrangement.html:131
+msgid "View orders"
+msgstr "Vis bestillinger"
+
+#: webook/templates/arrangement/planner/planner-base-dialog.html:68
+msgid "New arrangement"
+msgstr "Planlegg nytt arrangement"
+
+#: webook/templates/arrangement/planner/planner-base-dialog.html:81
+msgid "Title is required"
+msgstr "Tittel på norsk"
+
+#: webook/templates/arrangement/planner/planner-base-dialog.html:109
+msgid "Co-planners"
+msgstr "Planleggere"
+
+#: webook/templates/arrangement/planner/planner-base-dialog.html:121
+msgid "Location is required"
+msgstr "Lokasjoner"
+
+#: webook/templates/arrangement/planner/planner_calendar.html:104
+msgid "Month"
+msgstr "Måned"
+
+#: webook/templates/arrangement/planner/planner_calendar.html:105
+#: webook/templates/arrangement/planner/planner_calendar.html:110
+msgid "Week"
+msgstr "Uke"
+
+#: webook/templates/arrangement/planner/planner_calendar.html:106
+msgid "Year"
+msgstr "År"
+
+#: webook/templates/arrangement/planner/planner_calendar.html:107
+msgid "Timeline"
+msgstr "Tidslinje"
+
+#: webook/templates/arrangement/planner/planner_calendar.html:108
+msgid "Grid"
+msgstr "Rutenett"
+
+#: webook/templates/arrangement/planner/planner_calendar.html:151
+#: webook/templates/arrangement/planner/planner_calendar.html:354
+#: webook/templates/arrangement/planner/planner_calendar_v2.html:132
+msgid "Locations & Rooms"
+msgstr "Lokasjoner og rom"
+
+#: webook/templates/arrangement/requisitioneer/loose_requisitions/loose_requisitions_on_event.html:41
+msgid "Remove this event from the requisition"
+msgstr "Fjern denne hendelsen fra rekvireringen"
+
+#: webook/templates/arrangement/requisitioneer/loose_requisitions/loose_requisitions_on_event.html:53
+msgid "This order applies to:"
+msgstr "Denne bestillingen gjelder:"
 
 #: webook/templates/arrangement/requisitioneer/order_service_form.html:31
 msgid "The order has not been set up yet"
@@ -2082,8 +3347,8 @@ msgid ""
 "We are waiting for the provider to respond to the request we have sent to "
 "them by mail."
 msgstr ""
-"Vi venter for tilbyderen til å svare på forespørslen vi har sendt over "
-"e-post."
+"Vi venter for tilbyderen til å svare på forespørslen vi har sendt over e-"
+"post."
 
 #: webook/templates/arrangement/requisitioneer/order_service_form.html:39
 msgid "Awaiting response from provider"
@@ -2103,123 +3368,407 @@ msgstr "Avslått"
 msgid "The provider has accepted this request"
 msgstr "Tilbyderen har godtatt denne forespørslen"
 
-#: webook/templates/arrangement/requisitioneer/order_service_form.html:70
-msgid "Accepted"
-msgstr "Akseptert"
-
 #: webook/templates/arrangement/requisitioneer/order_service_form.html:92
 #: webook/templates/arrangement/requisitioneer/order_service_form.html:96
 msgid "This order has been cancelled"
 msgstr "Bestillingen har blitt kansellert"
 
-#: webook/templates/arrangement/requisitioneer/order_service_form.html:93
-#| msgid "Cancel"
-msgid "Cancelled"
-msgstr "Avbryt"
+#: webook/templates/arrangement/requisitioneer/order_service_form.html:120
+msgid "Service providers:"
+msgstr "Tjenesteleverandører:"
+
+#: webook/templates/arrangement/requisitioneer/order_service_form.html:126
+msgid "No companies are registered to provide"
+msgstr "Ingen bedrifter er registrert for å levere"
+
+#: webook/templates/arrangement/requisitioneer/order_service_form.html:127
+msgid "You must register a company that can provide"
+msgstr "Du må registrere en bedrift som kan levere"
+
+#: webook/templates/arrangement/requisitioneer/order_service_form.html:127
+msgid "before this order can be completed."
+msgstr "før bestillingen kan gjennomføres."
+
+#: webook/templates/arrangement/requisitioneer/order_service_form.html:131
+msgid "Choose a service provider for this order"
+msgstr "Velg en tjenesteleverandør for denne bestillingen"
 
 #: webook/templates/arrangement/requisitioneer/requisition_dialog.html:9
 msgid "Requisitioning"
 msgstr "Rekvirering"
 
-#: webook/templates/arrangement/room/partials/_location_room_list.html:8
-msgid "Maximum Occupants"
-msgstr "Maks Antall Mennesker"
+#: webook/templates/arrangement/room/room_detail.html:31
+msgid "Room details"
+msgstr "Romdetaljer"
 
-#: webook/templates/arrangement/room/partials/_location_room_list.html:9
-msgid "Is Exclusive?"
-msgstr "Er eksklusiv?"
+#: webook/templates/arrangement/room/room_detail.html:42
+msgid "View location"
+msgstr "Vis lokasjon"
 
-#: webook/templates/arrangement/room/partials/_location_room_list.html:10
-msgid "Has Screen?"
-msgstr "Har skjerm?"
+#: webook/templates/arrangement/room/room_detail.html:55
+msgid "Exclusive"
+msgstr "Eksklusiv"
 
-#: webook/templates/arrangement/room/partials/_location_room_list.html:39
+#: webook/templates/arrangement/room/room_detail.html:61
+msgid "Disabled"
+msgstr "Deaktivert"
+
+#: webook/templates/arrangement/room/room_detail.html:72
+msgid "Room calendar"
+msgstr "Romkalender"
+
+#: webook/templates/arrangement/room/room_form.html:35
+msgid "Room name (english)"
+msgstr "Romnavn (Engelsk)"
+
+#: webook/templates/arrangement/vue/notes/note-list.html:24
+msgid "Search notes"
+msgstr "Søk i notater"
+
+#: webook/templates/arrangement/vue/notes/note-list.html:36
+msgid "Include arrangement notes"
+msgstr "Inkluder notater fra arrangementet"
+
+#: webook/templates/arrangement/vue/notes/note-list.html:60
+msgid "Created:"
+msgstr "Opprettet:"
+
+#: webook/templates/arrangement/vue/notes/note-list.html:64
+msgid "By:"
+msgstr "Av:"
+
+#: webook/templates/arrangement/vue/room_and_preset_selector_component.html:25
+msgid "or"
+msgstr "eller"
+
+#: webook/templates/arrangement/vue/room_and_preset_selector_component.html:33
+msgid "Selected rooms"
+msgstr "Valgte rom"
+
+#: webook/templates/arrangement/vue/room_and_preset_selector_component.html:55
+msgid "Selected presets"
+msgstr "Valgte forhåndsoppsett"
+
+#: webook/templates/arrangement/vue/room_and_preset_selector_component.html:62
+msgid "Hide rooms"
+msgstr "Skjul rom"
+
+#: webook/templates/arrangement/vue/room_and_preset_selector_component.html:62
+msgid "Show rooms"
+msgstr "Vis rom"
+
+#: webook/templates/arrangement/vue/room_and_preset_selector_component.html:71
+msgid "rooms excluded"
+msgstr "rom ekskludert"
+
+#: webook/templates/arrangement/vue/room_and_preset_selector_component.html:74
+msgid "Remove preset from arrangement"
+msgstr "Fjern forhåndsoppsett fra arrangementet"
+
+#: webook/templates/arrangement/vue/rooms-select.html:24
+msgid "Select rooms and presets"
+msgstr "Velg rom og forhåndsoppsett"
+
+#: webook/templates/arrangement/vue/select_main_planner_base.html:11
+msgid "Without a search term, all people in the planner group are shown."
+msgstr "Uten søkeord vises alle personer i planleggergruppen."
+
+#: webook/templates/arrangement/vue/select_main_planner_base.html:13
+msgid ""
+"You can still search for and select people outside the planner group by "
+"entering at least 3 characters."
+msgstr ""
+"Du kan fortsatt søke etter og velge personer utenfor planleggergruppen ved å "
+"skrive inn minst 3 tegn."
+
+#: webook/templates/arrangement/vue/select_main_planner_base.html:20
+msgid "Search for planner... (at least 3 characters)"
+msgstr "Søk etter planlegger... (minst 3 tegn)"
+
+#: webook/templates/arrangement/vue/select_main_planner_base.html:40
+#: webook/templates/arrangement/vue/table_component.html:168
+#: webook/templates/arrangement/vue/table_component.html:223
+#: webook/templates/user_management/list.html:49
+msgid "results"
+msgstr "resultater"
+
+#: webook/templates/arrangement/vue/select_main_planner_base.html:46
+msgid ""
+"Select the person who should be the main planner for the arrangement by "
+"clicking their name."
+msgstr ""
+"Klikk på navnet til personen som skal være hovedplanlegger for arrangementet."
+
+#: webook/templates/arrangement/vue/table_component.html:42
+msgid "Add new entry"
+msgstr "Legg til ny oppføring"
+
+#: webook/templates/arrangement/vue/table_component.html:50
+msgid "Loading"
+msgstr "Laster"
+
+#: webook/templates/arrangement/vue/table_component.html:158
+msgid "Try another search term or clear the search."
+msgstr "Prøv et annet søkeord eller fjern søket."
+
+#: webook/templates/arrangement/vue/table_component.html:168
+msgid "total"
+msgstr "totalt"
+
+#: webook/templates/arrangement/vue/table_component.html:168
+msgid "pages"
+msgstr "sider"
+
+#: webook/templates/arrangement/vue/table_component.html:173
+msgid "First"
+msgstr "Første"
+
+#: webook/templates/arrangement/vue/table_component.html:216
+msgid "Last"
+msgstr "Siste"
+
+#: webook/templates/base.html:14
+msgid "No changes were saved."
+msgstr "Ingen endringer ble lagret."
+
+#: webook/templates/base.html:15
+msgid "Room added"
+msgstr "Rom lagt til"
+
+#: webook/templates/base.html:16
+msgid "People added"
+msgstr "Personer lagt til"
+
+#: webook/templates/base.html:17
+msgid "Inspect event"
+msgstr "Vis aktivitet"
+
+#: webook/templates/base.html:18
+msgid "Changes saved"
+msgstr "Endringene er lagret"
+
+#: webook/templates/base.html:19
+msgid "Conflict"
+msgstr "Konflikt"
+
+#: webook/templates/base.html:20
+msgid "The activity conflicts with another activity on an exclusive resource."
+msgstr "Aktiviteten kolliderer med en annen aktivitet på en eksklusiv ressurs."
+
+#: webook/templates/base.html:21
+msgid ""
+"The setup time after the activity conflicts with another activity on an "
+"exclusive resource."
+msgstr ""
+"Oppriggingstiden etter aktiviteten kolliderer med en annen aktivitet på en "
+"eksklusiv ressurs."
+
+#: webook/templates/base.html:22
+msgid ""
+"The setup time before the activity conflicts with another activity on an "
+"exclusive resource."
+msgstr ""
+"Oppriggingstiden før aktiviteten kolliderer med en annen aktivitet på en "
+"eksklusiv ressurs."
+
+#: webook/templates/base.html:23
+msgid "Conflicts with"
+msgstr "Kolliderer med"
+
+#: webook/templates/base.html:25
+msgid "Selected people have been added to the activity."
+msgstr "De valgte personene er lagt til i aktiviteten."
+
+#: webook/templates/base.html:26
+msgid "Planner(s) added"
+msgstr "Planlegger(e) lagt til"
+
+#: webook/templates/base.html:27
+msgid "Something went wrong. Please try again later."
+msgstr "Noe gikk galt. Prøv igjen senere."
+
+#: webook/templates/base.html:28
+msgid "Inspect arrangement"
+msgstr "Inspiser arrangement"
+
+#: webook/templates/base.html:29
+msgid "Inspect time"
+msgstr "Inspiser tidspunkt"
+
+#: webook/templates/base.html:30
+msgid "Delete arrangement"
+msgstr "Slett arrangement"
+
+#: webook/templates/base.html:31
+msgid "Delete activity"
+msgstr "Slett aktivitet"
+
+#: webook/templates/base.html:136
+msgid "Hello"
+msgstr "Hei"
+
+#: webook/templates/base.html:139
+msgid "Sign out"
+msgstr "Logg ut"
+
+#: webook/templates/base.html:154
+msgid "My page"
+msgstr "Min side"
+
+#: webook/templates/base.html:161
+msgid "Planning calendar"
+msgstr "Planleggingskalender"
+
+#: webook/templates/base.html:168
+msgid "Online booking"
+msgstr "Online booking"
+
+#: webook/templates/base.html:175
+msgid "Resources"
+msgstr "Ressurser"
+
+#: webook/templates/base.html:190
+msgid "Room presets"
+msgstr "Romoppsett"
+
+#: webook/templates/base.html:203
+msgid "Customers"
+msgstr "Kunder"
+
+#: webook/templates/base.html:210
+msgid "Types"
+msgstr "Typer"
+
+#: webook/templates/base.html:235
+msgid "Service types"
+msgstr "Tjenestetyper"
+
+#: webook/templates/base.html:241
+msgid "Organization types"
+msgstr "Organisasjonstyper"
+
+#: webook/templates/base.html:250
+msgid "Administration"
+msgstr "Administrasjon"
+
+#: webook/templates/base.html:260 webook/templates/user_management/list.html:13
+#: webook/users/apps.py:7
+msgid "Users"
+msgstr "Brukere"
+
+#: webook/templates/base.html:275
+msgid "Django admin panel"
+msgstr "Django-administrasjon"
+
+#: webook/templates/base.html:298
+msgid "Toggle navigation"
+msgstr "Vis/skjul navigasjon"
+
+#: webook/templates/base.html:322
+msgid "Search (ctrl + &quot;/&quot; to focus)"
+msgstr "Søk (ctrl + &quot;/&quot; for å fokusere)"
+
+#: webook/templates/base.html:330
+msgid "Language"
+msgstr "Språk"
+
+#: webook/templates/base.html:331
+msgid "Change language"
+msgstr "Bytt språk"
+
+#: webook/templates/base.html:353
+msgid "My Profile"
+msgstr "Min profil"
+
+#: webook/templates/common/archive_view.html:17
+#: webook/templates/common/dialog_archive_view.html:7
+msgid "Archive this item?"
+msgstr "Arkiver dette elementet?"
+
+#: webook/templates/common/archive_view.html:21
+#: webook/templates/common/dialog_archive_view.html:12
+msgid ""
+"It will be hidden from active lists, but its existing references and history "
+"will be retained."
+msgstr ""
+"Det skjules fra aktive lister, men eksisterende referanser og historikk "
+"beholdes."
+
+#: webook/templates/common/delete_view.html:10
+msgid "Are you sure you want to delete"
+msgstr "Er du sikker på at du vil slette"
+
+#: webook/templates/common/delete_view.html:11
+msgid "This action can not be reversed."
+msgstr "Denne handlingen kan ikke reverseres."
+
+#: webook/templates/common/dialog_list_view.html:21
+#: webook/templates/common/list_view.html:20
+msgid "Search for "
+msgstr "Søk etter"
+
+#: webook/templates/common/dialog_list_view.html:27
+#: webook/templates/common/list_view.html:26
+#: webook/templates/common/tree_list_view.html:19
+#, python-format
+msgid " No <em>%(ENTITY_NAME_PLURAL)s</em> registered yet! "
+msgstr "Ingen <em>%(ENTITY_NAME_PLURAL)s</em> har blitt registrert ennå! "
+
+#: webook/templates/common/dialog_list_view.html:29
+#: webook/templates/common/list_view.html:28
+#: webook/templates/common/tree_list_view.html:21
+#, python-format
+msgid ""
+"\n"
+"            After you have begun registering <em>%(ENTITY_NAME_PLURAL)s</em> "
+"they will be shown here! None have been registered yet,\n"
+"            but you can resolve this by clicking the button above!\n"
+"        "
+msgstr ""
+"\n"
+"Etter du har registrert nye <em>%(ENTITY_NAME_PLURAL)s</em> så vil de dukke "
+"opp her. Ingen har blitt registrert ennå. Bruk knappen over for å opprette "
+"nye entiteter."
+
+#: webook/templates/common/dialog_list_view.html:71
+#: webook/templates/common/dialog_list_view.html:73
+#: webook/templates/common/list_view.html:71
 #: webook/templates/common/list_view.html:73
 #: webook/templates/screenshow/screen/screen_list.html:39
 msgid "Show"
 msgstr "Vis"
 
-#: webook/templates/arrangement/room/room_detail.html:28
-msgid "Go To"
-msgstr "Gå til"
-
-#: webook/templates/arrangement/room/room_detail.html:34
-msgid "Max Occupants"
-msgstr "Maks Antall Mennesker"
-
-#: webook/templates/arrangement/room/room_form.html:38
-msgid "Room name (english)"
-msgstr "Romnavn (Engelsk)"
-
-#: webook/templates/arrangement/room_presets/form.html:20
-msgid "Save and then create a new room preset"
-msgstr "Lagre, og ny preset"
-
-#: webook/templates/arrangement/room_presets/form.html:26
-msgid "Create a new room preset based on your input"
-msgstr "Opprett en ny preset basert på din inndata"
-
-#: webook/templates/base.html:269
-msgid "Search (ctrl + &quot;/&quot; to focus)"
-msgstr "Søk (ctrl + &quot;/&quot; for å fokusere)"
-
-#: webook/templates/base.html:289
-msgid "My Profile"
-msgstr "Min profil"
-
-#: webook/templates/common/delete_view.html:8
-#: webook/templates/common/dialog_delete_view.html:7
-msgid "Are you sure?"
-msgstr "Er du sikker?"
-
-#: webook/templates/common/delete_view.html:10
-#: webook/templates/common/dialog_delete_view.html:9
-msgid "Are you sure you want to delete"
-msgstr "Er du sikker på at du vil slette"
-
-#: webook/templates/common/delete_view.html:11
-#: webook/templates/common/dialog_delete_view.html:10
-msgid "This action can not be reversed."
-msgstr "Denne handlingen kan ikke reverseres."
-
-#: webook/templates/common/dialog_list_view.html:40
-#: webook/templates/common/list_view.html:50
-#| msgid "Locations"
-msgid "Actions"
-msgstr "Valg"
-
-#: webook/templates/common/list_view.html:20
-msgid "Search for "
-msgstr "Søk etter"
-
-#: webook/templates/common/list_view.html:26
-#: webook/templates/common/tree_list_view.html:24
-#, python-format
-msgid " No <em>%(ENTITY_NAME_PLURAL)s</em> registered yet! "
-msgstr "Ingen <em>%(ENTITY_NAME_PLURAL)s</em> har blitt registrert ennå! "
-
-#: webook/templates/common/list_view.html:28
-#: webook/templates/common/tree_list_view.html:26
-#, python-format
-msgid ""
-"\n"
-"            After you have begun registering <em>%(ENTITY_NAME_PLURAL)s</em> they will be shown here! None have been registered yet,\n"
-"            but you can resolve this by clicking the button above!\n"
-"        "
-msgstr ""
-"\n"
-"Etter du har registrert nye <em>%(ENTITY_NAME_PLURAL)s</em> så vil de dukke opp her. Ingen har blitt registrert ennå. Bruk knappen over for å opprette nye entiteter."
-
 #: webook/templates/common/meta_base.html:5
 msgid "Entity"
 msgstr "Entitet"
 
+#: webook/templates/common/tree_list_view.html:10
+msgid "Register new"
+msgstr "Registrer ny"
+
+#: webook/templates/common/tree_list_view.html:34
+msgid "items"
+msgstr "elementer"
+
+#: webook/templates/common/tree_list_view.html:36
+msgid "Tree controls"
+msgstr "Trekontroller"
+
+#: webook/templates/common/tree_list_view.html:37
+#: webook/templates/common/tree_list_view.html:38
+msgid "Expand all"
+msgstr "Utvid alle"
+
+#: webook/templates/common/tree_list_view.html:40
+#: webook/templates/common/tree_list_view.html:41
+msgid "Collapse all"
+msgstr "Skjul alle"
+
 #: webook/templates/error_contact.html:8
 msgid ""
-"Please raise an error in our <a "
-"href='https://github.com/wemadefree/webook'><strong>GitHub "
-"repository</strong></a> if you believe this error to be a bug in the "
-"application."
+"Please raise an error in our <a href='https://github.com/wemadefree/"
+"webook'><strong>GitHub repository</strong></a> if you believe this error to "
+"be a bug in the application."
 msgstr ""
 "Vennligst rapporter feilen om du mener at dette er en feil i applikasjonen."
 
@@ -2264,7 +3813,6 @@ msgid "Number of items on screen"
 msgstr "Antall enheter på skjermen"
 
 #: webook/templates/screenshow/layout/layout_detail.html:21
-#| msgid "Last Name"
 msgid "Layout Name:"
 msgstr "Layout Navn"
 
@@ -2301,7 +3849,6 @@ msgid "This display layout is not showing on any screen"
 msgstr "Denne skjerm layouten vises ikke på noen skjermer"
 
 #: webook/templates/screenshow/layout/layout_form.html:22
-#| msgid "Last Name"
 msgid "Layout Name"
 msgstr "Etternavn"
 
@@ -2309,12 +3856,7 @@ msgstr "Etternavn"
 msgid "Layout Description"
 msgstr "Layout Beskrivelse"
 
-#: webook/templates/screenshow/screen/screen_detail.html:24
-msgid "Screen"
-msgstr "Skjerm"
-
 #: webook/templates/screenshow/screen/screen_detail.html:29
-#| msgid "ServiceName"
 msgid "Screen Name:"
 msgstr "Skjerm Navn:"
 
@@ -2332,30 +3874,109 @@ msgid "elements"
 msgstr "elementer"
 
 #: webook/templates/socialaccount/login.html:11
-#| msgid "Content"
 msgid "Continue"
 msgstr "Fortsett"
+
+#: webook/templates/user_management/list.html:18
+msgid "Show inactive users"
+msgstr "Vis inaktive brukere"
+
+#: webook/templates/user_management/list.html:24
+msgid "Search by name or email (at least 3 characters)"
+msgstr "Søk etter navn eller e-post (minst 3 tegn)"
+
+#: webook/templates/user_management/list.html:30
+msgid "Visible roles"
+msgstr "Synlige roller"
+
+#: webook/templates/user_management/list.html:42
+#: webook/templates/user_management/user_list.html:80
+msgid "Read-only access"
+msgstr "Lesetilgang"
+
+#: webook/templates/user_management/list.html:49
+msgid "Showing"
+msgstr "Viser"
+
+#: webook/templates/user_management/list.html:144
+msgid "Deactivate the account of"
+msgstr "Deaktiver kontoen til"
+
+#: webook/templates/user_management/list.html:150
+msgid "Deactivate user"
+msgstr "Deaktiver bruker"
+
+#: webook/templates/user_management/list.html:166
+msgid "Activate the account of"
+msgstr "Aktiver kontoen til"
+
+#: webook/templates/user_management/list.html:172
+msgid "Activate user"
+msgstr "Aktiver bruker"
+
+#: webook/templates/user_management/list.html:188
+msgid "Are you sure you want to activate these users?"
+msgstr "Er du sikker på at du vil aktivere disse brukerne?"
+
+#: webook/templates/user_management/list.html:202
+msgid "Activate these users"
+msgstr "Aktiver disse brukerne"
+
+#: webook/templates/user_management/list.html:221
+msgid "Are you sure you want to deactivate these users?"
+msgstr "Er du sikker på at du vil deaktivere disse brukerne?"
+
+#: webook/templates/user_management/list.html:235
+msgid "Deactivate these users"
+msgstr "Deaktiver disse brukerne"
+
+#: webook/templates/user_management/sso_detail_dialog.html:10
+#, fuzzy
+#| msgid "Has associated user?"
+msgid "No associated person"
+msgstr "Har tilkoblet bruker?"
+
+#: webook/templates/user_management/sso_detail_dialog.html:11
+msgid "This user has no associated person and cannot use SSO."
+msgstr ""
+
+#: webook/templates/user_management/sso_detail_dialog.html:12
+msgid "SSO values are associated with the person, not the user."
+msgstr ""
+
+#: webook/templates/user_management/user_list.html:61
+msgid "Role"
+msgstr "Rolle"
+
+#: webook/templates/user_management/user_list.html:69
+msgid "Superuser"
+msgstr "Superbruker"
+
+#: webook/templates/user_management/user_list.html:74
+msgid "Planner"
+msgstr "Planlegger"
+
+#: webook/templates/user_management/user_list.html:77
+msgid "Read-only access - Level 2"
+msgstr "Lesetilgang - nivå 2"
+
+#: webook/templates/user_management/user_list.html:83
+msgid "No role"
+msgstr "Ingen rolle"
 
 #: webook/templates/users/user_form.html:7
 msgid "My Info"
 msgstr "Min Info"
 
-#: webook/users/apps.py:7
-msgid "Users"
-msgstr "Brukere"
-
-#: webook/users/forms.py:18 webook/users/models.py:72
-#: webook/users/views.py:185
+#: webook/users/forms.py:18 webook/users/models.py:99 webook/users/views.py:193
 msgid "Profile Picture"
 msgstr "Profilbilde"
 
 #: webook/users/forms.py:23
-#| msgid "Timeline"
 msgid "Timezone"
 msgstr "Tidssone"
 
-#: webook/users/models.py:53
-#| msgid "E-mail Addresses"
+#: webook/users/models.py:80
 msgid "email address"
 msgstr "E-Post"
 
@@ -2369,57 +3990,108 @@ msgstr "Slug"
 msgid "Home"
 msgstr "Hjem"
 
-#: webook/utils/manifest_describe.py:42
+#: webook/utils/meta/meta_types.py:80
+#: webook/utils/meta_utils/section_manifest.py:92
+msgid "View"
+msgstr "Vis"
+
+#: webook/utils/meta/meta_types.py:145
+#: webook/utils/meta_utils/section_manifest.py:176
+msgid "All"
+msgstr "Alle"
+
+#~ msgid "Ticket Information"
+#~ msgstr "Billettinfo"
+
+#~ msgid "Create a new arrangement type based on your input"
+#~ msgstr "Opprett nytt arrangement basert på din inndata"
+
+#~ msgid "Create a new audience based on your input"
+#~ msgstr "Opprett en ny målgruppe basert på din inndata"
+
+#~ msgid "Maximum Occupancy"
+#~ msgstr "Maks Antall Mennesker"
+
+#~ msgid "Room Name"
+#~ msgstr "Rommets Navn"
+
+#~| msgid "Room Name"
+#~ msgid "Room Name (English)"
+#~ msgstr "Rommets Navn (Engelsk)"
+
+#~ msgid "Create room"
+#~ msgstr "Opprett rom"
+
+#~ msgid "Save and then create a new audience"
+#~ msgstr "Lagre målgruppe, og ny"
+
+#~ msgid ""
+#~ "There are no organizations registered of this type. You can select this "
+#~ "type when creating a new organization, and it will appear here."
+#~ msgstr ""
+#~ "Det er ingen organisasjoner registrert av denne typen. Du kan velge denne "
+#~ "typen når du oppretter en organisasjon, og organisasjonen vil så vises "
+#~ "her."
+
+#~| msgid "Has associated user?"
+#~ msgid "Has user?"
+#~ msgstr "Har tilkoblet bruker?"
+
+#~ msgid "Has Screen?"
+#~ msgstr "Har skjerm?"
+
+#~ msgid "Go To"
+#~ msgstr "Gå til"
+
+#~ msgid "Max Occupants"
+#~ msgstr "Maks Antall Mennesker"
+
+#~ msgid "Save and then create a new room preset"
+#~ msgstr "Lagre, og ny preset"
+
+#~ msgid "Create a new room preset based on your input"
+#~ msgstr "Opprett en ny preset basert på din inndata"
+
 #, python-brace-format
-msgid "Daily every {manifest.interval} day"
-msgstr "Daglig hver {manifest.interval} dag"
+#~ msgid "Daily every {manifest.interval} day"
+#~ msgstr "Daglig hver {manifest.interval} dag"
 
-#: webook/utils/manifest_describe.py:44
-msgid "Weekly every {_days_to_str(manifest)}"
-msgstr "Ukentlig hver {_days_to_str(manifest)}"
+#~ msgid "Weekly every {_days_to_str(manifest)}"
+#~ msgstr "Ukentlig hver {_days_to_str(manifest)}"
 
-#: webook/utils/manifest_describe.py:45
 #, python-brace-format
-msgid "The {manifest.day_of_month} every {manifest.interval} month"
-msgstr "Den {manifest.day_of_month} hver {manifest.interval} måned"
+#~ msgid "The {manifest.day_of_month} every {manifest.interval} month"
+#~ msgstr "Den {manifest.day_of_month} hver {manifest.interval} måned"
 
-#: webook/utils/manifest_describe.py:46
-msgid ""
-"Every {_arbitrators[manifest.arbitrator]} "
-"{calendar.day_name[manifest.day_of_week]} every {manifest.interval} month"
-msgstr ""
-"Hver {_arbitrators[manifest.arbitrator]} "
-"{calendar.day_name[manifest.day_of_week]} hver {manifest.interval} måned"
+#~ msgid ""
+#~ "Every {_arbitrators[manifest.arbitrator]} "
+#~ "{calendar.day_name[manifest.day_of_week]} every {manifest.interval} month"
+#~ msgstr ""
+#~ "Hver {_arbitrators[manifest.arbitrator]} "
+#~ "{calendar.day_name[manifest.day_of_week]} hver {manifest.interval} måned"
 
-#: webook/utils/manifest_describe.py:47
-msgid ""
-"The {manifest.day_of_month} {calendar.month_name[manifest.month]} every "
-"{manifest.interval} year(s)"
-msgstr ""
-"Den {manifest.day_of_month} {calendar.month_name[manifest.month]} hver "
-"{manifest.interval} år"
+#~ msgid ""
+#~ "The {manifest.day_of_month} {calendar.month_name[manifest.month]} every "
+#~ "{manifest.interval} year(s)"
+#~ msgstr ""
+#~ "Den {manifest.day_of_month} {calendar.month_name[manifest.month]} hver "
+#~ "{manifest.interval} år"
 
-#: webook/utils/manifest_describe.py:54
 #, python-brace-format
-msgid "between {manifest.start_date} and {manifest.stop_within}"
-msgstr "mellom {manifest.start_date} og {manifest.stop_within}"
+#~ msgid "between {manifest.start_date} and {manifest.stop_within}"
+#~ msgstr "mellom {manifest.start_date} og {manifest.stop_within}"
 
-#: webook/utils/manifest_describe.py:55
 #, python-brace-format
-msgid "after {manifest.stop_after_x_occurences} "
-msgstr "etter {manifest.stop_after_x_occurences} "
+#~ msgid "after {manifest.stop_after_x_occurences} "
+#~ msgstr "etter {manifest.stop_after_x_occurences} "
 
-#: webook/utils/manifest_describe.py:56
 #, python-brace-format
-msgid ""
-"for eternity (project {manifest.project_x_months_into_future} months into "
-"the future)"
-msgstr ""
-"for alltid (projiser {manifest.project_x_months_into_future} måneder inn i "
-"fremtiden) "
-
-#~ msgid "Norwegian"
-#~ msgstr "Norsk"
+#~ msgid ""
+#~ "for eternity (project {manifest.project_x_months_into_future} months into "
+#~ "the future)"
+#~ msgstr ""
+#~ "for alltid (projiser {manifest.project_x_months_into_future} måneder inn "
+#~ "i fremtiden) "
 
 #~ msgid "Owners"
 #~ msgstr "Eiere"
@@ -2466,15 +4138,14 @@ msgstr ""
 #, python-format
 #~ msgid ""
 #~ "Please sign in with one\n"
-#~ "of your existing third party accounts. Or, <a href=\"%(signup_url)s\">sign up</a>\n"
+#~ "of your existing third party accounts. Or, <a "
+#~ "href=\"%(signup_url)s\">sign up</a>\n"
 #~ "for a %(site_name)s account and sign in below:"
 #~ msgstr ""
 #~ "Vennligst logg in med en\n"
-#~ "av dine eksisterende tredjepartskontoer. Eller, <a href=\"%(signup_url)s\">registrer</a>\n"
+#~ "av dine eksisterende tredjepartskontoer. Eller, <a "
+#~ "href=\"%(signup_url)s\">registrer</a>\n"
 #~ "for en %(site_name)s konto og logg inn under:"
-
-#~ msgid "or"
-#~ msgstr "eller"
 
 #~ msgid "Forgot Password?"
 #~ msgstr "Glemt passord?"
@@ -2508,22 +4179,22 @@ msgstr ""
 #~ msgstr "Endre Ansvarlig"
 
 #~ msgid ""
-#~ "Here you can administer the people that are allowed to edit and work on this"
-#~ " arrangement. People added here will automatically be given the watcher "
-#~ "status, and will receive notifications, as well as be able to view and make "
-#~ "changes according to the authorization level given to them by the "
-#~ "arrangement responsible or an administrator."
+#~ "Here you can administer the people that are allowed to edit and work on "
+#~ "this arrangement. People added here will automatically be given the "
+#~ "watcher status, and will receive notifications, as well as be able to "
+#~ "view and make changes according to the authorization level given to them "
+#~ "by the arrangement responsible or an administrator."
 #~ msgstr ""
 #~ "Her kan du administrere personene som har tillatelse til å redigere og "
 #~ "arbeide med dette arrangementet. Personer lagt til her vil automatisk bli "
-#~ "gitt overvåker status, og vil motta notifikasjoner, samt kunne se og gjøre "
-#~ "forandringer i henhold til de autorisasjonene som har blitt gitt de av "
-#~ "arrangementets ansvarlige person eller en administrator."
+#~ "gitt overvåker status, og vil motta notifikasjoner, samt kunne se og "
+#~ "gjøre forandringer i henhold til de autorisasjonene som har blitt gitt de "
+#~ "av arrangementets ansvarlige person eller en administrator."
 
 #~ msgid ""
-#~ "Note that the responsible is considered the 'owner' of the event. Only the "
-#~ "responsible (and administrators) can authorize new people to access and edit"
-#~ " this arrangement."
+#~ "Note that the responsible is considered the 'owner' of the event. Only "
+#~ "the responsible (and administrators) can authorize new people to access "
+#~ "and edit this arrangement."
 #~ msgstr ""
 #~ "Merk at den ansvarlige personen er ansett som 'eieren' av arrangementet. "
 #~ "Bare ansvarlige (og administratorer) kan gi ut tilgang til dette "
@@ -2531,15 +4202,6 @@ msgstr ""
 
 #~ msgid "Authorization Level"
 #~ msgstr "Autorisasjonsnivå"
-
-#~ msgid "Change"
-#~ msgstr "Endre"
-
-#~ msgid "View"
-#~ msgstr "Vis"
-
-#~ msgid "Authorizations"
-#~ msgstr "Autorisasjoner"
 
 #~ msgid "All resources have accepted invitations"
 #~ msgstr "All ressurser har akseptert invitasjoner"
@@ -2556,7 +4218,8 @@ msgstr ""
 #~ "ferdigkonfigurert"
 
 #~ msgid ""
-#~ "An alert has been triggered on this event. You should check the notification"
+#~ "An alert has been triggered on this event. You should check the "
+#~ "notification"
 #~ msgstr ""
 #~ "En varsling har blitt trigget på denne hendelsen. Du burde sjekke "
 #~ "notifikasjonen"
@@ -2566,9 +4229,6 @@ msgstr ""
 
 #~ msgid "Location Calendar"
 #~ msgstr "Lokasjonskalender"
-
-#~ msgid "New Location"
-#~ msgstr "Opprett Lokasjon"
 
 #~ msgid "What is the name of the location we are creating?"
 #~ msgstr "Hva er navnet på lokasjonen vi oppretter?"
@@ -2609,9 +4269,6 @@ msgstr ""
 #~ msgid "Rooms & Locations"
 #~ msgstr "Rom & Lokasjoner"
 
-#~ msgid "Types"
-#~ msgstr "Typer"
-
 #~ msgid "Audience Types"
 #~ msgstr "Målgruppe Typer"
 
@@ -2629,9 +4286,6 @@ msgstr ""
 
 #~ msgid "Flags"
 #~ msgstr "Flagg"
-
-#~ msgid "Overview"
-#~ msgstr "Oversikt"
 
 #~ msgid "This username has already been taken."
 #~ msgstr "Dette brukernavnet har allerede blitt tatt."

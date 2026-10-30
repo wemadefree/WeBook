@@ -4036,6 +4036,36 @@ msgstr "Bekreftet, ferdig behandlet"
 msgid "Confirmed, not yet processed"
 msgstr "Bekreftet, ikke behandlet ennå"
 
+msgid "Show _MENU_ entries"
+msgstr "Vis _MENU_ rader"
+
+msgid "Search:"
+msgstr "Søk:"
+
+msgid "Showing _START_ to _END_ of _TOTAL_ entries"
+msgstr "Viser _START_ til _END_ av _TOTAL_ rader"
+
+msgid "Showing 0 to 0 of 0 entries"
+msgstr "Viser 0 til 0 av 0 rader"
+
+msgid "(filtered from _MAX_ total entries)"
+msgstr "(filtrert fra totalt _MAX_ rader)"
+
+msgid "No data available in table"
+msgstr "Ingen data tilgjengelig"
+
+msgid "No matching records found"
+msgstr "Ingen treff"
+
+msgid "Processing..."
+msgstr "Behandler ..."
+
+msgid "Display Text"
+msgstr "Tekst på skjerm"
+
+msgid "Display Text (English)"
+msgstr "Tekst på skjerm (Engelsk)"
+
 #~ msgid "Ticket Information"
 #~ msgstr "Billettinfo"
 

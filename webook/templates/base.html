@@ -452,6 +452,28 @@
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
       <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/af-2.3.7/b-2.2.2/b-colvis-2.2.2/b-html5-2.2.2/b-print-2.2.2/cr-1.5.5/date-1.1.2/fc-4.0.2/fh-3.2.2/kt-2.6.4/r-2.2.9/rg-1.1.4/rr-1.2.8/sc-2.0.5/sb-1.3.2/sp-2.0.0/sl-1.3.4/sr-1.1.0/datatables.min.js"></script>
+      <script>
+        // Translated labels for every DataTable (_MENU_, _START_, _END_, _TOTAL_ and _MAX_ are DataTables placeholders)
+        $.extend(true, $.fn.dataTable.defaults, {
+          language: {
+            lengthMenu: "{% trans 'Show _MENU_ entries' %}",
+            search: "{% trans 'Search:' %}",
+            info: "{% trans 'Showing _START_ to _END_ of _TOTAL_ entries' %}",
+            infoEmpty: "{% trans 'Showing 0 to 0 of 0 entries' %}",
+            infoFiltered: "{% trans '(filtered from _MAX_ total entries)' %}",
+            emptyTable: "{% trans 'No data available in table' %}",
+            zeroRecords: "{% trans 'No matching records found' %}",
+            loadingRecords: "{% trans 'Loading...' %}",
+            processing: "{% trans 'Processing...' %}",
+            paginate: {
+              first: "{% trans 'First' %}",
+              last: "{% trans 'Last' %}",
+              next: "{% trans 'Next' %}",
+              previous: "{% trans 'Previous' %}"
+            }
+          }
+        });
+      </script>
       <script src="{% static 'js/sweetalert2.js' %}"></script>
       <script src="{% static 'select2/dist/js/select2.min.js' %}"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js" integrity="sha512-TGClBy3S4qrWJtzel4qMtXsmM0Y9cap6QwRm3zo1MpVjvIURa90YYz5weeh6nvDGKZf/x3hrl1zzHW/uygftKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

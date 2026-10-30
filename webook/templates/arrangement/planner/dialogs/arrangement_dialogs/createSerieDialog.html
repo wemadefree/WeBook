@@ -855,7 +855,7 @@
                 dialog.data.countyOptions.forEach((county) => {
                     if (county.id == selectedCountyId) {
                         county.schools.forEach((school) => {
-                            if (school.audiences.includes(selectedAudienceId) || selectedAudienceId == {{ audienceGroupId }}) {
+                            if (school.audiences.includes(selectedAudienceId) || selectedAudienceId == {{ audienceGroupId|default:"null" }}) {
                                 schoolOptions.push({
                                     id: school.id,
                                     text: school.text,
@@ -932,7 +932,7 @@
             });
 
             if (dialog.interior.serie_uuid.value !== undefined) {
-                dialog.getElementById('title').innerText = "Rediger " + dialog.interior.serie_title.value;
+                dialog.getElementById('title').innerText = "{% trans 'Edit' %} " + dialog.interior.serie_title.value;
             }
 
             new DayOfWeekSelectComponent(dialog.getElementById('every_arbitrary_weekday_in_month__weekday'));

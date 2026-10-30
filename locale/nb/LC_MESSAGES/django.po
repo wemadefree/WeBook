@@ -4066,6 +4066,9 @@ msgstr "Tekst på skjerm"
 msgid "Display Text (English)"
 msgstr "Tekst på skjerm (Engelsk)"
 
+msgid "Please select an item"
+msgstr "Vennligst velg et element"
+
 #~ msgid "Ticket Information"
 #~ msgstr "Billettinfo"
 

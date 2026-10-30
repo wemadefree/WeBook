@@ -91,7 +91,7 @@ export class ArrangementCreator {
                             width: 900, 
                             height: 800,
                             modal: true,
-                            position: "center center",
+                            position: { my: "center", at: "center", of: window },
                             dialogClass: 'no-titlebar',
                         }
                     }),

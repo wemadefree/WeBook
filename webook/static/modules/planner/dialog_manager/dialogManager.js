@@ -455,6 +455,24 @@ export class DialogComplexDiscriminativeRenderer extends DialogBaseRenderer {
             dialog._$getDialogEl().prepend($buttonHolder);
             dialog.onRenderedCallback(dialog, context);
 
+            if (instantializeDialog !== false) {
+                /* The dialog was positioned when it opened, before its content settled; e.g. a stepper showing
+                all its steps made it taller than the window, which pins it to the top. Position it again whenever
+                its size changes while the content settles, until the user moves or resizes it. Only on first
+                open, so a dialog the user moved stays put on refresh. */
+                const $dialogElement = dialog._$getDialogEl();
+                const resizeObserver = new ResizeObserver(() => {
+                    if ($dialogElement.dialog("isOpen") && !dialog._isExpanded) {
+                        $dialogElement.dialog("option", "position", $dialogElement.dialog("option", "position"));
+                    }
+                });
+                const stopRepositioning = () => resizeObserver.disconnect();
+
+                resizeObserver.observe($dialogElement.closest(".ui-dialog")[0]);
+                $dialogElement.one("dialogdragstart dialogresizestart dialogclose", stopRepositioning);
+                setTimeout(stopRepositioning, 3000);
+            }
+
             this._isRendering = false;
 
             if (window.isMobile) {

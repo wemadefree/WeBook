@@ -687,7 +687,8 @@ export class DialogManager {
                             classes: {
                                 "ui-dialog": "slave-dialog"
                             },
-                            position: { my: "left top", at: "right top", of: parent.parentNode },
+                            // Attach to the outer edge of the parent dialog, aligned with its top
+                            position: { my: "left top", at: "right top", of: $(parent).closest(".ui-dialog") },
                             modal: true,
                             height: parent.parentNode.offsetHeight,
                             width: 600,

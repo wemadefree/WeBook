@@ -842,7 +842,6 @@ html, body {
 
 
 .slave-dialog {
-    top: 0px!important; /* To offset for a weird issue where chained dialogs are top+ something */
     box-shadow: 10px 1px 20px 1px  grey!important;
     background-color: var(--SECONDARY-COLOR)!important;
     border-top-left-radius: 0px!important;

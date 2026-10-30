@@ -91,7 +91,8 @@ export class ArrangementCreator {
                             width: 900, 
                             height: 800,
                             modal: true,
-                            position: { my: "center", at: "center", of: window },
+                            // Top left, leaving room on the right for the dialogs it opens (rooms, schedules, ...)
+                            position: { my: "left+16 top+16", at: "left top", of: window },
                             dialogClass: 'no-titlebar',
                         }
                     }),

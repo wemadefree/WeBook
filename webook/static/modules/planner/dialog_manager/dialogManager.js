@@ -1,3 +1,10 @@
+/* Links with href="#" are used as buttons throughout the dialogs. Following "#" scrolls the page to
+the top, losing the user's place in the calendar, so cancel that; the links' click handlers still run. */
+document.addEventListener("click", (event) => {
+    if (event.target.closest?.('.ui-dialog a[href="#"]')) {
+        event.preventDefault();
+    }
+});
 
 export class Dialog {
     constructor ({ dialogElementId, 

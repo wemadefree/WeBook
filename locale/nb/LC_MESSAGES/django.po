@@ -4069,6 +4069,24 @@ msgstr "Tekst på skjerm (Engelsk)"
 msgid "Please select an item"
 msgstr "Vennligst velg et element"
 
+msgid "Back"
+msgstr "Tilbake"
+
+msgid "Activate presets"
+msgstr "Aktiver presets"
+
+msgid "Or select rooms manually"
+msgstr "Eller velg rom manuelt"
+
+msgid "General"
+msgstr "Generelt"
+
+msgid "Service ordering"
+msgstr "Tjenestebestilling"
+
+msgid "Schedules & activities"
+msgstr "Tidsplaner & Aktiviteter"
+
 #~ msgid "Ticket Information"
 #~ msgstr "Billettinfo"
 
@@ -4218,9 +4236,6 @@ msgstr "Vennligst velg et element"
 
 #~ msgid "Forgot Password?"
 #~ msgstr "Glemt passord?"
-
-#~ msgid "General"
-#~ msgstr "Generelt"
 
 #~ msgid "System Messages"
 #~ msgstr "Systemvarsler"

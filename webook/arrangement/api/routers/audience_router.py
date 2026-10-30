@@ -6,7 +6,7 @@ from django.db.models import Q, Sum
 
 from webook.api.crud_router import Views
 from webook.api.schemas.base_schema import BaseSchema, ModelBaseSchema
-from webook.arrangement.api.validators import validate_tree_node_update
+from webook.api.shared_validators import validate_tree_node_update
 from webook.arrangement.models import Arrangement, Event
 from webook.api.crud_router import CrudRouter
 from datetime import datetime

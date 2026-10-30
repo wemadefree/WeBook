@@ -29,7 +29,8 @@ def validate_tree_node_update(
         if parent_node is None:
             raise Http404("Parent node by id '%s' does not exist" % payload.parent_id)
 
-        if parent_node.parent_id == instance.id:
+        # A new node (no id yet) cannot be its parent's parent
+        if instance.id is not None and parent_node.parent_id == instance.id:
             raise TranslatedHttpError(
                 status_code=400,
                 message="Parent node cannot be the same as the node's parent",

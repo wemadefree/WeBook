@@ -1,13 +1,12 @@
 from typing import Generic, List, Optional, TypeVar
 from ninja import Schema
+from pydantic import ConfigDict
 from datetime import datetime
 from webook.utils.camelize import camelize
 
 
 class BaseSchema(Schema):
-    class Config(Schema.Config):
-        alias_generator = camelize
-        populate_by_name = True
+    model_config = ConfigDict(alias_generator=camelize, populate_by_name=True)
 
 
 class ModelBaseSchema(BaseSchema):

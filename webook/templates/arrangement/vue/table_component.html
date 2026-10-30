@@ -64,7 +64,7 @@
                     </span>
                 </th>
                 <th v-if="actions && Object.keys(actions).length">
-                    <i class="fas fa-ellipsis-v"></i>
+                    <strong>{% trans "Actions" %}</strong>
                 </th>
             </tr>
         </thead>
@@ -93,7 +93,7 @@
                         <div class="form-group" v-if="options.componentName == 'toggle'">
                             <div class="form-check form-switch">
                                 <input type="checkbox" role="switch" class="form-check-input" 
-                                    @click.native="emitCheckboxClickedEvent(row, columnKey)"
+                                    @click.stop="emitCheckboxClickedEvent(row, columnKey)"
                                     v-model="row[columnKey]" :disabled="'is_disabled' in row && row.is_disabled" />
                             </div>
                         </div>
@@ -639,8 +639,12 @@
         watch: {
             searchTerm() {
                 if (this.dataSource instanceof APITableDataSource) {
-                    this.page = 1;
-                    this.refresh();
+                    // Wait until the user pauses typing, instead of querying on every keystroke
+                    clearTimeout(this._searchTimeout);
+                    this._searchTimeout = setTimeout(() => {
+                        this.page = 1;
+                        this.refresh();
+                    }, 300);
                     return;
                 }
             },
@@ -733,6 +737,10 @@
                 const column = this.columns[columnKey];
 
                 if (this.dataSource instanceof APITableDataSource) {
+                    // The column key is sent to the API as the field to sort by
+                    if (column.sortable === false || column.isSortable === false)
+                        return;
+
                     this.sortedBy = columnKey;
                     this.sortDirection = this.sortDirection == "asc" ? "desc" : "asc";
                     this.refresh();
@@ -852,10 +860,14 @@
                 });
             },
             async refresh() {
+                // Responses can arrive out of order; only apply the one for the latest request
+                const requestId = this._latestRefreshId = (this._latestRefreshId || 0) + 1;
                 this.isLoading = true;
 
                 try {
                     const data = await this.resolveDataSource();
+                    if (requestId !== this._latestRefreshId)
+                        return;
 
                     this.columns = data.columns;
                     this.data = data.data;
@@ -866,7 +878,8 @@
                         Math.ceil(this.visibleItems.length / this.itemsPerPage);
                 }
                 finally {
-                    this.isLoading = false;
+                    if (requestId === this._latestRefreshId)
+                        this.isLoading = false;
                 }
             },
             /* Attempt to resolve the given property dataSource, which serves as the backing data feed.

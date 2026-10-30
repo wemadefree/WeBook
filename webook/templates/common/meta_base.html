@@ -2,7 +2,7 @@
 {% load static i18n %}
 
 {% block title %}
-    {% trans "Entity" %} {{ object.name }}
+    {{ SECTION_TITLE }}{% if SECTION_SUBTITLE %} – {{ SECTION_SUBTITLE }}{% endif %}
 {% endblock %}
 {% block section_title %}
     {{ SECTION_TITLE }}

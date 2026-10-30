@@ -369,9 +369,9 @@
                   >
                   <i class="fa fa-user"></i>&nbsp;
                     {% if request.user.person and request.user.person.first_name %}
-                      Hei, {{ request.user.person.first_name }}
+                      {% trans "Hello" %}, {{ request.user.person.first_name }}
                     {% else %}
-                      Hei, (ingen person)
+                      {% trans "Hello" %}, ({% trans "no person" %})
                     {% endif %}
                   </button>
                   <ul class="dropdown-menu">

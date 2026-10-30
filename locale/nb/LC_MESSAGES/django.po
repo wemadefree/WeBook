@@ -4099,6 +4099,114 @@ msgstr "Kopier til utklippstavlen"
 msgid "Copied 1 row to clipboard"
 msgstr "Kopierte 1 rad til utklippstavlen"
 
+msgid "Access level"
+msgstr "Tilgangsnivå"
+
+msgid "Activate"
+msgstr "Aktiver"
+
+msgid "Active"
+msgstr "Aktiv"
+
+msgid "All roles"
+msgstr "Alle roller"
+
+msgid "All users"
+msgstr "Alle brukere"
+
+msgid "Can manage services"
+msgstr "Kan administrere tjenester"
+
+msgid "Can manage users"
+msgstr "Kan administrere brukere"
+
+msgid "Change role"
+msgstr "Endre rolle"
+
+msgid "Clear selection"
+msgstr "Fjern valg"
+
+msgid "Deactivate"
+msgstr "Deaktiver"
+
+msgid "Inactive"
+msgstr "Inaktiv"
+
+msgid "Last login"
+msgstr "Sist innlogget"
+
+msgid "Never"
+msgstr "Aldri"
+
+msgid "Registered"
+msgstr "Registrert"
+
+msgid "Service administrator"
+msgstr "Tjenesteadministrator"
+
+msgid "Synchronized"
+msgstr "Synkronisert"
+
+msgid "The role has been changed for the selected users."
+msgstr "Rollen er endret for de valgte brukerne."
+
+msgid "The selected users have been activated."
+msgstr "De valgte brukerne er aktivert."
+
+msgid "The selected users have been deactivated."
+msgstr "De valgte brukerne er deaktivert."
+
+msgid "The user account has been activated."
+msgstr "Brukerkontoen er aktivert."
+
+msgid "The user account has been deactivated."
+msgstr "Brukerkontoen er deaktivert."
+
+msgid "This user can log in with SSO"
+msgstr "Denne brukeren kan logge inn med SSO"
+
+msgid "This user cannot log in with SSO"
+msgstr "Denne brukeren kan ikke logge inn med SSO"
+
+msgid "User administrator"
+msgstr "Brukeradministrator"
+
+msgid "Which role should these users have?"
+msgstr "Hvilken rolle skal disse brukerne ha?"
+
+msgid "You cannot deactivate your own account."
+msgstr "Du kan ikke deaktivere din egen konto."
+
+msgid "selected"
+msgstr "valgt"
+
+msgid "no person"
+msgstr "ingen person"
+
+msgid "Change picture"
+msgstr "Bytt bilde"
+
+msgid "Local account, no SSO"
+msgstr "Lokal konto, uten SSO"
+
+msgid "Access"
+msgstr "Tilgang"
+
+msgid "Superusers have full access to everything, regardless of role."
+msgstr "Superbrukere har full tilgang til alt, uavhengig av rolle."
+
+msgid "Personal details"
+msgstr "Personalia"
+
+msgid "Can create and change arrangements, events and resources."
+msgstr "Kan opprette og endre arrangementer, aktiviteter og ressurser."
+
+msgid "Can see the calendar and open arrangements and events, without changing them."
+msgstr "Kan se kalenderen og åpne arrangementer og aktiviteter, uten å endre dem."
+
+msgid "Can see the calendar, but not open arrangements or events."
+msgstr "Kan se kalenderen, men ikke åpne arrangementer eller aktiviteter."
+
 #, python-format
 msgid "Copied %d rows to clipboard"
 msgstr "Kopierte %d rader til utklippstavlen"

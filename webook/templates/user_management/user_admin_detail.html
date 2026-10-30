@@ -3,216 +3,244 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<style>
+    #user_admin_detail .user-avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        font-weight: 600;
+        background-color: var(--bs-gray-200, #e9ecef);
+        color: var(--bs-gray-700, #495057);
+    }
+    #user_admin_detail .section-title {
+        font-size: .75rem;
+        font-weight: 600;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: var(--bs-gray-600, #6c757d);
+        margin-bottom: .75rem;
+    }
+    #user_admin_detail section + section {
+        border-top: 1px solid var(--bs-gray-200, #e9ecef);
+        padding-top: 1.25rem;
+        margin-top: 1.25rem;
+    }
+    #user_admin_detail .role-option {
+        display: flex;
+        gap: .75rem;
+        align-items: flex-start;
+        border: 1px solid var(--bs-gray-300, #dee2e6);
+        border-radius: .5rem;
+        padding: .6rem .85rem;
+        margin-bottom: .5rem;
+        cursor: pointer;
+    }
+    #user_admin_detail .role-option:has(input:checked) {
+        border-color: var(--bs-primary, #0d6efd);
+        background-color: rgba(13, 110, 253, .05);
+    }
+    #user_admin_detail .role-option input {
+        margin-top: .3rem;
+        flex-shrink: 0;
+    }
+    #user_admin_detail .meta-line {
+        font-size: .85rem;
+        color: var(--bs-gray-600, #6c757d);
+    }
+    #user_admin_detail .avatar-action {
+        color: var(--bs-primary, #0d6efd);
+        cursor: pointer;
+    }
+    #user_admin_detail .sso-details {
+        display: grid;
+        grid-template-columns: max-content auto;
+        gap: .1rem 1.5rem;
+        margin: .25rem 0 0 .85rem;
+    }
+    #user_admin_detail .sso-details dt {
+        font-weight: normal;
+    }
+    #user_admin_detail .sso-details dd {
+        margin: 0;
+    }
+    #user_admin_detail details summary {
+        cursor: pointer;
+    }
+    #user_admin_detail .dialog-footer {
+        position: sticky;
+        bottom: 0;
+        background-color: var(--bs-body-bg, #fff);
+        border-top: 1px solid var(--bs-gray-200, #e9ecef);
+        padding-top: .75rem;
+        margin-top: 1.25rem;
+    }
+</style>
+
 <div id="user_admin_detail">
-    <h4>{{USER.email}}</h4>
+    <form method="post" enctype="multipart/form-data">
+        {% if form.errors %}
+            <div class="alert alert-danger form-error">
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div>{{ field.label }}: {{ error }}</div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
 
-    {% if USER.is_superuser %}
-    <div class="badge badge-danger">
-        <i class="fas fa-user-shield"></i> System Administrator
-    </div>
-    {% elif USER|has_group:"planners" %}
-        <div class="badge badge-primary">
-            <i class="fas fa-calendar"></i> Planlegger
-        </div>
-    {% elif USER|has_group:"readonly_level_2" %}
-        <div class="badge badge-secondary">
-            Lesetilgang - Nivå 2
-        </div>
-    {% else %}
-        <div class="badge badge-light">
-            <i class="fas fa-eye"></i> Lesetilgang
-        </div>
-    {% endif %}
-    <!-- Sidebar -->
-    <form method="post">
-        <div class="row">
-            <div>
-                <div class="row w-100">
-                    <div class="col-12">
-                    <!-- Tab navs -->
-                    <div
-                        class="nav flex-row nav-tabs text-dark"
-                        id="v-tabs-tab"
-                        role="tablist"
-                        aria-orientation="vertical"
-                    >
+        <section class="d-flex gap-3 align-items-start">
+            <div class="text-center">
+                {% if USER.profile_picture %}
+                    <img src="{{ USER.profile_picture.url }}" class="user-avatar" alt="" id="userAvatar">
+                {% else %}
+                    <div class="user-avatar" id="userAvatar">{{ USER.person.first_name|slice:":1" }}{{ USER.person.last_name|slice:":1" }}</div>
+                {% endif %}
+                <label class="avatar-action d-block small mt-1" for="{{ form.profile_picture.id_for_label }}">{% trans "Change picture" %}</label>
+                <input type="file" name="{{ form.profile_picture.html_name }}" id="{{ form.profile_picture.id_for_label }}" accept="image/*" class="d-none">
+                {% if USER.profile_picture %}
+                    <div class="form-check d-flex justify-content-center gap-1 small">
+                        <input type="checkbox" class="form-check-input" name="{{ form.profile_picture.html_name }}-clear" id="removePicture">
+                        <label class="form-check-label" for="removePicture">{% trans "Remove" %}</label>
                     </div>
-                    <!-- Tab navs -->
-                    </div>
-                
-                    <div class="col-8">
-                    <!-- Tab content -->
-                    <div class="tab-content mt-3" id="v-tabs-tabContent">
-                        <div
-                            class="tab-pane fade show active"
-                            id="v-tabs-general"
-                            role="tabpanel"
-                            aria-labelledby="v-tabs-general-tab">
+                {% endif %}
+            </div>
 
-                            <div class=" d-inline">
-                                <img src="{{ form.profile_picture.url }}" class="border border-4 border-light mb-4" style="width:400px">
-                            </div>
-                            
-                                {{form.profile_picture|as_crispy_field}}
-
-                                <div class="d-flex mt-2" style="justify-content: space-between;">
-                                    <div>
-                                        {{form.first_name|as_crispy_field}}
-                                    </div>
-        
-                                    <div>
-                                        {{form.middle_name|as_crispy_field}}
-                                    </div>
-        
-                                    <div>
-                                        {{form.last_name|as_crispy_field}}
-                                    </div>
-                                </div>
-        
-                                <div class="mt-2">
-                                    {{ form.birth_date|as_crispy_field }}
-                                </div>
-        
-                                <div class="mt-2">
-                                    {{ form.timezone|as_crispy_field }}
-                                </div>
-
-                                <div class="mt-3">
-                                    <h4><i class="fas fa-lock"></i>&nbsp; Tilgangsnivå</h4>
-                                    {{form.user_role|as_crispy_field}}
-
-                                    <h5 class="mt-3">Brukeradministrator</h5>
-                                    {{ form.is_user_admin|as_crispy_field }}
-
-                                    <h5 class="mt-3">Tjenesteadministrator</h5>
-
-                                    {{object}}
-
-                                    {{ form.is_service_admin|as_crispy_field }}
-                                </div>
-                        </div>
-                        <div
-                            class="tab-pane fade"
-                            id="v-tabs-sso"
-                            role="tabpanel"
-                            aria-labelledby="v-tabs-sso-tab">
-                            
-                            <div class="d-flex">
-                                <div class="alert alert-light wb-bg-secondary">
-                                    <h3 class="text-center">
-                                        {% if USER.person.is_synced %}
-                                            <i class="fas fa-check text-success"></i>
-                                        {% else %}
-                                            <i class="fas fa-times text-danger"></i>
-                                        {% endif %}
-                                    </h3>
-                                    <h5>Er synkronisert</h5>
-                                </div>
-
-                                <div class="alert alert-light wb-bg-secondary ms-2">
-                                    <h3 class="text-center">
-                                        {% if USER.person.is_sso_capable %}
-                                            <i class="fas fa-check text-success"></i>
-                                        {% else %}
-                                            <i class="fas fa-times text-danger"></i>
-                                        {% endif %}
-                                    </h3>
-                                    <h5>Kan logge inn med SSO</h5>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <h5>ObjectId</h5>
-                                {{ USER.person.social_provider_id }}
-                            </div>
-
-                            <div class="form-group mt-2">
-                                <h5>Social Provider Email</h5>
-                                {{ USER.person.social_provider_email }}
-                            </div>
-                        </div>
-                        <div
-                            class="tab-pane fade"
-                            id="v-tabs-email-password"
-                            role="tabpanel"
-                            aria-labelledby="v-tabs-email-password-tab">
-                            Email & Password content
-                        </div>
-                        <div
-                            class="tab-pane fade"
-                            id="v-tabs-roles"
-                            role="tabpanel"
-                            aria-labelledby="v-tabs-roles-tab">
-                            Roles content
-                        </div>
-                    </div>
-                    <!-- Tab content -->
+            <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="fs-5">{{ USER.email }}</div>
+                        {% if USER.is_superuser %}
+                            <span class="badge bg-danger">{% trans "Superuser" %}</span>
+                        {% elif USER|has_group:"planners" %}
+                            <span class="badge bg-primary">{% trans "Planner" %}</span>
+                        {% elif USER|has_group:"readonly_level_2" %}
+                            <span class="badge bg-secondary">{% trans "Read-only access - Level 2" %}</span>
+                        {% elif USER|has_group:"readonly" %}
+                            <span class="badge bg-secondary">{% trans "Read-only access" %}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{% trans "No role" %}</span>
+                        {% endif %}
                     </div>
 
-                    <div class="col-4">
-                        <div class="card">
-                            <div class="card-body" style="background-color: ghostwhite">
-                                <h4 class="text-center">SSO</h4>
-                                
-                                <div class="alert alert-light">
-                                    {% if USER.person.is_sso_capable %}
-                                        <i class="fas fa-check text-success d-block h4 text-center"></i> <small>Denne brukeren kan logge inn med SSO</small>
-                                    {% else %}
-                                        <i class="fas fa-times text-danger d-block h4 text-center"></i> <small>Denne brukeren kan ikke logge inn med SSO</small>
-                                    {% endif %}
-                                </div>
-
-
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <tbody>
-                                            <tr>
-                                                <th class="fw-bold">Er synkronisert:</th>
-                                                <td>
-                                                    {% if USER.person.is_synced %}
-                                                        <i class="fas fa-check text-success"></i>
-                                                    {% else %}
-                                                        <i class="fas fa-times text-danger"></i>
-                                                    {% endif %}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th class="fw-bold">Objekt ID:</th>
-                                                <td>
-                                                    {{ USER.person.social_provider_id }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th class="fw-bold">E-Post:</th>
-                                                <td>
-                                                    {{ USER.person.social_provider_email }}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="form-check form-switch">
+                        {{ form.is_active }}
+                        <label class="form-check-label" for="{{ form.is_active.id_for_label }}">{% trans "Active" %}</label>
                     </div>
                 </div>
-                    
-                <button class="wb-btn-main btn mt-2 float-end clearfix" type="submit">
-                    Lagre forandringer
-                </button>
-                <button class="wb-btn-secondary btn mt-2 float-end clearfix cancel-button" type="button">
-                    Avbryt
-                </button>
-            </form>
 
+                {% trans "Never" as never %}
+                <div class="meta-line mt-2">
+                    {% trans "Last login" %}: {{ USER.last_login|date:"SHORT_DATETIME_FORMAT"|default:never }}
+                    &middot;
+                    {% trans "Registered" %}: {{ USER.date_joined|date:"SHORT_DATE_FORMAT" }}
+                </div>
+
+                <details class="meta-line mt-1">
+                    <summary>
+                        {% if USER.person.is_sso_capable %}
+                            <i class="fas fa-check text-success"></i> {% trans "This user can log in with SSO" %}
+                        {% else %}
+                            {% trans "Local account, no SSO" %}
+                        {% endif %}
+                    </summary>
+                    <dl class="sso-details">
+                        <dt>{% trans "Synchronized" %}</dt>
+                        <dd>{% if USER.person.is_synced %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</dd>
+                        <dt>{% trans "Object ID" %}</dt>
+                        <dd>{{ USER.person.social_provider_id|default_if_none:"–" }}</dd>
+                        <dt>{% trans "Email" %}</dt>
+                        <dd>{{ USER.person.social_provider_email|default_if_none:"–" }}</dd>
+                    </dl>
+                </details>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-title">{% trans "Access" %}</div>
+
+            {% if USER.is_superuser %}
+                <div class="alert wb-alert-secondary mb-3">
+                    <i class="fas fa-user-shield"></i>&nbsp;
+                    {% trans "Superusers have full access to everything, regardless of role." %}
+                </div>
+            {% else %}
+                {% for radio, description in ROLE_OPTIONS %}
+                    <label class="role-option" for="{{ radio.id_for_label }}">
+                        {{ radio.tag }}
+                        <span>
+                            <span class="d-block fw-semibold">{{ radio.choice_label }}</span>
+                            <small class="text-muted">{{ description }}</small>
+                        </span>
+                    </label>
+                {% endfor %}
+            {% endif %}
+
+            <div class="form-check form-switch mt-3">
+                {{ form.is_user_admin }}
+                <label class="form-check-label" for="{{ form.is_user_admin.id_for_label }}">{% trans "Can manage users" %}</label>
+            </div>
+            <div class="form-check form-switch">
+                {{ form.is_service_admin }}
+                <label class="form-check-label" for="{{ form.is_service_admin.id_for_label }}">{% trans "Can manage services" %}</label>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-title">{% trans "Personal details" %}</div>
+
+            <div class="row g-2">
+                <div class="col-md-4">{{ form.first_name|as_crispy_field }}</div>
+                <div class="col-md-4">{{ form.middle_name|as_crispy_field }}</div>
+                <div class="col-md-4">{{ form.last_name|as_crispy_field }}</div>
+            </div>
+            <div class="mt-2">
+                {{ form.timezone|as_crispy_field }}
+            </div>
+        </section>
+
+        <div class="dialog-footer d-flex justify-content-end gap-2">
+            <button class="wb-btn-secondary btn cancel-button" type="button">
+                {% trans "Cancel" %}
+            </button>
+            <button class="wb-btn-main btn" type="submit">
+                {% trans "Save changes" %}
+            </button>
         </div>
-    </div>
+    </form>
 </div>
 
 <script>
     $(document).ready(function () {
-        $('#user_admin_detail').find('.form-control-lg').each((index, element) => {
-            element.classList.remove("form-control-lg");
-        })
-    })
+        const root = document.getElementById("user_admin_detail");
+
+        root.querySelectorAll(".form-control-lg").forEach((element) => element.classList.remove("form-control-lg"));
+
+        $(root).find("select[name='{{ form.timezone.html_name }}']").select2({
+            dropdownParent: $(root).closest(".ui-dialog"),
+            width: "100%",
+        });
+
+        // Preview the chosen picture in the avatar before saving
+        document.getElementById("{{ form.profile_picture.id_for_label }}").addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if (!file)
+                return;
+
+            const avatar = document.getElementById("userAvatar");
+            const preview = document.createElement("img");
+            preview.className = "user-avatar";
+            preview.id = "userAvatar";
+            preview.alt = "";
+            preview.src = URL.createObjectURL(file);
+            avatar.replaceWith(preview);
+        });
+    });
 </script>
 {% endblock %}

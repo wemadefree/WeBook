@@ -209,7 +209,6 @@ export class DialogFormInterceptorPlugin {
             });
 
             formElement.onsubmit = function (event) {
-                debugger;
                 event.preventDefault();
 
                 let action = formElement.getAttribute("action") || this.dialog.formUrl;
@@ -240,8 +239,10 @@ export class DialogFormInterceptorPlugin {
                         this.dialog.close();
                     }
                     else {
-                        // validation error -- we want to refresh the dialog
-                        this.dialog.refresh(this.context, html);
+                        // validation error -- show the returned form with its errors in place.
+                        // The renderer does not re-render an open dialog, so swap the content here.
+                        this.dialog._$getDialogEl().html(html);
+                        this._findAllForms();
                     }
                 });
             }.bind(this);

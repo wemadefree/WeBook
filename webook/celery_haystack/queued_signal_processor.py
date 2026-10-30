@@ -4,9 +4,6 @@ from haystack.signals import RealtimeSignalProcessor
 
 class QueuedSignalProcessor(RealtimeSignalProcessor):
     def setup(self):
-        # Disconnect the Haystack signal processor
-        super(QueuedSignalProcessor, self).setup()
-        # Connect the QueuedSignalProcessor to the Django signal processor
         from django.db.models import signals
 
         signals.post_save.connect(
@@ -17,7 +14,6 @@ class QueuedSignalProcessor(RealtimeSignalProcessor):
         )
 
     def teardown(self):
-        # Disconnect the QueuedSignalProcessor from the Django signal processor
         from django.db.models import signals
 
         signals.post_save.disconnect(
@@ -26,30 +22,49 @@ class QueuedSignalProcessor(RealtimeSignalProcessor):
         signals.post_delete.disconnect(
             self.enqueue_delete, dispatch_uid="queued_signal_processor"
         )
-        # Reconnect the Haystack signal processor
-        super(QueuedSignalProcessor, self).teardown()
+
+    def _is_indexed_model(self, sender):
+        from haystack import connections
+
+        return any(
+            sender
+            in connections[alias].get_unified_index().get_indexed_models()
+            for alias in connections.connections_info
+        )
 
     def enqueue_save(self, sender, instance, **kwargs):
         # Enqueue the save operation
-        from webook.celery_haystack.tasks import update_object, ALL_MODELS
+        from django.db import transaction
+        from webook.celery_haystack.tasks import update_object
 
-        if instance.__class__.__name__ not in ALL_MODELS:
-            if instance.__class__.__name__ not in ["Migration", "Site"]:
-                logging.debug(
-                    f"Model {instance.__class__.__name__} is not in the list of models to be indexed"
-                )
+        if not self._is_indexed_model(sender):
+            logging.debug("Model %s is not indexed by Haystack", sender.__name__)
             return
 
-        update_object.delay(id=instance.id, model_name=instance.__class__.__name__)
+        database_alias = kwargs.get("using") or instance._state.db
+        transaction.on_commit(
+            lambda: update_object.delay(
+                id=instance.pk,
+                model_name=sender.__name__,
+                database_alias=database_alias,
+            ),
+            using=database_alias,
+        )
 
     def enqueue_delete(self, sender, instance, **kwargs):
         # Enqueue the delete operation
-        from webook.celery_haystack.tasks import remove_object, ALL_MODELS
+        from django.db import transaction
+        from webook.celery_haystack.tasks import remove_object
 
-        if instance.__class__.__name__ not in ALL_MODELS:
-            logging.warning(
-                f"Model {instance.__class__.__name__} is not in the list of models to be indexed"
-            )
+        if not self._is_indexed_model(sender):
+            logging.debug("Model %s is not indexed by Haystack", sender.__name__)
             return
 
-        remove_object.delay(id=instance.id, model=instance.__class__.__name__)
+        database_alias = kwargs.get("using") or instance._state.db
+        transaction.on_commit(
+            lambda: remove_object.delay(
+                id=instance.pk,
+                model_name=sender.__name__,
+            ),
+            using=database_alias,
+        )

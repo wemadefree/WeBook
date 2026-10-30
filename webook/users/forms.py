@@ -38,17 +38,45 @@ class ComplexUserUpdateForm(forms.UserChangeForm):
         ]
 
 
+# Roles a user administrator can assign: (group name, label, what the role allows)
+USER_ROLES = (
+    (
+        "planners",
+        _("Planner"),
+        _("Can create and change arrangements, events and resources."),
+    ),
+    (
+        "readonly_level_2",
+        _("Read-only access - Level 2"),
+        _("Can see the calendar and open arrangements and events, without changing them."),
+    ),
+    (
+        "readonly",
+        _("Read-only access"),
+        _("Can see the calendar, but not open arrangements or events."),
+    ),
+)
+USER_ROLE_CHOICES = tuple((name, label) for name, label, _description in USER_ROLES)
+
+SWITCH_WIDGET = dj_forms.CheckboxInput(attrs={"class": "form-check-input", "role": "switch"})
+
+
 class ComplexUserUpdateFormWithRole(ComplexUserUpdateForm):
     user_role = dj_forms.ChoiceField(
-        choices=(
-            ("planners", "Planlegger"),
-            ("readonly", "Lesetilgang"),
-            ("readonly_level_2", "Lesetilgang - Nivå 2"),
-        ),
+        choices=USER_ROLE_CHOICES,
         required=True,
+        label=_("Role"),
+        widget=dj_forms.RadioSelect(attrs={"class": "form-check-input"}),
     )
-    is_user_admin = dj_forms.BooleanField(required=False)
-    is_service_admin = dj_forms.BooleanField(required=False)
+    is_active = dj_forms.BooleanField(
+        required=False, label=_("Active"), widget=SWITCH_WIDGET
+    )
+    is_user_admin = dj_forms.BooleanField(
+        required=False, label=_("Can manage users"), widget=SWITCH_WIDGET
+    )
+    is_service_admin = dj_forms.BooleanField(
+        required=False, label=_("Can manage services"), widget=SWITCH_WIDGET
+    )
 
     class Meta(forms.UserChangeForm.Meta):
         model = Person
@@ -57,12 +85,12 @@ class ComplexUserUpdateFormWithRole(ComplexUserUpdateForm):
             "first_name",
             "middle_name",
             "last_name",
-            "birth_date",
             "profile_picture",
             "timezone",
             "user_role",
+            "is_active",
             "is_user_admin",
-            "is_service_admin",	
+            "is_service_admin",
         ]
 
 
@@ -85,7 +113,7 @@ class BatchChangeUserStateForm(dj_forms.Form):
 
 class BatchChangeUserGroupForm(dj_forms.Form):
     slugs = dj_forms.CharField(max_length=10000, required=True)
-    group = dj_forms.CharField(max_length=50, required=True)
+    group = dj_forms.ChoiceField(choices=USER_ROLE_CHOICES, required=True)
 
     class Meta:
         fields = ("slugs",)

@@ -1,5 +1,6 @@
 from django import forms
 from django.forms.widgets import CheckboxSelectMultiple
+from django.utils.translation import gettext_lazy as _
 
 from webook.arrangement.models import Arrangement, ArrangementType, Audience, Event, Person, RoomPreset, StatusType
 from webook.screenshow.models import DisplayLayout
@@ -39,8 +40,8 @@ class PlannerPlanSerieForm(forms.Form):
         widget=forms.Select(attrs={"class": "form-control form-control-lg"}),
     )
 
-    display_text = forms.CharField(required=False, label="Display Text")
-    display_text_en = forms.CharField(required=False, label="Display Text (English)")
+    display_text = forms.CharField(required=False, label=_("Display Text"))
+    display_text_en = forms.CharField(required=False, label=_("Display Text (English)"))
 
-    meeting_place = forms.CharField()
-    meeting_place_en = forms.CharField()
+    meeting_place = forms.CharField(required=False, label=_("Meeting Place"))
+    meeting_place_en = forms.CharField(required=False, label=_("Meeting Place (English)"))

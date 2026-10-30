@@ -363,12 +363,12 @@
             <button class="btn wb-btn-blank btn-lg text-muted"
                     d-trigger="close">
                 <i class="fas fa-times"></i>&nbsp;
-                Avbryt / Lukk
+                {% trans "Cancel / Close" %}
             </button>
         </div>
         <div class="float-end">
-            <button class="btn wb-btn-secondary btn-lg" id="back" type="button">Tilbake</button>
-            <a class="btn wb-btn-main btn-lg" id="next" href="#"> Neste</a>
+            <button class="btn wb-btn-secondary btn-lg" id="back" type="button">{% trans "Back" %}</button>
+            <button class="btn wb-btn-main btn-lg" id="next" type="button">{% trans "Next" %}</button>
             <button class="btn wb-btn-main btn-lg" type="button" id="finish" d-trigger="submit" style="display: none;">
                 {% trans "Create arrangement" %}
             </button>
@@ -453,7 +453,7 @@
                 dialog.data.countyOptions.forEach((county) => {
                     if (county.id == selectedCountyId) {
                         county.schools.forEach((school) => {
-                            if (school.audiences.includes(selectedAudienceId) || selectedAudienceId == {{ audienceGroupId }}) {
+                            if (school.audiences.includes(selectedAudienceId) || selectedAudienceId == {{ audienceGroupId|default:"null" }}) {
                                 schoolOptions.push({
                                      id: school.id,
                                     text: school.text,
@@ -592,7 +592,7 @@
                 steps: [
                 {
                     element: dialog.getElementById('step-1'),
-                    title: 'Generelt',
+                    title: '{% trans "General" %}',
                     stepIn: () => {},
                     stepOut: () => {
                         let field_elements = dialog.$('#step-1').find("input, select");
@@ -631,7 +631,7 @@
                 },
                 {
                     element: dialog.getElementById('step-2'),
-                    title: 'Detaljer',
+                    title: '{% trans "Details" %}',
                     stepIn: () => {},
                     stepOut: () => {
                         dialog.$('#step-2').find("input, select").each((index, $el) => {
@@ -654,13 +654,13 @@
                 },
                 {
                     element: dialog.getElementById('step-3'),
-                    title: 'Skjermvisning',
+                    title: '{% trans "Screen display" %}',
                     stepIn: () => {},
                     stepOut: () => {},
                 },
                 {
                     element: dialog.getElementById('step-4'),
-                    title: "Tjenestebestilling",
+                    title: "{% trans 'Service ordering' %}",
                     stepIn: () => {
 
                     },
@@ -670,7 +670,7 @@
                 },
                 {
                     element: dialog.getElementById('step-5'),
-                    title: 'Tidsplaner & Aktiviteter',
+                    title: '{% trans "Schedules & activities" %}',
                     stepIn: () => {
                         dialog.getElementById('next').style.display = "none";
                         dialog.getElementById('finish').style.display = "inline-block";

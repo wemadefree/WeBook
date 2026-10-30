@@ -27,7 +27,7 @@ container-fluid
     {% endif %}
   
 
-    <p class="user-welcome-label mb-1">Velkommen tilbake</p>
+    <p class="user-welcome-label mb-1">{% trans "Welcome back" %}</p>
     <h1 class="user-welcome-title mb-0 header-fonted">
       {{ request.user.person.full_name }}
     </h1>
@@ -39,7 +39,7 @@ container-fluid
           aria-controls="v-tabs-overview"
           aria-selected="{% if request.get_full_path == overview_url %}true{% else %}false{% endif %}">
           <i class="fas fa-user"></i>&nbsp; 
-          Min side
+          {% trans "My page" %}
       </a>
       <a
         class="nav-link {% if request.get_full_path == my_info_url %}active{% endif %}"
@@ -48,7 +48,7 @@ container-fluid
         aria-controls="v-tabs-my-info"
         aria-selected="{% if request.get_full_path == my_info_url %}true{% else %}false{% endif %}">
         <i class="fas fa-info-circle"></i>&nbsp; 
-        Brukerinformasjon
+        {% trans "User information" %}
       </a>
       <a
         class="nav-link {% if request.get_full_path == emails_url %}active{% endif %}"
@@ -57,15 +57,16 @@ container-fluid
         aria-controls="v-tabs-email"
         aria-selected="{% if request.get_full_path == emails_url %}true{% else %}false{% endif %}">
         <i class="fas fa-at"></i>&nbsp; 
-        E-Post
-        <a
+        {% trans "Email" %}
+      </a>
+      <a
         class="nav-link {% if request.get_full_path == account_reset_password_url %}active{% endif %}"
         id="v-tabs-reset-password-tab"
         href="{% url 'account_reset_password' %}"
         aria-controls="v-tabs-reset-password"
         aria-selected="{% if request.get_full_path == account_reset_password_url %}true{% else %}false{% endif %}">
         <i class="fas fa-lock"></i>&nbsp; 
-        Endre passord
+        {% trans "Change Password" %}
       </a>
     </ul>
   </div>

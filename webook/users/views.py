@@ -31,8 +31,11 @@ from webook.users.forms import (
     ComplexUserUpdateForm,
     ComplexUserUpdateFormWithRole,
     ToggleUserActiveStateForm,
+    USER_ROLES,
 )
 from webook.users.models import User
+from webook.utils.meta_utils.meta_mixin import MetaMixin
+from webook.utils.meta_utils.section_manifest import SectionManifest, ViewMeta
 
 User = get_user_model()
 
@@ -94,15 +97,23 @@ class BatchChangeeUserStateView(
     form_class = BatchChangeUserStateForm
 
     def form_valid(self, form) -> JsonResponse:
-        for user_slug in form.cleaned_data["slugs"].split(","):
+        new_active_state = form.cleaned_data["new_active_state"]
+        slugs = form.cleaned_data["slugs"].split(",")
+
+        if not new_active_state and self.request.user.slug in slugs:
+            return JsonResponse(
+                {"message": _("You cannot deactivate your own account.")}, status=400
+            )
+
+        for user_slug in slugs:
             user: User = User.objects.get(slug=user_slug)
-            user.is_active = form.cleaned_data["new_active_state"]
+            user.is_active = new_active_state
             user.save()
 
-        return JsonResponse({"message": "Users have been deactivated"})
+        return JsonResponse({"message": "Users have been updated"})
 
     def form_invalid(self, form) -> JsonResponse:
-        return JsonResponse(form.errors)
+        return JsonResponse(form.errors, status=400)
 
 
 batch_change_user_state_view = BatchChangeeUserStateView.as_view()
@@ -127,7 +138,7 @@ class BatchChangeUserGroupView(
         )
 
     def form_invalid(self, form) -> HttpResponse:
-        return JsonResponse(form.errors)
+        return JsonResponse(form.errors, status=400)
 
 
 batch_change_user_group_view = BatchChangeUserGroupView.as_view()
@@ -145,29 +156,45 @@ class ToggleUserActiveStateView(
         if user is None:
             raise Exception(f"User by slug '{slug}' does not exist")
 
+        if user == self.request.user and user.is_active:
+            return JsonResponse(
+                {"message": _("You cannot deactivate your own account.")}, status=400
+            )
+
         user.is_active = not user.is_active
         user.save()
 
         return JsonResponse(
-            {
-                "message": (
-                    "User " + "activated"
-                    if user.is_active
-                    else "deactivated" + " successfully"
-                )
-            }
+            {"message": "User activated" if user.is_active else "User deactivated"}
         )
 
     def form_invalid(self, form) -> JsonResponse:
-        return JsonResponse(form.errors)
+        return JsonResponse(form.errors, status=400)
 
 
 toggle_user_active_state_view = ToggleUserActiveStateView.as_view()
 
 
-class UsersListView(LoginRequiredMixin, UserAdminAuthorizationMixin, ListView):
+class UsersListView(LoginRequiredMixin, UserAdminAuthorizationMixin, MetaMixin, ListView):
     model = User
     template_name = "user_management/user_list.html"
+    view_meta = ViewMeta(
+        subtitle=_("All users"),
+        current_crumb_title=_("All users"),
+        current_crumb_icon="fas fa-list",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.section = SectionManifest(
+            section_title=_("Users"),
+            section_icon="fas fa-user-shield",
+            section_crumb_url=reverse("users:user_admin_list"),
+        )
+
+    def get_queryset(self):
+        # The table loads its rows from the API
+        return User.objects.none()
 
 
 users_list_view = UsersListView.as_view()
@@ -269,32 +296,44 @@ class UserAdminDetailView(UserAdminAuthorizationMixin, UserUpdateView):
 
         return User.objects.get(slug=user_slug)
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        # Superusers have full access regardless of group, so they are not given a role
+        if self.get_user().is_superuser:
+            form.fields["user_role"].required = False
+        return form
+
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["USER"] = self.get_user()
+        descriptions = {name: description for name, _label, description in USER_ROLES}
+        context["ROLE_OPTIONS"] = [
+            (radio, descriptions[radio.data["value"]])
+            for radio in context["form"]["user_role"]
+        ]
         return context
 
     def form_valid(self, form):
         user = self.get_user()
 
-        for key, value in form.cleaned_data.items():
-            setattr(user.person, key, value)
+        if user == self.request.user and not form.cleaned_data["is_active"]:
+            form.add_error("is_active", _("You cannot deactivate your own account."))
+            return self.form_invalid(form)
 
+        for key in ("first_name", "middle_name", "last_name"):
+            setattr(user.person, key, form.cleaned_data[key])
         user.person.save()
 
-        user.profile_picture = form.cleaned_data["profile_picture"]
+        # The clear checkbox of the picture input gives False
+        user.profile_picture = form.cleaned_data["profile_picture"] or None
         user.timezone = form.cleaned_data["timezone"]
+        user.is_active = form.cleaned_data["is_active"]
         user.is_user_admin = form.cleaned_data["is_user_admin"]
         user.is_service_admin = form.cleaned_data["is_service_admin"]
-        selected_role = form.cleaned_data["user_role"]
-        group = Group.objects.get(name=selected_role)
-        if group is not None:
-            user.groups.clear()
-            group.user_set.add(user)
-        else:
-            group.user_set.clear()
 
-        group.save()
+        selected_role = form.cleaned_data["user_role"]
+        if selected_role:
+            user.groups.set([Group.objects.get(name=selected_role)])
 
         user.save()
 
@@ -307,12 +346,11 @@ class UserAdminDetailView(UserAdminAuthorizationMixin, UserUpdateView):
         user = self.get_user()
 
         if user is not None:
-            groups = user.groups.values_list("name")
-            if groups:
-                initial.update({"user_role": groups[0]})
-            else:
-                initial.update({"user_role": "readonly"})
-
+            # Users without a role get none preselected, so saving makes the choice explicit
+            initial.update(
+                {"user_role": user.groups.values_list("name", flat=True).first()}
+            )
+            initial.update({"is_active": user.is_active})
             initial.update({"is_user_admin": user.is_user_admin})
             initial.update({"is_service_admin": user.is_service_admin})
 

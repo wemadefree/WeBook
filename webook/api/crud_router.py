@@ -236,7 +236,8 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             k for k, v in model.__dict__.items() if type(v) == property
         ]
 
-        self.list_filters += list_filters or []
+        # New list: += would extend the class-level default, shared by every router
+        self.list_filters = [*self.list_filters, *(list_filters or [])]
         self.conditional_callable_triggers: List[ConditionalCallableTrigger] = (
             conditional_callable_triggers or []
         )
@@ -859,9 +860,12 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
                             val = str(val).lower()
                         sqs = qf.apply(sqs, val)
 
-            results = paginate_queryset(
-                sqs.auto_query(query), page or 1, limit or STANDARD_PAGE_SIZE
-            )
+            # Match on word prefixes, so results show up while the user is still typing
+            # ("adm" finds "admin"); every word in the query must match.
+            for term in query.lower().split():
+                sqs = sqs.filter(content__startswith=term)
+
+            results = paginate_queryset(sqs, page or 1, limit or STANDARD_PAGE_SIZE)
             return self.transform_pd_to_response(results)
 
         search_func.__name__ = f"search_{self.model_name_plural.lower()}"

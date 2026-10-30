@@ -4,6 +4,7 @@ from django.db.models.query import QuerySet
 from django.http import HttpResponse
 from webook.api.schemas.base_schema import BaseSchema, ModelBaseSchema
 from webook.api.session_auth import AuthAgent
+from webook.tasks.api.cloud_tasks_auth import CloudTasksOIDCAuth
 from webook.arrangement.models import Person
 from webook.graph_integration.models import GraphCalendar, SyncedEvent
 from ninja import Router
@@ -106,32 +107,26 @@ def get_task_execution_record(request, task_uuid: str) -> TaskExecutionSchema:
     return TaskExecutionSchema.from_model(task_execution)
 
 
-@tasks_router.post("/execute-task", response=bool, auth=None)
+@tasks_router.post("/execute-task", response=bool, auth=CloudTasksOIDCAuth())
 def execute_task(request, task_uuid: str) -> bool:
     """
-    Endpoint to execute a specific task.
+    Endpoint to execute a specific task. Called by Google Cloud Tasks only (TASK_BACKEND "google_cloud").
+    Returns false (with status 200, so Cloud Tasks does not retry) if the task already ran or is running.
     """
-
-    task_execution = TaskExecution.objects.filter(uuid=task_uuid).first()
-    if not task_execution:
+    try:
+        is_success = TASK_MANAGER.run_staged_task(task_uuid)
+    except TaskExecution.DoesNotExist:
         return HttpResponse(
             status=404, content=f"Task with UUID '{task_uuid}' not found."
         )
 
-    task_execution.status = TaskExecutionState.RUNNING
-    task_execution.save()
+    if is_success is None:
+        return False
 
-    try:
-        is_success = TASK_MANAGER.execute_task(task_execution)
-        if not is_success:
-            return HttpResponse(
-                status=500,
-                content="Task execution failed. See task record for details.",
-            )
-        return True
-    except Exception as e:
-        task_execution.status = TaskExecutionState.FAILED
-        task_execution.result = str(e)
-        task_execution.save()
-
-        return HttpResponse(status=500, content=f"Failed to execute task: {str(e)}")
+    if not is_success:
+        # Non-2xx lets Cloud Tasks retry according to the queue's retry policy
+        return HttpResponse(
+            status=500,
+            content="Task execution failed. See task record for details.",
+        )
+    return True

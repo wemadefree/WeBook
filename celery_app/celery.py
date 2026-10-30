@@ -4,7 +4,7 @@ from celery import Celery
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 app = Celery("webook")
 app.config_from_object("django.conf:settings", namespace="CELERY")
-app.autodiscover_tasks(packages=["webook.celery_haystack"])
+app.autodiscover_tasks(packages=["webook.celery_haystack", "webook.tasks"])
 
 app.conf.result_backend = "django-db"
 app.conf.timezone = "Europe/Oslo"

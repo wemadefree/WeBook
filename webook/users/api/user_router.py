@@ -9,7 +9,7 @@ import sentry_sdk
 from webook.api.jwt_auth import IssueeType, TokenData, decode_jwt_token, issue_token
 from webook.api.models import APIScope
 from webook.api.schemas.base_schema import BaseSchema, ModelBaseSchema
-from webook.api.crud_router import CrudRouter, Views
+from webook.api.crud_router import CrudRouter, QueryFilter, Views
 from django.db.models import QuerySet
 from django.core.exceptions import PermissionDenied
 from webook.api.scopes_router import APIScopeGetSchema
@@ -81,6 +81,19 @@ class EmailLoginSchema(BaseSchema):
     get_cookie: Optional[bool] = False
 
 
+class RoleQueryFilter(QueryFilter):
+    """Filter users by role: "superuser", a group name, or "none" (no group)"""
+
+    def apply(self, qs, value) -> QuerySet:
+        if value == "superuser":
+            return qs.filter(is_superuser=True)
+
+        qs = qs.filter(is_superuser=False)
+        if value == "none":
+            return qs.filter(groups__isnull=True)
+        return qs.filter(groups__name=value).distinct()
+
+
 class UserRouter(CrudRouter):
     def __init__(self, *args, **kwargs):
         self.non_deferred_fields = ["person"]
@@ -99,6 +112,12 @@ router = UserRouter(
     get_schema=UserGetSchema,
     list_schema=UserGetSchema,
     enable_search=True,
+    list_filters=[
+        QueryFilter(
+            param="is_active", query_by="is_active", annotation=Optional[bool]
+        ),
+        RoleQueryFilter(param="role", query_by="role", annotation=Optional[str]),
+    ],
 )
 
 

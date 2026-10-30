@@ -28,7 +28,22 @@
     contextInspectArrangement: "{% trans 'Inspect arrangement' %}",
     contextInspectTime: "{% trans 'Inspect time' %}",
     contextDeleteArrangement: "{% trans 'Delete arrangement' %}",
-    contextDeleteActivity: "{% trans 'Delete activity' %}"
+    contextDeleteActivity: "{% trans 'Delete activity' %}",
+    selectAnItem: "{% trans 'Please select an item' %}"
+  };
+  // Labels for the calendar modules (planner, My page, location and person calendars)
+  window.WEBOOK_I18N = {
+    day: "{% trans 'Day' %}",
+    month: "{% trans 'Month' %}",
+    week: "{% trans 'Week' %}",
+    year: "{% trans 'Year' %}",
+    timeline: "{% trans 'Timeline' %}",
+    grid: "{% trans 'Grid' %}",
+    calendar: "{% trans 'Calendar' %}",
+    weekPrefix: "{% trans 'Week' %}",
+    today: "{% trans 'Today' %}",
+    cancel: "{% trans 'Cancel' %}",
+    yes: "{% trans 'Yes' %}"
   };
 </script>
 <html lang="{{ CURRENT_LANGUAGE }}">
@@ -165,7 +180,7 @@
         <li class="sidenav-item {% if url_name == 'services_dashboard' %}active{% endif %}">
           <a  href="{% url 'arrangement:services_dashboard' %}" 
               class="sidenav-link">
-            <i class="fas fa-calendar-plus fa-fw me-3"></i><span>Tjenestebehandling</span></a
+            <i class="fas fa-calendar-plus fa-fw me-3"></i><span>{% trans "Service management" %}</span></a
           >
 
         </li>
@@ -288,7 +303,7 @@
 
         <li class="sidenav-item">
           <a href="{% url 'celery_haystack:taskresult_list' %}" class="sidenav-link sidenav-link-danger-subtle">
-            <i class="fas fa-tasks"></i>&nbsp; Tasks Backend
+            <i class="fas fa-tasks"></i>&nbsp; {% trans "Tasks Backend" %}
           </a>
         </li>
         {% endif %}
@@ -354,9 +369,9 @@
                   >
                   <i class="fa fa-user"></i>&nbsp;
                     {% if request.user.person and request.user.person.first_name %}
-                      Hei, {{ request.user.person.first_name }}
+                      {% trans "Hello" %}, {{ request.user.person.first_name }}
                     {% else %}
-                      Hei, (ingen person)
+                      {% trans "Hello" %}, ({% trans "no person" %})
                     {% endif %}
                   </button>
                   <ul class="dropdown-menu">
@@ -438,6 +453,39 @@
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
       <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.11.5/af-2.3.7/b-2.2.2/b-colvis-2.2.2/b-html5-2.2.2/b-print-2.2.2/cr-1.5.5/date-1.1.2/fc-4.0.2/fh-3.2.2/kt-2.6.4/r-2.2.9/rg-1.1.4/rr-1.2.8/sc-2.0.5/sb-1.3.2/sp-2.0.0/sl-1.3.4/sr-1.1.0/datatables.min.js"></script>
+      <script>
+        // Translated labels for every DataTable (_MENU_, _START_, _END_, _TOTAL_ and _MAX_ are DataTables placeholders)
+        $.extend(true, $.fn.dataTable.defaults, {
+          language: {
+            lengthMenu: "{% trans 'Show _MENU_ entries' %}",
+            search: "{% trans 'Search:' %}",
+            info: "{% trans 'Showing _START_ to _END_ of _TOTAL_ entries' %}",
+            infoEmpty: "{% trans 'Showing 0 to 0 of 0 entries' %}",
+            infoFiltered: "{% trans '(filtered from _MAX_ total entries)' %}",
+            emptyTable: "{% trans 'No data available in table' %}",
+            zeroRecords: "{% trans 'No matching records found' %}",
+            loadingRecords: "{% trans 'Loading...' %}",
+            processing: "{% trans 'Processing...' %}",
+            paginate: {
+              first: "{% trans 'First' %}",
+              last: "{% trans 'Last' %}",
+              next: "{% trans 'Next' %}",
+              previous: "{% trans 'Previous' %}"
+            },
+            // Export buttons (DataTables Buttons extension); %d is replaced with the row count
+            buttons: {
+              copy: "{% trans 'Copy' %}",
+              print: "{% trans 'Print' %}",
+              copyTitle: "{% trans 'Copy to clipboard' %}",
+              copySuccess: {
+                1: "{% trans 'Copied 1 row to clipboard' %}",
+                _: "{% trans 'Copied %d rows to clipboard' %}"
+              },
+              copyKeys: "{% trans 'Press ctrl or ⌘ + C to copy the table data to your clipboard. To cancel, click this message or press Esc.' %}"
+            }
+          }
+        });
+      </script>
       <script src="{% static 'js/sweetalert2.js' %}"></script>
       <script src="{% static 'select2/dist/js/select2.min.js' %}"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js" integrity="sha512-TGClBy3S4qrWJtzel4qMtXsmM0Y9cap6QwRm3zo1MpVjvIURa90YYz5weeh6nvDGKZf/x3hrl1zzHW/uygftKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

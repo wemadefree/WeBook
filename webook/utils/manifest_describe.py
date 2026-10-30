@@ -124,7 +124,7 @@ describe_pattern = {
 }
 
 describe_pattern_nb_no = {
-    "daily__every_x_day": lambda manifest: "Daglig hver {manifest.interval}. dag",
+    "daily__every_x_day": lambda manifest: f"Daglig hver {manifest.interval}. dag",
     "daily__every_weekday": lambda manifest: "Hver ukedag",
     "weekly__standard": lambda manifest: f"Ukentlig hver {_days_to_str_nb_no(manifest)}",
     "month__every_x_day_every_y_month": lambda manifest: f"Den {manifest.day_of_month}. hver {manifest.interval}. måned",
@@ -141,7 +141,7 @@ describe_recurrence = {
         f"between {manifest.start_date} and {manifest.stop_within}"
     ),
     "StopAfterXInstances": lambda manifest: _(
-        f"after {manifest.stop_after_x_occurences} "
+        f"after {manifest.stop_after_x_occurences} occurrence(s)"
     ),
     "NoStopDate": lambda manifest: _(
         f"for eternity (project {manifest.project_x_months_into_future} months into the future)"
@@ -175,7 +175,8 @@ def describe_manifest(manifest) -> str:
     """
     current_request = get_current_request()
     lang_code = current_request.LANGUAGE_CODE if current_request else "en"
-    if lang_code == "nb-no":
+    # LANGUAGE_CODE is "nb" (previously "nb-no"); match any Norwegian Bokmål variant
+    if lang_code.lower().startswith("nb"):
         # TODO: Work-around. Need to study how the localization works in more depth, doesn't trigger the correct language, even with correct code in request.
         return f"{describe_pattern_nb_no[manifest.pattern_strategy](manifest)} {describe_recurrence_nb_no[manifest.recurrence_strategy](manifest)}"
 

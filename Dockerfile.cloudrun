@@ -16,7 +16,7 @@ ENV PYTHONUNBUFFERED 1
 # OS level Dependencies
 RUN apt update && apt install -y curl
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-RUN apt install -y nodejs python3-dev libpq-dev gcc
+RUN apt install -y nodejs python3-dev libpq-dev gcc gettext
 
 # Install dependencies
 COPY requirements/base.txt ./requirements/base.txt
@@ -27,6 +27,9 @@ RUN pip install --no-cache-dir -r requirements/production.txt
 
 # Copy code to container
 COPY . .
+
+# Compile translations (*.mo files are not committed)
+RUN for po in $(find locale -name '*.po'); do msgfmt --check-format -o "${po%.po}.mo" "$po"; done
 
 # Install frontend dependencies
 RUN npm install

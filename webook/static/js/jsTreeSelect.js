@@ -31,7 +31,7 @@ export class JSTreeSelect {
         selectFirstTimeButtonText="Select",
         changeSelectedValueButtonText="Change",
         popoverSaveChoicesButtonText="Save choices",
-        invalidFeedbackText="Please select an item"} = {} ) {
+        invalidFeedbackText=window.WEBOOK_MESSAGES?.selectAnItem || "Please select an item"} = {} ) {
 
         this.element = element;
         this.srcUrl = treeJsonSrcUrl;

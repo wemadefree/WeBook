@@ -1,18 +1,54 @@
 {% extends "common/meta_base.html" %}
 {% load static i18n %}
 
-{% block noheader %}{% endblock %}
+{% block css %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
 
 {% block content %}
 
 <div id="users-app">
 
-    <table-component 
+    <div class="alert wb-alert-secondary d-flex align-items-center flex-wrap mb-2" v-if="selectedCount > 0">
+        <strong class="me-3">[[ selectedCount ]] {% trans "selected" %}</strong>
+        <button class="btn wb-btn-secondary btn-sm me-2" type="button" @click="batchActivateUsers()">
+            <i class="fas fa-user-check"></i>&nbsp; {% trans "Activate" %}
+        </button>
+        <button class="btn wb-btn-secondary btn-sm me-2" type="button" @click="batchDeactivateUsers()">
+            <i class="fas fa-user-slash"></i>&nbsp; {% trans "Deactivate" %}
+        </button>
+        <button class="btn wb-btn-secondary btn-sm me-2" type="button" @click="batchChangeRole()">
+            <i class="fas fa-user-tag"></i>&nbsp; {% trans "Change role" %}
+        </button>
+        <button class="btn wb-btn-blank btn-sm ms-auto" type="button" @click="clearSelection()">
+            <i class="fas fa-times"></i>&nbsp; {% trans "Clear selection" %}
+        </button>
+    </div>
+
+    <table-component
         :data-source="dataSource"
         :can-search="true"
+        table-classes="table table-sm align-middle mt-3"
         @checkbox-clicked="(row, columnKey) => checkboxClicked(row, columnKey)"
         @edit="(user) => openShowDialog(user)"
-        ref="schoolsTable">
+        ref="usersTable">
+
+        <div class="d-flex align-items-center ms-3">
+            <select class="form-select form-select-sm" v-model="activeFilter" aria-label="{% trans 'Status' %}">
+                <option value="">{% trans "All users" %}</option>
+                <option value="true">{% trans "Active" %}</option>
+                <option value="false">{% trans "Inactive" %}</option>
+            </select>
+            <select class="form-select form-select-sm ms-2" v-model="roleFilter" aria-label="{% trans 'Role' %}">
+                <option value="">{% trans "All roles" %}</option>
+                <option value="superuser">{% trans "Superuser" %}</option>
+                <option value="planners">{% trans "Planner" %}</option>
+                <option value="readonly_level_2">{% trans "Read-only access - Level 2" %}</option>
+                <option value="readonly">{% trans "Read-only access" %}</option>
+                <option value="none">{% trans "No role" %}</option>
+            </select>
+        </div>
     </table-component>
 </div>
 {% include "arrangement/vue/table_component.html" %}
@@ -20,27 +56,73 @@
 
 <script type="module">
     import { Dialog, DialogManager, DialogSimpleRenderer, DialogFormInterceptorPlugin } from  "{% static 'modules/planner/dialog_manager/dialogManager.js' %}";
-    import UserCard from "{% static 'vue-components/user_card.js' %}";
-    import UsersTable from "{% static 'vue-components/users_table.js' %}";
+
+    const formatDateTime = (value) => {
+        if (!value)
+            return "{% trans 'Never' %}";
+
+        return new Date(value).toLocaleString(document.documentElement.lang || navigator.language || "en", {
+            "year": "numeric",
+            "month": "2-digit",
+            "day": "2-digit",
+            "hour": "2-digit",
+            "minute": "2-digit",
+        });
+    };
+
+    const csrfToken = "{{ csrf_token }}";
+
+    /* POST to one of the user administration endpoints, showing the server's message on failure */
+    async function postForm(url, fields) {
+        const formData = new FormData();
+        Object.entries(fields).forEach(([key, value]) => formData.append(key, value));
+
+        const response = await fetch(url, { method: "POST", headers: { "X-CSRFToken": csrfToken }, body: formData });
+        if (!response.ok) {
+            const body = await response.json().catch(() => ({}));
+            toastr.error(body.message || window.WEBOOK_MESSAGES.genericLoadError);
+        }
+        return response.ok;
+    }
 
     const app = Vue.createApp({
         components: {
             TableComponent,
-            UserCard,
         },
         data() {
             return {
-
+                activeFilter: "",
+                roleFilter: "",
+                // Selected users by slug, kept across pages, searches and filter changes
+                selectedUsers: {},
             }
         },
         computed: {
+            selectedCount() {
+                return Object.keys(this.selectedUsers).length;
+            },
             dataSource: function () {
-                let url = "/api/users/list?";
+                const filters = new URLSearchParams();
+                if (this.activeFilter)
+                    filters.set("is_active", this.activeFilter);
+                if (this.roleFilter)
+                    filters.set("role", this.roleFilter);
+
+                let url = "/api/users/list?" + filters.toString();
 
                 let columnsDefinition = {
-                    "name": {
+                    "selected": {
+                        friendlyName: "",
+                        field: "selected",
+                        sortable: false,
+                        isHidden: false,
+                        isComponent: true,
+                        componentName: "checkbox",
+                    },
+                    // Column keys of sortable columns are the fields the API sorts by
+                    "person__first_name": {
                         friendlyName: "{% trans 'Name' %}",
-                        field: "username",
+                        field: "person__first_name",
                         sortable: true,
                         isHidden: false,
                         isHtml: true,
@@ -60,11 +142,11 @@
                     "role": {
                         friendlyName: "{% trans 'Role' %}",
                         field: "role",
-                        sortable: true,
+                        sortable: false,
                         isHidden: false,
                         isHtml: true,
                         isSearchable: false,
-                    formatter: (obj, value) => {
+                        formatter: (obj, value) => {
                             if (obj.isSuperuser) {
                                 return "<span class='badge bg-danger'>{% trans 'Superuser' %}</span>";
                             }
@@ -72,59 +154,38 @@
                             switch (obj.role) {
                                 case "planners":
                                     return "<span class='badge bg-primary'>{% trans 'Planner' %}</span>";
-                                    break;
                                 case "readonly_level_2":
                                     return "<span class='badge bg-secondary'>{% trans 'Read-only access - Level 2' %}</span>";
-                                    break;
                                 case "readonly":
                                     return "<span class='badge bg-secondary'>{% trans 'Read-only access' %}</span>";
-                                    break;
                                 case null:
+                                case undefined:
                                     return "<span class='badge bg-secondary'>{% trans 'No role' %}</span>";
-                                    break;
                                 default:
-                                    return obj.role;    
+                                    return obj.role;
                             }
-
-                            return obj.role;
                         }
                     },
-                    "lastLogIn": {
-                        friendlyName: "Sist innlogget",
-                        field: "lastLogIn",
+                    "lastLogin": {
+                        friendlyName: "{% trans 'Last login' %}",
+                        field: "lastLogin",
                         sortable: true,
                         isHidden: false,
                         isHtml: true,
                         isSearchable: false,
-                        formatter: (obj, value) => {
-                            return new Date(obj.lastLogin).toLocaleString(document.documentElement.lang || navigator.language || "en", {
-                                "year": "numeric",
-                                "month": "2-digit",
-                                "day": "2-digit",
-                                "hour": "2-digit", 
-                                "minute": "2-digit", 
-                            });
-                        }
+                        formatter: (obj, value) => formatDateTime(obj.lastLogin),
                     },
-                    "signedUp": {
-                        friendlyName: "Registrert",
-                        field: "signedUp",
+                    "dateJoined": {
+                        friendlyName: "{% trans 'Registered' %}",
+                        field: "dateJoined",
                         sortable: true,
                         isHidden: false,
                         isHtml: true,
                         isSearchable: false,
-                        formatter: (obj, value) => {
-                            return new Date(obj.dateJoined).toLocaleString(document.documentElement.lang || navigator.language || "en", {
-                                "year": "numeric",
-                                "month": "2-digit",
-                                "day": "2-digit",
-                                "hour": "2-digit", 
-                                "minute": "2-digit", 
-                            });
-                        }
+                        formatter: (obj, value) => formatDateTime(obj.dateJoined),
                     },
                     "isActive": {
-                        friendlyName: "Aktiv",
+                        friendlyName: "{% trans 'Active' %}",
                         field: "isActive",
                         sortable: true,
                         isHidden: false,
@@ -139,12 +200,17 @@
                     url,
                     columnsDefinition,
                     {
-                        "edit": { type: 'main', content: "<i class='fas fa-edit'></i>", isContentHtml: true }
+                        "edit": { type: 'main', content: "<i class='fas fa-edit'></i>&nbsp; {% trans 'Edit' %}", isContentHtml: true }
                     },
-                    'name',
+                    'person__first_name',
                     'asc',
                     true,
                     (data) => {
+                        // Show the current selection on freshly loaded rows (search results wrap them in obj)
+                        data.data.forEach((item) => {
+                            const user = item.obj || item;
+                            user.selected = user.slug in this.selectedUsers;
+                        });
                         return data;
                     },
                     true // useV2Search (elastic search)
@@ -152,90 +218,153 @@
             }
         },
         methods: {
+            refresh() {
+                this.$refs.usersTable.refresh();
+            },
             openShowDialog: function (user) {
-                console.log("openShowDialog", user);
-
                 document.dispatchEvent(new CustomEvent(
                     'genericManager.user_admin_detail.trigger',
-                    { detail: { url: '/users/administration/' + user.slug + "/dialogs/user_admin_detail", title: user.person.fullName } }  
+                    { detail: { url: '/users/administration/' + user.slug + "/dialogs/user_admin_detail", title: user.person.fullName } }
                 ));
             },
+            checkboxClicked: function ({ row, columnKey }) {
+                if (columnKey === "selected") {
+                    // The checkbox state settles after the click has been handled
+                    setTimeout(() => {
+                        if (row.selected)
+                            this.selectedUsers[row.slug] = row;
+                        else
+                            delete this.selectedUsers[row.slug];
+                    });
+                    return;
+                }
+
+                if (columnKey === "isActive") {
+                    // The switch has already flipped; act on the state it was in
+                    if (row.isActive)
+                        this.deactivateUserDialog(row);
+                    else
+                        this.activateUserDialog(row);
+                }
+            },
+            clearSelection() {
+                this.selectedUsers = {};
+                this.refresh();
+            },
+            selectedUsersList() {
+                const names = Object.values(this.selectedUsers).map((user) => user.person.fullName);
+                const list = document.createElement("p");
+                list.textContent = names.join(", ");
+                return list.outerHTML;
+            },
+            async afterBatchChange(succeeded, message) {
+                if (succeeded) {
+                    toastr.success(message);
+                    this.selectedUsers = {};
+                }
+                this.refresh();
+            },
             deactivateUserDialog(user) {
-                console.log("deactivateUserDialog.user", user)
                 Swal.fire({
-                    title: "Er du sikker på at du ønsker å deaktivere brukerkonto '" + user.person.fullName + "'?",
+                    title: "{% trans 'Deactivate the account of' %} " + user.person.fullName + "?",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    cancelButtonText: "Avbryt",
-                    confirmButtonText: 'Deaktiver brukerkonto'
-                }).then((result) => {
-
-                    if (result.isDismissed) {
-                        this.$refs.schoolsTable.refresh();
-                        return;
-                    }
-
-                    let formData = new FormData();
-                    formData.append("user_slug", user.slug);
-
-                    fetch("/users/administration/toggle_active", {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': "{{ csrf_token }}"
-                        },
-                        body: formData
-                    }).then(_ => {
-                        toastr.success("Brukerkontoen til " + user.person.fullName + " har blitt deaktivert!");
-                    });
+                    cancelButtonText: "{% trans 'Cancel' %}",
+                    confirmButtonText: "{% trans 'Deactivate user' %}"
+                }).then(async (result) => {
+                    if (result.isConfirmed && await postForm("/users/administration/toggle_active", { user_slug: user.slug }))
+                        toastr.success("{% trans 'The user account has been deactivated.' %}");
+                    this.refresh();
                 })
-            },
-            checkboxClicked: function (row, columnKey) {
-                console.log("checkboxClicked", row, columnKey);
-
-                console.log("columnKey", row.columnKey);
-
-                if (row.columnKey === "isActive") {
-                    console.log("isActive", row.row.isActive);
-                    
-                    if (row.row.isActive) {
-                        this.deactivateUserDialog(row.row);
-                    } else {
-                        this.activateUserDialog(row.row);
-                    }
-                }
-
             },
             activateUserDialog(user) {
                 Swal.fire({
-                    title: "Aktiver kontoen til " + user.person.fullName + "?",
+                    title: "{% trans 'Activate the account of' %} " + user.person.fullName + "?",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    cancelButtonText: "Avbryt",
-                    confirmButtonText: 'Aktiver bruker'
-                }).then((result) => {
-                    if (result.isDismissed) {
-                        this.$refs.schoolsTable.refresh();
-                        return;
-                    }
-
-                    let formData = new FormData();
-                    formData.append("user_slug", user.slug);
-
-                    fetch("/users/administration/toggle_active", {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': "{{ csrf_token }}"
-                        },
-                        body: formData
-                    }).then(_ => {
-                        toastr.success("Brukerkontoen til " + user.person.fullName + " har blitt aktivert!");
-                    });
+                    cancelButtonText: "{% trans 'Cancel' %}",
+                    confirmButtonText: "{% trans 'Activate user' %}"
+                }).then(async (result) => {
+                    if (result.isConfirmed && await postForm("/users/administration/toggle_active", { user_slug: user.slug }))
+                        toastr.success("{% trans 'The user account has been activated.' %}");
+                    this.refresh();
                 });
             },
+            batchActivateUsers() {
+                Swal.fire({
+                    title: "{% trans 'Are you sure you want to activate these users?' %}",
+                    html: this.selectedUsersList(),
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    cancelButtonText: "{% trans 'Cancel' %}",
+                    confirmButtonText: "{% trans 'Activate these users' %}"
+                }).then(async (result) => {
+                    if (!result.isConfirmed)
+                        return;
+                    const succeeded = await postForm("/users/administration/batch_change_user_state", {
+                        slugs: Object.keys(this.selectedUsers).join(","),
+                        new_active_state: true,
+                    });
+                    this.afterBatchChange(succeeded, "{% trans 'The selected users have been activated.' %}");
+                });
+            },
+            batchDeactivateUsers() {
+                Swal.fire({
+                    title: "{% trans 'Are you sure you want to deactivate these users?' %}",
+                    html: this.selectedUsersList(),
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    cancelButtonText: "{% trans 'Cancel' %}",
+                    confirmButtonText: "{% trans 'Deactivate these users' %}"
+                }).then(async (result) => {
+                    if (!result.isConfirmed)
+                        return;
+                    const succeeded = await postForm("/users/administration/batch_change_user_state", {
+                        slugs: Object.keys(this.selectedUsers).join(","),
+                        new_active_state: false,
+                    });
+                    this.afterBatchChange(succeeded, "{% trans 'The selected users have been deactivated.' %}");
+                });
+            },
+            batchChangeRole() {
+                Swal.fire({
+                    title: "{% trans 'Which role should these users have?' %}",
+                    html: this.selectedUsersList() + `
+                        <select class="form-select mt-2" id="batchRoleSelect">
+                            <option value="planners">{% trans "Planner" %}</option>
+                            <option value="readonly">{% trans "Read-only access" %}</option>
+                            <option value="readonly_level_2">{% trans "Read-only access - Level 2" %}</option>
+                        </select>
+                    `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    cancelButtonText: "{% trans 'Cancel' %}",
+                    confirmButtonText: "{% trans 'Change role' %}",
+                    preConfirm: () => document.getElementById("batchRoleSelect").value,
+                }).then(async (result) => {
+                    if (!result.isConfirmed)
+                        return;
+                    const succeeded = await postForm("/users/administration/batch_change_user_group_view", {
+                        slugs: Object.keys(this.selectedUsers).join(","),
+                        group: result.value,
+                    });
+                    this.afterBatchChange(succeeded, "{% trans 'The role has been changed for the selected users.' %}");
+                });
+            },
+        },
+        mounted() {
+            // Called by the edit dialog after saving
+            window.vueRefresh = () => this.refresh();
         },
         delimiters: ['[[', ']]'],
     });
@@ -249,7 +378,7 @@
         }
 
         onResponseOk() {
-            toastr.success("Forandringene har blitt lagret!");
+            toastr.success(window.WEBOOK_MESSAGES.changesSaved);
             window.vueRefresh();
         }
     }
@@ -259,35 +388,6 @@
             managerName: 'genericManager',
             allowMultipleOpenAtOnce: false,
             dialogs: [
-                [
-                    "user_sso_detail",
-                    new Dialog({
-                        dialogElementId: 'user_sso_detail',
-                        triggerElementId: undefined,
-                        triggerByEvent: true,
-                        dialogOptions: {
-                            dialogClass: 'no-titlebar',
-                            modal: true
-                        },
-                        plugins: [ new CustomDialogFormInterceptorPlugin("{{csrf_token}}") ],
-                        htmlFabricator: async (context, dialog) => {
-                            if (!context.lastTriggererDetails.url) {
-                                throw Error("URL must be specified to call detail dialog view");
-                            }
-
-                            dialog.formUrl = context.lastTriggererDetails.url;
-                            if (context.lastTriggererDetails.title) {
-                                dialog.title = context.lastTriggererDetails.title;
-                            }
-
-                            return e.loadDialogHtml({
-                                url: context.lastTriggererDetails.url,
-                                dialogId: "detail",
-                                managerName: "genericManager",
-                            });
-                        }
-                    }),
-                ],
                 [
                 "user_admin_detail",
                 new Dialog({
@@ -300,7 +400,7 @@
                         modal: true,
                         width: '50%'
                     },
-                    plugins: [ new CustomDialogFormInterceptorPlugin("{{csrf_token}}") ],
+                    plugins: [ new CustomDialogFormInterceptorPlugin(csrfToken) ],
                     htmlFabricator: async (context, dialog) => {
                         if (!context.lastTriggererDetails.url) {
                             throw Error("URL must be specified to call detail dialog view");
@@ -333,4 +433,3 @@
 </script>
 
 {% endblock %}
-

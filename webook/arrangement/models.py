@@ -143,6 +143,10 @@ class CalendarEntitySchoolMixin(models.Model):
 
         ob_settings = OnlineBookingSettings.objects.first()
 
+        # Online booking not configured yet (e.g. a fresh database)
+        if ob_settings is None:
+            return False
+
         if settings.USE_REDIS:
             school_audiences = cache.get("school_audiences")
             if school_audiences is None:
@@ -157,7 +161,8 @@ class CalendarEntitySchoolMixin(models.Model):
                 ob_settings.audience_group,
             ]
 
-        is_school_rel = self.audience in school_audiences
+        # audience_group may be unset (None); an activity without an audience must not match it
+        is_school_rel = self.audience is not None and self.audience in school_audiences
 
         if settings.USE_REDIS:
             cache.set(cache_key, is_school_rel, 120)

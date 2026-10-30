@@ -1,3 +1,10 @@
+/* Links with href="#" are used as buttons throughout the dialogs. Following "#" scrolls the page to
+the top, losing the user's place in the calendar, so cancel that; the links' click handlers still run. */
+document.addEventListener("click", (event) => {
+    if (event.target.closest?.('.ui-dialog a[href="#"]')) {
+        event.preventDefault();
+    }
+});
 
 export class Dialog {
     constructor ({ dialogElementId, 
@@ -202,7 +209,6 @@ export class DialogFormInterceptorPlugin {
             });
 
             formElement.onsubmit = function (event) {
-                debugger;
                 event.preventDefault();
 
                 let action = formElement.getAttribute("action") || this.dialog.formUrl;
@@ -233,8 +239,10 @@ export class DialogFormInterceptorPlugin {
                         this.dialog.close();
                     }
                     else {
-                        // validation error -- we want to refresh the dialog
-                        this.dialog.refresh(this.context, html);
+                        // validation error -- show the returned form with its errors in place.
+                        // The renderer does not re-render an open dialog, so swap the content here.
+                        this.dialog._$getDialogEl().html(html);
+                        this._findAllForms();
                     }
                 });
             }.bind(this);
@@ -398,8 +406,15 @@ export class DialogComplexDiscriminativeRenderer extends DialogBaseRenderer {
         if (this._isRendering === false) {
             this._isRendering = true;
 
-            if (!html)
-                html = await dialog.htmlFabricator(context, dialog);
+            if (!html) {
+                try {
+                    html = await dialog.htmlFabricator(context, dialog);
+                }
+                catch (error) {
+                    this._isRendering = false;
+                    throw error;
+                }
+            }
         
             let span = document.createElement("span");
             span.innerHTML = html;
@@ -407,6 +422,9 @@ export class DialogComplexDiscriminativeRenderer extends DialogBaseRenderer {
             let dialogEl = span.querySelector("#" + dialog.dialogElementId);
 
             if (!dialogEl) {
+                // Typically an error page from the server; reset so the dialog can be opened again
+                this._isRendering = false;
+                toastr.error(window.WEBOOK_MESSAGES?.genericLoadError);
                 throw new Error("Dialog element not found in HTML by id: " + dialog.dialogElementId);
             }
 
@@ -444,6 +462,24 @@ export class DialogComplexDiscriminativeRenderer extends DialogBaseRenderer {
 
             dialog._$getDialogEl().prepend($buttonHolder);
             dialog.onRenderedCallback(dialog, context);
+
+            if (instantializeDialog !== false) {
+                /* The dialog was positioned when it opened, before its content settled; e.g. a stepper showing
+                all its steps made it taller than the window, which pins it to the top. Position it again whenever
+                its size changes while the content settles, until the user moves or resizes it. Only on first
+                open, so a dialog the user moved stays put on refresh. */
+                const $dialogElement = dialog._$getDialogEl();
+                const resizeObserver = new ResizeObserver(() => {
+                    if ($dialogElement.dialog("isOpen") && !dialog._isExpanded) {
+                        $dialogElement.dialog("option", "position", $dialogElement.dialog("option", "position"));
+                    }
+                });
+                const stopRepositioning = () => resizeObserver.disconnect();
+
+                resizeObserver.observe($dialogElement.closest(".ui-dialog")[0]);
+                $dialogElement.one("dialogdragstart dialogresizestart dialogclose", stopRepositioning);
+                setTimeout(stopRepositioning, 3000);
+            }
 
             this._isRendering = false;
 
@@ -659,7 +695,8 @@ export class DialogManager {
                             classes: {
                                 "ui-dialog": "slave-dialog"
                             },
-                            position: { my: "left top", at: "right top", of: parent.parentNode },
+                            // Attach to the outer edge of the parent dialog, aligned with its top
+                            position: { my: "left top", at: "right top", of: $(parent).closest(".ui-dialog") },
                             modal: true,
                             height: parent.parentNode.offsetHeight,
                             width: 600,

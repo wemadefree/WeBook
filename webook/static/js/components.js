@@ -23,15 +23,20 @@ class SelectedPill extends LinkedHTMLElement {
      * Component: SelectedPill
      * 
      */
+    static get observedAttributes() {
+        return ["name"];
+    }
+
     constructor() {
         super()
-    
+
         const wrapper = document.createElement("span");
 
         const textSpan = document.createElement("span");
-        textSpan.innerText = this.getAttribute("name"); 
+        textSpan.innerText = this.getAttribute("name");
         textSpan.setAttribute("id", this.getAttribute("id"));
         wrapper.appendChild(textSpan);
+        this._textSpan = textSpan;
         
         const timesLink = document.createElement("a");
         timesLink.setAttribute("href", "#");
@@ -49,6 +54,14 @@ class SelectedPill extends LinkedHTMLElement {
         wrapper.appendChild(timesLink);
 
         this.shadowRoot.append(wrapper);
+    }
+
+    attributeChangedCallback(attributeName, oldValue, newValue) {
+        /* When the element is created first and its attributes set afterwards (e.g. when Vue renders
+        the dialog), the constructor sees no name. Keep the text in sync with the attribute. */
+        if (attributeName === "name") {
+            this._textSpan.innerText = newValue ?? "";
+        }
     }
 }
 

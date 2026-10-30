@@ -5,11 +5,13 @@ from .models import TaskExecution, TaskExecutionState
 from abc import ABC, abstractmethod
 from google.cloud import tasks_v2
 from google.protobuf import timestamp_pb2
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from django.conf import settings
+from django.db import close_old_connections, transaction
+from django.utils import timezone as dj_timezone
+import os
 from queue import Queue
-from threading import Thread
-import httpx
+from threading import Lock, Thread
 from time import sleep
 from dataclasses import dataclass
 import uuid
@@ -102,7 +104,8 @@ class AbstractTaskBackend(ABC):
 @dataclass
 class LocalTaskBackend(AbstractTaskBackend):
     """
-    Local task backend
+    Local task backend, running tasks in a worker thread in the web process. Meant for development:
+    the queue is in memory, so tasks still queued when the process stops are lost.
     """
 
     queue: Queue
@@ -110,10 +113,27 @@ class LocalTaskBackend(AbstractTaskBackend):
 
     def __init__(self):
         print("Initializing LocalTaskBackend...")
-        self.queue = Queue()
-        self.queue_worker_thread = Thread(target=self.queue_worker)
-        self.queue_worker_thread.daemon = True
-        self.queue_worker_thread.start()
+        self.queue = None
+        self.queue_worker_thread = None
+        self._worker_pid = None
+        self._worker_lock = Lock()
+
+    def _ensure_worker(self):
+        """Start the queue worker in the current process. It is started lazily rather than in __init__,
+        because with gunicorn --preload this module is imported in the master process, and threads do
+        not survive the fork into the worker processes that actually queue tasks."""
+        with self._worker_lock:
+            if (
+                self._worker_pid == os.getpid()
+                and self.queue_worker_thread is not None
+                and self.queue_worker_thread.is_alive()
+            ):
+                return
+
+            self._worker_pid = os.getpid()
+            self.queue = Queue()
+            self.queue_worker_thread = Thread(target=self.queue_worker, daemon=True)
+            self.queue_worker_thread.start()
 
     def queue_worker(self):
         while True:
@@ -127,28 +147,25 @@ class LocalTaskBackend(AbstractTaskBackend):
                 continue
 
             uuid = task.get("uuid")
-            target_url = task.get("target_url")
+            task_execution_uuid = task.get("task_execution_uuid")
 
-            if not uuid or not target_url:
+            if not uuid or not task_execution_uuid:
                 print("Invalid task data, skipping...")
                 continue
 
-            execute_response: httpx.Response = httpx.post(url=target_url)
+            close_old_connections()
+            try:
+                is_success = TASK_MANAGER.run_staged_task(task_execution_uuid)
+            except Exception as e:
+                # Keep the worker alive; one failing task must not stop the queue
+                is_success = False
+                print(f"Failed to execute task {uuid}: {e}")
+            finally:
+                close_old_connections()
 
             self.task_meta[uuid] = (
-                TaskExecutionState.COMPLETED
-                if execute_response.status_code == 200
-                else TaskExecutionState.FAILED
+                TaskExecutionState.FAILED if is_success is False else TaskExecutionState.COMPLETED
             )
-
-            if execute_response.status_code != 200:
-                print(
-                    f"Failed to execute task {uuid} at {target_url}. Status code: {execute_response.status_code}"
-                )
-            else:
-                print(
-                    f"Task {uuid} executed successfully at {target_url}. Response: {execute_response.text}"
-                )
 
     def create_http_task(
         self,
@@ -158,14 +175,15 @@ class LocalTaskBackend(AbstractTaskBackend):
         *args,
         **kwargs,
     ) -> TaskExeuctionCreateResponse:
+        self._ensure_worker()
+
         task_uuid = uuid.uuid4()
-        self.queue.put(
-            {
-                "uuid": task_uuid,
-                "target_url": target_url,
-                "payload": payload,
-            }
-        )
+        queued_task = {
+            "uuid": task_uuid,
+            "task_execution_uuid": kwargs.get("task_execution_uuid"),
+        }
+        # Queue after commit, so the worker can see the TaskExecution row
+        transaction.on_commit(lambda: self.queue.put(queued_task))
 
         result = TaskExeuctionCreateResponse()
         result.success = True
@@ -202,7 +220,32 @@ class GoogleCloudTaskBackend(AbstractTaskBackend):
         self.project_id = project_id
         self.location = location
         self.queue_name = queue_name
-        self.__client = tasks_v2.CloudTasksClient()
+        self.__client = None
+        self.__client_pid = None
+
+    @property
+    def _client(self) -> tasks_v2.CloudTasksClient:
+        """Created on first use in each process: gRPC channels must not be shared across a fork
+        (gunicorn --preload imports this module in the master process)."""
+        if self.__client is None or self.__client_pid != os.getpid():
+            if settings.GOOGLE_CLOUD_TASKS_EMULATOR_HOST:
+                # The emulator serves plain gRPC without authentication
+                import grpc
+                from google.cloud.tasks_v2.services.cloud_tasks.transports import (
+                    CloudTasksGrpcTransport,
+                )
+
+                self.__client = tasks_v2.CloudTasksClient(
+                    transport=CloudTasksGrpcTransport(
+                        channel=grpc.insecure_channel(
+                            settings.GOOGLE_CLOUD_TASKS_EMULATOR_HOST
+                        )
+                    )
+                )
+            else:
+                self.__client = tasks_v2.CloudTasksClient()
+            self.__client_pid = os.getpid()
+        return self.__client
 
     def create_http_task(
         self,
@@ -218,6 +261,9 @@ class GoogleCloudTaskBackend(AbstractTaskBackend):
         :param target_url: The URL to which the task will be sent.
         :return: True if the task was created successfully, False otherwise.
         """
+        # Name the Cloud Task after the TaskExecution, so its ID is known before the task is created
+        task_id = str(kwargs.get("task_execution_uuid") or uuid.uuid4())
+
         task = tasks_v2.Task(
             http_request=tasks_v2.HttpRequest(
                 http_method=tasks_v2.HttpMethod.POST,
@@ -226,39 +272,44 @@ class GoogleCloudTaskBackend(AbstractTaskBackend):
                     "Content-Type": "application/json",
                 },
                 body=json.dumps(payload).encode("utf-8"),
+                # Lets /api/tasks/execute-task verify that the request comes from Cloud Tasks
+                oidc_token=tasks_v2.OidcToken(
+                    service_account_email=settings.GOOGLE_CLOUD_TASK_SERVICE_ACCOUNT,
+                    audience=settings.GOOGLE_CLOUD_TASK_OIDC_AUDIENCE,
+                ),
             ),
-            name=None,
-            # name=(
-            #     self.__client.task_path(
-            #         project=self.project_id,
-            #         location=self.location,
-            #         queue=self.queue_name,
-            #     )
-            # ),
+            name=self._client.task_path(
+                project=self.project_id,
+                location=self.location,
+                queue=self.queue_name,
+                task=task_id,
+            ),
         )
 
         if scheduled_seconds_from_now is not None:
             timestamp = timestamp_pb2.Timestamp()
             timestamp.FromDatetime(
-                datetime.datetime.utcnow()
-                + datetime.timedelta(seconds=scheduled_seconds_from_now)
+                datetime.now(timezone.utc)
+                + timedelta(seconds=scheduled_seconds_from_now)
             )
             task.schedule_time = timestamp
 
-        created_task = self.__client.create_task(
-            tasks_v2.CreateTaskRequest(
-                parent=self.__client.queue_path(
-                    project=self.project_id,
-                    location=self.location,
-                    queue=self.queue_name,
-                ),
-                task=task,
-            )
+        create_task_request = tasks_v2.CreateTaskRequest(
+            parent=self._client.queue_path(
+                project=self.project_id,
+                location=self.location,
+                queue=self.queue_name,
+            ),
+            task=task,
+        )
+        # Create after commit, so the TaskExecution row exists when Cloud Tasks calls back
+        transaction.on_commit(
+            lambda: self._client.create_task(create_task_request), robust=True
         )
 
         result = TaskExeuctionCreateResponse()
         result.success = True
-        result.task_id = int(created_task.name.split("/")[-1])
+        result.task_id = task_id
         result.status = TaskExecutionState.PENDING
 
         return result
@@ -271,9 +322,9 @@ class GoogleCloudTaskBackend(AbstractTaskBackend):
         :return: True if the task was canceled successfully, False otherwise.
         """
         try:
-            self.__client.delete_task(
+            self._client.delete_task(
                 tasks_v2.DeleteTaskRequest(
-                    name=self.__client.task_path(
+                    name=self._client.task_path(
                         project=self.project_id,
                         location=self.location,
                         queue=self.queue_name,
@@ -296,9 +347,9 @@ class GoogleCloudTaskBackend(AbstractTaskBackend):
         #     "GoogleCloudTaskBackend.get_task_status is not implemented yet."
         # )
         try:
-            task: tasks_v2.Task = self.__client.get_task(
+            task: tasks_v2.Task = self._client.get_task(
                 tasks_v2.GetTaskRequest(
-                    name=self.__client.task_path(
+                    name=self._client.task_path(
                         project=self.project_id,
                         location=self.location,
                         queue=self.queue_name,
@@ -309,6 +360,61 @@ class GoogleCloudTaskBackend(AbstractTaskBackend):
             return TaskExecutionState(task.status.name.lower())
         except Exception as e:
             raise TaskNotFoundError(task_id) from e
+
+
+class CeleryTaskBackend(AbstractTaskBackend):
+    """
+    Celery task backend, running tasks in the Celery workers. For deployments that already run Celery.
+    """
+
+    _celery_to_task_state = {
+        "STARTED": TaskExecutionState.RUNNING,
+        "RETRY": TaskExecutionState.RUNNING,
+        "SUCCESS": TaskExecutionState.COMPLETED,
+        "FAILURE": TaskExecutionState.FAILED,
+        "REVOKED": TaskExecutionState.FAILED,
+    }
+
+    def create_http_task(
+        self,
+        target_url: str,
+        payload: Dict[str, Any] = None,
+        scheduled_seconds_from_now: Optional[int] = None,
+        *args,
+        **kwargs,
+    ) -> TaskExeuctionCreateResponse:
+        from .tasks import execute_staged_task
+
+        celery_task_id = str(uuid.uuid4())
+        task_execution_uuid = str(kwargs.get("task_execution_uuid"))
+
+        # Send after commit, so the worker can see the TaskExecution row
+        transaction.on_commit(
+            lambda: execute_staged_task.apply_async(
+                args=[task_execution_uuid],
+                task_id=celery_task_id,
+                countdown=scheduled_seconds_from_now,
+            )
+        )
+
+        result = TaskExeuctionCreateResponse()
+        result.success = True
+        result.task_id = celery_task_id
+        result.status = TaskExecutionState.PENDING
+        return result
+
+    def get_task_status(self, task_id) -> TaskExecutionState:
+        from celery.result import AsyncResult
+
+        return self._celery_to_task_state.get(
+            AsyncResult(task_id).state, TaskExecutionState.PENDING
+        )
+
+    def cancel_task(self, task_id) -> bool:
+        from celery.result import AsyncResult
+
+        AsyncResult(task_id).revoke()
+        return True
 
 
 class TaskManager:
@@ -359,6 +465,7 @@ class TaskManager:
             target_url=task_execution.execution_url,
             task_name=task_execution.task_name,
             payload=None,
+            task_execution_uuid=task_execution.uuid,
         )
 
         if response.success:
@@ -372,6 +479,29 @@ class TaskManager:
             task_execution.save()
 
             raise Exception("Failed to stage task execution")
+
+    def run_staged_task(self, task_execution_uuid) -> Optional[bool]:
+        """
+        Run a staged task by its execution UUID. Used by every backend: the Cloud Tasks endpoint,
+        the Celery worker and the local worker thread.
+
+        A task that is running or has completed is not run again (e.g. a duplicate delivery); a
+        failed task may be retried.
+
+        :return: True if the task completed, False if it failed, None if it was not run.
+        :raises TaskExecution.DoesNotExist: if there is no staged task with that UUID.
+        """
+        # Claim the task atomically, so concurrent deliveries can't both run it
+        claimed = TaskExecution.objects.filter(
+            uuid=task_execution_uuid,
+            status__in=[TaskExecutionState.PENDING, TaskExecutionState.FAILED],
+        ).update(status=TaskExecutionState.RUNNING)
+
+        task_execution = TaskExecution.objects.get(uuid=task_execution_uuid)
+        if not claimed:
+            return None
+
+        return self.execute_task(task_execution)
 
     def execute_task(self, task_execution: TaskExecution) -> bool:
         """
@@ -392,7 +522,7 @@ class TaskManager:
             task_execution.status = TaskExecutionState.FAILED
             task_execution.result = str(e)
         finally:
-            task_execution.completed_at = datetime.now()
+            task_execution.completed_at = dj_timezone.now()
             task_execution.save()
 
         return task_execution.status == TaskExecutionState.COMPLETED
@@ -420,19 +550,20 @@ class TaskManager:
         return self.backend.cancel_task(task_id)
 
 
-TASK_BACKEND = (
-    GoogleCloudTaskBackend(
+if settings.TASK_BACKEND == "google_cloud":
+    TASK_BACKEND = GoogleCloudTaskBackend(
         queue_name=settings.GOOGLE_CLOUD_TASK_QUEUE_NAME,
         project_id=settings.GOOGLE_PROJECT_ID,
         location=settings.GOOGLE_PROJECT_LOCATION,
     )
-    if settings.TASK_BACKEND == "google_cloud"
-    else LocalTaskBackend()
-)
+elif settings.TASK_BACKEND == "celery":
+    TASK_BACKEND = CeleryTaskBackend()
+else:
+    TASK_BACKEND = LocalTaskBackend()
 
 TASK_MANAGER = TaskManager(
     backend=TASK_BACKEND,
-    execution_ep_url=f"{settings.APP_BASE_URL}/api/tasks/execute-task",
+    execution_ep_url=f"{settings.TASK_EXECUTION_BASE_URL}/api/tasks/execute-task",
 )
 
 

@@ -98,22 +98,6 @@ container-fluid
 
 {% block content %}
 
-<script>
-    window.WEBOOK_I18N = {
-        day: "{% trans 'Day' %}",
-        month: "{% trans 'Month' %}",
-        week: "{% trans 'Week' %}",
-        year: "{% trans 'Year' %}",
-        timeline: "{% trans 'Timeline' %}",
-        grid: "{% trans 'Grid' %}",
-        calendar: "{% trans 'Calendar' %}",
-        weekPrefix: "{% trans 'Week' %}",
-        today: "{% trans 'Today' %}",
-        cancel: "{% trans 'Cancel' %}",
-        yes: "{% trans 'Yes' %}"
-    };
-</script>
-
 <div class="row">
     <div class="col-12">
         <div class="clearfix">
@@ -547,8 +531,8 @@ container-fluid
             title: '{% trans "Go to date" %}',
             html: "<input type='date' id='swalGoToDate' class='form-control'></input>",
             showCancelButton: true,
-            confirmButtonText: 'Gå til dato',
-            cancelButtonText: 'Avbryt',
+            confirmButtonText: '{% trans "Go to date" %}',
+            cancelButtonText: '{% trans "Cancel" %}',
         }).then((result) => {
             if (result.isConfirmed) {
                 let date = new Date(document.getElementById('swalGoToDate').value);

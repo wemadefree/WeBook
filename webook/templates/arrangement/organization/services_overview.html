@@ -1,11 +1,12 @@
+{% load i18n %}
 
-
+{% if services_providable %}
 <div class="table-responsive">
     <table class="table table-sm">
         <thead>
             <tr>
-                <th>Tjeneste</th>
-                <th>Valg</th>
+                <th>{% trans "Service" %}</th>
+                <th>{% trans "Options" %}</th>
             </tr>
         </thead>
 
@@ -14,13 +15,22 @@
                 <tr>
                     <td><a href="{% url 'arrangement:servicetype_detail' slug=service.service_type.slug %}">{{ service.service_type.name }}</a></td>
                     <td>
-                        <button class="btn btn-sm btn-danger">Fjern fra sortiment</button>
+                        <button class="btn btn-sm btn-danger">{% trans "Remove from services" %}</button>
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+{% else %}
+<div class="table-empty-state" role="status">
+    <i class="fas fa-hand-holding-dollar" aria-hidden="true"></i>
+    <div>
+        <h3 class="h6 mb-1">{% trans "No services" %}</h3>
+        <p class="mb-0 text-muted">{% trans "This organization has no registered services yet." %}</p>
+    </div>
+</div>
+{% endif %}
 
 <script>
     var servicesOverviewComponent = {

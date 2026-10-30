@@ -1,3 +1,4 @@
+{% load i18n %}
 {% include "arrangement/vue/select-main-planner-s2.html" %}
 
 <template id="editEventDialog">
@@ -9,19 +10,19 @@
 
         <template v-slot:header>
             <h3 class="mb-0 fw-bold">
-                Planlegg Aktivitet
+                {% trans "Plan event" %}
             </h3>
         </template>
 
         <template v-slot:content>
             <div class="row">
                 <div class="col-6"> 
-                    <label class="fw-bold">Tittel (Norsk)</label>
+                    <label class="fw-bold">{% trans "Title (Norwegian)" %}</label>
                     <input type="text" v-model="localEvent.title" class="form-control">
                 </div>
     
                 <div class="col-6">
-                    <label class="fw-bold">Tittel (Engelsk)</label>
+                    <label class="fw-bold">{% trans "Title (English)" %}</label>
                     <input type="text" v-model="localEvent.title_en" class="form-control">
                 </div>
             </div>
@@ -29,7 +30,7 @@
             <div class="row mt-2">
                 <div class="col-6">
                     <label class="fw-bold">
-                        <i class="fas fa-calendar-alt"></i>&nbsp; Fra
+                        <i class="fas fa-calendar-alt"></i>&nbsp; {% trans "From" %}
                     </label>
                     <input type="date" v-model="localEvent.from_date" class="form-control">
                 </div>
@@ -45,7 +46,7 @@
             <div class="row mt-2">
                 <div class="col-6">
                     <label class="fw-bold">
-                        <i class="fas fa-calendar-alt"></i>&nbsp; Til
+                        <i class="fas fa-calendar-alt"></i>&nbsp; {% trans "To" %}
                     </label>
 
                     <input type="date" v-model="localEvent.to_date" class="form-control">
@@ -63,14 +64,14 @@
                 <div class="col-4">
                     <label class="fw-bold">
                         <i class="fas fa-building"></i>&nbsp;
-                        Lokasjon
+                        {% trans "Location" %}
                     </label>
                     <location-select v-model:selected="localEvent.location"></location-select>
                 </div>
                 <div class="col-8">
                     <label class="fw-bold">
                         <i class="fas fa-list"></i>&nbsp;
-                        Rom
+                        {% trans "Rooms" %}
                     </label>
                     <rooms-select v-model:selected="localEvent.rooms"></rooms-select>
                 </div>
@@ -93,7 +94,7 @@
                         </div>
 
                         <div class="ms-2">
-                            Detaljer
+                            {% trans "Details" %}
                         </div>
                       </button>
                     </h4>
@@ -107,9 +108,9 @@
                             <div>
                                 <tree-select-component 
                                     :is-open="false" 
-                                    label="Målgruppe" 
+                                    label="{% trans 'Audience' %}"
                                     json-url="{% url 'arrangement:audience_tree' %}"
-                                    button-label="Velg målgruppe"
+                                    button-label="{% trans 'Select audience' %}"
                                     icon="fas fa-users"
                                     button-position="left"
                                     v-model="localEvent.audience">
@@ -120,9 +121,9 @@
                             <div>
                                 <tree-select-component 
                                     :is-open="false" 
-                                    label="Arrangementstype" 
+                                    label="{% trans 'Arrangement type' %}"
                                     json-url="{% url 'arrangement:arrangement_type_tree_list' %}"
-                                    button-label="Velg arrangementstype"
+                                    button-label="{% trans 'Select arrangement type' %}"
                                     icon="fas fa-cog"
                                     button-position="left"
                                     v-model="localEvent.arrangement_type">
@@ -135,7 +136,7 @@
                                     :is-open="false" 
                                     label="Status" 
                                     json-url="{% url 'arrangement:statustype_tree' %}"
-                                    button-label="Velg status"
+                                    button-label="{% trans 'Select status' %}"
                                     icon="fas fa-cog"
                                     button-position="left"
                                     v-model="localEvent.status_type">
@@ -143,12 +144,12 @@
                                 </tree-select-component>
                             </div>
                             <div>
-                                <label>Billettinfo</label>
+                                <label>{% trans "Ticket information" %}</label>
                                 <input type="text" v-model="localEvent.ticket_code" class="form-control">
                             </div>
               
                             <div class="mt-2">
-                                <label>Forventet besøkende</label>
+                                <label>{% trans "Expected visitors" %}</label>
                                 <input type="number" v-model="localEvent.expected_visitors" class="form-control">            
                             </div>
                       </div>

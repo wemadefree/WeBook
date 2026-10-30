@@ -1,3 +1,4 @@
+{% load i18n %}
 {% include "arrangement/vue/popover-tree-select.html" %}
 
 <template id="vuec-arrangement-info-dialog">
@@ -13,7 +14,7 @@
         <template v-slot:header>
             
             <h3 class="mb-0 fw-bold">
-                Arrangement Tittel          
+                {% trans "Arrangement title" %}
             </h3>
         
         </template>
@@ -32,12 +33,12 @@
                 <div>
                     <button class="btn wb-btn-secondary">
                         <i class="fas fa-trash"></i>&nbsp;
-                        Slett
+                        {% trans "Delete" %}
                     </button>
 
                     <button class="btn wb-btn-main ms-2">
                         <i class="fas fa-tree"></i>&nbsp;
-                        Kaskadeendringer & Synkronitet
+                        {% trans "Cascade changes & synchronization" %}
                     </button>
                 </div>
             </div>
@@ -45,7 +46,7 @@
             <div class="row mt-3">
                 <div class="col-4">
                     <div class="alert wb-bg-secondary">
-                        <h4 class="mb-0">Hovedplanlegger:</h4>
+                        <h4 class="mb-0">{% trans "Main planner" %}:</h4>
                     </div>
                 </div>
                 <div class="col-4">
@@ -75,7 +76,7 @@
                         data-mdb-toggle="tab">
 
                         <i class="fas fa-clock"></i>&nbsp;
-                        Tidspunkter
+                        {% trans "Time slots" %}
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -86,7 +87,7 @@
                         data-mdb-toggle="tab">
 
                         <i class="fas fa-edit"></i>&nbsp;
-                        Notater
+                        {% trans "Notes" %}
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -97,7 +98,7 @@
                         data-mdb-toggle="tab">
 
                         <i class="fas fa-file-alt"></i>&nbsp;
-                        Filer
+                        {% trans "Files" %}
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -108,7 +109,7 @@
                         data-mdb-toggle="tab">
 
                         <i class="fas fa-tools"></i>&nbsp;
-                        Tjenestebestillinger
+                        {% trans "Service orders" %}
                     </a>
                 </li>
             </ul>
@@ -121,45 +122,45 @@
                             <div class="row">
                                 <div class="col-6">
                                     <label for="" class="form-label">
-                                        Navn:
+                                        {% trans "Name" %}:
                                     </label>
                                     <input type="text" name="" id="" class="form-control ">
                                 </div>
                                 <div class="col-6">
                                     <label for="" class="form-label">
-                                        Navn (Engelsk):
+                                        {% trans "Name" %} ({% trans "English" %}):
                                     </label>
                                     <input type="text" name="" id="" class="form-control ">
                                 </div>
                             </div>
 
                             <div>
-                                <label for="">Billettinfo</label>
+                                <label for="">{% trans "Ticket information" %}</label>
                                 <input type="text" name="" id="" class="form-control ">
                             </div>
 
                             <div class="row mt-3">
                                 <div class="col-6">
-                                    <h5>Møtested</h5>
+                                    <h5>{% trans "Meeting place" %}</h5>
                                     <div>
-                                        <label for="">Møtested</label>
+                                        <label for="">{% trans "Meeting place" %}</label>
                                         <input type="text" name="" id="" class="form-control ">
                                     </div>
                                     
                                     <div>
-                                        <label for="">Møtested (Engelsk)</label>
+                                        <label for="">{% trans "Meeting place" %} ({% trans "English" %})</label>
                                         <input type="text" name="" id="" class="form-control ">
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <h5>Besøkende</h5>
+                                    <h5>{% trans "Visitors" %}</h5>
                                     <div>
-                                        <label for="">Forventet antall besøkende</label>
+                                        <label for="">{% trans "Expected visitors" %}</label>
                                         <input type="number" name="" id="" class="form-control " min="0">
                                     </div>
 
                                     <div class>
-                                        <label for="">Faktisk antall besøkende</label>
+                                        <label for="">{% trans "Actual visitors" %}</label>
                                         <input type="number" name="" id="" class="form-control" min="0">
                                     </div>
 
@@ -179,7 +180,7 @@
                         <div class="col-4">
                             <div>
                                 <label for="" class="form-label">
-                                    Lokasjon
+                                    {% trans "Location" %}
                                 </label>
                                 <select name="" id="" class="form-select form-select-sm">
                                     <option value="">Konsert</option>
@@ -191,9 +192,9 @@
                             <div class="mt-2">
                                 <tree-select-component 
                                     :is-open="false" 
-                                    label="Målgruppe" 
+                                    label="{% trans 'Audience' %}"
                                     json-url="{% url 'arrangement:audience_tree' %}"
-                                    button-label="Velg målgruppe"
+                                    button-label="{% trans 'Select audience' %}"
                                     icon="fas fa-users"
                                     v-model="arrangement.audience">
 
@@ -203,9 +204,9 @@
                             <div class="mt-2">
                                 <tree-select-component 
                                     :is-open="false" 
-                                    label="Arrangementstype" 
+                                    label="{% trans 'Arrangement type' %}"
                                     json-url="{% url 'arrangement:arrangement_type_tree_list' %}"
-                                    button-label="Velg arrangementstype"
+                                    button-label="{% trans 'Select arrangement type' %}"
                                     icon="fas fa-cog"
                                     v-model="arrangement.arrangement_type">
 
@@ -215,9 +216,9 @@
                             <div class="mt-2">
                                 <tree-select-component 
                                     :is-open="false" 
-                                    label="Status" 
+                                    label="{% trans 'Status' %}"
                                     json-url="{% url 'arrangement:statustype_tree' %}"
-                                    button-label="Velg status"
+                                    button-label="{% trans 'Select status' %}"
                                     icon="fas fa-cog"
                                     v-model="arrangement.status_type">
 
@@ -229,7 +230,7 @@
                 </div>
 
                 <div class="tab-pane fade" id="arrangementInfoDialog_tabs_timeslots" role="tabpanel">
-                    <h1>Timeslots</h1>
+                    <h1>{% trans "Time slots" %}</h1>
                 </div>
 
                 <div class="tab-pane fade" id="arrangementInfoDialog_tabs_notes" role="tabpanel">
@@ -252,7 +253,7 @@
                 </div>
 
                 <div class="tab-pane fade" id="arrangementInfoDialog_tabs_service_orders" role="tabpanel">
-                    <h1>Service Orders</h1>
+                    <h1>{% trans "Service orders" %}</h1>
                 </div>
             </div>
 

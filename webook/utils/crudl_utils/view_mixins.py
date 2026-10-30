@@ -80,7 +80,7 @@ class GenericTreeListTemplateMixin(BaseGenericListTemplateMixin):
         This allows the tree_list_view to set up buttons in the list for each element in the list. Due to tree list view
         being constructed in JS we need to pre-process these urls and package them in like this with each instance."""
         if self.section and self.section.crudl_map:
-            urls = [ ("detail_url", self.section.crudl_map.detail_url), ("edit_url", self.section.crudl_map.edit_url), ("delete_url", self.section.crudl_map.delete_url) ]
+            urls = [ ("detail_url", self.section.crudl_map.detail_url), ("edit_url", self.section.crudl_map.edit_url), ("delete_url", self.section.crudl_map.delete_url), ("archive_url", self.section.crudl_map.archive_url) ]
             for item in obj_list:
                 for attr_name, url in urls:
                     if url:

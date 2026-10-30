@@ -39,7 +39,7 @@
                   </tr>
                   <tr>
                     <td>
-                      <label>{% trans "Slutt" %}</label>
+                      <label>{% trans "End" %}</label>
                     </td>
                     <td>
                       <input type="time" id="serie_end" required />
@@ -94,7 +94,7 @@
                 </div>
 
                 <div id="patternRoute_weekly" style="display: none;">
-                  <div><label>{% trans "Skjer hver" %} <input type="number" min="1" id="week_interval" name="repeat_every_x_week" style="width: 40px" required/> {% trans "week at" %}:</label></div>
+                  <div><label>{% trans "Every" %} <input type="number" min="1" id="week_interval" name="repeat_every_x_week" style="width: 40px" required/> {% trans "week at" %}:</label></div>
                   <span id="day_checkbox_wrapper">
                     <input type="checkbox" id="monday"> <label>{% trans "Monday" %}</label>
                     <input type="checkbox" id="tuesday"> <label>{% trans "Tuesday" %}</label>
@@ -126,7 +126,7 @@
                     {% trans "Happens every" %} <input type="number" min="1" required id="pattern_yearly_const__year_interval" style="width: 40px" /> {% trans "year" %}
                   </div>
                   <div>
-                    <input type="radio" name="pattern_yearly_subroute" value="0" required> {% trans "Dato" %}:
+                    <input type="radio" name="pattern_yearly_subroute" value="0" required> {% trans "Date" %}:
                     <input type="number" min="1" required id="every_x_of_month__date" style="width: 40px" />
                     <select id="every_x_of_month__month" required>
                     </select>

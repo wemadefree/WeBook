@@ -1,3 +1,4 @@
+{% load i18n %}
 {% include "arrangement/vue/pattern_designer.html" %}
 {% include "arrangement/vue/select-main-planner-s2.html" %}
 {% include "arrangement/vue/location-select2.html" %}
@@ -10,7 +11,7 @@
         @close="$emit('close')">
         <template v-slot:header>
             <h3 class="mb-0 fw-bold">
-                <i class="fas fa-calendar-alt"></i> Planlegg Gjentagende Hendelse
+                <i class="fas fa-calendar-alt"></i> {% trans "Plan recurring event" %}
             </h3>
         </template>
 
@@ -18,13 +19,13 @@
             <div class="row">
                 <div class="col-6">
                     <div>
-                        <label class="fw-bold">Tittel på norsk</label>
+                        <label class="fw-bold">{% trans "Title in Norwegian" %}</label>
                         <input type="text" v-model="localModelValue.title" name="" id="" class="form-control">
                     </div>
                 </div>
                 <div class="col-6">
                     <div>
-                        <label class="fw-bold">Tittel på engelsk</label>
+                        <label class="fw-bold">{% trans "Title in English" %}</label>
                         <input type="text" v-model="localModelValue.title_en" class="form-control">
                     </div>
                 </div>
@@ -32,22 +33,22 @@
 
             <div class="row mt-2">
                 <div class="col-6">
-                    <label class="fw-bold">Start</label>
+                    <label class="fw-bold">{% trans "Start" %}</label>
                     <input type="time" v-model="localModelValue.start_time" class="form-control">
                 </div>
                 <div class="col-6">
-                    <label class="fw-bold">Slutt</label>
+                    <label class="fw-bold">{% trans "End" %}</label>
                     <input type="time" v-model="localModelValue.end_time" class="form-control">
                 </div>
             </div>
 
             <div class="mt-2 row">
                 <div class="col-4">
-                    <label class="fw-bold">Lokasjon</label>
+                    <label class="fw-bold">{% trans "Location" %}</label>
                     <location-select v-model:selected="localModelValue.location"></location-select>
                 </div>
                 <div class="col-8">
-                    <label class="fw-bold">Rom</label>
+                    <label class="fw-bold">{% trans "Rooms" %}</label>
                     <rooms-select v-model:selected="localModelValue.rooms"></rooms-select>
                 </div>
             </div>
@@ -74,11 +75,11 @@
                                         <i class="fas fa-clipboard"></i>
                                     </div>
                                     <div class="ms-2">
-                                        Detaljer
+                                        {% trans "Details" %}
                                     </div>
                                 </div>
                                 <div class="h6 text-muted d-block me-5">
-                                    (Kopiert fra arrangement)
+                                    ({% trans "Copied from arrangement" %})
                                 </div>
                             </div>
                         </button>
@@ -93,9 +94,9 @@
                             <div>
                                 <tree-select-component 
                                     :is-open="false" 
-                                    label="Målgruppe" 
+                                    label="{% trans 'Audience' %}"
                                     json-url="{% url 'arrangement:audience_tree' %}"
-                                    button-label="Velg målgruppe"
+                                    button-label="{% trans 'Select audience' %}"
                                     icon="fas fa-users"
                                     button-position="left"
                                     v-model="localModelValue.audience">
@@ -106,9 +107,9 @@
                             <div>
                                 <tree-select-component 
                                     :is-open="false" 
-                                    label="Arrangementstype" 
+                                    label="{% trans 'Arrangement type' %}"
                                     json-url="{% url 'arrangement:arrangement_type_tree_list' %}"
-                                    button-label="Velg arrangementstype"
+                                    button-label="{% trans 'Select arrangement type' %}"
                                     icon="fas fa-cog"
                                     button-position="left"
                                     v-model="localModelValue.arrangement_type">
@@ -121,7 +122,7 @@
                                     :is-open="false" 
                                     label="Status" 
                                     json-url="{% url 'arrangement:statustype_tree' %}"
-                                    button-label="Velg status"
+                                    button-label="{% trans 'Select status' %}"
                                     icon="fas fa-cog"
                                     button-position="left"
                                     v-model="localModelValue.status_type">
@@ -130,12 +131,12 @@
                             </div>
     
                             <div>
-                                <label for="ticketCode">Billettinfo</label>
+                                <label for="ticketCode">{% trans "Ticket information" %}</label>
                                 <input type="text" id="ticketCode" v-model="localModelValue.ticket_code" class="form-control">
                             </div>
                 
                             <div class="mt-2">
-                                <label for="">Forventet besøkende</label>
+                                <label for="">{% trans "Expected visitors" %}</label>
                                 <input type="number" id="expected_visitors" v-model="localModelValue.expected_visitors" class="form-control">            
                             </div>
                         </div>

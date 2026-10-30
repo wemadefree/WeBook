@@ -7,10 +7,10 @@
     <div class="clearfix">
         <div class="float-start">
             <h3 class="fw-bold">
-                {{ form.title.value }} {% if event.serie %}<small class="fw-light"><em>(repeterende)</em></small>{% endif %}
+                {{ form.title.value }} {% if event.serie %}<small class="fw-light"><em>({% trans "repeating" %})</em></small>{% endif %}
             </h3>
             <h5 id="title">
-                {{form.start.value}} <strong> until </strong> {{form.end.value}}
+                {{form.start.value}} <strong> {% trans "until" %} </strong> {{form.end.value}}
             </h5>
         </div>
         <div id="stepper" class="float-end stepper-rail"></div>
@@ -19,7 +19,7 @@
     <hr>
 
     <div class="clearfix">
-        <small class="float-end">Opprettet {{event.created}} av <strong>{{event.created_by.full_name }}</strong> <strong>|</strong> Sist oppdatert {{event.modified}} av <strong>{{ event.updated_by.full_name }}</strong></small>
+        <small class="float-end">{% trans "Created" %} {{event.created}} {% trans "by" %} <strong>{{event.created_by.full_name }}</strong> <strong>|</strong> {% trans "Last updated" %} {{event.modified}} {% trans "by" %} <strong>{{ event.updated_by.full_name }}</strong></small>
     </div>
 
     <div class="row">
@@ -27,7 +27,7 @@
             <div class="alert col-auto mb-4 mt-2 wb-bg-secondary">
                 <div class="clearfix">
                     <div class="float-start">
-                        <h6 class="mb-0 d-inline fw-lighter">Tilhører arrangement:</h4>
+                        <h6 class="mb-0 d-inline fw-lighter">{% trans "Belongs to arrangement" %}:</h4>
                         <h4 class="mb-0">{{ object.arrangement.name }}</h6>
                         
                         <small>
@@ -41,7 +41,7 @@
                             d-trigger="openInspectArrangementDialog"
                             d-arg-slug="{{ object.arrangement.slug }}"
                             d-arg-event_pk="{{ object.pk }}">
-                        Gå til arrangement
+                        {% trans "Go to arrangement" %}
                     </button>
                 </div>
             </div>
@@ -52,8 +52,8 @@
             <div class="alert mb-4 mt-2" style="background-color:  #f6f6f0 !important;">
                     <div>
                         <h4 class="mb-0"><span class="h3"><i class="fas fa-sync"></i></span>&nbsp;&nbsp; {{event.serie.serie_plan_manifest.schedule_description }}</h4>
-                        <small><i class="fas fa-info-circle"></i>&nbsp; Ved redigering vil denne aktiviteten brytes ut av serien, og vil ikke lenger bli ansett som en del av denne serien</small>
-                        <small class="d-block">Du kan redigere selve serien fra arrangementsvisningen, gå til tidspunkter og rediger der</small>
+                        <small><i class="fas fa-info-circle"></i>&nbsp; {% trans "When editing, this activity will be separated from the series and will no longer be considered part of it." %}</small>
+                        <small class="d-block">{% trans "You can edit the series from the arrangement view: open Time slots and edit it there." %}</small>
                     </div>
             </div>
             {% endif %}
@@ -70,12 +70,12 @@
                 role="tab"
                 aria-controls="ex1-tabs-1"
                 aria-selected="true">
-            Aktivitet
+            {% trans "Activity" %}
             </a>
         </li>
         <li class="nav-item" role="presentation">
             <a href="#tab-resources" role="tab" data-mdb-toggle="tab" class="nav-link" id="tab-resource">
-                Rom & Personer
+                {% trans "Rooms & people" %}
             </a>
         </li>
         <li class="nav-item" role="presentation">
@@ -87,7 +87,7 @@
                 role="tab"
                 aria-controls="ex1-tabs-2"
                 aria-selected="false">
-                Filer
+                {% trans "Files" %}
             </a>
         </li>
         <li class="nav-item" role="presentation">
@@ -99,12 +99,12 @@
                 role="tab"
                 aria-controls="ex1-tabs-3"
                 aria-selected="false">
-                Notater
+                {% trans "Notes" %}
             </a>
         </li>
         <li class="nav-item" role="presentation">
             <a href="#tab-details" role="tab" data-mdb-toggle="tab" class="nav-link" id="tab-detailss">
-                Detaljer
+                {% trans "Details" %}
             </a>
         </li>
         <li class="nav-item" role="presentation">
@@ -116,7 +116,7 @@
                 role="tab"
                 aria-controls="ex1-tabs-4"
                 aria-selected="false"
-                >Opprigg & Nedrigg
+                >{% trans "Setup & teardown" %}
             </a>
         </li>
         {% if object.is_school_related %}
@@ -129,7 +129,7 @@
                 role="tab"
                 aria-controls="ex1-tabs-5"
                 aria-selected="false"
-                >Skoler
+                >{% trans "Schools" %}
             </a>
         </li>
         {% endif %}
@@ -207,7 +207,7 @@
                                         data-mdb-default-time="{{object.start|date:'G:i' }}">
                                         <input type="text" class="form-control form-control-lg" id="startDateTimeInput" 
                                             value="{{ object.start|date:'d.m.Y G:i' }}"/>
-                                        <label for="datetimepickerExample" class="form-label h5">Startdato og tidspunkt</label>
+                                        <label for="datetimepickerExample" class="form-label h5">{% trans "Start date and time" %}</label>
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-md-12 col-sm-12 mt-3">
@@ -216,7 +216,7 @@
                                         data-mdb-default-time="{{object.end|date:'G:i' }}">
                                         <input type="text" class="form-control form-control-lg" id="endDateTimeInput" 
                                             value="{{ object.end|date:'d.m.Y G:i' }}" />
-                                        <label for="datetimepickerExample" class="form-label h5">Sluttdato og tidspunkt</label>
+                                        <label for="datetimepickerExample" class="form-label h5">{% trans "End date and time" %}</label>
                                     </div>
                                 </div>
                                 <div class="col-12 mt-2">
@@ -257,11 +257,11 @@
                                 </div>
                             </div>
 
-                            <h4>Skjermvisning</h4>
+                            <h4>{% trans "Screen display" %}</h4>
                             <div class="mt-2">
                                 <div class="row">
                                     <div class="col-lg-4 col-sm-12">
-                                        <label class="d-block form-label">Vises på skjerm:</label>
+                                        <label class="d-block form-label">{% trans "Displayed on screen" %}:</label>
                                         {{form.display_layouts}}
                                     </div>
                                     <div class="col-lg-8 col-sm-12">
@@ -296,7 +296,7 @@
     
                                 <label for="" class="d-block form-label">
                                     <i class="fas fa-star"></i>
-                                    Hovedplanlegger
+                                    {% trans "Main planner" %}
                                 </label>
                                 <h5 class="mb-2" id="mainPlannerName">
                                     {{ object.responsible }}
@@ -306,7 +306,7 @@
                                     id="setMainPlannerButton"
                                     type="button"
                                     d-trigger="triggerSetPlanner">
-                                    Endre hovedplanlegger
+                                    {% trans "Change main planner" %}
                                 </button>
                                 {% endif %}
                             </div>
@@ -315,7 +315,7 @@
                                 <div class="mt-3">
                                     <label for="{{ form.audience.id_for_label }}" class="form-label">
                                         <i class="fas fa-users"></i>&nbsp;
-                                        Målgruppe
+                                        {% trans "Audience" %}
                                     </label>
                                     <div id="audience_jstree_select" class="dialog-popover-left-fix"></div>
                                     
@@ -329,7 +329,7 @@
                                 <div class="mt-3">
                                     <label for="{{ form.arrangement_type.id_for_label }}" class="form-label select-label">
                                         <i class="fas fa-cog"></i>&nbsp;
-                                        Arrangementstype
+                                        {% trans "Arrangement type" %}
                                     </label>
                                     <div id="arrangement_type_jstree_select" class="dialog-popover-left-fix"></div>
                                     {% if form.arrangement_type.errors|length > 0 %}
@@ -342,7 +342,7 @@
                                 <div class="form-group mt-3">
                                     <label>
                                         <i class="fas fa-cog"></i>&nbsp;
-                                        Status
+                                        {% trans "Status" %}
                                     </label>
                                     <div id="status_type_jstree_select" class="dialog-popover-left-fix"></div>
                                     {% if form.status_type.errors|length > 0 %}
@@ -372,12 +372,12 @@
             <div data-mdb-perfect-scrollbar="true" data-mdb-handlers="click-rail" style="position: relative; max-height: 30em; overflow-y: scroll;">
                 {% for file in object.arrangement.files.all %}
                     <div class="wb-bg-extra p-3 mt-2 rounded-pill" id="fileRow_{{file.pk}}">
-                        <span><i class="fas fa-arrow-down"></i> <small class="me-2 fw-bold">Hentet fra arrangementet</small>&nbsp; {{file.filename}}</span>
+                        <span><i class="fas fa-arrow-down"></i> <small class="me-2 fw-bold">{% trans "From the arrangement" %}</small>&nbsp; {{file.filename}}</span>
                         <span class="float-end">
                             {% if user|has_group:"planners" or user.is_superuser %}
                             <a href="#" class="text-muted"
                                 data-mdb-toggle="tooltip"
-                                title="Denne filen kommer fra arrangementet og kan dermed bare slettes der">
+                                title="{% trans 'This file is part of the arrangement and can only be deleted there.' %}">
                                 <i class="fas fa-trash"></i>
                             </a>
                             {% endif %}
@@ -420,7 +420,7 @@
             </div>
             {% else %}
             <div class="alert wb-bg-secondary">
-                <h4 class="text-center">Ingen filer lastet opp her ennå!</h4>
+                <h4 class="text-center">{% trans "No files have been uploaded here yet!" %}</h4>
                 {% if user|has_group:"planners" or user.is_superuser %}
                 <div class="row">
                     <div class="col text-center">
@@ -428,7 +428,7 @@
                         d-trigger="triggerUploadFilesDialog"
                         href="#">
                         <i class="fas fa-upload"></i>
-                        Last opp
+                        {% trans "Upload" %}
                     </a>
                     </div>
                 </div>
@@ -441,12 +441,12 @@
             <div class="row">
                 <div class="col-lg-6 col-sm-12">
                     <div class=" mb-2 mt-4">
-                        <label class="form-label">Rom</label>
+                        <label class="form-label">{% trans "Rooms" %}</label>
                         {% if user|has_group:"planners" or user.is_superuser %}
                         <a class="btn btn-sm wb-btn-secondary wb-bg-secondary float-end"
                             d-trigger="triggerAddRooms"
                             type="button">
-                            Legg til nye rom
+                            {% trans "Add rooms" %}
                         </a>
                         {% endif %}
                     </div>
@@ -476,12 +476,12 @@
                 </div>
                 <div class="col-lg-6 col-sm-12">
                     <div class="cmb-2 mt-4">
-                        <label class="form-label">Personer</label>
+                        <label class="form-label">{% trans "People" %}</label>
                         {% if user|has_group:"planners" or user.is_superuser %}
                         <a class="btn btn-sm wb-btn-secondary wb-bg-secondary float-end"
                             d-trigger="triggerAddPeople"
                             type="button">
-                            Legg til nye personer
+                            {% trans "Add people" %}
                         </a>
                         {% endif %}
                     </div>
@@ -516,7 +516,7 @@
 
         <div class="tab-pane fade" id="tab-details" role="tabpanel">
             <div class="form-group mb-3">
-                <label class="form-label" for="{{ form.ticket_code.id_for_label }}">Billettinfo</label>
+                <label class="form-label" for="{{ form.ticket_code.id_for_label }}">{% trans "Ticket information" %}</label>
                 <input type="text"
                     class="form-control form-control-lg"
                     id="{{ form.ticket_code.id_for_label }}" 
@@ -539,7 +539,7 @@
                     <a class="btn wb-btn-main shadow-0 mb-2 float-end"
                         d-trigger="triggerNewNoteDialog">
                         <i class="fas fa-feather"></i>
-                        Nytt notat
+                        {% trans "New note" %}
                     </a>
                 </div>
                 {% endif %}
@@ -555,12 +555,12 @@
                             <div class="float-start">
                                 <i class="fas fa-arrow-down me-3 h3"></i>
                                 {% if note.has_personal_information %}
-                                    <i class="fas fa-shield-alt text-warning h3"></i> <strong>Inneholder <abbr class="me-3" title="Personlig identifiserende informasjon">PII</abbr></strong>
+                                    <i class="fas fa-shield-alt text-warning h3"></i> <strong>{% trans "Contains" %} <abbr class="me-3" title="{% trans 'Personally identifiable information' %}">PII</abbr></strong>
                                 {% endif %}
-                                <em class="text-muted small float-end">Opprettet av {{note.author}} den {{ note.created|date:'d.m.Y H:i' }}</em>
+                                <em class="text-muted small float-end">{% trans "Created by" %} {{note.author}} {% trans "on" %} {{ note.created|date:'d.m.Y H:i' }}</em>
                             </div>
                             <div class="float-end">
-                                <em><small> <i class="far fa-question-circle"></i> Notatet kommer fra arrangementet og kan bare redigeres/slettes der</small></em>
+                                <em><small> <i class="far fa-question-circle"></i> {% trans "This note is from the arrangement and can only be edited or deleted there." %}</small></em>
                             </div>
                         </div>
                     </div>
@@ -575,9 +575,9 @@
                         <div class="clearfix">
                             <div class="float-start">
                                 {% if note.has_personal_information %}
-                                    <i class="fas fa-shield-alt text-warning h3"></i> <strong>Inneholder <abbr class="me-3" title="Personlig identifiserende informasjon">PII</abbr></strong>
+                                    <i class="fas fa-shield-alt text-warning h3"></i> <strong>{% trans "Contains" %} <abbr class="me-3" title="{% trans 'Personally identifiable information' %}">PII</abbr></strong>
                                 {% endif %}
-                                <em class="text-muted small float-end">Opprettet av {{note.author}} den {{ note.created|date:'d.m.Y H:i' }}</em>
+                                <em class="text-muted small float-end">{% trans "Created by" %} {{note.author}} {% trans "on" %} {{ note.created|date:'d.m.Y H:i' }}</em>
                             </div>
                             {% if user|has_group:"planners" or user.is_superuser %}
                             <div class="float-end">
@@ -601,14 +601,14 @@
 
             {% else %}
                 <div class="alert wb-bg-secondary">
-                    <h4 class="text-center">Ingen notater skrevet ennå!</h4>
+                    <h4 class="text-center">{% trans "No notes have been written yet!" %}</h4>
                     {% if user|has_group:"planners" or user.is_superuser %}
                     <div class="row">
                         <div class="col text-center">
                             <a class="btn wb-btn-main text-center shadow-0 mb-2 center" style="margin:auto"
                             d-trigger="triggerNewNoteDialog">
                             <i class="fas fa-feather"></i>
-                            Nytt notat
+                            {% trans "New note" %}
                         </a>
                         </div>
                     </div>
@@ -620,10 +620,10 @@
         <div class="tab-pane fade" id="ex1-tabs-4" role="tabpanel" aria-labelledby="ex1-tabs-4">
             {% if not object.is_buffer_event %}
                 <div class="alert alert-info small">
-                    Opprigg og nedrigg blir opprettet som egne hendelser før og etter aktiviteten.
+                    {% trans "Setup and teardown are created as separate events before and after this activity." %}
                     <div>
-                        Det betyr at om du endrer tidene på aktivitetene så vil denne forandringen også reflekteres her.
-                        Vice versa så kan du også endre tidene her, og det vil endre tidene på rigging aktivitetene.
+                        {% trans "If you change the activity times, those changes will also be reflected here." %}
+                        {% trans "Conversely, changing the times here will update the setup and teardown activities." %}
                     </div>
                 </div>
 
@@ -634,13 +634,13 @@
                             <th colspan="3" class="fw-bold">
                                 {% if object.buffer_before_event %}
                                 <div class="clearfix">
-                                    <h4 class="float-start mb-0">Opprigg</h4>
+                                    <h4 class="float-start mb-0">{% trans "Setup" %}</h4>
 
                                     <a href="#" 
                                         d-trigger="inspectOtherEvent"
                                         d-arg-event_id="{{ object.buffer_before_event.pk }}"
                                         class="btn btn-sm wb-btn-main float-end">
-                                        Åpne aktivitet
+                                        {% trans "Open activity" %}
                                     </a>
                                 </div>
                                 {% endif %}
@@ -650,12 +650,12 @@
                         <tr>
                             <td colspan="2">
                                 <div class="form-group">
-                                    <label for="" class="form-label">Tittel</label>
+                                    <label for="" class="form-label">{% trans "Title" %}</label>
                                     <input type="text" id="buffer_before_title" class="form-control form-control-lg" value="{{ form.before_buffer_title.value|default:'' }}" />
                                 </div>
                                 
                                 <div class="form-group mt-2">
-                                    <label for="" class="form-label">Dato</label>
+                                    <label for="" class="form-label">{% trans "Date" %}</label>
                                     <input type="date" name="" id="buffer_before_date" class="form-control form-control-lg" value="{{ form.before_buffer_date.value|date:'Y-m-d' }}">
                                 </div>
                             </td>
@@ -663,13 +663,13 @@
 
                         <tr>
                             <td>
-                                <label for="" class="form-label">Fra</label>
+                                <label for="" class="form-label">{% trans "From" %}</label>
                                 <div class="form-outline">
                                     <input type="time" id="buffer_before_start" value="{{ form.before_buffer_start.value|date:'H:i' }}" class="form-control form-control-lg" />
                                 </div>
                             </td>
                             <td>
-                                <label for="" class="form-label">Til</label>
+                                <label for="" class="form-label">{% trans "To" %}</label>
                                 <div class="form-outline">
                                     <input type="time" id="buffer_before_end" value="{{ form.before_buffer_end.value|date:'H:i' }}" class="form-control form-control-lg" />
                                 </div>
@@ -679,11 +679,11 @@
                             <th colspan="3" class="fw-bold" 
                             style="justify-content: center; align-items:center;">
                                 {% if object.buffer_after_event %}
-                                <h4 class="float-start mb-0">Nedrigg</h4>
+                                <h4 class="float-start mb-0">{% trans "Teardown" %}</h4>
                                 <a href="#" class="btn btn-sm wb-btn-main float-end" 
                                     d-trigger="inspectOtherEvent"
                                     d-arg-event_id="{{ object.buffer_before_event.pk }}">
-                                    Åpne aktivitet
+                                    {% trans "Open activity" %}
                                 </a>
                                 {% endif %}
                             </th>
@@ -692,12 +692,12 @@
                         <tr>
                             <td colspan="2">
                                 <div class="form-group">
-                                    <label for="" class="form-label">Tittel</label>
+                                    <label for="" class="form-label">{% trans "Title" %}</label>
                                     <input type="text" id="buffer_after_title" class="form-control form-control-lg" value="{{ form.after_buffer_title.value|default:'' }}" />
                                 </div>
                                 
                                 <div class="form-group mt-2">
-                                    <label for="" class="form-label">Dato</label>
+                                    <label for="" class="form-label">{% trans "Date" %}</label>
                                     <input type="date" name="" id="buffer_after_date" class="form-control form-control-lg"  value="{{ form.after_buffer_date.value|date:'Y-m-d' }}">
                                 </div>
                             </td>
@@ -705,13 +705,13 @@
 
                         <tr>
                             <td>
-                                <label for="" class="form-label">Fra</label>
+                                <label for="" class="form-label">{% trans "From" %}</label>
                                 <div class="form-outline">
                                     <input type="time" id="buffer_after_start" value="{{ form.after_buffer_start.value|date:'H:i' }}" class="form-control form-control-lg" />
                                 </div>
                             </td>
                             <td>
-                                <label for="" class="form-label">Til</label>
+                                <label for="" class="form-label">{% trans "To" %}</label>
                                 <div class="form-outline">
                                     <input type="time" id="buffer_after_end" value="{{ form.after_buffer_end.value|date:'H:i' }}" class="form-control form-control-lg" />
                                 </div>
@@ -723,11 +723,10 @@
             <div class="p-3">
                 <h3 class="text-center text-muted"><i class="fas fa-info-circle"></i></h3>
                 <hr>
-                <h6 class="text-center">Denne hendelsen er en opprigg/nedrigg hendelse for en annen hendelse og du kan dermed ikke definere opprigg/nedrigg tider på denne hendelsen.</h6>
+                <h6 class="text-center">{% trans "This event is a setup or teardown event for another event, so you cannot define setup or teardown times for it." %}</h6>
                 
                 <h6 class="mt-4 text-center">
-                    Om du ønsker å endre tider på opprigg/nedrigg så kan du redigere tiden på denne aktiviteten. Denne forandringen vil speiles 
-                    til opprigg/nedrigg tidene definert på "hoved-aktiviteten" som disse rigg aktivitetene omhandler.
+                    {% trans "To change setup or teardown times, edit the time of this activity. The change will be reflected in the setup or teardown times defined on the main activity." %}
                 </h6>
 
                 <div class="d-flex justify-content-center">
@@ -735,7 +734,7 @@
                             type="button"
                             d-trigger="inspectOtherEvent"
                             d-arg-event_id="{{ object.buffer_for.pk }}">
-                        Åpne hovedaktivitet
+                        {% trans "Open main activity" %}
                     </button>
                 </div>
             </div>
@@ -745,11 +744,11 @@
         {% if object.is_school_related %}
         <div class="tab-pane fade" id="ex1-tabs-5" role="tabpanel">
             <div class="form-group">
-                <label for="countySelect">Fylke</label>
+                <label for="countySelect">{% trans "County" %}</label>
                 <select name="" id="countySelect" class="form-control">
                     <option value=""
                         {% if object.school is None %}selected{% endif %}>
-                        Ingen valgt
+                        {% trans "None selected" %}
                     </option>
 
                     {% for county in counties %}
@@ -762,12 +761,12 @@
             </div>
 
             <div class="form-group mt-2">
-                <label for="schoolSelect">Skole <em>(Målgruppe: {{ object.audience.name }})</em></label>
+                <label for="schoolSelect">{% trans "School" %} <em>({% trans "Audience" %}: {{ object.audience.name }})</em></label>
                 
                 <select name="" id="schoolSelect" class="form-control w-100" style="width: 100%">
                     <option value=""
                         {% if object.school is None %}selected{% endif %}>
-                        Ingen valgt
+                        {% trans "None selected" %}
                     </option>
 
 
@@ -910,17 +909,17 @@
         <div class="float-start">
             <a href="#" class="btn wb-btn-blank"
                 d-trigger="delete">
-                <i class="fas fa-trash"></i>&nbsp; Slett denne aktiviteten
+                <i class="fas fa-trash"></i>&nbsp; {% trans "Delete this activity" %}
             </a>
         </div>
         <div class="float-end">
             <a href="#" class="btn wb-btn-secondary btn-lg"
                 d-trigger="close">
                 <i class="fas fa-times"></i>
-                Avbryt / Lukk
+                {% trans "Cancel / Close" %}
             </a>
             <a class="btn btn-lg wb-btn-main" type="button" d-trigger="save">
-                <i class="fas fa-save"></i>&nbsp; Lagre
+                <i class="fas fa-save"></i>&nbsp; {% trans "Save" %}
             </a>
         </div>
     </div>
@@ -990,7 +989,7 @@
                                 let schoolOptions = [
                                     {
                                         id: "",
-                                        text: "Ingen valgt",
+                                        text: "{% trans 'None selected' %}",
                                     },
                                     ...a.data.map((school) => {
                                         let segment = dialog.data.citySegmentMap.get(school.citySegmentId);
@@ -1050,10 +1049,10 @@
 
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen målgruppe valgt ennå",
-                selectFirstTimeButtonText: 'Velg målgruppe',
-                changeSelectedValueButtonText: 'Endre målgruppe',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No audience selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select audience" %}',
+                changeSelectedValueButtonText: '{% trans "Change audience" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save choices" %}',
             });
             dialog.data.arrangementTypeJsTreeSelect = new JSTreeSelect({
                 element: dialog.querySelector('#arrangement_type_jstree_select'),
@@ -1069,10 +1068,10 @@
 
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen arrangementstype valgt ennå",
-                selectFirstTimeButtonText: 'Velg arrangementstype',
-                changeSelectedValueButtonText: 'Endre arrangementstype',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No arrangement type selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select arrangement type" %}',
+                changeSelectedValueButtonText: '{% trans "Change arrangement type" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save choices" %}',
             });
             dialog.data.statusTypeJsTreeSelect = new JSTreeSelect({
                 element: dialog.querySelector('#status_type_jstree_select'),
@@ -1088,10 +1087,10 @@
                     
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen status valgt ennå",
-                selectFirstTimeButtonText: 'Velg status',
-                changeSelectedValueButtonText: 'Endre status',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No status selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select status" %}',
+                changeSelectedValueButtonText: '{% trans "Change status" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save choices" %}',
             });
 
             {% if user|has_group:"readonly_level_2" and user.is_superuser == False %}
@@ -1142,14 +1141,14 @@
             /* Delete a note, identified by note_pk */
             deleteNote: (dialog, { notePk } = {}) => {
                 Swal.fire({
-                    title: 'Er du sikker?',
-                    text: "Er du sikker på at du ønsker å slette dette notatet?",
+                    title: '{% trans "Are you sure?" %}',
+                    text: "{% trans 'Are you sure you want to delete this note?' %}",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Slett',
-                    cancelButtonText: 'Avbryt',
+                    confirmButtonText: '{% trans "Delete" %}',
+                    cancelButtonText: '{% trans "Cancel" %}',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         fetch('/arrangement/note/delete/' + notePk, {
@@ -1252,14 +1251,14 @@
             /* Delete this current event */
             delete: (dialog) => {
                 Swal.fire({
-                    title: 'Er du sikker?',
-                    text: "Hendelsen kan ikke hentes tilbake.",
+                    title: '{% trans "Are you sure?" %}',
+                    text: "{% trans 'This event cannot be recovered.' %}",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ja',
-                    cancelButtonText: 'Avbryt'
+                    confirmButtonText: '{% trans "Yes" %}',
+                    cancelButtonText: '{% trans "Cancel" %}'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         let formData = new FormData();

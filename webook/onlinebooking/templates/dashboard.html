@@ -31,7 +31,6 @@ container
 
 {% include "arrangement/vue/js_tree_select_component.html" %}
 {% include "arrangement/vue/table_component.html" %}
-{% include "onlinebooking/modals/school_edit_modal.html" %}
 {% include "onlinebooking/modals/county_edit_modal.html" %}
 {% include "onlinebooking/modals/test_booking_modal.html" %}
 {% include "onlinebooking/tables/booking_table.html" %}
@@ -339,7 +338,7 @@ container
             components: {
                 TreeSelectComponent,
                 TableComponent,
-                SchoolEditModalComponent,
+                SchoolEditModalComponent: window.SchoolEditModalComponent,
                 CountyEditModalComponent,
                 TestBookingModalComponent,
                 BookingTableComponent,

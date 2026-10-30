@@ -1,8 +1,10 @@
+{% load i18n %}
+
 <div id="{{dialogId}}" class="{{discriminator}}" title="Velg planleggere">
 
     <div class="titlebar-hack"
         style="display:flex;">
-        <h4 class="fw-bold">Synkronisering</h4>
+        <h4 class="fw-bold">{% trans "Synchronization" %}</h4>
 
         <span id="title-holder">
         </span>
@@ -11,42 +13,38 @@
     <div class="alert alert-info mt-3">
         <div>
             <i class="fas fa-info"></i>&nbsp; 
-            <strong>Om synkronisering</strong>
+            <strong>{% trans "About synchronization" %}</strong>
         </div>
-        Herfra kan du synkronisere verdier fra arrangementet ned til aktiviteter på arrangementer. Hver node i treet
-        er en egen aktivitet. Hvis du ekspanderer noden vil du se hvilke felter som kan overskrives. Noder som er markert med
-        et <i class="fas fa-check text-success"></i> tegn er lik arrangementet, mens noder markert med <i class="fas fa-times text-danger"></i> devierer
-        fra arrangementet.
+        {% trans "From here you can synchronize values from the arrangement to its activities. Each node in the tree is an activity. Expand a node to see which fields can be overwritten. Nodes marked with a check match the arrangement, while nodes marked with an X differ from it." %}
         <br>
-        Du velger hvilke felter på hvilke aktiviteter som skal overskrives ved å huke av sjekkboksene. Når en sjekkboks er avhuket og synkronisering utføres så vil verdien som er
-        gjeldende på arrangementet bli skrevet inn på dette feltet på denne aktiviteten.
+        {% trans "Select which fields on which activities should be overwritten by checking the boxes. When synchronization runs, the arrangement value is written to the selected activity fields." %}
     </div>
 
     <div class="clearfix">
         <button class="btn wb-btn-blank border float-end mb-2" d-trigger="selectAll" type="button"
-            data-mdb-toggle="tooltip" title="Huk av alle synlige elementer (kan kombineres med søk">
+            data-mdb-toggle="tooltip" title="{% trans 'Select all visible items (can be combined with search)' %}">
             <i class="fas fa-check text-success"></i>&nbsp;
-            Velg alle
+            {% trans "Select all" %}
         </button>
         <button class="btn wb-btn-blank border float-end mb-2 me-2" d-trigger="deselectAll" type="button"
-            data-mdb-toggle="tooltip" title="Huk av alle synlige elementer (kan kombineres med søk">
+            data-mdb-toggle="tooltip" title="{% trans 'Select all visible items (can be combined with search)' %}">
             <i class="fas fa-times text-danger"></i>&nbsp;
-            Fjern alle valg
+            {% trans "Clear all selections" %}
         </button>
     </div>
 
-    <input type="search" class="form-control" id="cascade-tree-search" placeholder="Søk...">
+    <input type="search" class="form-control" id="cascade-tree-search" placeholder="{% trans 'Search' %}...">
 
     <div id="cascade-tree" style="max-height: 350px; overflow: scroll;">
     </div>
 
     <p class="text-end mt-2">
-        <strong id="selectedCount">0</strong> av <strong id="totalCount">0</strong> valgt for synkronisering
+        <strong id="selectedCount">0</strong> {% trans "of" %} <strong id="totalCount">0</strong> {% trans "selected for synchronization" %}
     </p>
 
     <div class="clearfix">
         <button class="wb-btn-main float-end" type="button" d-trigger="synchronize">
-            Synkroniser avhukede elementer
+            {% trans "Synchronize selected items" %}
         </button>
     </div>
 </div>

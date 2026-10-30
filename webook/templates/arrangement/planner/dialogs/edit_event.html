@@ -105,7 +105,7 @@
                       <h4>{% trans "People" %}</h4>
                       <div class="input-group">               
                         <div id="personAutocomplete" class="form-outline">
-                          <input type="text" class="form-control" placeholder="Søk etter person...">
+                          <input type="text" class="form-control" placeholder="{% trans 'Search for a person...' %}">
                         </div>       
                         <div class="input-group-append">
                           <button class="btn btn-success" style="box-shadow:none;border-top-left-radius: 0;border-bottom-left-radius: 0;"><i class="fas fa-plus"></i></button>
@@ -126,7 +126,7 @@
                       <h4>{% trans "Rooms" %}</h4>
                       <div class="input-group">                      
                         <div id="roomAutoComplete" class="form-outline">
-                          <input type="text" class="form-control" placeholder="Søk etter rom...">
+                          <input type="text" class="form-control" placeholder="{% trans 'Search for a room...' %}">
                         </div>   
                         <div class="input-group-append">
                           <button class="btn btn-success" style="box-shadow:none;border-top-left-radius: 0;border-bottom-left-radius: 0;"><i class="fas fa-plus"></i></button>
@@ -147,8 +147,7 @@
   
                   <div class="alert alert-info">
                     <i class="fas fa-info text-info"></i>&nbsp; 
-                    Personer og rom vil reserveres i rekvireringsfasen. Personene og rommene definert her vil ikke bli rekvirert og forespurt kvittert før 
-                    du faktisk velger å igangsette rekvirering, så det er ingen innlåsninger eller konsekvenser før den terskelen krysses.
+                    {% blocktrans %}People and rooms will be reserved during the requisitioning phase. The people and rooms defined here will not be requisitioned or requested for confirmation until you start requisitioning, so there are no commitments or consequences before that point.{% endblocktrans %}
                   </div>
   
                 </div>

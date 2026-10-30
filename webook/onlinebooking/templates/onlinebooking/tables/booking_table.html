@@ -3,6 +3,9 @@
         :data-source="dataSource"
         :columns="columns"
         :can-search="true"
+        empty-title="Ingen bookinger"
+        empty-message="Det finnes ingen bookinger å vise her ennå."
+        empty-icon="fas fa-calendar-xmark"
         @show="(data) => show(data.id)"
         @archive="(data) => archive(data.id)"
         ref="onlineBookingsTable">

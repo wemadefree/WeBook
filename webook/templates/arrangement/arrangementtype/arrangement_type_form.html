@@ -50,22 +50,21 @@
         </div>
         {% endif %}
 
-        <a class="btn wb-btn-secondary me-3 cancel-button" onClick="window.history.back(); return false;">
-            <i class="fas fa-times"></i>&nbsp; 
-            {% trans "Cancel" %}
-        </a>
-        <div class="float-end">
-            <button type="submit" class="btn wb-btn-main" value="submit" name="submit"
-                data-mdb-toggle="tooltip" title="{% trans 'Create a new arrangement type based on your input' %}">
-                <i class="fas fa-check"></i>&nbsp; 
-                {% trans "Save" %}
-            </button>
-        </div>
-
         {% if form.instance.id %}
-        <div class="text-end mt-3">
+        <div class="text-end text-muted mb-3">
             <small><em>Sist oppdatert {{ object.modified }}</em></small>
         </div>
         {% endif %}
+
+        <div class="d-flex flex-wrap justify-content-end gap-2 mt-4 pt-3 border-top">
+            <a class="btn wb-btn-secondary cancel-button" onClick="window.history.back(); return false;">
+                <i class="fas fa-times"></i>&nbsp;
+                {% trans "Cancel" %}
+            </a>
+            <button type="submit" class="btn wb-btn-main" value="submit" name="submit">
+                <i class="fas fa-check"></i>&nbsp;
+                {% trans "Save" %}
+            </button>
+        </div>
     </form>
 {% endblock %}

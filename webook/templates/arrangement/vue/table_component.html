@@ -1,5 +1,9 @@
 {% include "arrangement/vue/tristate_toggle_component.html" %}
 
+{% load i18n %}
+
+<template id="vuec-table-component-template">
+
 <template id="vuec-table-component-template">
     <div class="d-flex justify-content-between">
         <div class="input-group w-50" v-if="canSearch">
@@ -7,7 +11,7 @@
                 <i class="fas fa-search"></i>
             </span>
 
-            <input type="text" class="form-control form-control-lg border-start-0" placeholder="Søk..."
+            <input type="text" class="form-control form-control-lg border-start-0" placeholder="{% trans 'Search' %}..."
                 v-model="searchTerm">
         </div>
 
@@ -37,13 +41,18 @@
             <div>
                 <button class="btn btn-sm wb-btn-main mt-2" @click="addCreateRow()" v-if="canInsert">
                     <i class="fas fa-plus"></i>
-                    Legg til ny oppføring
+                    {% trans "Add new entry" %}
                 </button>
             </div>
         </div>
     </div>
 
-    <table :class="tableClasses ? tableClasses : 'table table-sm align-middle mt-3 text-center'">
+    <div v-if="isLoading" class="table-empty-state mt-3" role="status">
+        <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>
+        <span>{% trans "Loading" %}...</span>
+    </div>
+
+    <table v-else-if="itemsOnPage.length" :class="tableClasses ? tableClasses : 'table table-sm align-middle mt-3 text-center'">
         <thead ref="thead" style="background-color: ghostwhite;">
             <tr>
                 <th v-for="( options, columnKey ) in visibleColumns" @click="sortBy(columnKey)">
@@ -146,24 +155,34 @@
             </tr>
         </tbody>
     </table>
+
+    <div v-else class="table-empty-state mt-3" role="status">
+        <i :class="emptyIcon" aria-hidden="true"></i>
+        <div>
+            <h3 class="h6 mb-1">[[ searchTerm ? '{% trans "No results" %}' : emptyTitle ]]</h3>
+            <p class="mb-0 text-muted">
+                [[ searchTerm ? '{% trans "Try another search term or clear the search." %}' : emptyMessage ]]
+            </p>
+        </div>
+    </div>
     
     <nav aria-label=""
         :class="['d-flex align-items-center', compactNav ? 'justify-content-center' : 'justify-content-between']"
         v-if="totalPages > 1">
 
         <div v-if="!compactNav">
-            <em>[[entitiesCount]] resultater, totalt [[totalPages]] sider </em>
+            <em>[[entitiesCount]] {% trans "results" %}, {% trans "total" %} [[totalPages]] {% trans "pages" %}</em>
         </div>
         <ul class="pagination">
             <li class="page-item me-1" v-if="totalPages > (pageCircumference * 2)">
                 <a href="javascript:void(0)" class="page-link fw-bold" @click.stop="page = 1">
-                    Første
+                    {% trans "First" %}
                 </a>
             </li>
             <li class="page-item" :class="{ disabled: page == 1 }">
                 <a class="page-link" href="javascript:void(0)" @click.stop="page--">
                     <i class="fas fa-arrow-left"></i> &nbsp;
-                    Forrige
+                    {% trans "Previous" %}
                 </a>
             </li>
 
@@ -193,21 +212,21 @@
 
             <li class="page-item" :class="{ disabled: page == totalPages }">
                 <a class="page-link" href="javascript:void(0)" @click.stop="page++">
-                    Neste&nbsp;
+                    {% trans "Next" %}&nbsp;
                     <i class="fas fa-arrow-right"></i>
                 </a>
             </li>
 
             <li class="page-item ms-1" v-if="totalPages > (pageCircumference * 2)">
                 <a href="javascript:void(0)" class="page-link fw-bold" @click.stop="page = totalPages">
-                    Siste
+                    {% trans "Last" %}
                 </a>
             </li>
         </ul>
     </nav>
 
     <div v-if="compactNav" class="text-center">
-        <em>[[entitiesCount]] resultater</em>
+        <em>[[entitiesCount]] {% trans "results" %}</em>
     </div>
 
     <div v-if="entitiesCount == 0">
@@ -399,6 +418,13 @@
             if (this.isPaginated) {
                 if (searchTerm) {
                     extraQueryParams["search"] = searchTerm;
+                    const fieldsToSearch = Object.entries(this.columns)
+                        .filter(([, column]) => column.isSearchable)
+                        .map(([columnKey, column]) => column.field || columnKey);
+
+                    if (fieldsToSearch.length) {
+                        extraQueryParams["fields_to_search"] = fieldsToSearch.join(",");
+                    }
                 }
                 if (sortBy) {
                     extraQueryParams["sort_by"] = sortBy;
@@ -495,6 +521,18 @@
             rerenderToggle: Boolean,
             compactNav: Boolean,
             forceDropdownActionButton: Boolean,
+            emptyTitle: {
+                type: String,
+                default: "Ingen oppføringer"
+            },
+            emptyMessage: {
+                type: String,
+                default: "Det finnes ingen oppføringer å vise."
+            },
+            emptyIcon: {
+                type: String,
+                default: "fas fa-inbox"
+            },
             hideTableIfNoData: Boolean,
         },
         data() {
@@ -511,6 +549,7 @@
                 sortDirection: null,
                 searchTerm: "",
                 isApiDataSource: false,
+                isLoading: true,
                 format: (type, val) => {
                     switch (val) {
                         case Date:
@@ -602,6 +641,7 @@
         watch: {
             searchTerm() {
                 if (this.dataSource instanceof APITableDataSource) {
+                    this.page = 1;
                     this.refresh();
                     return;
                 }
@@ -814,15 +854,22 @@
                 });
             },
             async refresh() {
-                const data = await this.resolveDataSource();
+                this.isLoading = true;
 
-                this.columns = data.columns;
-                this.data = data.data;
-                this.actions = data.actions;
+                try {
+                    const data = await this.resolveDataSource();
 
-                this.totalPages = this.dataSource instanceof APITableDataSource ?
-                    this.dataSource.pagesInTotal || 1 :
-                    Math.ceil(this.visibleItems.length / this.itemsPerPage);
+                    this.columns = data.columns;
+                    this.data = data.data;
+                    this.actions = data.actions;
+
+                    this.totalPages = this.dataSource instanceof APITableDataSource ?
+                        this.dataSource.pagesInTotal || 1 :
+                        Math.ceil(this.visibleItems.length / this.itemsPerPage);
+                }
+                finally {
+                    this.isLoading = false;
+                }
             },
             /* Attempt to resolve the given property dataSource, which serves as the backing data feed.
             A data source may be either an array, or a function that returns an array. If it is the latter

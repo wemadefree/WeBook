@@ -54,11 +54,11 @@
                     <div class="row">
                         <div class="col-6">
                             <label for="" class="d-block fw-bold">Fra</label>
-                            <vue-date-picker v-model="event.start"  locale="nb-no" :format="dateFormatter"></vue-date-picker>
+                            <vue-date-picker v-model="event.start" :locale="document.documentElement.lang" :format="dateFormatter"></vue-date-picker>
                         </div>
                         <div class="col-6">
                             <label for="" class="d-block fw-bold">Til</label>
-                            <vue-date-picker v-model="event.end" locale="nb-no" :format="dateFormatter"></vue-date-picker>
+                            <vue-date-picker v-model="event.end" :locale="document.documentElement.lang" :format="dateFormatter"></vue-date-picker>
                         </div>
                     </div>
     

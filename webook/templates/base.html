@@ -6,7 +6,32 @@
 
 {{ MESSAGES_SERIALIZABLE | json_script:"queuedMessages" }}
 
-<html lang="en">
+{% get_current_language as CURRENT_LANGUAGE %}
+<script>
+  window.WEBOOK_MESSAGES = {
+    search: "{% trans 'Search' %}...",
+    cancel: "{% trans 'Cancel' %}",
+    noChangesSaved: "{% trans 'No changes were saved.' %}",
+    roomAdded: "{% trans 'Room added' %}",
+    personAdded: "{% trans 'People added' %}",
+    inspectEventTitle: "{% trans 'Inspect event' %}",
+    changesSaved: "{% trans 'Changes saved' %}",
+    collisionTitle: "{% trans 'Conflict' %}",
+    collisionMainEvent: "{% trans 'The activity conflicts with another activity on an exclusive resource.' %}",
+    collisionAfterSetup: "{% trans 'The setup time after the activity conflicts with another activity on an exclusive resource.' %}",
+    collisionBeforeSetup: "{% trans 'The setup time before the activity conflicts with another activity on an exclusive resource.' %}",
+    collisionDetailsPrefix: "{% trans 'Conflicts with' %}",
+    collisionLocationPrefix: "{% trans 'in' %}",
+    addedPeopleToEvent: "{% trans 'Selected people have been added to the activity.' %}",
+    plannersAdded: "{% trans 'Planner(s) added' %}",
+    genericLoadError: "{% trans 'Something went wrong. Please try again later.' %}",
+    contextInspectArrangement: "{% trans 'Inspect arrangement' %}",
+    contextInspectTime: "{% trans 'Inspect time' %}",
+    contextDeleteArrangement: "{% trans 'Delete arrangement' %}",
+    contextDeleteActivity: "{% trans 'Delete activity' %}"
+  };
+</script>
+<html lang="{{ CURRENT_LANGUAGE }}">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -108,10 +133,10 @@
       {% with request.resolver_match.url_name as url_name %}
       <div class="text-center mb-2">
         <h5 class="fw-bold">
-          Hei, {{ request.user.person.first_name }}
+          {% trans "Hello" %}, {{ request.user.person.first_name }}
         </h5>
         <a class="btn wb-btn-main" href="{% url 'account_logout' %}">
-          Logg ut
+          {% trans "Sign out" %}
         </a>
       </div>
 
@@ -126,14 +151,14 @@
         <li class="sidenav-item {% if url_name == 'detail' %}active{% endif %}">
           <a  href="{% url 'users:detail' request.user.slug %}" 
               class="sidenav-link">
-            <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Min Side</span></a
+            <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>{% trans "My page" %}</span></a
           >
         </li>
     
         <li class="sidenav-item {% if url_name == 'planner_calendar' %}active{% endif %}">
           <a  href="{% url 'arrangement:planner_calendar' %}" 
               class="sidenav-link">
-            <i class="fas fa-calendar-plus fa-fw me-3"></i><span>Planleggingskalender</span></a
+            <i class="fas fa-calendar-plus fa-fw me-3"></i><span>{% trans "Planning calendar" %}</span></a
           >
         </li>
 
@@ -148,14 +173,14 @@
         <li class="sidenav-item {% if url_name == 'dashboard' %}active{% endif %}">
           <a  href="{% url 'onlinebooking:dashboard' %}" 
               class="sidenav-link">
-            <i class="fas fa-calendar-alt fa-fw me-3"></i><span>Online Booking</span></a
+            <i class="fas fa-calendar-alt fa-fw me-3"></i><span>{% trans "Online booking" %}</span></a
           >
         </li>
         {% if user|has_group:"planners" %}
         <li class="sidenav-item pt-3">
           <span class="sidenav-subheading text-muted fw-bold">
             <i class="fas fa-cubes"></i>&nbsp;
-            Ressurser
+            {% trans "Resources" %}
           </span>
           
           <hr>
@@ -163,65 +188,65 @@
           <li class="sidenav-item {% if url_name == 'location_list' %}active{% endif %}">
             <a  href="{% url 'arrangement:location_list' %}" 
             class="sidenav-link">
-              <i class="fas fa-building fa-fw me-3"></i><span>Lokasjoner</span></a
+              <i class="fas fa-building fa-fw me-3"></i><span>{% trans "Locations" %}</span></a
             >
           </li>
 
           <li class="sidenav-item {% if url_name == 'room_preset_list' %}active{% endif %}">
             <a  href="{% url 'arrangement:room_preset_list' %}" 
             class="sidenav-link">
-              <i class="fas fa-building fa-fw me-3"></i><span>Rom Preset</span></a
+              <i class="fas fa-building fa-fw me-3"></i><span>{% trans "Room presets" %}</span></a
             >
           </li>
 
           <li class="sidenav-item {% if url_name == 'person_list' %}active{% endif %}">
             <a  href="{% url 'arrangement:person_list' %}" 
                 class="sidenav-link">
-              <i class="fas fa-users fa-fw me-3"></i><span>Personer</span></a
+              <i class="fas fa-users fa-fw me-3"></i><span>{% trans "People" %}</span></a
             >
           </li>
           <li class="sidenav-item {% if url_name == 'organization_list' %}active{% endif %}">
             <a  href="{% url 'arrangement:organization_list' %}"
                 class="sidenav-link">
-              <i class="fas fa-dollar-sign fa-fw me-3"></i><span>Kunder</span>
+              <i class="fas fa-dollar-sign fa-fw me-3"></i><span>{% trans "Customers" %}</span>
             </a>
           </li>
           
         </li>
 
         <li class="sidenav-item pt-3">
-          <span class="sidenav-subheading text-muted fw-bold"><i class="fas fa-cogs"></i>&nbsp; Typer</span>
+          <span class="sidenav-subheading text-muted fw-bold"><i class="fas fa-cogs"></i>&nbsp; {% trans "Types" %}</span>
           <hr>
 
         </li>
         <li class="sidenav-item {% if url_name == 'audience_list' %}active{% endif %}">
           <a  href="{% url 'arrangement:audience_list' %}"
               class="sidenav-link">
-            <span>Målgrupper</span>
+            <span>{% trans "Audiences" %}</span>
             </a>
         </li>
         <li class="sidenav-item {% if url_name == 'statustype_list' %}active{% endif %}">
           <a  href="{% url 'arrangement:statustype_list' %}"
               class="sidenav-link">
-            <span>Status</span></a
+            <span>{% trans "Status" %}</span></a
           >
         </li>
         <li class="sidenav-item {% if url_name == 'arrangement_type_list' %}active{% endif %}">
           <a  href="{% url 'arrangement:arrangement_type_list' %}" 
               class="sidenav-link">
-            <span>Arrangement</span>
+            <span>{% trans "Arrangements" %}</span>
           </a>
         </li>
         <!-- <li class="sidenav-item {% if url_name == "servicetype_list" %}active{% endif %}">
           <a  href="{% url 'arrangement:servicetype_list' %}" 
               class="sidenav-link">
-            <span>Tjenestetyper</span>
+            <span>{% trans "Service types" %}</span>
             </a>
         </li> -->
         <li class="sidenav-item {% if url_name == "organizationtype_list" %}active{% endif %}">
           <a  href="{% url 'arrangement:organizationtype_list' %}"
               class="sidenav-link">
-            <span>Organisasjonstyper</span>
+            <span>{% trans "Organization types" %}</span>
           </a>
         </li>
         {% endif %}
@@ -230,7 +255,7 @@
         <li class="sidenav-item mb-1 pt-3">
           <span class="sidenav-subheading text-muted fw-bold">
             <i class="fas fa-tools"></i>&nbsp;
-            Administrasjon
+            {% trans "Administration" %}
           </span>
           <hr>
         </li>
@@ -240,7 +265,7 @@
         <li class="sidenav-item {% if url_name == 'user_list' %}active{% endif %} mb-1">
           <a  href="{% url 'users:user_admin_list' %}"
               class="sidenav-link sidenav-link-success-subtle">
-            <i class="fas fa-user-shield fa-fw me-3"></i><span>Brukere</span></a
+            <i class="fas fa-user-shield fa-fw me-3"></i><span>{% trans "Users" %}</span></a
           >
         </li>
         {% endif %}
@@ -248,7 +273,7 @@
         <li class="sidenav-item {% if url_name == 'screen_list' %}active{% endif %} mb-1">
           <a  href="{% url 'screenshow:screen_list' %}"
               class="sidenav-link sidenav-link-info-subtle">
-            <i class="fas fa-tv fa-fw me-3"></i><span>Skjermvisning</span></a
+            <i class="fas fa-tv fa-fw me-3"></i><span>{% trans "Screen display" %}</span></a
           >
         </li>
         {% endif %}
@@ -256,7 +281,7 @@
         {% if ADMIN_ENABLED %}
         <li class="sidenav-item mb-1">
           <a class="sidenav-link sidenav-link-danger-subtle" href="{% url 'admin:index' %}">
-            <i class="fas fa-tools fa-fw me-3"></i><span>Django Admin Panel</span></a
+            <i class="fas fa-tools fa-fw me-3"></i><span>{% trans "Django admin panel" %}</span></a
           >
         </li>
         {% endif %}
@@ -271,22 +296,22 @@
       {% endwith %}
       
     </nav>
-      
       <div class="w-100 " id="contentWrapper">
         <header>
           <nav id="top-navbar" class="navbar navbar-expand-lg navbar-light shadow-0 border-bottom">
             <div class="container-fluid d-flex">
               <button
                 onclick="toggleSidebar()"
-                class="btn wb-btn-white wb-large-btn btn-lg"
+                class="top-navbar-menu-button btn wb-btn-white"
                 aria-controls="#sidenav"
                 aria-haspopup="true"
+                aria-label="{% trans 'Toggle navigation' %}"
               >
                 <i class="fas fa-bars"></i>
               </button>
-              <h2 class="mb-0 ms-2 wb-text-main text-uppercase">
-                {{APP_TITLE}}
-              </h2>
+              <div class="top-navbar-title application-title ms-3 wb-text-main">
+                {{ APP_TITLE|lower|capfirst }}
+              </div>
 
               <div>
                 {% if ALERT_TEXT_ALL_USERS %}
@@ -308,6 +333,17 @@
                   <span class="input-group-text border-0"><i class="fas fa-search" aria-hidden="true"></i></span>
                 </form> 
               </ul>
+              {% get_available_languages as AVAILABLE_LANGUAGES %}
+              <form class="d-flex align-items-center ms-3" method="post" action="{% url 'set_language' %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <label class="visually-hidden" for="language-selector">{% trans "Language" %}</label>
+                <select class="form-select form-select-sm" id="language-selector" name="language" onchange="this.form.submit()" aria-label="{% trans 'Change language' %}">
+                  {% for language_code, language_name in AVAILABLE_LANGUAGES %}
+                    <option value="{{ language_code }}"{% if language_code == CURRENT_LANGUAGE %} selected{% endif %}>{{ language_name }}</option>
+                  {% endfor %}
+                </select>
+              </form>
               {% if request.user.is_authenticated %}
                 <div class="btn-group shadow-0 d-none d-md-flex">
                   <button
@@ -341,11 +377,10 @@
         </header> 
         <div  id="mainBodyContainer" class="{% block container_classes %} container {% endblock %}">
           {% block superheader %}
-            <div class="mt-2"></div>
           {% endblock %}
           {% block noheader %}
-          <section>
-            <h1 class="h1 mb-0 text-muted h2 header-fonted">
+          <section class="section-header-band">
+            <h1 class="section-header-title header-fonted">
               <i class="{% block section_icon_class %}{% endblock %}"></i>
               {% block section_title_block %}
               
@@ -364,16 +399,10 @@
                 {{ CRUMBS|crumbinator }}
               {% endif %}
             </div>
-            <div class="mt-3">
-              {% block beneath_breadcrumbs_block %}
-              {% endblock %}
-            </div>
+            <div class="section-header-actions">{% block beneath_breadcrumbs_block %}{% endblock %}</div>
           </section>
+          <div class="section-content-spacer"></div>
           {% endblock %}
-        </section>
-    
-    
-        <div class="mb-4"></div>
     
         {% block content %}
         {% endblock %}

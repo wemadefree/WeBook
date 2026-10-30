@@ -114,7 +114,7 @@ container-fluid
                     <div class="col-4 d-flex justify-content-end">
                         <div>
                             <button class="btn wb-btn-main" id="newArrangementBtn" @click="isPlannerDialogOpen = true">
-                                <i class="fas fa-plus"></i>&nbsp; Opprett arrangement
+                                <i class="fas fa-plus"></i>&nbsp; {% trans "Create arrangement" %}
                             </button>
                         </div>
                     </div>
@@ -129,7 +129,7 @@ container-fluid
         <div class="d-flex me-2">
             <div class="me-1">
                 <advanced-tree-filter
-                    label="Lokasjoner & Rom"
+                    label="{% trans 'Locations & Rooms' %}"
                     icon="fa-building"
                     @filter="(selected) => { console.log('Location&Rooms Filter', selected); }"
                     data-source-url="{% url 'arrangement:location_tree' %}">
@@ -138,7 +138,7 @@ container-fluid
 
             <div class="me-1">
                 <advanced-tree-filter
-                    label="Målgrupper"
+                    label="{% trans 'Audiences' %}"
                     icon="fa-theater-masks"
                     @filter="(selected) => { console.log('Audience filter', selected); }"
                     data-source-url="{% url 'arrangement:audience_tree' %}">
@@ -147,7 +147,7 @@ container-fluid
 
             <div class="me-1">
                 <advanced-tree-filter
-                    label="Arrangementstyper"
+                    label="{% trans 'Arrangement types' %}"
                     icon="fa-cog"
                     @filter="(selected) => { console.log('ArrangementType Filter', selected); }"
                     data-source-url="{% url 'arrangement:arrangement_type_tree_list' %}">
@@ -156,7 +156,7 @@ container-fluid
 
             <div class="me-1">
                 <advanced-tree-filter
-                    label="Status"
+                    label="{% trans 'Status' %}"
                     icon="fa-cog"
                     @filter="(selected) => { console.log('StatusType filter', selected); }"
                     cascade-behaviour="parent_independent_cascade"
@@ -402,7 +402,7 @@ container-fluid
                     return {
                         items: {
                             arrangement_inspector: {
-                                name: "<i class='fas fa-search'></i>&nbsp; Inspiser arrangement",
+                                name: `<i class='fas fa-search'></i>&nbsp; ${window.WEBOOK_MESSAGES?.contextInspectArrangement || "Inspect arrangement"}`,
                                 isHtmlName: true,
                                 callback: (key, opt) => {
                                     const arrangementId = this.getArrangementIdFromElement(opt.$trigger[0]);
@@ -412,7 +412,7 @@ container-fluid
                                 }
                             },
                             event_inspector: {
-                                name: "<i class='fas fa-search'></i>&nbsp; Inspiser tidspunkt",
+                                name: `<i class='fas fa-search'></i>&nbsp; ${window.WEBOOK_MESSAGES?.contextInspectTime || "Inspect time"}`,
                                 isHtmlName: true,
                                 callback: (key, opt) => {
                                     const eventId = this.getEventIdFromElement(opt.$trigger[0]);
@@ -423,7 +423,7 @@ container-fluid
                             },
                             sep: "---------",
                             delete_event: {
-                                name: "<i class='fas fa-trash'></i>&nbsp; Slett tidspunkt",
+                                name: `<i class='fas fa-trash'></i>&nbsp; ${window.WEBOOK_MESSAGES?.contextDeleteActivity || "Delete activity"}`,
                                 isHtmlName: true,
                                 callback: (key, opt) => {
                                     const eventId = this.getEventIdFromElement(opt.$trigger[0]);
@@ -456,7 +456,7 @@ container-fluid
                                 }
                             },
                             delete_arrangement: {
-                                name: "<i class='fas fa-trash'></i>&nbsp; Slett arrangement",
+                                name: `<i class='fas fa-trash'></i>&nbsp; ${window.WEBOOK_MESSAGES?.contextDeleteArrangement || "Delete arrangement"}`,
                                 isHtmlName: true,
                                 callback: (key, opt) => {
                                     const arrangementId = this.getArrangementIdFromElement(opt.$trigger[0]);

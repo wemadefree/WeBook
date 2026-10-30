@@ -2,7 +2,6 @@ from enum import Enum
 from functools import reduce
 import inspect
 from typing import Any, Callable, Dict, Generic, List, Optional, Type, TypeVar
-import django
 from django.http import HttpResponse
 from django.core.paginator import EmptyPage
 from django.shortcuts import get_object_or_404
@@ -590,40 +589,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             if self.pre_create_hook is not None:
                 (instance, payload) = self.pre_create_hook(instance, payload)
 
-            delayed_m2m_set_operations = []
-
-            for key, value in dict(payload).items():
-                if value is NOT_SET:
-                    continue
-
-                field_type = self.model._meta.get_field(key)
-
-                if type(field_type) == django.db.models.fields.related.ManyToManyField:
-                    delayed_m2m_set_operations.append((key, value))
-                else:
-                    try:
-                        setattr(instance, key, value)
-                    except Exception as e:
-                        print(
-                            f"Error setting attribute {key} on {self.model_name_singular}: {e}"
-                        )
-                        raise e
-
-            instance.save()
-
-            if delayed_m2m_set_operations:
-                for key, value in delayed_m2m_set_operations:
-                    if hasattr(instance, key):
-                        attr = getattr(instance, key)
-                        if isinstance(value, list):
-                            attr.set(value)
-                        else:
-                            attr.set([value])
-                    else:
-                        raise Exception(
-                            f"Field {key} is a ManyToManyField, but not found on {self.model_name_singular}."
-                        )
-
+            self.apply_payload(instance, payload)
             return instance
 
         post_func.__annotations__ = {
@@ -637,25 +603,38 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
     def get_retrieve_func(self):
         # @decorate_view(transaction.non_atomic_requests(using="default"))
         def retrieve_func(request, id: int) -> self.get_schema:
-            qs = self.get_queryset(Views.GET, request)
-            try:
-                # return self.model.objects.get(id=id)
-                result = get_object_or_404(
-                    qs,
-                    id=id,
-                )
+            result = get_object_or_404(self.get_queryset(Views.GET, request), id=id)
 
-                self.ensure_authorization(
-                    view=Views.GET, request=request, instance=result
-                )
+            self.ensure_authorization(view=Views.GET, request=request, instance=result)
 
-                return self.get_schema.from_orm(result)
-            except self.model.DoesNotExist:
-                raise HttpResponse(status=404)
+            return self.get_schema.from_orm(result)
 
         retrieve_func.__name__ = f"get_{self.model_name_singular.lower()}"
 
         return retrieve_func
+
+    def apply_payload(self, instance, payload, only_fields_set: bool = False) -> None:
+        """Set payload values on instance and save it. Many-to-many values are set after
+        saving. With only_fields_set (PATCH), only fields explicitly sent by the client are applied."""
+        many_to_many_values = {}
+        many_to_many_fields = {
+            field.name for field in instance._meta.many_to_many
+        }
+
+        for key, value in dict(payload).items():
+            if value is NOT_SET:
+                continue
+            if only_fields_set and key not in payload.model_fields_set:
+                continue
+            if key in many_to_many_fields:
+                many_to_many_values[key] = value
+            else:
+                setattr(instance, key, value)
+
+        instance.save()
+
+        for key, value in many_to_many_values.items():
+            getattr(instance, key).set(value if isinstance(value, list) else [value])
 
     def __transform_data_to_export(self, data: List) -> List:
         if hasattr(self, "transform_to_export"):
@@ -930,15 +909,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             if self.pre_update_hook is not None:
                 self.pre_update_hook(instance, payload)
 
-            for key, value in dict(payload).items():
-                if value is not NOT_SET:
-                    if type(value) == list:
-                        related_field = getattr(instance, key)
-                        related_field.set(value)
-                    else:
-                        setattr(instance, key, value)
-
-            instance.save()
+            self.apply_payload(instance, payload)
 
             return OperationResultSchema[self.get_schema](
                 operation=OperationType.UPDATE,
@@ -964,10 +935,7 @@ class CrudRouter(Router, ManyToManyRelRouterMixin):
             if self.pre_update_hook is not None:
                 self.pre_update_hook(instance, payload)
 
-            for key, value in dict(payload).items():
-                if key in payload.model_fields_set:
-                    setattr(instance, key, value)
-            instance.save()
+            self.apply_payload(instance, payload, only_fields_set=True)
 
             return OperationResultSchema[self.get_schema](
                 operation=OperationType.UPDATE,

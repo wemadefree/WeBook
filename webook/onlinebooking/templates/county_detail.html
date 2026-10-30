@@ -109,13 +109,13 @@ container
             {% endif %}
             {% if county.city_segment_enabled %}
             <li class="nav-item" role="presentation">
-              <button class="nav-link text-center" id="segments-tab" data-mdb-toggle="tab" href="#segmentsTab" role="tab" aria-controls="segmentsTab" aria-selected="true">
+                            <button class="nav-link text-center{% if not county.school_enabled %} active{% endif %}" id="segments-tab" data-mdb-toggle="tab" href="#segmentsTab" role="tab" aria-controls="segmentsTab" aria-selected="{% if not county.school_enabled %}true{% else %}false{% endif %}">
                 <span class="h6 mb-0"><i class="fas fa-map-marker-alt"></i></span>
                 &nbsp; <span class="h6">Bydeler</span></button>
             </li>
             {% endif %}
             <li class="nav-item" role="presentation">
-                <button class="nav-link text-center" id="bookings-tab" data-mdb-toggle="tab" href="#bookingsTab" role="tab" aria-controls="bookingsTab" aria-selected="true">
+                                <button class="nav-link text-center{% if not county.school_enabled and not county.city_segment_enabled %} active{% endif %}" id="bookings-tab" data-mdb-toggle="tab" href="#bookingsTab" role="tab" aria-controls="bookingsTab" aria-selected="{% if not county.school_enabled and not county.city_segment_enabled %}true{% else %}false{% endif %}">
                   <span class="h6 mb-0"><i class="fas fa-calendar"></i></span>
                   &nbsp; <span class="h6">Bookinger</span></button>
               </li>
@@ -134,14 +134,14 @@ container
             {% endif %}
 
             {% if county.city_segment_enabled %}
-            <div class="tab-pane fade" role="tabpanel" id="segmentsTab">
+            <div class="tab-pane fade{% if not county.school_enabled %} show active{% endif %}" role="tabpanel" id="segmentsTab">
                 <city-segments-table-component
                     :county-id="{{ object.id }}">
                 </city-segments-table-component>
             </div>
             {% endif %}
 
-            <div class="tab-pane fade" role="tabpanel" id="bookingsTab">
+            <div class="tab-pane fade{% if not county.school_enabled and not county.city_segment_enabled %} show active{% endif %}" role="tabpanel" id="bookingsTab">
                 <booking-table-component
                     :county-id="{{ object.id }}">
                 </booking-table-component>

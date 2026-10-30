@@ -8,16 +8,16 @@
 
 <div id="{{dialogId}}" title="{{object.name}}" class="{{discriminator}}">
     <h3>{{object.name}}</h3>
-    <h5>Fra {{object.start.start}} til {{object.end.end}}</h5>
+    <h5>{% trans "From" %} {{object.start.start}} {% trans "to" %} {{object.end.end}}</h5>
 
     {% if user|has_group:"planners" or user.is_superuser %}
-    <button class="btn wb-btn-secondary mb-3" d-trigger="delete"><i class="fas fa-trash"></i>&nbsp; Slett</button>
+    <button class="btn wb-btn-secondary mb-3" d-trigger="delete"><i class="fas fa-trash"></i>&nbsp; {% trans "Delete" %}</button>
     <button class="btn wb-btn-main mb-3" 
         d-trigger="triggerCascadeTree"
         data-mdb-toggle="tooltip"
-        title="Synkroniser verdier fra arrangementet ned til aktivitetene">
+        title="{% trans 'Synchronize values from the arrangement to its activities' %}">
         <i class="fas fa-tree"></i>
-        Kaskadeendringer & Synkronisitet
+        {% trans "Cascade changes and synchronization" %}
     </button>
     {% endif %}
     
@@ -27,7 +27,7 @@
     <div class="row">
         <div class="col-12 col-lg-4 col-md-6">
             <div class="alert wb-bg-secondary">
-                <h6 class="mb-0 d-inline fw-lighter"><i class="fas fa-star"></i> Hovedplanlegger:</h4>
+                <h6 class="mb-0 d-inline fw-lighter"><i class="fas fa-star"></i> {% trans "Main planner" %}:</h4>
                 <h4 class="mb-0">{{ object.responsible }}</h4>
 
                 <span style="text-wrap: wrap;"><i class="fas fa-envelope"></i> {{ object.responsible.personal_email }}</span>
@@ -37,7 +37,7 @@
                     <a class="btn wb-btn-blank float-end shadow-0" href="#"
                             type="button"
                             id="mainPlannerDialog__promotePlannerBtn">
-                        Endre
+                        {% trans "Change" %}
                     </a>
                 </div>
                 {% endif %}
@@ -49,7 +49,7 @@
             <div class="alert wb-bg-secondary">
                 <h6 class="mb-0 d-inline fw-lighter">
                     <i class="fas fa-calendar"></i>
-                    Neste aktivitet
+                    {% trans "Next activity" %}
                     <h4 class="mb-0">{{object.next_event.title}}</h4>
                     <small>{{object.next_event.start|date:"d.m.Y H:i:s"}} - {{object.next_event.end|date:"d.m.Y H:i:s"}}</small>
                 </h6>
@@ -67,7 +67,7 @@
                 class="nav-link active"
                 role="tab"
                 data-mdb-toggle="tab">
-                Arrangementsinformasjon
+                {% trans "Arrangement information" %}
             </a>
         </li>
         <!-- Timeslots -->
@@ -77,7 +77,7 @@
                 class="nav-link"
                 role="tab"
                 data-mdb-toggle="tab">
-                Tidsplaner & Aktiviteter
+                {% trans "Time plans & activities" %}
             </a>
         </li>
         <!-- Notes -->
@@ -87,7 +87,7 @@
                 class="nav-link"
                 role="tab"
                 data-mdb-toggle="tab">
-                Notater
+                {% trans "Notes" %}
             </a>
         </li>
         <!-- Files -->
@@ -97,7 +97,7 @@
                 class="nav-link"
                 role="tab"
                 data-mdb-toggle="tab">
-                Filer
+                {% trans "Files" %}
             </a>
         </li>
 
@@ -109,7 +109,7 @@
                 class="nav-link"
                 role="tab"
                 data-mdb-toggle="tab">
-                Skole
+                {% trans "School" %}
             </a>
         </li>
         {% endif %}
@@ -133,7 +133,7 @@
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-sm-12">
                             <div class="form-group mb-2">
-                                <label class="form-label">Navn:</label>
+                                <label class="form-label">{% trans "Name" %}:</label>
                                 <input type="text"
                                     class="form-control form-control-md"
                                     id="{{ form.name.id_for_label }}"
@@ -150,7 +150,7 @@
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12">
                             <div class="form-group mb-2">
-                                <label class="form-label">Navn (<em class="small">Engelsk</em>):</label>
+                                <label class="form-label">{% trans "Name" %} (<em class="small">{% trans "English" %}</em>):</label>
                                 <input type="text"
                                     class="form-control form-control-md"
                                     id="{{ form.name_en.id_for_label }}"
@@ -167,7 +167,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Billettinfo:</label>
+                        <label class="form-label">{% trans "Ticket information" %}:</label>
                         <input type="text"
                             class="form-control form-control-md"
                             id="{{ form.ticket_code.id_for_label }}"
@@ -185,14 +185,14 @@
                     <div class="form-group mt-4">
                         <div class="row mt-2">
                             <div class="col-lg-6 col-sm-12">
-                                <h4 class="mb-0">Møtested</h4>
-                                <label class="form-label">Møtested:</label>
+                                <h4 class="mb-0">{% trans "Meeting place" %}</h4>
+                                <label class="form-label">{% trans "Meeting place" %}:</label>
                                 <input type="text"
                                     class="form-control form-control-md"
                                     id="{{ form.meeting_place.id_for_label }}"
                                     value="{{ form.meeting_place.value|default:'' }}"
                                     name="{{ form.meeting_place.name }}"
-                                    placeholder="Møtested..."/>
+                                    placeholder="{% trans 'Meeting place' %}..."/>
                 
                                 {% if form.meeting_place.errors|length > 0 %}
                                     <div class="alert alert-danger">
@@ -202,15 +202,15 @@
                             </div>
         
                             <div class="col-lg-6 col-sm-12">
-                                <h4 class="mb-0">Besøkende</h4>
-                                <label class="form-label">Forventet antall besøkende:</label>
+                                <h4 class="mb-0">{% trans "Visitors" %}</h4>
+                                <label class="form-label">{% trans "Expected visitors" %}:</label>
                                 <input type="number"
                                     min="0"
                                     class="form-control form-control-md"
                                     id="{{ form.expected_visitors.id_for_label }}"
                                     value="{{ form.expected_visitors.value|default:'0' }}"
                                     name="{{ form.expected_visitors.name }}"
-                                    placeholder="{% trans 'Forventet antall besøkende' %}..."
+                                    placeholder="{% trans 'Expected visitors' %}..."
                                     required/>
                 
                                 {% if form.expected_visitors.errors|length > 0 %}
@@ -221,7 +221,7 @@
                             </div>
         
                             <div class="col-lg-6 col-sm-12">
-                                <label class="form-label">Møtested (Engelsk):</label>
+                                <label class="form-label">{% trans "Meeting place" %} ({% trans "English" %}):</label>
                                 <input type="text"
                                     class="form-control form-control-md"
                                     id="{{ form.meeting_place_en.id_for_label }}"
@@ -237,14 +237,14 @@
                             </div>
         
                             <div class="col-lg-6 col-sm-12">
-                                <label class="form-label">Faktisk antall besøkende:</label>
+                                <label class="form-label">{% trans "Actual visitors" %}:</label>
                                 <input type="number"
                                     min="0"
                                     class="form-control form-control-md"
                                     id="{{ form.actual_visitors.id_for_label }}"
                                     value="{{ form.actual_visitors.value|default:'' }}"
                                     name="{{ form.actual_visitors.name }}"
-                                    placeholder="{% trans 'Faktisk antall besøkende' %}..."/>
+                                    placeholder="{% trans 'Actual visitors' %}..."/>
         
                                 {% if form.actual_visitors.errors|length > 0 %}
                                     <div class="alert alert-danger">
@@ -254,14 +254,14 @@
                             </div>
                         </div>
                     </div>
-                    <h4 class="mt-3">Planleggere</h4>
+                    <h4 class="mt-3">{% trans "Planners" %}</h4>
                     <div class="form-group mt-2">
-                        <label class="form-label">Planleggere:</label>
+                        <label class="form-label">{% trans "Planners" %}:</label>
                         <div class="row">
                             <div class="col-lg-6 col-sm-12">
                                 <div>
                                     <select multiple id="mainPlannerDialog_plannersSelect" class="form-control">
-                                        <option value="MAIN" data-toggle="tooltip" title="Hovedplanlegger" disabled>{{object.responsible}}</option>
+                                        <option value="MAIN" data-toggle="tooltip" title="{% trans 'Main planner' %}" disabled>{{object.responsible}}</option>
                                         {% for planner in object.planners.all %}
                                             <option value="{{planner.pk}}">{{planner}}</option>
                                         {% endfor %}
@@ -274,14 +274,14 @@
                                     <a href='#' class='shadow-0 btn wb-btn-secondary btn-block mb-2 btn-sm'
                                             d-trigger="triggerAddPlannersDialog">
                                         <i class='fas fa-plus'></i>
-                                        Legg til planlegger(e)
+                                        {% trans "Add planner(s)" %}
                                     </a>
                                 </div>
                                 <div>
                                     <a href='#' class='shadow-0 btn wb-btn-secondary btn-block btn-sm' id='mainDialog_removePlannerBtn'
                                         d-trigger="removePlanners">
                                         <i class='fas fa-trash'></i>
-                                        Fjern valgte planleggere
+                                        {% trans "Remove selected planners" %}
                                     </a>
                                 </div>
                             </div>
@@ -291,14 +291,14 @@
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12">
                     <div class="form-group">
-                        <label for="{{form.location.id_for_label}}" class="form-label">Lokasjon</label>
+                        <label for="{{form.location.id_for_label}}" class="form-label">{% trans "Location" %}</label>
                         {{ form.location }}
                     </div>
                     <div id="jsTreeSelects">
                         <div class="mb-2 mt-2">
                             <label for="{{ form.audience.id_for_label }}" class="form-label">
                                 <i class="fas fa-users"></i>&nbsp;
-                                Målgruppe
+                                {% trans "Audience" %}
                             </label>
                             <div id="audience_jstree_select" class="dialog-popover-left-fix"></div>
                             
@@ -311,7 +311,7 @@
                         <div class="mb-2">
                             <label for="{{ form.arrangement_type.id_for_label }}" class="form-label select-label">
                                 <i class="fas fa-cog"></i>&nbsp;
-                                Arrangementstype
+                                {% trans "Arrangement type" %}
                             </label>
                             <div id="arrangement_type_jstree_select" class="dialog-popover-left-fix"></div>
                             {% if form.arrangement_type.errors|length > 0 %}
@@ -323,7 +323,7 @@
                         <div class="mb-2">
                             <label>
                                 <i class="fas fa-cog"></i>&nbsp;
-                                Status
+                                {% trans "Status" %}
                             </label>
                             <div id="status_type_jstree_select" class="dialog-popover-left-fix"></div>
                             {% if form.status_type.errors|length > 0 %}
@@ -334,11 +334,11 @@
                         </div>
                     </div>
                     <div class="form-group mt-3">
-                        <h4>Skjermvisning</h4>
+                        <h4>{% trans "Screen display" %}</h4>
         
                         <div class="row">
                             <div class="col-lg-4 col-sm-12">
-                                <label class="form-label">Vises på skjermen: </label>
+                                <label class="form-label">{% trans "Displayed on screen" %}: </label>
                                 {{ form.display_layouts }}
                             </div>
                             <div class="col-lg-8 col-sm-12 mt-sm-2 mt-lg-0 mb-2">
@@ -365,13 +365,13 @@
                     <a href="#" class="btn wb-btn-secondary btn-lg"
                         d-trigger="close">
                         <i class="fas fa-times"></i>
-                        Avbryt / Lukk
+                        {% trans "Cancel / Close" %}
                     </a>
                     
                     <a class="btn shadow-0 wb-btn-main" href="#"
                         d-trigger="submit">
                         <i class="fas fa-check"></i>
-                        Lagre endringer
+                        {% trans "Save changes" %}
                     </a>
                 </div>
             </div>
@@ -386,11 +386,11 @@
                 <div class="float-end">
                     <a class="btn wb-btn-main"
                         d-trigger="triggerNewTimePlanDialog">
-                        Ny tidsplan
+                        {% trans "New time plan" %}
                     </a>
                     <a class="btn wb-btn-main"
                         d-trigger="triggerNewSimpleActivityDialog">
-                        Ny enkel aktivitet
+                        {% trans "New simple activity" %}
                     </a>
                 </div>
             </div>
@@ -399,12 +399,12 @@
             <ul class="nav nav-tabs webook-tabs mt-1" role="tablist">
                 <li class="nav-item" role="presentation">
                     <a href="#timeslots_tabs_series" class="nav-link active" data-mdb-toggle="tab">
-                        Tidsplaner
+                        {% trans "Time plans" %}
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
                     <a href="#timeslots_tabs_activities" class="nav-link" data-mdb-toggle="tab">
-                        Aktiviteter
+                        {% trans "Activities" %}
                     </a>
                 </li>
             </ul>
@@ -424,7 +424,7 @@
 
                         <div class="d-flex justify-content-between">
                             <div>
-                                Totalt antall repeterende aktiviteter:
+                                {% trans "Total recurring activities" %}:
                                 <span id="seriesTableTotalEntitiesCount">
                                 </span>
                             </div>
@@ -433,15 +433,15 @@
                                 <div class="me-3">
                                     <div style="display:none" id="seriesTableLoadSpinner">
                                         <div class="spinner-border" role="status">
-                                            <span class="visually-hidden">Loading...</span>
+                                            <span class="visually-hidden">{% trans "Loading..." %}</span>
                                         </div>
-                                        Laster inn data...
+                                        {% trans "Loading data..." %}
                                     </div>
 
                                 </div>
 
                                 <button class="btn wb-btn-secondary" id="seriesTableGoBackOnePageButton">
-                                    Forrige
+                                    {% trans "Previous" %}
                                 </button>
     
                                 <div class="d-flex align-content-center">
@@ -453,7 +453,7 @@
                                 </div>
     
                                 <button class="ms-2 btn wb-btn-secondary" id="seriesTableGoForwardOnePageButton">
-                                    Neste
+                                    {% trans "Next" %}
                                 </button>
                             </div>
                         </div>
@@ -468,10 +468,10 @@
                             <thead>
                                 <tr class="wb-bg-secondary">
                                     <th>
-                                        Aktivitet
+                                        {% trans "Activity" %}
                                     </th>
                                     <th>
-                                        Del av serie?
+                                        {% trans "Part of a series?" %}
                                     </th>
                                 </tr>
                             </thead>
@@ -482,7 +482,7 @@
 
                         <div class="d-flex justify-content-between">
                             <div>
-                                Totalt antall aktiviteter:
+                                {% trans "Total activities" %}:
                                 <span id="activitiesTableTotalEntitiesCount">
                                 </span>
                             </div>
@@ -491,15 +491,15 @@
                                 <div class="me-3">
                                     <div style="display:none" id="activitiesTableLoadSpinner">
                                         <div class="spinner-border" role="status">
-                                            <span class="visually-hidden">Loading...</span>
+                                            <span class="visually-hidden">{% trans "Loading..." %}</span>
                                         </div>
-                                        Laster inn data...
+                                        {% trans "Loading data..." %}
                                     </div>
 
                                 </div>
 
                                 <button class="btn wb-btn-secondary" id="activitiesTableGoBackOnePageButton">
-                                    Forrige
+                                    {% trans "Previous" %}
                                 </button>
     
                                 <div class="d-flex align-content-center">
@@ -511,7 +511,7 @@
                                 </div>
     
                                 <button class="ms-2 btn wb-btn-secondary" id="activitiesTableGoForwardOnePageButton">
-                                    Neste
+                                    {% trans "Next" %}
                                 </button>
                             </div>
                         </div>
@@ -525,14 +525,14 @@
 
             {% if not object.notes.exists %}
                 <div class="alert wb-bg-secondary">
-                    <h4 class="text-center">Ingen notater skrevet ennå!</h4>
+                                    <h4 class="text-center">{% trans "No notes have been written yet!" %}</h4>
                     {% if user|has_group:"planners" or user.is_superuser %}
                     <div class="row">
                         <div class="col text-center">
                             <a class="btn wb-btn-main text-center shadow-0 mb-2 center" style="margin:auto"
                             d-trigger="triggerNewNoteDialog">
                             <i class="fas fa-feather"></i>
-                            Nytt notat
+                            {% trans "New note" %}
                         </a>
                         </div>
                     </div>
@@ -543,7 +543,7 @@
                     <a class="btn wb-btn-main shadow-0 mb-2 float-end" 
                         d-trigger="triggerNewNoteDialog">
                         <i class="fas fa-feather"></i>
-                        Nytt notat
+                        {% trans "New note" %}
                     </a>
                 </div>
             {% endif %}
@@ -559,9 +559,9 @@
                         <div class="float-start">
                             <div class="float-start">
                                 {% if note.has_personal_information %}
-                                    <i class="fas fa-shield-alt text-warning h3"></i> <strong>Inneholder <abbr class="me-3" title="Personlig identifiserende informasjon">PII</abbr></strong>
+                                    <i class="fas fa-shield-alt text-warning h3"></i> <strong>{% trans "Contains" %} <abbr class="me-3" title="{% trans 'Personally identifiable information' %}">PII</abbr></strong>
                                 {% endif %}
-                                <em class="text-muted small float-end">Opprettet av {{note.author}} den {{ note.created|date:'d.m.Y H:i' }}</em>
+                                <em class="text-muted small float-end">{% trans "Created by" %} {{note.author}} {% trans "on" %} {{ note.created|date:'d.m.Y H:i' }}</em>
                             </div>
                         </div>
                         {% if user|has_group:"planners" or user.is_superuser %}
@@ -594,7 +594,7 @@
                             d-trigger="triggerUploadFilesToArrangementDialog"
                             href="#">
                         <i class="fas fa-upload"></i>
-                        Upload file(s)
+                        {% trans "Upload file(s)" %}
                     </a>
                 </div>
                 {% endif %}
@@ -604,7 +604,7 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Fil</th>
+                                <th>{% trans "File" %}</th>
                             </tr>
                         </thead>
         
@@ -637,7 +637,7 @@
                 </div>
                 {% else %}
                     <div class="alert wb-bg-secondary">
-                        <h4 class="text-center">Ingen filer lastet opp her ennå!</h4>
+                        <h4 class="text-center">{% trans "No files have been uploaded here yet!" %}</h4>
                         {% if user|has_group:"planners" or user.is_superuser %}
                         <div class="row">
                             <div class="col text-center">
@@ -645,7 +645,7 @@
                                 d-trigger="triggerUploadFilesToArrangementDialog"
                                 href="#">
                                 <i class="fas fa-upload"></i>
-                                Last opp
+                                {% trans "Upload" %}
                             </a>
                             </div>
                         </div>
@@ -658,11 +658,11 @@
         {% if object.is_school_related %}
         <div class="tab-pane fade" id="arrangementInfoDialog_tabs_school" role="tabpanel">
             <div class="form-group">
-                <label for="countySelect">Fylke</label>
+                <label for="countySelect">{% trans "County" %}</label>
                 <select name="" id="countySelect" class="form-control">
                     <option value=""
                         {% if object.county is None %}selected{% endif %}>
-                        Ingen valgt
+                        {% trans "None selected" %}
                     </option>
 
                     {% for county in counties %}
@@ -675,11 +675,11 @@
             </div>
 
             <div class="form-group mt-2">
-                <label for="schoolSelect">Skole <em>(Målgruppe: {{ object.audience.name }})</em></label>
+                <label for="schoolSelect">{% trans "School" %} <em>({% trans "Audience" %}: {{ object.audience.name }})</em></label>
                 <select name="" id="schoolSelect" class="form-control" style="width: 100%">
                     <option value=""
                         {% if object.school is None %}selected{% endif %}>
-                        Ingen valgt
+                        {% trans "None selected" %}
                     </option>
 
                     {% for school in schools %}
@@ -697,13 +697,13 @@
                     <a href="#" class="btn wb-btn-secondary btn-lg"
                         d-trigger="close">
                         <i class="fas fa-times"></i>
-                        Avbryt / Lukk
+                        {% trans "Cancel / Close" %}
                     </a>
                     
                     <a class="btn shadow-0 wb-btn-main" href="#"
                         d-trigger="submit">
                         <i class="fas fa-check"></i>
-                        Lagre endringer
+                        {% trans "Save changes" %}
                     </a>
                 </div>
             </div>
@@ -929,7 +929,7 @@
                             let schoolOptions = [
                                 {
                                     id: "",
-                                    text: "Ingen valgt",
+                                    text: "{% trans 'None selected' %}",
                                 },
                                 ...a.data.map((school) => {
                                     let segment = dialog.data.citySegmentMap.get(school.citySegmentId);
@@ -976,10 +976,10 @@
 
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen målgruppe valgt ennå",
-                selectFirstTimeButtonText: 'Velg målgruppe',
-                changeSelectedValueButtonText: 'målgruppe',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No audience selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select audience" %}',
+                changeSelectedValueButtonText: '{% trans "Change audience" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save selection" %}',
             });
             dialog.data.arrangementTypeJsTreeSelect = new JSTreeSelect({
                 element: dialog.querySelector('#arrangement_type_jstree_select'),
@@ -995,10 +995,10 @@
 
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen arrangementstype valgt ennå",
-                selectFirstTimeButtonText: 'Velg arrangementstype',
-                changeSelectedValueButtonText: 'Endre arrangementstype',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No arrangement type selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select arrangement type" %}',
+                changeSelectedValueButtonText: '{% trans "Change arrangement type" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save selection" %}',
             });
             dialog.data.statusTypeJsTreeSelect = new JSTreeSelect({
                 element: dialog.querySelector('#status_type_jstree_select'),
@@ -1014,10 +1014,10 @@
                     
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen status valgt ennå",
-                selectFirstTimeButtonText: 'Velg status',
-                changeSelectedValueButtonText: 'Endre status',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No status selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select status" %}',
+                changeSelectedValueButtonText: '{% trans "Change status" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save selection" %}',
             });
             
 
@@ -1066,11 +1066,12 @@
                             const startDate = new Date(event.start);
                             const endDate = new Date(event.end);
 
-                            const startDateString = startDate.toLocaleDateString("nb-NO", { year: 'numeric', month: '2-digit', day: '2-digit' });
-                            const endDateString = endDate.toLocaleDateString("nb-NO", { year: 'numeric', month: '2-digit', day: '2-digit' });
+                            const locale = document.documentElement.lang || navigator.language || "en";
+                            const startDateString = startDate.toLocaleDateString(locale, { year: 'numeric', month: '2-digit', day: '2-digit' });
+                            const endDateString = endDate.toLocaleDateString(locale, { year: 'numeric', month: '2-digit', day: '2-digit' });
                             tr.innerHTML = `
-                                <td>${event.title} - ${startDateString} til ${endDateString}</td>
-                                <td>${event.serieId ? "Ja" : "Nei"}</td>
+                                                        <td>${event.title} - ${startDateString} {% trans "to" %} ${endDateString}</td>
+                                                        <td>${event.serieId ? "{% trans 'Yes' %}" : "{% trans 'No' %}"}</td>
                             `;
                             tr.onclick = () => {
                                 dialog._methods.triggerInspectEvent(dialog, { eventId: event.id });
@@ -1093,7 +1094,7 @@
                                     <small class='d-block'><strong><i class='fas fa-cog'></i> ${event.status.name}</strong></small>
 
                                     <div class="mt-2 text-muted">
-                                        <i class='fas fa-info'></i> Trykk på raden for å åpne aktiviteten
+                                        <i class='fas fa-info'></i> {% trans "Click a row to open the activity" %}
                                     </div>
                                 `
                             });
@@ -1101,7 +1102,7 @@
 
                         spinner.style.display = "none";
                     }).catch(e => {
-                        spinner.innerHTML = "Noe gikk galt under lasting av data. Prøv igjen senere.<br><code>" + e + "</code>";
+                        spinner.innerHTML = "{% trans 'Something went wrong while loading data. Please try again later.' %}<br><code>" + e + "</code>";
                     });
             },
             loadSeriesToTable(dialog, { pageNumber } = {}, triggeredByElement) {
@@ -1151,17 +1152,17 @@
                                                     <div>
                                                         <button class="btn wb-btn-main" id="c_${eventSerie.id}_openButton">
                                                             <i class="fas fa-eye"></i>
-                                                            Åpne
+                                                            {% trans "Open" %}
                                                         </button>
 
                                                         <button class="btn wb-btn-main" id="c_${eventSerie.id}_deleteButton">
                                                             <i class="fas fa-trash"></i>
-                                                            Slett
+                                                            {% trans "Delete" %}
                                                         </button>
 
                                                         <button class="btn wb-btn-main" id="c_${eventSerie.id}_orderService">
                                                             <i class="fas fa-shopping-cart"></i>
-                                                            Bestill tjeneste
+                                                            {% trans "Order service" %}
                                                         </button>
                                                     </div>
                                                 </div>
@@ -1171,45 +1172,45 @@
                                             <div class="d-flex">
                                                 <div>
                                                     <i class="fas fa-star"></i> 
-                                                    ${eventSerie.seriePlanManifest.responsible.fullName ? eventSerie.seriePlanManifest.responsible.fullName : "Ingen ansvarlig"}
+                                                    ${eventSerie.seriePlanManifest.responsible.fullName ? eventSerie.seriePlanManifest.responsible.fullName : "{% trans 'No responsible person' %}"}
                                                 </div>
 
                                                 <div class="ms-3">
                                                     <i class="fas fa-users"></i>
-                                                    ${eventSerie.seriePlanManifest.audience?.name || "Ingen målgruppe"}
+                                                    ${eventSerie.seriePlanManifest.audience?.name || "{% trans 'No audience' %}"}
                                                 </div>
 
                                                 <div class="ms-3">
                                                     <i class="fas fa-cogs"></i>
-                                                    ${eventSerie.seriePlanManifest.arrangementType?.name || "Ingen arrangement type"}
+                                                    ${eventSerie.seriePlanManifest.arrangementType?.name || "{% trans 'No arrangement type' %}"}
                                                 </div>
 
                                                 <div class="ms-3">
                                                     <i class="fas fa-cogs"></i>
-                                                    ${eventSerie.seriePlanManifest.status?.name || "Ingen status"}
+                                                    ${eventSerie.seriePlanManifest.status?.name || "{% trans 'No status' %}"}
                                                 </div>
                                             </div>
 
                                             <div class="d-flex mt-3">
                                                 <div class=" border border-1 border-dark p-2">
-                                                    <h6>Rom: </h6>
-                                                    ${roomsList || "Ingen rom"}
+                                                    <h6>{% trans "Rooms" %}: </h6>
+                                                    ${roomsList || "{% trans 'No rooms' %}"}
                                                 </div>
 
                                                 <div class="ms-3 border border-1 border-dark p-2">
-                                                    <h6>Personer: </h6>
-                                                    ${peopleList || "Ingen personer"}
+                                                    <h6>{% trans "People" %}: </h6>
+                                                    ${peopleList || "{% trans 'No people' %}"}
                                                 </div>
 
                                                 <div class="ms-3 border border-1 border-dark p-2">
                                                     <div class="d-flex">
                                                         <h6>
-                                                            Filer
+                                                            {% trans "Files" %}
                                                         </h6>
 
                                                         {% if user|has_group:"planners" %}
                                                         <a href="#" class="ms-3" id="c_${eventSerie.id}_uploadFilesBtn">
-                                                            (<i class='fas fa-upload'></i>&nbsp;Last opp...)
+                                                            (<i class='fas fa-upload'></i>&nbsp;{% trans "Upload..." %})
                                                         </a>
                                                         {% endif %}
                                                     </div>
@@ -1223,24 +1224,24 @@
                                             <div class="mt-3 wb-bg-secondary border border-dark p-2">
                                                 <h6 id="c_${eventSerie.id}_showEventsTable" class="wb-bg-secondary mb-0 pt-2 pb-2 ps-1">
                                                     <i class="fas fa-chevron-right" id="c_${eventSerie.id}_showEventsTableButtonIcon"></i>
-                                                    Forekomster <small class="text-muted ms-3"><i class='fas fa-info'></i>&nbsp; Trykk for å ekspandere/skjule</small>
+                                                    {% trans "Occurrences" %} <small class="text-muted ms-3"><i class='fas fa-info'></i>&nbsp; {% trans "Click to expand or collapse" %}</small>
                                                 </h6>
 
                                                 <div id="c_${eventSerie.id}_events_loader" style="display: none">
                                                     <div class="spinner-border" role="status">
                                                         <span class="visually-hidden">Loading...</span>
                                                     </div>
-                                                    Laster inn data...
+                                                    {% trans "Loading data..." %}
                                                 </div>
 
                                                 <div id="c_${eventSerie.id}_eventsBody" class="bg-white" style="display: none;">
                                                     <table class="table table-sm table-bordered table-striped">
                                                         <thead>
                                                             <tr>
-                                                                <th>Tittel</th>
-                                                                <th>Start</th>
-                                                                <th>Slutt</th>
-                                                                <th>Valg</th>
+                                                                <th>{% trans "Title" %}</th>
+                                                                <th>{% trans "Start" %}</th>
+                                                                <th>{% trans "End" %}</th>
+                                                                <th>{% trans "Actions" %}</th>
                                                             </tr>
                                                         </thead>
 
@@ -1378,8 +1379,9 @@
                                                     const startDate = new Date(event.start);
                                                     const endDate = new Date(event.end);
 
-                                                    const startDateString = startDate.toLocaleDateString("nb-NO", { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-                                                    const endDateString = endDate.toLocaleDateString("nb-NO", { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                                                    const locale = document.documentElement.lang || navigator.language || "en";
+                                                    const startDateString = startDate.toLocaleDateString(locale, { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                                                    const endDateString = endDate.toLocaleDateString(locale, { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
                                                     tr.innerHTML = `
                                                         <td>${event.title}</td>
                                                         <td>${startDateString}</td>
@@ -1387,7 +1389,7 @@
                                                         <td>
                                                             <btn href="#" class="btn btn-sm btn-light border border-dark wb-bg-secondary box-shadow-0 shadow-0"
                                                                 d-trigger="openEditEvent" d-arg-event_pk="${event.id}">
-                                                                Åpne
+                                                                {% trans "Open" %}
                                                             </btn>
                                                         </td>
                                                     `;
@@ -1400,7 +1402,7 @@
 
                                                 loader.style.display = "none";
                                             }).catch(e => {
-                                                loader.innerHTML = "<span class='text-danger'>Noe gikk galt under lasting av data. Prøv igjen senere. <i>(Statuskode: " + e.status + ")</i></span>";
+                                                loader.innerHTML = "<span class='text-danger'>{% trans 'Something went wrong while loading data. Please try again later.' %} <i>({% trans 'Status code' %}: " + e.status + ")</i></span>";
                                             });
                                     };
                                     // ensure we sort, since asynchronous fetches can cause out of order rendering
@@ -1420,20 +1422,20 @@
                             spinner.style.display = "none";
                     }).catch(
                         e => {
-                            spinner.innerHTML = "<span class='text-danger'>Noe gikk galt under lasting av data. Prøv igjen senere. <i>(Statuskode: " + e.status + ")</i></span>";
+                            spinner.innerHTML = "<span class='text-danger'>{% trans 'Something went wrong while loading data. Please try again later.' %} <i>({% trans 'Status code' %}: " + e.status + ")</i></span>";
                         }
                     )
             },
             deleteNote(dialog, { notePk } = {}, triggeredByElement) {
                 Swal.fire({
-                    title: 'Er du sikker?',
-                    text: "Er du sikker på at du ønsker å slette dette notatet?",
+                    title: '{% trans "Are you sure?" %}',
+                    text: "{% trans 'Are you sure you want to delete this note?' %}",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Slett',
-                    cancelButtonText: 'Avbryt',
+                    confirmButtonText: '{% trans "Delete" %}',
+                    cancelButtonText: '{% trans "Cancel" %}',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         fetch('/arrangement/note/delete/' + notePk, {
@@ -1453,14 +1455,14 @@
             },
             deleteActivity(dialog, { activityPk } = {}, triggeredByElement) {
                 Swal.fire({
-                    title: 'Er du sikker?',
-                    text: "Aktiviteten kan ikke hentes tilbake etter sletting.",
+                    title: '{% trans "Are you sure?" %}',
+                    text: "{% trans 'The activity cannot be recovered after deletion.' %}",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ja',
-                    cancelButtonText: 'Avbryt'
+                    confirmButtonText: '{% trans "Yes" %}',
+                    cancelButtonText: '{% trans "Cancel" %}'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         let formData = new FormData();
@@ -1567,14 +1569,14 @@
             },
             deleteEventSerie(dialog, { eventSeriePk } = {}, triggeredByElement) {
                 Swal.fire({
-                    title: 'Er du sikker?',
-                    text: "Serien og hendelsene i serien kan ikke hentes tilbake etter sletting.",
+                    title: '{% trans "Are you sure?" %}',
+                    text: "{% trans 'The series and its activities cannot be recovered after deletion.' %}",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ja',
-                    cancelButtonText: 'Avbryt'
+                    confirmButtonText: '{% trans "Yes" %}',
+                    cancelButtonText: '{% trans "Cancel" %}'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         fetch("/arrangement/eventSerie/delete/" + eventSeriePk, {
@@ -1595,14 +1597,14 @@
             },
             delete(dialog, {} = {}, triggeredByElement) {
                 Swal.fire({
-                    title: 'Er du sikker?',
-                    text: "Arrangementet og underliggende aktiviteter vil bli fjernet, og kan ikke hentes tilbake.",
+                    title: '{% trans "Are you sure?" %}',
+                    text: "{% trans 'The arrangement and its activities will be deleted and cannot be recovered.' %}",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ja',
-                    cancelButtonText: 'Avbryt'
+                    confirmButtonText: '{% trans "Yes" %}',
+                    cancelButtonText: '{% trans "Cancel" %}'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         fetch('/arrangement/arrangement/delete/{{ object.slug }}', {
@@ -1619,14 +1621,14 @@
             },
             deleteFile(dialog, { fileId, typeDiscriminator } = {}, triggeredByElement) {
                 Swal.fire({
-                    title: 'Er du sikker?',
-                    text: "Filen kan ikke hentes tilbake etter sletting.",
+                    title: '{% trans "Are you sure?" %}',
+                    text: "{% trans 'The file cannot be recovered after deletion.' %}",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ja',
-                    cancelButtonText: 'Avbryt'
+                    confirmButtonText: '{% trans "Yes" %}',
+                    cancelButtonText: '{% trans "Cancel" %}'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         let urlToDelete = "/arrangement/arrangement/files/delete/";

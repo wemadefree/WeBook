@@ -18,10 +18,13 @@ RUN apt install -y nodejs python3-dev libpq-dev gcc
 RUN pip install --no-cache-dir -r requirements/local.txt
 RUN pip install --no-cache-dir -r requirements/production.txt
 RUN pip install gunicorn
+RUN pup install numpy
+RUN pip install pandas
 
 COPY . .
 
-RUN npm install
+RUN rm -rf node_modules && rm -f package-lock.json && npm i
+
 RUN chmod +x ./entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]

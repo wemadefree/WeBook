@@ -22,13 +22,16 @@ class MetaMixin:
         current_crumb_title = ""
         entity_name = ""
 
+        object_instance = getattr(self, "object", None)
+        if object_instance is not None and self.view_meta.entity_name_attribute:
+            entity_name = getattr(
+                object_instance, self.view_meta.entity_name_attribute
+            )
+
         if self.view_meta.subtitle_mode == SUBTITLE_MODE.TITLE_AS_SUBTITLE:
             section_subtitle = self.view_meta.subtitle
             current_crumb_title = self.view_meta.current_crumb_title
         elif self.view_meta.subtitle_mode == SUBTITLE_MODE.ENTITY_NAME_AS_SUBTITLE:
-            entity_name = getattr(
-                self.get_object(), self.view_meta.entity_name_attribute
-            )
             section_subtitle = entity_name
             current_crumb_title = entity_name
 

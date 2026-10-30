@@ -12,7 +12,7 @@
 
     <div class="clearfix">
         <div class="float-start">
-            <h4 class="fw-bold">Planlegg nytt arrangement</h4>
+            <h4 class="fw-bold">{% trans "Plan new arrangement" %}</h4>
         </div>
         <div id="rail" class="float-end stepper-rail"></div>
     </div>
@@ -27,7 +27,7 @@
                 <fieldset>
                     <div class="form-group mb-2">
                         <label>
-                            Tittel <i>(Norsk)</i>
+                            {% trans "Title" %} <i>({% trans "Norwegian" %})</i>
                         </label>
                         <input type="text"
                             class="form-control form-control-lg mb-2"
@@ -45,7 +45,7 @@
 
                     <div class="form-group mb-2">
                         <label>
-                            Tittel <i>(Engelsk)</i>
+                            {% trans "Title" %} <i>({% trans "English" %})</i>
                         </label>
                         <input type="text"
                             class="form-control form-control-lg" 
@@ -64,7 +64,7 @@
                     <div class="mb-2">
                         <label>
                             <i class="fas fa-users"></i>&nbsp;
-                            Målgruppe
+                            {% trans "Audience" %}
                         </label>
                         <div id="audience_jstree_select" class="dialog-popover-left-fix"></div>
 
@@ -77,10 +77,10 @@
                         <div id="school_options" style="display: none;">
                             <div class="form-group mt-2">
                                 <label>
-                                    Fylke
+                                    {% trans "County" %}
                                 </label>
                                 <select name="" id="countySelect" class="form-control">
-                                    <option value="0">Ingen fylke valgt</option>
+                                    <option value="0">{% trans "No county selected" %}</option>
                                     {% for county in counties %}
                                         <option value="{{county.id}}">{{county.name}}</option>
                                     {% endfor %}
@@ -89,11 +89,11 @@
 
                             <div class="form-group mt-2">
                                 <label>
-                                    Skole
+                                    {% trans "School" %}
                                 </label>
 
                                 <select name="" id="schoolSelect" class="form-control">
-                                    <option value="0">Ingen skole valgt</option>
+                                    <option value="0">{% trans "No school selected" %}</option>
                                 </select>
                             </div>
                         </div>
@@ -102,7 +102,7 @@
                     <div class="mb-2">
                         <label>
                             <i class="fas fa-cog"></i>&nbsp;
-                            Arrangementstype
+                            {% trans "Arrangement type" %}
                         </label>
                         <div id="arrangement_type_jstree_select" class="dialog-popover-left-fix"></div>
                         {% if form.arrangement_type.errors|length > 0 %}
@@ -114,7 +114,7 @@
 
                     <div class="mb-2">
                         <label>
-                            Status
+                            {% trans "Status" %}
                         </label>
 
                         <div id="status_type_jstree_select" class="dialog-popover-left-fix"></div>
@@ -136,7 +136,7 @@
                     <div class="mb-2">
                         <label>
                             <i class="fas fa-map-marker-alt"></i>&nbsp;
-                            Lokasjon
+                            {% trans "Location" %}
                         </label>
                         {{ form.location }}
                     </div>
@@ -157,12 +157,12 @@
 
                     <label for="" class="d-block form-label">
                         <i class="fas fa-star"></i>
-                        Hovedplanlegger
+                        {% trans "Main planner" %}
                     </label>
 
                     <div class="text-danger" style="display: none;"
                         id="mainPlanner_validationText">
-                        Vennligst velg en hovedplanlegger
+                        {% trans "Please select a main planner" %}
                     </div>
 
                     <h5 class="mb-2" id="mainPlannerName"></h5>
@@ -170,20 +170,20 @@
                         id="setMainPlannerButton"
                         type="button"
                         d-trigger="triggerSetPlanner">
-                        Velg hovedplanlegger
+                        {% trans "Select main planner" %}
                     </button>
                 </div>
 
                 <div class="border rounded box-shadow-2 wb-bg-secondary p-4">
                     <label for="{{form.responsible.id_for_label}}" class="form-label">
                         <i class="fas fa-users"></i>&nbsp;
-                        Personer
+                        {% trans "People" %}
                     </label>
                     <div>
                         <button class="wb-btn-main"
                                 type="button"
                                 d-trigger="triggerAddPeople">
-                            Velg personer
+                            {% trans "Select people" %}
                         </button>
                     </div>
                     <div id="peopleChips" class="chipsList"></div>
@@ -192,13 +192,13 @@
                 <div class="border rounded box-shadow-2 wb-bg-secondary p-4 mt-4">
                     <label for="" class="form-label">
                         <i class="fas fa-building"></i>&nbsp;
-                        Rom
+                        {% trans "Rooms" %}
                     </label>
                     <div>
                         <button class="wb-btn-main"
                             type="button"
                             d-trigger="triggerAddRooms">
-                            Velg rom
+                            {% trans "Select rooms" %}
                         </button>
                     </div>
                     <div id="roomChips" class="chipsList"></div>
@@ -207,13 +207,13 @@
                 <div class="border rounded box-shadow-2 wb-bg-secondary p-4 mt-4">
                     <label for="" class="form-label">
                         <i class="fas fa-users-cog"></i>&nbsp;
-                        Planleggere
+                        {% trans "Planners" %}
                     </label>
                     <div>
                         <button class="wb-btn-main"
                             type="button"
                             d-trigger="triggerAddPlanners">
-                            Velg planleggere
+                            {% trans "Select planners" %}
                         </button>
                     </div>
                     <div id="plannerChips" class="chipsList"></div>
@@ -222,7 +222,7 @@
                 <div class="mb-2 mt-4 form-group">
                     <label>
                         <i class="fas fa-receipt"></i>&nbsp;
-                        Billettinfo
+                        {% trans "Ticket information" %}
                     </label>
                     <input type="text"
                         class="form-control form-control-lg"
@@ -239,7 +239,7 @@
 
                 <div class="mb-2 form-group">
                     <label>
-                        Forventet besøkende
+                        {% trans "Expected visitors" %}
                     </label>
                     <input type="number"
                         min="0"
@@ -261,9 +261,9 @@
                 <div class="col-lg-4 col-sm-12">
                     <h5 class="header-fonted">
                         <i class="fas fa-tv"></i>
-                        Skjerm
+                        {% trans "Screen" %}
                     </h5>
-                    <label class="d-block">&nbsp; {% trans "Vises på skjerm:" %}</label>
+                    <label class="d-block">&nbsp; {% trans "Shown on screen:" %}</label>
                     {{form.display_layouts}}
                 </div>
 
@@ -284,17 +284,17 @@
             <div class="mt-2 form-group">
                 <label>
                     <i class="fas fa-door-open"></i>&nbsp;
-                    Møtested <i>(Norsk)</i>
+                    {% trans "Meeting place" %} <i>({% trans "Norwegian" %})</i>
                 </label>
                 <input type="text"
                     class="form-control form-control-lg"
                     id="{{ form.meeting_place.id_for_label }}"
                     value="{{ form.meeting_place.value|default:'' }}"
                     name="{{ form.meeting_place.name }}"
-                    placeholder="{% trans 'Møtested' %}..."/>
+                    placeholder="{% trans 'Meeting place' %}..."/>
                 <div class="form-helper text-end">
                     <i class="fas fa-info-circle"></i>&nbsp;
-                    Vil overskrive sted/rom vist på skjerm
+                    {% trans "This overrides the location/room shown on the screen." %}
                 </div>
             </div>
             {% if form.meeting_place.errors|length > 0 %}
@@ -306,17 +306,17 @@
             <div class="mt-2 form-group">
                 <label>
                     <i class="fas fa-door-open"></i>&nbsp;
-                    Møtested <i>(Engelsk)</i>
+                    {% trans "Meeting place" %} <i>({% trans "English" %})</i>
                 </label>
                 <input type="text"
                     class="form-control form-control-lg"
                     id="{{ form.meeting_place_en.id_for_label }}"
                     value="{{ form.meeting_place_en.value|default:'' }}"
                     name="{{ form.meeting_place_en.name }}"
-                    placeholder="{% trans 'Møtested' %}..."/>
+                    placeholder="{% trans 'Meeting place' %}..."/>
                 <div class="form-helper text-end">
                     <i class="fas fa-info-circle"></i>&nbsp;
-                    Vil overskrive sted/rom vist på skjerm
+                    {% trans "This overrides the location/room shown on the screen." %}
                 </div>
             </div>
             {% if form.meeting_place.errors|length > 0 %}
@@ -370,7 +370,7 @@
             <button class="btn wb-btn-secondary btn-lg" id="back" type="button">Tilbake</button>
             <a class="btn wb-btn-main btn-lg" id="next" href="#"> Neste</a>
             <button class="btn wb-btn-main btn-lg" type="button" id="finish" d-trigger="submit" style="display: none;">
-                Opprett arrangement
+                {% trans "Create arrangement" %}
             </button>
         </div>
     </div>
@@ -447,7 +447,7 @@
                 let selectedAudienceId = parseInt(dialog.data.audienceJsTreeSelect.getSelectedValue()); 
                 let schoolOptions = [{
                     id: 0,
-                    text: "Ingen skole valgt",
+                    text: "{% trans 'No school selected' %}",
                 }];
 
                 dialog.data.countyOptions.forEach((county) => {
@@ -496,7 +496,7 @@
                     {% comment %} filter: true, {% endcomment %}
                     {% comment %} container: "[class='{{discriminator}}']", {% endcomment %}
                     validation: true,
-                    noResultText: "Ingen resultater",
+                    noResultText: "{% trans 'No results' %}",
                     invalidFeedback: select.invalidFeedback,
                 });
                 mdbSelect._input.classList.add("form-control-lg", "dialog-select-hack");
@@ -530,10 +530,10 @@
 
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen målgruppe valgt ennå",
-                selectFirstTimeButtonText: 'Velg målgruppe',
-                changeSelectedValueButtonText: 'Endre målgruppe',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No audience selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select audience" %}',
+                changeSelectedValueButtonText: '{% trans "Change audience" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save selection" %}',
             });
             dialog.data.arrangementTypeJsTreeSelect = new JSTreeSelect({
                 element: dialog.querySelector('#arrangement_type_jstree_select'),
@@ -551,10 +551,10 @@
 
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen arrangementstype valgt ennå",
-                selectFirstTimeButtonText: 'Velg arrangementstype',
-                changeSelectedValueButtonText: 'Endre arrangementstype',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No arrangement type selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select arrangement type" %}',
+                changeSelectedValueButtonText: '{% trans "Change arrangement type" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save selection" %}',
             });
             dialog.data.statusTypeJsTreeSelect = new JSTreeSelect({
                 element: dialog.querySelector('#status_type_jstree_select'),
@@ -572,10 +572,10 @@
                     
                     return labelText;
                 },
-                noneSelectedLabelText: "Ingen status valgt ennå",
-                selectFirstTimeButtonText: 'Velg status',
-                changeSelectedValueButtonText: 'Endre status',
-                popoverSaveChoicesButtonText: 'Lagre valg',
+                noneSelectedLabelText: "{% trans 'No status selected yet' %}",
+                selectFirstTimeButtonText: '{% trans "Select status" %}',
+                changeSelectedValueButtonText: '{% trans "Change status" %}',
+                popoverSaveChoicesButtonText: '{% trans "Save selection" %}',
             });
 
             document.addEventListener("{{managerName}}.contextUpdated", (e) => {

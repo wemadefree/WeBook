@@ -34,11 +34,11 @@ container-fluid
 
                     <button class="btn wb-large-btn wb-btn-secondary ms-2 border-0 shadow-0"
                         id="planner__todayButton">
-                        I dag
+                        {% trans "Today" %}
                     </button>
                     <button class="btn  wb-large-btn  wb-btn-secondary border-0 shadow-0"
                         type="button"
-                        title="Gå til dato"
+                        title="{% trans 'Go to date' %}"
                         data-mdb-toggle="tooltip"
                         id="planner__goToDateButton">
                         <i class="fas fa-door"></i>
@@ -50,21 +50,21 @@ container-fluid
                         <li class="nav-item" role="presentation">
                             <a href="#" onclick="$('#overview-tab')[0].click(); setNavActive(this);" class="nav-link active">
                                 <i class="fas fa-theater-masks"></i>&nbsp; 
-                                Arrangementer
+                                {% trans "Arrangements" %}
                             </a>
                         </li>
                         <li class="nav-item" role="presentation">
                             <a href="#" role="presentation" class="nav-link"
                                 onclick="$('#locations-tab')[0].click(); setNavActive(this);">
                                 <i class="fas fa-building"></i>&nbsp; 
-                                Lokasjoner
+                                {% trans "Locations" %}
                             </a>
                         </li>
                         {% if user|has_group:"planners" or user.is_superuser %}
                         <li class="nav-item" role="presentation">
                             <a href="#" onclick="$('#people-tab')[0].click(); setNavActive(this);" class="nav-link">
                                 <i class="fas fa-users"></i>&nbsp; 
-                                Personer
+                                {% trans "People" %}
                             </a>
                         </li>
                         {% endif %}
@@ -73,7 +73,7 @@ container-fluid
                 {% if user|has_group:"planners" or user.is_superuser %}
                 <div class="col-4">
                     <button class="btn wb-btn-main float-end" id="newArrangementBtn">
-                        <i class="fas fa-plus"></i>&nbsp; Opprett arrangement
+                        <i class="fas fa-plus"></i>&nbsp; {% trans "Create arrangement" %}
                     </button>
                 </div>
                 {% endif %}
@@ -98,6 +98,22 @@ container-fluid
 
 {% block content %}
 
+<script>
+    window.WEBOOK_I18N = {
+        day: "{% trans 'Day' %}",
+        month: "{% trans 'Month' %}",
+        week: "{% trans 'Week' %}",
+        year: "{% trans 'Year' %}",
+        timeline: "{% trans 'Timeline' %}",
+        grid: "{% trans 'Grid' %}",
+        calendar: "{% trans 'Calendar' %}",
+        weekPrefix: "{% trans 'Week' %}",
+        today: "{% trans 'Today' %}",
+        cancel: "{% trans 'Cancel' %}",
+        yes: "{% trans 'Yes' %}"
+    };
+</script>
+
 <div class="row">
     <div class="col-12">
         <div class="clearfix">
@@ -106,17 +122,17 @@ container-fluid
                     <li class="nav-item" role="presentation">
                         <a class="nav-link active text-center" id="overview-tab" data-mdb-toggle="tab" href="#universeCalendar" role="tab" aria-controls="universe" aria-selected="true">
                         <span class="mb-0"><i class="fas fa-eye"></i></span>
-                        &nbsp; <span>Arrangementer</span></a>
+                        &nbsp; <span>{% trans "Arrangements" %}</span></a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link text-center" id="locations-tab" data-mdb-toggle="tab" href="#locationsCalendar" role="tab" aria-controls="locations" aria-selected="true">
                         <span class="mb-0"><i class="fas fa-building"></i></span>
-                        &nbsp; <span>Lokasjoner</span></a>
+                        &nbsp; <span>{% trans "Locations" %}</span></a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="people-tab" data-mdb-toggle="tab" href="#peopleCalendar" role="tab" aria-controls="people" aria-selected="false">
                         <span class="mb-0"><i class="fas fa-users"></i></span>
-                        &nbsp; <span>Personer</span>
+                        &nbsp; <span>{% trans "People" %}</span>
                         </a>
                     </li>
                 </ul>
@@ -132,7 +148,7 @@ container-fluid
                 <div id="location-and-rooms-popover-filter" class="mb-2 d-inline">
                     <button class="btn wb-btn-white wb-large-btn btn-lg" id="location-and-rooms-popover-filter-trigger">
                         <i class="fas fa-building text-dark"></i>&nbsp;
-                        Lokasjoner & Rom
+                        {% trans "Locations & Rooms" %}
                     </button>
                     <span id="location-and-rooms-popover-filter-content">
                     </span>
@@ -140,7 +156,7 @@ container-fluid
                 <div id="audience-popover-filter" class="mb-2  d-inline">
                     <button class="btn wb-btn-white btn-lg wb-large-btn" id="audience-popover-filter-trigger">
                         <i class="fas fa-theater-masks text-dark"></i>&nbsp;
-                        Målgruppe
+                        {% trans "Audience" %}
                         <i class="fas fa-angle-down"></i>
                     </button>
                     <span id="audience-popover-filter-content">
@@ -149,7 +165,7 @@ container-fluid
                 <div id="arrangement-type-popover-filter" class="mb-2  d-inline">
                     <button class="btn wb-btn-white btn-lg wb-large-btn" id="arrangement-type-popover-filter-trigger">
                         <i class="fas fa-cog text-dark"></i>&nbsp;
-                        Arrangementstyper
+                        {% trans "Arrangement types" %}
                         <i class="fas fa-angle-down"></i>
                     </button>
                     <span id="arrangement-type-popover-filter-content">
@@ -158,7 +174,7 @@ container-fluid
                 <div id="status-type-popover-filter" class="mb-2  d-inline">
                     <button class="btn wb-btn-white btn-lg wb-large-btn" id="status-type-popover-filter-trigger">
                         <i class="fas fa-cog text-dark"></i>&nbsp;
-                        Status
+                        {% trans "Status" %}
                         <i class="fas fa-angle-down"></i>
                     </button>
                     <span id="status-type-popover-filter-content">
@@ -288,7 +304,7 @@ container-fluid
     }
 
     const statusTypeFilter = new AdvancedTreeFilter({
-        title: 'Status',
+        title: '{% trans "Status" %}',
         triggerElement: document.getElementById('status-type-popover-filter-trigger'),
         wrapperElement: document.getElementById('status-type-popover-filter-content'),
         onSubmit: function (filter, selectedNodes) {
@@ -304,7 +320,7 @@ container-fluid
     });
 
     const arrangementTypeTreeFilter = new AdvancedTreeFilter({
-        title: 'Arrangementstyper',
+        title: '{% trans "Arrangement types" %}',
         triggerElement: document.getElementById('arrangement-type-popover-filter-trigger'),
         wrapperElement: document.getElementById('arrangement-type-popover-filter-content'),
         onSubmit: function (filter, selectedNodes) {
@@ -320,7 +336,7 @@ container-fluid
     });
 
     const audienceTreeFilter = new AdvancedTreeFilter({
-        title: 'Målgrupper',
+        title: '{% trans "Audiences" %}',
         triggerElement: document.getElementById('audience-popover-filter-trigger'),
         wrapperElement: document.getElementById('audience-popover-filter-content'),
         onSubmit: function (filter, selectedNodes) { 
@@ -335,7 +351,7 @@ container-fluid
     });
 
     const locationAndRoomsFilter = new AdvancedTreeFilter({
-        title: 'Lokasjoner & Rom',
+        title: '{% trans "Locations & Rooms" %}',
         triggerElement: document.getElementById('location-and-rooms-popover-filter-trigger'),
         wrapperElement: document.getElementById('location-and-rooms-popover-filter-content'),
         onSubmit: function (filter, selectedNodes, undeterminedNodes) {
@@ -528,7 +544,7 @@ container-fluid
     });
     document.getElementById('planner__goToDateButton').addEventListener('click', (event) => {
         Swal.fire({
-            title: 'Gå til dato',
+            title: '{% trans "Go to date" %}',
             html: "<input type='date' id='swalGoToDate' class='form-control'></input>",
             showCancelButton: true,
             confirmButtonText: 'Gå til dato',

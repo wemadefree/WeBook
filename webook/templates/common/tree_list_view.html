@@ -5,17 +5,12 @@
 {% block content %}
 
 {% if SHOW_CREATE_BUTTON %}
-<div class="d-flex mb-2" style="justify-content: space-between; align-items: center;;">
-    <a class="btn wb-btn-secondary shadow-0 btn-lg mb-2"
-        onclick="document.dispatchEvent(new CustomEvent('genericManager.create.trigger', { detail: { url: '{% url CRUDL_MAP.create_url %}', title: 'Registrer ny {{ ENTITY_NAME_SINGULAR }}' } }))">
+<div class="mb-3">
+    <a class="btn wb-btn-main shadow-0 btn-md mb-2"
+        onclick="document.dispatchEvent(new CustomEvent('genericManager.create.trigger', { detail: { url: '{% url CRUDL_MAP.create_url %}', title: `<i class='fas fa-plus'></i>&nbsp; {% trans 'Register new' %} {{ ENTITY_NAME_SINGULAR }}` } }))">
         <i class="fas fa-plus"></i>&nbsp;
         {% trans "Create" %} {{ ENTITY_NAME_SINGULAR }}
     </a>
-
-    <em class="float-end">
-        <i class="fas fa-info-circle"></i>
-        Høyreklikk på en node i treet for å <strong>redigere</strong> eller <strong>slette</strong>.
-    </em>
 </div>
 {% endif %}
 
@@ -31,8 +26,30 @@
 </div>
 {% else %}
 
-<div class="wb-bg-secondary p-2 border">
-    <div id="entityTree"></div>
+<div class="entity-tree-panel border rounded-2 overflow-hidden">
+    <div class="entity-tree-toolbar wb-bg-secondary border-bottom p-3">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+            <div>
+                <h2 class="h5 mb-0">{{ ENTITY_NAME_PLURAL }}</h2>
+                <small class="text-muted">{{ object_list|length }} {% trans "items" %}</small>
+            </div>
+            <div class="btn-group shadow-0" role="group" aria-label="{% trans 'Tree controls' %}">
+                <button id="expandTree" class="btn btn-sm wb-btn-white" type="button" title="{% trans 'Expand all' %}">
+                    <i class="fas fa-angles-down"></i>&nbsp; {% trans "Expand all" %}
+                </button>
+                <button id="collapseTree" class="btn btn-sm wb-btn-white" type="button" title="{% trans 'Collapse all' %}">
+                    <i class="fas fa-angles-up"></i>&nbsp; {% trans "Collapse all" %}
+                </button>
+            </div>
+        </div>
+        <div class="input-group">
+            <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+            <input id="entityTreeSearch" type="search" class="form-control" placeholder="{% trans 'Search' %} {{ ENTITY_NAME_PLURAL }}" aria-label="{% trans 'Search' %} {{ ENTITY_NAME_PLURAL }}">
+        </div>
+    </div>
+    <div class="entity-tree-body bg-white p-2">
+        <div id="entityTree"></div>
+    </div>
 </div>
 
 {% endif %}
@@ -112,8 +129,9 @@
                             });
                         },
                         dialogOptions: {
-                            classes: { "ui-dialog": "wb-dialog" },
-                            width: 600,
+                            classes: { "ui-dialog": "wb-dialog wb-form-dialog" },
+                            width: 560,
+                            height: "auto",
                             modal: true,
                         },
                         onRenderedCallback: (dialogManager, context) => {
@@ -127,32 +145,29 @@
                     }),
                 ],
                 [ 
-                    "delete",
+                    "archive",
                     new Dialog({
-                        dialogElementId: 'delete',
-                        title: '<i class="fas fa-trash"></i> Delete',
+                        dialogElementId: 'archive',
                         triggerElementId: undefined,
                         triggerByEvent: true,
                         renderer: new DialogSimpleRenderer(),
                         plugins: [ new CustomDialogFormInterceptorPlugin("{{csrf_token}}") ],
                         dialogOptions: {
-                            classes: { "ui-dialog": "wb-dialog" },
+                            classes: { "ui-dialog": "wb-dialog no-titlebar" },
                             width: 600,
+                            height: "auto",
                             modal: true,
                         },
                         htmlFabricator: async (context, dialog) => {
                             if (!context.lastTriggererDetails.url) {
-                                throw Error("URL must be specified to call delete view");
+                                throw Error("URL must be specified to call archive view");
                             }
 
                             dialog.formUrl = context.lastTriggererDetails.url;
-                            if (context.lastTriggererDetails.title) {
-                                dialog.title = context.lastTriggererDetails.title;
-                            }
 
                             return e.loadDialogHtml({
                                 url: context.lastTriggererDetails.url,
-                                dialogId: "delete",
+                                dialogId: "archive",
                                 managerName: "genericManager",
                             });
                         },
@@ -168,14 +183,15 @@
                     "create",
                     new Dialog({
                         dialogElementId: 'create',
-                        title: 'Create',
+                        title: '<i class="fas fa-plus"></i>&nbsp; {% trans "Create" %}',
                         triggerElementId: undefined,
                         triggerByEvent: true,
                         renderer: new DialogSimpleRenderer(),
                         plugins: [ new CustomDialogFormInterceptorPlugin("{{csrf_token}}") ],
                         dialogOptions: {
-                            classes: { "ui-dialog": "wb-dialog" },
-                            width: 600,
+                            classes: { "ui-dialog": "wb-dialog wb-form-dialog" },
+                            width: 560,
+                            height: "auto",
                             modal: true,
                         },
                         htmlFabricator: async (context, dialog) => {
@@ -214,25 +230,100 @@
         setupJsTree();
 
         document.getElementById('entityTree').addEventListener('refresh', function () {
-            debugger;
             setupJsTree();
-        })
+        });
+
+        document.getElementById('entityTreeSearch').addEventListener('input', function (event) {
+            $('#entityTree').jstree(true)?.search(event.target.value);
+        });
+
+        document.getElementById('expandTree').addEventListener('click', function () {
+            $('#entityTree').jstree(true)?.open_all();
+        });
+
+        document.getElementById('collapseTree').addEventListener('click', function () {
+            $('#entityTree').jstree(true)?.close_all();
+        });
     });
 
     function setupJsTree() {
-        $('#entityTree').jstree("destroy")
+        $('#entityTree').jstree("destroy");
 
         fetch("{{ JSON_TREE_SRC_URL }}", { method: 'GET' })
             .then(response => response.json())
             .then(obj => {
+                normalizeTreeIcons(obj);
                 $('#entityTree').jstree({
-                    plugins: ["contextmenu"],
+                    plugins: ["contextmenu", "search"],
                     contextmenu: { items: getContextMenuItems },
+                    search: {
+                        show_only_matches: true,
+                        show_only_matches_children: true,
+                    },
                     'core': {
                         'data': obj
                     }
-                });
+                }).on('ready.jstree after_open.jstree redraw.jstree', decorateTreeActions);
             });
+    }
+
+    function normalizeTreeIcons(nodes) {
+        nodes.forEach(node => {
+            if (!node.icon || node.icon.includes('folder')) {
+                node.icon = 'fas fa-tag';
+            }
+            normalizeTreeIcons(node.children || []);
+        });
+    }
+
+    function decorateTreeActions() {
+        const tree = $('#entityTree').jstree(true);
+        document.querySelectorAll('#entityTree .jstree-node').forEach(element => {
+            const node = tree.get_node(element.id);
+            const anchor = element.querySelector(':scope > .jstree-anchor');
+            if (!node?.data || !anchor || element.querySelector(':scope > .entity-tree-actions')) {
+                return;
+            }
+
+            const actions = document.createElement('span');
+            actions.className = 'entity-tree-actions';
+            if (node.data.edit_url) {
+                actions.append(createTreeAction('fas fa-edit', '{% trans "Edit" %}', () => triggerTreeEdit(node)));
+            }
+            if (node.data.archive_url) {
+                actions.append(createTreeAction('fas fa-archive', '{% trans "Archive" %}', () => triggerTreeArchive(node)));
+            }
+            if (actions.children.length) {
+                anchor.after(actions);
+            }
+        });
+    }
+
+    function createTreeAction(icon, label, action) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'entity-tree-action';
+        button.title = label;
+        button.setAttribute('aria-label', label);
+        button.innerHTML = `<i class="${icon}"></i>`;
+        button.addEventListener('click', event => {
+            event.preventDefault();
+            event.stopPropagation();
+            action();
+        });
+        return button;
+    }
+
+    function triggerTreeEdit(node) {
+        document.dispatchEvent(
+            new CustomEvent('genericManager.edit.trigger', { detail: { url: node.data.edit_url, title: `<i class='fas fa-edit'></i>&nbsp; Rediger <i>'${node.text}'</i>` } })
+        );
+    }
+
+    function triggerTreeArchive(node) {
+        document.dispatchEvent(
+            new CustomEvent('genericManager.archive.trigger', { detail: { url: node.data.archive_url, title: `<i class='fas fa-archive'></i>&nbsp; Arkiver <i>'${node.text}'</i>` } })
+        );
     }
 
     function getContextMenuItems(node) {
@@ -240,17 +331,13 @@
             editItem: {
                 label: "<i class='fas fa-edit'></i> {% trans 'Edit' %}",
                 action: function () {
-                    document.dispatchEvent(
-                        new CustomEvent(`genericManager.edit.trigger`, { "detail": { url: node.data.edit_url, title: `<i class='fas fa-edit'></i>&nbsp; Rediger <i>'${node.text}'</i>` } })
-                    );
+                    triggerTreeEdit(node);
                 }
             },
-            deleteItem: {
-                label: "<i class='fas fa-trash'></i> {% trans 'Delete' %}",
+            archiveItem: {
+                label: "<i class='fas fa-archive'></i> {% trans 'Archive' %}",
                 action: function () {
-                    document.dispatchEvent(
-                        new CustomEvent(`genericManager.delete.trigger`, { "detail": { url: node.data.delete_url, title: `<i class='fas fa-trash'></i>&nbsp; Slett <i>'${node.text}'</i>` } })
-                    );
+                    triggerTreeArchive(node);
                 }
             }
         }

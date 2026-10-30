@@ -1,5 +1,6 @@
 {% extends "common/meta_base.html" %}
 {% load static i18n %}
+{% get_current_language as CURRENT_LANGUAGE %}
 
 {% block content %}
 
@@ -75,7 +76,7 @@
             initialView: 'dayGridMonth',
             navLinks:true,
             initialView: 'dayGridMonth',
-            locale: 'nb',
+            locale: '{{ CURRENT_LANGUAGE }}',
             headerToolbar: {
               left: 'prev,next today',
               center: 'title',

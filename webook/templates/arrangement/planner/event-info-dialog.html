@@ -31,11 +31,11 @@
             <h3 class="mb-0 fw-bold">
                 [[ event.title ]]
                 <small class="fw-light" v-if="event.is_part_of_serie">
-                    <em>(repeterende)</em>
+                    <em>({% trans "recurring" %})</em>
                 </small>
             </h3>
             <h5>
-                [[ event.start_date ]] <strong> til </strong> [[ event.end_date ]]
+                [[ event.start_date ]] <strong> {% trans "to" %} </strong> [[ event.end_date ]]
             </h5>
         </template>
 
@@ -43,7 +43,7 @@
             {{ event }}
 
             <div class="clearfix">
-                <small class="float-end">Opprettet [[event.created]] <strong>|</strong> Sist oppdatert [[event.modified]]</small>
+                <small class="float-end">{% trans "Created" %} [[event.created]] <strong>|</strong> {% trans "Last updated" %} [[event.modified]]</small>
             </div>
 
             <div class="row">
@@ -51,7 +51,7 @@
                     <div class="alert col-auto mb-4 mt-2 wb-bg-secondary">
                         <div class="clearfix">
                             <div class="float-start">
-                                <h6 class="mb-0 d-inline fw-lighter">Tilhører arrangement:</h4>
+                                <h6 class="mb-0 d-inline fw-lighter">{% trans "Belongs to arrangement:" %}</h4>
                                 <h4 class="mb-0">[[ event.arrangement.name ]]</h6>
                                 
                                 <small>
@@ -65,7 +65,7 @@
                                     d-trigger="openInspectArrangementDialog"
                                     d-arg-slug="{{ object.arrangement.slug }}"
                                     d-arg-event_pk="{{ object.pk }}">
-                                Gå til arrangement
+                                {% trans "Go to arrangement" %}
                             </button>
                         </div>
                     </div>
@@ -75,8 +75,8 @@
                     <div class="alert mb-4 mt-2" style="background-color:  #f6f6f0 !important;" v-if="event.is_part_of_serie">
                             <div>
                                 <h4 class="mb-0"><span class="h3"><i class="fas fa-sync"></i></span>&nbsp;&nbsp; [[ event.manifest_schedule_description ]]</h4>
-                                <small><i class="fas fa-info-circle"></i>&nbsp; Ved redigering vil denne aktiviteten brytes ut av serien, og vil ikke lenger bli ansett som en del av denne serien</small>
-                                <small class="d-block">Du kan redigere selve serien fra arrangementsvisningen, gå til tidspunkter og rediger der</small>
+                                <small><i class="fas fa-info-circle"></i>&nbsp; {% trans "When edited, this activity will be separated from the series and will no longer be considered part of it." %}</small>
+                                <small class="d-block">{% trans "You can edit the series from the arrangement view under time slots." %}</small>
                             </div>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
                         role="tab"
                         aria-controls="ex1-tabs-1"
                         aria-selected="true">
-                    Aktivitet
+                    {% trans "Activity" %}
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -104,7 +104,7 @@
                         role="tab"
                         aria-controls="ex1-tabs-2"
                         aria-selected="false">
-                        Filer
+                        {% trans "Files" %}
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -116,12 +116,12 @@
                         role="tab"
                         aria-controls="ex1-tabs-3"
                         aria-selected="false">
-                        Notater
+                        {% trans "Notes" %}
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
                     <a href="#tab-details" role="tab" data-mdb-toggle="tab" class="nav-link" id="tab-detailss">
-                        Detaljer
+                        {% trans "Details" %}
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -133,7 +133,7 @@
                         role="tab"
                         aria-controls="ex1-tabs-4"
                         aria-selected="false"
-                        >Opprigg & Nedrigg
+                        >{% trans "Rigging" %}
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -145,7 +145,7 @@
                         aria-controls="service-orders-tab"
                         aria-selected="false"
                         class="nav-link">
-                        Tjenester
+                        {% trans "Services" %}
                         <!-- <i class="fas fa-envelope fa-1x"></i>
                         <span class="badge rounded-pill badge-notification bg-danger">99</span> -->
                     </a>
@@ -176,41 +176,41 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="form-group">
-                                                    <label>Tittel</label>
+                                                    <label>{% trans "Title" %}</label>
                                                     <input type="text" class="form-control form-control-lg" v-model="event.title"
-                                                        placeholder="Tittel">
+                                                        placeholder="{% trans 'Title' %}">
                                                 </div>
                                             </div>
                                             <div class="col-6">
-                                                <label>Tittel (engelsk)</label>
+                                                <label>{% trans "Title" %} ({% trans "English" %})</label>
                                                 <div class="form-group">
                                                     <input type="text" class="form-control form-control-lg" v-model="event.title_en"
-                                                        placeholder="Tittel (engelsk)">
+                                                        placeholder="{% trans 'Title' %} ({% trans 'English' %})">
                                                 </div>
                                             </div>
                                             <div class="col-6 mt-3">
-                                                <label>Startdato og tid</label>
-                                                <vue-date-picker v-model="event.start_date" locale="nb-no" :format="dateFormatter"></vue-date-picker>
+                                                <label>{% trans "Start date and time" %}</label>
+                                                <vue-date-picker v-model="event.start_date" :locale="document.documentElement.lang" :format="dateFormatter"></vue-date-picker>
                                             </div>
                                             <div class="col-6 mt-3">
-                                                <label>Sluttdato og tid</label>
-                                                <vue-date-picker v-model="event.end_date"  locale="nb-no" :format="dateFormatter"></vue-date-picker>
+                                                <label>{% trans "End date and time" %}</label>
+                                                <vue-date-picker v-model="event.end_date" :locale="document.documentElement.lang" :format="dateFormatter"></vue-date-picker>
                                             </div>
                                             <div class="col-6 mt-2">
                                                 <div class="form-group mb-3">
-                                                    <label>Forventet antall besøkende</label>
+                                                    <label>{% trans "Expected visitors" %}</label>
                                                     <input type="number" class="form-control" v-model="event.expected_visitors" min="0">
                                                 </div>
                                             </div>
                                             <div class="col-6 mt-2">
                                                 <div class="form-group mb-3">
-                                                    <label>Faktisk antall besøkende</label>
+                                                    <label>{% trans "Actual visitors" %}</label>
                                                     <input type="number" class="form-control" v-model="event.actual_visitors" min="0">
                                                 </div>
                                             </div>
 
                                             <div class="col-12">
-                                                <h4>Rom</h4>
+                                                <h4>{% trans "Rooms" %}</h4>
                                                 <div class="d-flex">
                                                     <rooms-select v-model:selected="event.rooms">
                                                     </rooms-select>
@@ -220,12 +220,12 @@
 
                                         <div class="row mt-2">
                                             <div class="col-6">
-                                                <label>Møtested</label>
+                                                <label>{% trans "Meeting place" %}</label>
                                                 <input type="text" v-model="event.meeting_place" class="form-control">
                                             </div>
                     
                                             <div class="col-6">
-                                                <label>Møtested (engelsk)</label>
+                                                <label>{% trans "Meeting place" %} ({% trans "English" %})</label>
                                                 <input type="text" v-model="event.meeting_place_en" class="form-control">
                                             </div>
                                         </div>
@@ -247,9 +247,9 @@
                                             <div class="mt-3">
                                                 <tree-select-component 
                                                     :is-open="false" 
-                                                    label="Målgruppe" 
+                                                    label="{% trans 'Audience' %}"
                                                     json-url="{% url 'arrangement:audience_tree' %}"
-                                                    button-label="Velg målgruppe"
+                                                    button-label="{% trans 'Select audience' %}"
                                                     icon="fas fa-users"
                                                     v-model="event.audience">
 
@@ -259,9 +259,9 @@
                                             <div class="mt-3">
                                                 <tree-select-component 
                                                     :is-open="false" 
-                                                    label="Arrangementstype" 
+                                                    label="{% trans 'Arrangement type' %}"
                                                     json-url="{% url 'arrangement:arrangement_type_tree_list' %}"
-                                                    button-label="Velg arrangementstype"
+                                                    button-label="{% trans 'Select arrangement type' %}"
                                                     icon="fas fa-cog"
                                                     v-model="event.arrangement_type">
 
@@ -273,7 +273,7 @@
                                                     :is-open="false" 
                                                     label="Status" 
                                                     json-url="{% url 'arrangement:statustype_tree' %}"
-                                                    button-label="Velg status"
+                                                    button-label="{% trans 'Select status' %}"
                                                     icon="fas fa-cog"
                                                     v-model="event.status_type">
 

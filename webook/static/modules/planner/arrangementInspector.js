@@ -168,7 +168,7 @@ export class ArrangementInspector {
                         onUpdatedCallback: ( ) => {
                             this.dialogManager.reloadDialog("mainDialog");
                             this.dialogManager.closeDialog("selectPlannersDialog");
-                            toastr.success("Planlegger(e) har blitt lagt til")
+                            toastr.success(window.WEBOOK_MESSAGES?.plannersAdded || "Planner(s) added");
                         },
                         onSubmit: (context, details, dialogManager, dialog) => {
                             let formData = new FormData();
@@ -706,7 +706,7 @@ export class ArrangementInspector {
                                 }
                             }).then(response => {
                                 if (!response.ok) {
-                                    toast.error("Noe gikk galt, prøv igjen senere");
+                                    toast.error(window.WEBOOK_MESSAGES?.genericLoadError || "Something went wrong. Please try again later.");
                                 }
                             })
                         },
@@ -831,7 +831,7 @@ export class ArrangementInspector {
                         onRenderedCallback: () => {},
                         dialogOptions: { width: 500, dialogClass: 'no-titlebar', },
                         onUpdatedCallback: () => {
-                            toastr.success("Rom lagt til");
+                            toastr.success(window.WEBOOK_MESSAGES?.roomAdded || "Room added");
                             this.dialogManager.closeDialog("orderRoomForLocalEventDialog");
                         },
                         onSubmit: (context, details) => {
@@ -961,7 +961,7 @@ export class ArrangementInspector {
                         dialogOptions: { width: 500, dialogClass: 'no-titlebar' },
                         onUpdatedCallback: () => {
                             this.dialogManager.closeDialog("nestedOrderRoomDialog");
-                            toastr.success("Rom har blitt lagt til");
+                            toastr.success(window.WEBOOK_MESSAGES?.roomAdded || "Room added");
                         },
                         onSubmit: (context, details) => {
                             window.MessagesFacility.send(details.recipientDialog, details.selectedBundle, "roomsSelected");
@@ -1000,7 +1000,7 @@ export class ArrangementInspector {
                         dialogOptions: { width: 500, dialogClass: 'no-titlebar', },
                         onUpdatedCallback: () => {
                             this.dialogManager.closeDialog("nestedOrderPersonDialog");
-                            toastr.success("Personer har blitt lagt til");
+                            toastr.success(window.WEBOOK_MESSAGES?.personAdded || "People added");
                         },
                         onSubmit: (context, details, dialogManager, dialog) => {
                             const eventName = dialog.data.whenEventName || "peopleSelected";

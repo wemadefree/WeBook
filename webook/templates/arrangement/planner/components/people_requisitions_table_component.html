@@ -1,15 +1,16 @@
-<h3>Kvitteringer på personressurser</h3>
+{% load i18n %}
+
+<h3>{% trans "Person resource receipts" %}</h3>
 
 <div class="alert alert-light p-0">
     <em class="small">
-        Merk at før en person skal bli rekvirert så må du igangsette rekvireringen. Her ser 
-        du aktive rekvireringer, mens i tabellen nedenfor har du mulighet til å starte rekvirering.
+        {% trans "A person must be requisitioned before they can be contacted. Active requisitions are shown here; the table below lets you start a requisition." %}
     </em>
 </div>
 
 {% if object_list is None or object_list|length == 0 %}
 
-<h6>Ingen aktive kvitteringer</h6>
+<h6>{% trans "No active receipts" %}</h6>
 
 {% else %}
 
@@ -17,8 +18,8 @@
     <thead>
         <tr>
             <th class="fw-bold">Status</th>
-            <th class="fw-bold">Mottager</th>
-            <th class="fw-bold">Sendt</th>
+            <th class="fw-bold">{% trans "Recipient" %}</th>
+            <th class="fw-bold">{% trans "Sent" %}</th>
         </tr>
     </thead>
 

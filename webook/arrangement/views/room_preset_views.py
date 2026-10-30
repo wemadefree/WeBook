@@ -58,7 +58,7 @@ def get_section_manifest():
             detail_url=None,
             create_url="arrangement:room_preset_create",
             edit_url="arrangement:room_preset_update",
-            delete_url="arrangement:room_preset_delete",
+            archive_url="arrangement:room_preset_delete",
             list_url="arrangement:room_preset_list",
         ),
     )
@@ -154,8 +154,8 @@ class RoomPresetDeleteView(
     LoginRequiredMixin, RoomPresetsSectionManifestMixin, MetaMixin, ArchiveView
 ):
     model = RoomPreset
-    view_meta = ViewMeta.Preset.delete(RoomPreset)
-    template_name = "common/delete_view.html"
+    view_meta = ViewMeta.Preset.archive(RoomPreset)
+    template_name = "common/archive_view.html"
 
     def get_success_url(self) -> str:
         return reverse("arrangement:room_preset_list")

@@ -38,7 +38,7 @@ def get_section_manifest():
             detail_url="arrangement:servicetype_detail",
             create_url="arrangement:servicetype_create",
             edit_url="arrangement:servicetype_edit",
-            delete_url="arrangement:servicetype_delete",
+            archive_url="arrangement:servicetype_delete",
             list_url="arrangement:servicetype_list",
         ),
     )
@@ -145,8 +145,8 @@ class ServiceTypeDeleteView(
     model = ServiceType
     slug_field = "slug"
     slug_url_kwarg = "slug"
-    template_name = "common/delete_view.html"
-    view_meta = ViewMeta.Preset.delete(ServiceType)
+    template_name = "common/archive_view.html"
+    view_meta = ViewMeta.Preset.archive(ServiceType)
 
     def get_success_url(self) -> str:
         return reverse("arrangement:servicetype_list")

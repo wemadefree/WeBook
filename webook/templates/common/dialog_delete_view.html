@@ -4,12 +4,18 @@
     <form method="post">
         {% csrf_token %}
 
-        <h4>{% trans "Are you sure?" %}</h4>
-        <h5>
-            {% trans "Are you sure you want to delete" %} <i>'{{ ENTITY_NAME }}'</i> ?<br>
-            {% trans "This action can not be reversed." %}
-        </h5>
-        <a class="btn wb-btn-secondary cancel-button" href="{{ RETURN_URL }}"><i class="fas fa-times"></i>&nbsp; {% trans "Cancel" %}</a>
-        <button class="btn wb-btn-main float-end" type="submit"><i class="fas fa-trash"></i>&nbsp; {% trans "Delete" %}</button>
+        <h4>Er du sikker?</h4>
+
+        {% if ENTITY_NAME %}
+            <p>
+                Er du sikker på at du vil slette <i>'{{ ENTITY_NAME }}'</i> ?<br>
+            </p>
+        {% else %}
+            <p>Denne handlingen kan ikke angres.</p>
+
+        {% endif %}
+
+        <a class="btn wb-btn-secondary cancel-button" href="{{ RETURN_URL }}"><i class="fas fa-times"></i>&nbsp; Avbryt</a>
+        <button class="btn wb-btn-main float-end" type="submit"><i class="fas fa-trash"></i>&nbsp; Slett</button>
     </form>
 {% endblock %}

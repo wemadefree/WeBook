@@ -233,7 +233,7 @@ export class PersonCalendar extends FullCalendarBased {
                         selector: "#peoplePlannerCalendar .fc-event",
                         items: {
                             arrangement_inspector: {
-                                name: "<i class='fas fa-search'></i>&nbsp; Inspiser arrangement",
+                                name: `<i class='fas fa-search'></i>&nbsp; ${window.WEBOOK_MESSAGES?.contextInspectArrangement || "Inspect arrangement"}`,
                                 isHtmlName: true,
                                 callback: (key, opt) => {
                                     let pk = parseInt(_this._findEventPkFromEl(opt.$trigger[0]));
@@ -247,7 +247,7 @@ export class PersonCalendar extends FullCalendarBased {
                                 }
                             },
                             event_inspector: {
-                                name: "<i class='fas fa-search'></i>&nbsp; Inspiser tidspunkt",
+                                name: `<i class='fas fa-search'></i>&nbsp; ${window.WEBOOK_MESSAGES?.contextInspectTime || "Inspect time"}`,
                                 isHtmlName: true,
                                 callback: (key, opt) => {
                                     let pk = _this._findEventPkFromEl(opt.$trigger[0]);
@@ -256,7 +256,7 @@ export class PersonCalendar extends FullCalendarBased {
                             },
                             "section_sep_1": "---------",
                             delete_arrangement: {
-                                name: "<i class='fas fa-trash'></i>&nbsp; Slett arrangement",
+                                name: `<i class='fas fa-trash'></i>&nbsp; ${window.WEBOOK_MESSAGES?.contextDeleteArrangement || "Delete arrangement"}`,
                                 isHtmlName: true,
                                 callback: (key, opt) => {
                                     Swal.fire({
@@ -284,7 +284,7 @@ export class PersonCalendar extends FullCalendarBased {
                                 }
                             },
                             delete_event: {
-                                name: "<i class='fas fa-trash'></i>&nbsp; Slett aktivitet",
+                                name: `<i class='fas fa-trash'></i>&nbsp; ${window.WEBOOK_MESSAGES?.contextDeleteActivity || "Delete activity"}`,
                                 isHtmlName: true,
                                 callback: (key, opt) => {
                                     Swal.fire({
@@ -323,7 +323,7 @@ export class PersonCalendar extends FullCalendarBased {
                     $(element).find(".fc-list-item-title").append("<div>" + event.resourceId + "</div>");
                 },
                 navLinks: false,
-                locale: 'nb',
+                locale: document.documentElement.lang || navigator.language || 'en',
                 eventSources: [
                     {
                         events: async (start, end, startStr, endStr, timezone) => {

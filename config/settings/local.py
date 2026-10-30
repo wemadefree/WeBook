@@ -75,7 +75,7 @@ INSTALLED_APPS += ["django_extensions"]  # noqa: F405
 # Anymail (Mailgun) # Test out email in development environment.
 # ------------------------------------------------------------------------------
 # https://anymail.readthedocs.io/en/stable/installation/#installing-anymail
-INSTALLED_APPS += ["anymail"]  # noqa: F405
+# INSTALLED_APPS += ["anymail"]  # noqa: F405
 INSTALLED_APPS += ["hijack", "hijack.contrib.admin"]
 
 MIDDLEWARE += ["hijack.middleware.HijackUserMiddleware"]

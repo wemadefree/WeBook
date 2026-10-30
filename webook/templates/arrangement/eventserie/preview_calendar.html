@@ -13,7 +13,7 @@
             events: '/arrangement/eventSerie/{{object.pk}}/calculate',
             initialView: 'timeGridWeek',
             navLinks:true,
-            locale: 'nb',
+            locale: document.documentElement.lang || navigator.language || 'en',
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',

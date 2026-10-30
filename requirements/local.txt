@@ -6,19 +6,19 @@ ipdb==0.13.3  # https://github.com/gotcha/ipdb
 
 # Testing
 # ------------------------------------------------------------------------------
-mypy==0.770, <0.780 # https://github.com/python/mypy
+mypy==2.3.0 # https://github.com/python/mypy
 # mypy >0.770 and <0.780 is required by django-stubs==1.5.0
-django-stubs==1.5.0  # https://github.com/typeddjango/django-stubs
+django-stubs==6.0.9  # https://github.com/typeddjango/django-stubs
 pytest==6.1.0  # https://github.com/pytest-dev/pytest
 pytest-sugar==0.9.4  # https://github.com/Frozenball/pytest-sugar
 django-test-plus==1.4.0  # https://github.com/revsys/django-test-plus
 
 # Code quality
 # ------------------------------------------------------------------------------
-flake8==3.8.3  # https://github.com/PyCQA/flake8
-coverage==5.3  # https://github.com/nedbat/coveragepy
-black==20.8b1  # https://github.com/ambv/black
-pylint-django==2.3.0  # https://github.com/PyCQA/pylint-django
+flake8==7.3.0  # https://github.com/PyCQA/flake8
+coverage==7.15.4  # https://github.com/nedbat/coveragepy
+black==26.5.1  # https://github.com/ambv/black
+pylint-django==2.8.0  # https://github.com/PyCQA/pylint-django
 pre-commit==2.7.1  # https://github.com/pre-commit/pre-commit
 
 # Django
@@ -29,4 +29,4 @@ django-debug-toolbar==4.4.6  # https://github.com/jazzband/django-debug-toolbar
 django-extensions==3.0.9  # https://github.com/django-extensions/django-extensions
 django-coverage-plugin==1.8.0  # https://github.com/nedbat/django_coverage_plugin
 pytest-django==3.10.0  # https://github.com/pytest-dev/pytest-django
-django-hijack
+django-hijack==3.7.8

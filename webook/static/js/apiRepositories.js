@@ -91,6 +91,17 @@ class SchoolAPIRepository extends BaseAPIRepository {
         return response.json()
     }
 
+    async archive(id, csrf_token) {
+        const response = await fetch(`/api/onlinebooking/school/delete?id=${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': csrf_token
+            }
+        });
+
+        return super.archive(id, csrf_token, response);
+    }
+
     async create(data, csrf_token) {
         const response = await fetch(`/api/onlinebooking/school/create`, {
             method: 'POST',

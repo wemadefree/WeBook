@@ -1,3 +1,5 @@
+{% load i18n %}
+
 {% include "arrangement/vue/popover_component.html" %}
 
 
@@ -25,7 +27,7 @@
     
                         <h5>[[label]]</h5>
     
-                        <input type="search" class="form-control mb-1" placeholder="Søk....">
+                        <input type="search" class="form-control mb-1" placeholder="{% trans 'Search' %}....">
     
                         <div ref="jsTreeEl">
                         </div>
@@ -40,7 +42,7 @@
         </div>
     </div>
     <div v-else>
-        <input type="search" class="form-control mb-1" placeholder="Søk...." v-if="showSearch">
+        <input type="search" class="form-control mb-1" placeholder="{% trans 'Search' %}...." v-if="showSearch">
 
         <div ref="jsTreeEl">
         </div>
@@ -88,7 +90,16 @@
             async loadJson() {
                 let response = await fetch(this.jsonUrl);
                 let json = await response.json();
+                this.normalizeTreeIcons(json);
                 return json;
+            },
+            normalizeTreeIcons(nodes) {
+                nodes.forEach(node => {
+                    if (!node.icon || node.icon.includes('folder')) {
+                        node.icon = 'fas fa-tag';
+                    }
+                    this.normalizeTreeIcons(node.children || []);
+                });
             },
             setSelected() {
                 if (this.modelValue && this.hasInit) {

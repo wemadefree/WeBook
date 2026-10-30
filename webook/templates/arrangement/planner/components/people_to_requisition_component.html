@@ -1,15 +1,17 @@
 
-<h3>Personer for rekvirering</h3>
+{% load i18n %}
+
+<h3>{% trans "People to requisition" %}</h3>
 <div class="alert alert-light p-0">
     <em class="small">
-        Trykk på <strong>'Send Forespørsel'</strong> for å sende ut en forespørsel til denne personen.
+        {% trans "Click 'Send request' to send a request to this person." %}
     </em>
 </div>
 <table class="table table-sm">
     <thead>
         <tr>
-            <th class="fw-bold">Person</th>
-            <th class="fw-bold">Valg</th>
+            <th class="fw-bold">{% trans "Person" %}</th>
+            <th class="fw-bold">{% trans "Options" %}</th>
         </tr>
     </thead>
 
@@ -18,7 +20,7 @@
             <tr>
                 <td>{{ person }}</td>
                 <td>
-                    <button class="initiatePersonRequisitionBtn btn btn-wemade" value="{{ person.pk }}" type="button">Send forespørsel</button>
+                    <button class="initiatePersonRequisitionBtn btn btn-wemade" value="{{ person.pk }}" type="button">{% trans "Send request" %}</button>
                 </td>
             </tr>
         {% endfor %}

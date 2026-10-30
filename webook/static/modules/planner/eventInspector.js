@@ -21,7 +21,7 @@ export class EventInspector {
                                 url: "/arrangement/planner/dialogs/event_inspector/" + context.event.pk,
                                 managerName: "eventInspector",
                                 dialogId: "inspectEventDialog",
-                                dialogTitle: "Inspect event",
+                                dialogTitle: window.WEBOOK_MESSAGES?.inspectEventTitle || "Inspect event",
                             });
                         },
                         onPreRefresh: (dialog) => {
@@ -44,7 +44,7 @@ export class EventInspector {
                         dialogOptions: { width: "80%", height: "100%", dialogClass: 'no-titlebar', modal:true, },
                         onUpdatedCallback: () => {
                             // this.dialogManager.closeDialog("inspectEventDialog");
-                            toastr.success("Endringer er lagret");
+                            toastr.success(window.WEBOOK_MESSAGES?.changesSaved || "Changes saved");
                         },
                         onSubmit: async (context, details) => {
                             const responses = await QueryStore.UpdateEvents( [details.event], details.csrf_token );
@@ -58,21 +58,33 @@ export class EventInspector {
                             }
 
                             let collisionText = "";
-                            let subtext = "Forandringer på selve aktiviteten har blitt lagret, men aktiviteter for rigging har ikke blitt opprettet."
+                            const subtext = window.WEBOOK_MESSAGES?.noChangesSaved || "No changes were saved.";
+                            let collision = null;
                             if (response.main_event_is_in_collision === true) {
-                                collisionText = "aktiviteten"
-                                subtext = "";
+                                collisionText = window.WEBOOK_MESSAGES?.collisionMainEvent || "The activity conflicts with another activity on an exclusive resource."
+                                collision = response.main_event_collision;
                             }
                             else if (response.post_buffer_event_is_in_collision === true) {
-                                collisionText = "riggetid etter aktiviteten"
+                                collisionText = window.WEBOOK_MESSAGES?.collisionAfterSetup || "The setup time after the activity conflicts with another activity on an exclusive resource."
+                                collision = response.post_buffer_event_collision;
                             }
                             else if (response.pre_buffer_event_is_in_collision) {
-                                collisionText = "riggetid før aktiviteten"
+                                collisionText = window.WEBOOK_MESSAGES?.collisionBeforeSetup || "The setup time before the activity conflicts with another activity on an exclusive resource."
+                                collision = response.pre_buffer_event_collision;
+                            }
+
+                            let collisionDetails = "";
+                            if (collision !== null) {
+                                const formatDateTime = function (value) {
+                                    return value ? value.replace("T", " ").slice(0, 16) : "";
+                                }
+
+                                collisionDetails = `\n${window.WEBOOK_MESSAGES?.collisionDetailsPrefix || "Conflicts with"}: ${collision.event_b_title} (${formatDateTime(collision.event_b_start)} - ${formatDateTime(collision.event_b_end)}) ${window.WEBOOK_MESSAGES?.collisionLocationPrefix || "in"} ${collision.contested_resource_name}.`;
                             }
 
                             Swal.fire(
-                                'Kollisjon',
-                                `Endringen kunne ikke lagres da ${collisionText} er i en kollisjon med en annen aktivitet på en eksklusiv ressurs.\n${subtext}`,
+                                window.WEBOOK_MESSAGES?.collisionTitle || "Conflict",
+                                `${collisionText}\n${subtext}${collisionDetails}`,
                                 'warning'
                             )
 
@@ -121,7 +133,7 @@ export class EventInspector {
                             const eventName = dialog.data.whenEventName || "peopleSelected";
 
                             window.MessagesFacility.send("inspectEventDialog", details.selectedBundle, eventName);
-                            toastr.success("Valgte personer er blitt lagt til i arrangementet");
+                            toastr.success(window.WEBOOK_MESSAGES?.addedPeopleToEvent || "Selected people have been added to the activity.");
                         }
                     })
                 ],

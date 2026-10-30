@@ -194,6 +194,7 @@ class BaseEventForm(forms.ModelForm):
         )
         if len(collisions_with_main) > 0:
             self.main_collision = True
+            self.main_collision_record = collisions_with_main[0]
             return
 
         pre_buffer, post_buffer = self.instance.refresh_buffers()
@@ -216,6 +217,7 @@ class BaseEventForm(forms.ModelForm):
             pre_buffer_collisions = analyze_collisions([pre_buffer_dto])
             if len(pre_buffer_collisions) > 0:
                 self.pre_buffer_collision = True
+                self.pre_buffer_collision_record = pre_buffer_collisions[0]
                 pre_buffer.archive(None)
                 return
         if post_buffer is not None:
@@ -237,6 +239,7 @@ class BaseEventForm(forms.ModelForm):
             post_buffer_collisions = analyze_collisions([post_buffer_dto])
             if len(post_buffer_collisions) > 0:
                 self.post_buffer_collision = True
+                self.post_buffer_collision_record = post_buffer_collisions[0]
                 post_buffer.archive(None)
                 return
 

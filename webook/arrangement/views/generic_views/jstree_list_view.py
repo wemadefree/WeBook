@@ -32,6 +32,7 @@ class JSTreeListView(JsonListView):
             ("detail_url", self.section.crudl_map.detail_url),
             ("edit_url", self.section.crudl_map.edit_url),
             ("delete_url", self.section.crudl_map.delete_url),
+            ("archive_url", self.section.crudl_map.archive_url),
         ]
         for item in nodes:
             for attr_name, url in urls:

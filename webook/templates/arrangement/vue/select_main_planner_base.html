@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <template id="vuec-select-main-planner-base">
     
     <div v-if="!mainPlannerSearchTerm"
@@ -6,16 +8,16 @@
             <h2 class="mb-0"><i class="fas fa-info"></i></h2>
             
             <div class="ms-3">
-                Uten søk vises alle personer med gruppe planlegger
+                {% trans "Without a search term, all people in the planner group are shown." %}
                 <br>
-                Du kan fortsatt søke etter og velge personer uten gruppe planlegger ved å skrive inn minst 3 tegn i søkefeltet.
+                {% trans "You can still search for and select people outside the planner group by entering at least 3 characters." %}
             </div>
         </div>
     </div>
     
     <input type="search" class="form-control form-control-lg"
         v-model="mainPlannerSearchTerm"
-        placeholder="Søk etter planlegger... (minst 3 tegn)">       
+        placeholder="{% trans 'Search for planner... (at least 3 characters)' %}">
 
     <div class="mt-3">
         <div v-if="mainPlannerSearchResults.length">
@@ -35,20 +37,20 @@
             </table>
 
             <div v-if="mainPlannerSearchTerm.length > 2" class="text-end">
-                [[mainPlannerSearchResults.length]] resultater
+                    [[mainPlannerSearchResults.length]] {% trans "results" %}
             </div>
             
             <div class="clearfix">
                 <small class="text-muted float-end fw-bold">
                     <i class="fas fa-info"></i>&nbsp;
-                    Trykk på navnet til personen du ønsker å velge som hovedplanlegger for arrangementet
+                    {% trans "Select the person who should be the main planner for the arrangement by clicking their name." %}
                 </small>
             </div>
         </div>
         <div 
             class="alert alert-info"
             v-else>
-            Ingen resultater
+            {% trans "No results" %}
         </div>
     </div>
 </template>

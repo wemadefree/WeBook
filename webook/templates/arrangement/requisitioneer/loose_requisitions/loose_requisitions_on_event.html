@@ -1,4 +1,6 @@
 
+{% load i18n %}
+
 {% block content %}
     <style>
         ul.coloredDotUl {
@@ -15,16 +17,16 @@
         }
     </style>
 
-    <h3>Bestillinger</h3>
+    <h3>{% trans "Orders" %}</h3>
 
     <div class="table-responsive">
         <table class="table table-sm table-bordered table-striped">
             <thead>
                 <tr>
                     <th></th>
-                    <th><i class="fas fa-comment"></i>&nbsp; Kommentar</th>
-                    <th><i class="fas fa-dollar-sign"></i>&nbsp; Tjenestetype</th>
-                    <th><i class="fas fa-cog"></i>&nbsp; Valg</th>
+                    <th><i class="fas fa-comment"></i>&nbsp; {% trans "Comment" %}</th>
+                    <th><i class="fas fa-dollar-sign"></i>&nbsp; {% trans "Service type" %}</th>
+                    <th><i class="fas fa-cog"></i>&nbsp; {% trans "Options" %}</th>
                 </tr>
             </thead>
 
@@ -36,7 +38,7 @@
                         <td>{{ l_requisition.type_to_order }}</td>
                         <td>
                             {% if reference_frame == "event" %}
-                                <button class="btn btn-sm btn-danger" onclick="looseRequisitionsOnEventComponent.removeEventFromRequisition({{l_requisition.pk}})"><i class="fas fa-times"></i>&nbsp; Fjern denne hendelsen fra rekvireringen</button>
+                                <button class="btn btn-sm btn-danger" onclick="looseRequisitionsOnEventComponent.removeEventFromRequisition({{l_requisition.pk}})"><i class="fas fa-times"></i>&nbsp; {% trans "Remove this event from the requisition" %}</button>
                             {% else %}
                                 <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i>&nbsp; Slett bestilling</button>
                             {% endif %}
@@ -48,7 +50,7 @@
                         <td colspan="3">
                             <table>
                                 <tbody>
-                                    <h5>Denne bestillingen gjelder:</h5>
+                                    <h5>{% trans "This order applies to:" %}</h5>
                                     
                                     <ul class="coloredDotUl">
                                         {% for event in l_requisition.events.all %}

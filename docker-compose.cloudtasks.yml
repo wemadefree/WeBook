@@ -1,0 +1,41 @@
+# Runs background tasks through a local Cloud Tasks emulator (github.com/aertje/cloud-tasks-emulator)
+# instead of Celery, exercising the TASK_BACKEND="google_cloud" path used on Cloud Run, including
+# the OIDC token check on /api/tasks/execute-task. Use on top of the local stack:
+#
+#   docker compose --env-file /dev/null -f docker-compose.local.yml -f docker-compose.cloudtasks.yml up -d
+#
+# The emulator signs tokens with a publicly known development key; never point a real deployment
+# at it.
+
+x-cloud-tasks-env: &cloud-tasks-env
+  TASK_BACKEND: google_cloud
+  GOOGLE_PROJECT_ID: webook-local
+  GOOGLE_PROJECT_LOCATION: europe-west1
+  GOOGLE_CLOUD_TASK_QUEUE_NAME: webook-queue
+  GOOGLE_CLOUD_TASK_SERVICE_ACCOUNT: webook-tasks@webook-local.iam.gserviceaccount.com
+  GOOGLE_CLOUD_TASKS_EMULATOR_HOST: cloud-tasks-emulator:8123
+  GOOGLE_CLOUD_TASKS_EMULATOR_OIDC_ISSUER: http://cloud-tasks-emulator:8980
+  # The emulator calls the app over the Compose network, not via localhost
+  TASK_EXECUTION_BASE_URL: http://webook:8080
+
+services:
+  cloud-tasks-emulator:
+    image: ghcr.io/aertje/cloud-tasks-emulator@sha256:a625499a689597d1c14efe33224c59e5e5a1e6b9bfbdfc52e978fad307c52ed3
+    command:
+      - -host
+      - 0.0.0.0
+      - -port
+      - "8123"
+      - -initial-queue
+      - projects/webook-local/locations/europe-west1/queues/webook-queue
+      - -openid-issuer
+      - http://cloud-tasks-emulator:8980
+
+  webook:
+    environment: *cloud-tasks-env
+    depends_on:
+      cloud-tasks-emulator:
+        condition: service_started
+
+  celery:
+    environment: *cloud-tasks-env

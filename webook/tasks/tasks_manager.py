@@ -220,7 +220,32 @@ class GoogleCloudTaskBackend(AbstractTaskBackend):
         self.project_id = project_id
         self.location = location
         self.queue_name = queue_name
-        self.__client = tasks_v2.CloudTasksClient()
+        self.__client = None
+        self.__client_pid = None
+
+    @property
+    def _client(self) -> tasks_v2.CloudTasksClient:
+        """Created on first use in each process: gRPC channels must not be shared across a fork
+        (gunicorn --preload imports this module in the master process)."""
+        if self.__client is None or self.__client_pid != os.getpid():
+            if settings.GOOGLE_CLOUD_TASKS_EMULATOR_HOST:
+                # The emulator serves plain gRPC without authentication
+                import grpc
+                from google.cloud.tasks_v2.services.cloud_tasks.transports import (
+                    CloudTasksGrpcTransport,
+                )
+
+                self.__client = tasks_v2.CloudTasksClient(
+                    transport=CloudTasksGrpcTransport(
+                        channel=grpc.insecure_channel(
+                            settings.GOOGLE_CLOUD_TASKS_EMULATOR_HOST
+                        )
+                    )
+                )
+            else:
+                self.__client = tasks_v2.CloudTasksClient()
+            self.__client_pid = os.getpid()
+        return self.__client
 
     def create_http_task(
         self,
@@ -236,6 +261,9 @@ class GoogleCloudTaskBackend(AbstractTaskBackend):
         :param target_url: The URL to which the task will be sent.
         :return: True if the task was created successfully, False otherwise.
         """
+        # Name the Cloud Task after the TaskExecution, so its ID is known before the task is created
+        task_id = str(kwargs.get("task_execution_uuid") or uuid.uuid4())
+
         task = tasks_v2.Task(
             http_request=tasks_v2.HttpRequest(
                 http_method=tasks_v2.HttpMethod.POST,
@@ -250,14 +278,12 @@ class GoogleCloudTaskBackend(AbstractTaskBackend):
                     audience=settings.GOOGLE_CLOUD_TASK_OIDC_AUDIENCE,
                 ),
             ),
-            name=None,
-            # name=(
-            #     self.__client.task_path(
-            #         project=self.project_id,
-            #         location=self.location,
-            #         queue=self.queue_name,
-            #     )
-            # ),
+            name=self._client.task_path(
+                project=self.project_id,
+                location=self.location,
+                queue=self.queue_name,
+                task=task_id,
+            ),
         )
 
         if scheduled_seconds_from_now is not None:
@@ -268,20 +294,22 @@ class GoogleCloudTaskBackend(AbstractTaskBackend):
             )
             task.schedule_time = timestamp
 
-        created_task = self.__client.create_task(
-            tasks_v2.CreateTaskRequest(
-                parent=self.__client.queue_path(
-                    project=self.project_id,
-                    location=self.location,
-                    queue=self.queue_name,
-                ),
-                task=task,
-            )
+        create_task_request = tasks_v2.CreateTaskRequest(
+            parent=self._client.queue_path(
+                project=self.project_id,
+                location=self.location,
+                queue=self.queue_name,
+            ),
+            task=task,
+        )
+        # Create after commit, so the TaskExecution row exists when Cloud Tasks calls back
+        transaction.on_commit(
+            lambda: self._client.create_task(create_task_request), robust=True
         )
 
         result = TaskExeuctionCreateResponse()
         result.success = True
-        result.task_id = int(created_task.name.split("/")[-1])
+        result.task_id = task_id
         result.status = TaskExecutionState.PENDING
 
         return result
@@ -294,9 +322,9 @@ class GoogleCloudTaskBackend(AbstractTaskBackend):
         :return: True if the task was canceled successfully, False otherwise.
         """
         try:
-            self.__client.delete_task(
+            self._client.delete_task(
                 tasks_v2.DeleteTaskRequest(
-                    name=self.__client.task_path(
+                    name=self._client.task_path(
                         project=self.project_id,
                         location=self.location,
                         queue=self.queue_name,
@@ -319,9 +347,9 @@ class GoogleCloudTaskBackend(AbstractTaskBackend):
         #     "GoogleCloudTaskBackend.get_task_status is not implemented yet."
         # )
         try:
-            task: tasks_v2.Task = self.__client.get_task(
+            task: tasks_v2.Task = self._client.get_task(
                 tasks_v2.GetTaskRequest(
-                    name=self.__client.task_path(
+                    name=self._client.task_path(
                         project=self.project_id,
                         location=self.location,
                         queue=self.queue_name,
@@ -535,7 +563,7 @@ else:
 
 TASK_MANAGER = TaskManager(
     backend=TASK_BACKEND,
-    execution_ep_url=f"{settings.APP_BASE_URL}/api/tasks/execute-task",
+    execution_ep_url=f"{settings.TASK_EXECUTION_BASE_URL}/api/tasks/execute-task",
 )
 
 

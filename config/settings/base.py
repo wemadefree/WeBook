@@ -512,8 +512,17 @@ GOOGLE_CLOUD_TASK_QUEUE_NAME = env(
     "GOOGLE_CLOUD_TASK_QUEUE_NAME", default="webook-queue"
 )
 GOOGLE_PROJECT_LOCATION = env("GOOGLE_PROJECT_LOCATION", default="europe-west1")
+# Base URL Cloud Tasks uses to reach /api/tasks/execute-task; may differ from the public APP_BASE_URL
+TASK_EXECUTION_BASE_URL = env("TASK_EXECUTION_BASE_URL", default=APP_BASE_URL)
 # Cloud Tasks sends an OIDC token for this service account, which /api/tasks/execute-task verifies
 GOOGLE_CLOUD_TASK_SERVICE_ACCOUNT = env("GOOGLE_CLOUD_TASK_SERVICE_ACCOUNT", default=None)
 GOOGLE_CLOUD_TASK_OIDC_AUDIENCE = env(
-    "GOOGLE_CLOUD_TASK_OIDC_AUDIENCE", default=APP_BASE_URL
+    "GOOGLE_CLOUD_TASK_OIDC_AUDIENCE", default=TASK_EXECUTION_BASE_URL
+)
+# Local development only: the Cloud Tasks emulator (github.com/aertje/cloud-tasks-emulator), as
+# host:port for its gRPC API, and the issuer of the OIDC tokens it signs (keys served at <issuer>/jwks).
+# Leave unset in real deployments, where tokens must be issued by Google.
+GOOGLE_CLOUD_TASKS_EMULATOR_HOST = env("GOOGLE_CLOUD_TASKS_EMULATOR_HOST", default=None)
+GOOGLE_CLOUD_TASKS_EMULATOR_OIDC_ISSUER = env(
+    "GOOGLE_CLOUD_TASKS_EMULATOR_OIDC_ISSUER", default=None
 )

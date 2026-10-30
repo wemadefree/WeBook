@@ -1,5 +1,10 @@
+import time
 import uuid
+from types import SimpleNamespace
 from unittest.mock import patch
+
+import jwt
+from cryptography.hazmat.primitives.asymmetric import rsa
 
 from django.test import TestCase, override_settings
 
@@ -63,7 +68,10 @@ class CeleryTaskBackendTests(TestCase):
         )
 
 
+@override_settings(GOOGLE_CLOUD_TASKS_EMULATOR_OIDC_ISSUER=None)
 class CloudTasksOIDCAuthTests(TestCase):
+    """Tokens issued by Google (no emulator configured)"""
+
     def authenticate(self, claims=None, error=None):
         with patch("google.oauth2.id_token.verify_oauth2_token") as verify:
             verify.return_value = claims
@@ -91,6 +99,48 @@ class CloudTasksOIDCAuthTests(TestCase):
             self.authenticate({"email": "someone@example.com", "email_verified": True})
         )
         self.assertIsNone(self.authenticate(error=ValueError("bad token")))
+
+
+EMULATOR_ISSUER = "http://cloud-tasks-emulator:8980"
+EMULATOR_AUDIENCE = "http://webook:8080"
+
+
+@override_settings(
+    TASK_BACKEND="google_cloud",
+    GOOGLE_CLOUD_TASK_SERVICE_ACCOUNT=SERVICE_ACCOUNT,
+    GOOGLE_CLOUD_TASKS_EMULATOR_OIDC_ISSUER=EMULATOR_ISSUER,
+    GOOGLE_CLOUD_TASK_OIDC_AUDIENCE=EMULATOR_AUDIENCE,
+)
+class CloudTasksEmulatorTokenTests(TestCase):
+    def setUp(self):
+        self.emulator_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+
+    def token(self, signing_key=None, **claims):
+        payload = {
+            "iss": EMULATOR_ISSUER,
+            "aud": EMULATOR_AUDIENCE,
+            "email": SERVICE_ACCOUNT,
+            "email_verified": True,
+            "exp": int(time.time()) + 300,
+            **claims,
+        }
+        return jwt.encode(payload, signing_key or self.emulator_key, algorithm="RS256")
+
+    def authenticate(self, token):
+        # Stands in for fetching the emulator's /jwks
+        published_key = SimpleNamespace(key=self.emulator_key.public_key())
+        with patch("jwt.PyJWKClient.get_signing_key_from_jwt", return_value=published_key):
+            return CloudTasksOIDCAuth().authenticate(request=None, token=token)
+
+    def test_accepts_emulator_token(self):
+        self.assertEqual(self.authenticate(self.token()), SERVICE_ACCOUNT)
+
+    def test_rejects_wrong_issuer_audience_or_key(self):
+        other_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+
+        self.assertIsNone(self.authenticate(self.token(iss="http://elsewhere")))
+        self.assertIsNone(self.authenticate(self.token(aud="http://other-app")))
+        self.assertIsNone(self.authenticate(self.token(signing_key=other_key)))
 
 
 class ExecuteTaskEndpointTests(TestCase):

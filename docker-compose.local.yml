@@ -4,6 +4,9 @@
 #
 # (--env-file /dev/null stops Compose itself from reading .env for variable substitution.)
 #
+# Background tasks run through Celery here, like on the VMs. To run them through a Cloud Tasks
+# emulator instead (the Cloud Run setup), add -f docker-compose.cloudtasks.yml.
+#
 # The repo (including .env) is mounted into the containers, but settings only read
 # .env for variables that are not already set. Everything that connects to an external
 # service is therefore set explicitly below, so a local run can never reach a shared

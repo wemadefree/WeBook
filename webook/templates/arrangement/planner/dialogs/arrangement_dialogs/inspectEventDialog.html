@@ -974,7 +974,7 @@
                         let audience_id = dialog.data.audienceJsTreeSelect.getSelectedValue() || 0;
 
                         let url = "/api/onlinebooking/school/list?county_id=" + e.target.value + "&sort_by=name&limit=1000";
-                        if (parseInt(audience_id) != {{ audienceGroupId }}) {
+                        if (parseInt(audience_id) != {{ audienceGroupId|default:"null" }}) {
                             url += "&audience_id=" + audience_id;
                         }
 

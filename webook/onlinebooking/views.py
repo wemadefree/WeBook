@@ -63,9 +63,6 @@ class AllowedAudiencesTreeJsonView(LoginRequiredMixin, JSTreeListView):
     model = Audience
 
     def get_queryset(self):
-        settings = OnlineBookingSettings.objects.first()
-        if settings is None:
-            settings = OnlineBookingSettings.objects.create()
-            settings.save()
+        settings = OnlineBookingSettings.get_solo()
 
         return [item.as_node() for item in settings.allowed_audiences.all()]

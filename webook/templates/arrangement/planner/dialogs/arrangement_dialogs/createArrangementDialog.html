@@ -453,7 +453,7 @@
                 dialog.data.countyOptions.forEach((county) => {
                     if (county.id == selectedCountyId) {
                         county.schools.forEach((school) => {
-                            if (school.audiences.includes(selectedAudienceId) || selectedAudienceId == {{ audienceGroupId }}) {
+                            if (school.audiences.includes(selectedAudienceId) || selectedAudienceId == {{ audienceGroupId|default:"null" }}) {
                                 schoolOptions.push({
                                      id: school.id,
                                     text: school.text,

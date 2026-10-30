@@ -114,6 +114,14 @@ class OnlineBookingSettings(models.Model):
     )
     duration_amount = models.PositiveIntegerField(default=15)
 
+    @classmethod
+    def get_solo(cls) -> "OnlineBookingSettings":
+        """Get the settings, which are a single row created with defaults on first use"""
+        settings = cls.objects.first()
+        if settings is None:
+            settings = cls.objects.create()
+        return settings
+
     def save(self, *args, **kwargs) -> None:
         if settings.USE_REDIS:
             for key in cache.keys("school_related:*"):

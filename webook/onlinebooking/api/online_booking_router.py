@@ -103,7 +103,7 @@ def create_online_booking(
 
     ob.save()
 
-    settings = OnlineBookingSettings.objects.first()
+    settings = OnlineBookingSettings.get_solo()
 
     add_time_with_arbitrary_unit = lambda amount, unit: timedelta(
         weeks=amount if unit == OnlineBookingSettings.Unit.WEEKS else 0,
@@ -198,10 +198,7 @@ def create_online_booking(
 
 @online_booking_router.get("/settings", response=OnlineBookingSettingsGetSchema)
 def get_online_booking_settings(request) -> OnlineBookingSettingsGetSchema:
-    settings = OnlineBookingSettings.objects.first()
-    if settings is None:
-        settings = OnlineBookingSettings.objects.create()
-        settings.save()
+    settings = OnlineBookingSettings.get_solo()
 
     return settings
 

@@ -842,7 +842,7 @@ class PlannerCreateArrangementInformatioDialogView(
         context["orderRoomDialog"] = self.request.GET.get("orderRoomDialog")
         context["orderPersonDialog"] = self.request.GET.get("orderPersonDialog")
 
-        settings = OnlineBookingSettings.objects.first()
+        settings = OnlineBookingSettings.get_solo()
         counties = County.objects.all().order_by("name")
 
         for county in counties:
@@ -853,9 +853,9 @@ class PlannerCreateArrangementInformatioDialogView(
 
         context["schoolAudiences"] = [
             *settings.allowed_audiences.all(),
-            settings.audience_group,
+            *([settings.audience_group] if settings.audience_group else []),
         ]
-        context["audienceGroupId"] = settings.audience_group.id
+        context["audienceGroupId"] = settings.audience_group_id
         context["counties"] = counties
 
         return context
@@ -927,7 +927,7 @@ class PlannerArrangementCreateSimpleEventDialogView(
             hide_rigging = hide_rigging == "true"
         context["HIDE_RIGGING"] = hide_rigging
 
-        settings = OnlineBookingSettings.objects.first()
+        settings = OnlineBookingSettings.get_solo()
         counties = County.objects.all().order_by("name")
 
         for county in counties:
@@ -935,9 +935,9 @@ class PlannerArrangementCreateSimpleEventDialogView(
 
         context["schoolAudiences"] = [
             *settings.allowed_audiences.all(),
-            settings.audience_group,
+            *([settings.audience_group] if settings.audience_group else []),
         ]
-        context["audienceGroupId"] = settings.audience_group.id
+        context["audienceGroupId"] = settings.audience_group_id
         context["counties"] = counties
 
         return context
@@ -1335,11 +1335,7 @@ class PlanSerieForm(LoginRequiredMixin, DialogView, FormView):
         context["orderRoomDialog"] = self.request.GET.get("orderRoomDialog")
         context["orderPersonDialog"] = self.request.GET.get("orderPersonDialog")
 
-        settings = (
-            OnlineBookingSettings.objects.prefetch_related("allowed_audiences")
-            .select_related("audience_group")
-            .first()
-        )
+        settings = OnlineBookingSettings.get_solo()
         counties = (
             County.objects.all().prefetch_related("city_segments").order_by("name")
         )
@@ -1355,9 +1351,9 @@ class PlanSerieForm(LoginRequiredMixin, DialogView, FormView):
 
         context["schoolAudiences"] = [
             *settings.allowed_audiences.all(),
-            settings.audience_group,
+            *([settings.audience_group] if settings.audience_group else []),
         ]
-        context["audienceGroupId"] = settings.audience_group.id
+        context["audienceGroupId"] = settings.audience_group_id
         context["counties"] = counties
 
         return context

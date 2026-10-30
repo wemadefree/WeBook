@@ -485,6 +485,10 @@ HAYSTACK_SIGNAL_PROCESSOR = (
     "webook.celery_haystack.queued_signal_processor.QueuedSignalProcessor"
 )
 
+# Backend that runs tasks staged through TASK_MANAGER (webook/tasks):
+#   "local"        - a worker thread in the web process (development)
+#   "celery"       - the Celery workers (deployments that run Celery)
+#   "google_cloud" - Google Cloud Tasks, calling /api/tasks/execute-task (Cloud Run)
 TASK_BACKEND = env(
     "TASK_BACKEND",
     default="local",
@@ -508,3 +512,8 @@ GOOGLE_CLOUD_TASK_QUEUE_NAME = env(
     "GOOGLE_CLOUD_TASK_QUEUE_NAME", default="webook-queue"
 )
 GOOGLE_PROJECT_LOCATION = env("GOOGLE_PROJECT_LOCATION", default="europe-west1")
+# Cloud Tasks sends an OIDC token for this service account, which /api/tasks/execute-task verifies
+GOOGLE_CLOUD_TASK_SERVICE_ACCOUNT = env("GOOGLE_CLOUD_TASK_SERVICE_ACCOUNT", default=None)
+GOOGLE_CLOUD_TASK_OIDC_AUDIENCE = env(
+    "GOOGLE_CLOUD_TASK_OIDC_AUDIENCE", default=APP_BASE_URL
+)

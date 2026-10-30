@@ -31,7 +31,7 @@ x-webook-env: &webook-env
   CELERY_BROKER_URL: redis://redis:6379/0
   CELERY_RESULT_BACKEND: django-db
   ELASTICSEARCH_URL: http://elasticsearch:9200/
-  TASK_BACKEND: local
+  TASK_BACKEND: celery  # like the VM deployments; "local" runs tasks in the web process
   # Login with email/password only
   ALLOW_EMAIL_LOGIN: "True"
   ALLOW_SSO: "False"

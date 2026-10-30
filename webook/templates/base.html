@@ -471,6 +471,17 @@
               last: "{% trans 'Last' %}",
               next: "{% trans 'Next' %}",
               previous: "{% trans 'Previous' %}"
+            },
+            // Export buttons (DataTables Buttons extension); %d is replaced with the row count
+            buttons: {
+              copy: "{% trans 'Copy' %}",
+              print: "{% trans 'Print' %}",
+              copyTitle: "{% trans 'Copy to clipboard' %}",
+              copySuccess: {
+                1: "{% trans 'Copied 1 row to clipboard' %}",
+                _: "{% trans 'Copied %d rows to clipboard' %}"
+              },
+              copyKeys: "{% trans 'Press ctrl or ⌘ + C to copy the table data to your clipboard. To cancel, click this message or press Esc.' %}"
             }
           }
         });

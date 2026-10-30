@@ -1051,3 +1051,24 @@ a.fc-event {
 .cursor-pointer {
     cursor: pointer;
 }
+/* Message shown by the DataTables copy button. Only the DataTables scripts are loaded, not its
+   stylesheet, so without this the message is dropped unstyled into the page. */
+div.dt-button-info {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 420px;
+    max-width: 90vw;
+    padding: 1rem 1.5rem;
+    z-index: 2100;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+
+div.dt-button-info h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}

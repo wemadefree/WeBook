@@ -7,8 +7,9 @@ from google.cloud import tasks_v2
 from google.protobuf import timestamp_pb2
 from datetime import datetime
 from django.conf import settings
+import os
 from queue import Queue
-from threading import Thread
+from threading import Lock, Thread
 import httpx
 from time import sleep
 from dataclasses import dataclass
@@ -110,10 +111,27 @@ class LocalTaskBackend(AbstractTaskBackend):
 
     def __init__(self):
         print("Initializing LocalTaskBackend...")
-        self.queue = Queue()
-        self.queue_worker_thread = Thread(target=self.queue_worker)
-        self.queue_worker_thread.daemon = True
-        self.queue_worker_thread.start()
+        self.queue = None
+        self.queue_worker_thread = None
+        self._worker_pid = None
+        self._worker_lock = Lock()
+
+    def _ensure_worker(self):
+        """Start the queue worker in the current process. It is started lazily rather than in __init__,
+        because with gunicorn --preload this module is imported in the master process, and threads do
+        not survive the fork into the worker processes that actually queue tasks."""
+        with self._worker_lock:
+            if (
+                self._worker_pid == os.getpid()
+                and self.queue_worker_thread is not None
+                and self.queue_worker_thread.is_alive()
+            ):
+                return
+
+            self._worker_pid = os.getpid()
+            self.queue = Queue()
+            self.queue_worker_thread = Thread(target=self.queue_worker, daemon=True)
+            self.queue_worker_thread.start()
 
     def queue_worker(self):
         while True:
@@ -133,7 +151,14 @@ class LocalTaskBackend(AbstractTaskBackend):
                 print("Invalid task data, skipping...")
                 continue
 
-            execute_response: httpx.Response = httpx.post(url=target_url)
+            try:
+                # No timeout: tasks may legitimately run for a long time
+                execute_response: httpx.Response = httpx.post(url=target_url, timeout=None)
+            except Exception as e:
+                # Keep the worker alive; one failing task must not stop the queue
+                self.task_meta[uuid] = TaskExecutionState.FAILED
+                print(f"Failed to execute task {uuid} at {target_url}: {e}")
+                continue
 
             self.task_meta[uuid] = (
                 TaskExecutionState.COMPLETED
@@ -158,6 +183,8 @@ class LocalTaskBackend(AbstractTaskBackend):
         *args,
         **kwargs,
     ) -> TaskExeuctionCreateResponse:
+        self._ensure_worker()
+
         task_uuid = uuid.uuid4()
         self.queue.put(
             {

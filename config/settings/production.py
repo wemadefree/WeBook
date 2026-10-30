@@ -56,7 +56,15 @@ SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
 )
 
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# https://docs.djangoproject.com/en/dev/ref/settings/#storages
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # https://github.com/antonagestam/collectfast#upload-strategies
 COLLECTFAST_STRATEGY = "collectfast.strategies.filesystem.FileSystemStrategy"

@@ -1,6 +1,5 @@
-# import zoneinfo
+import zoneinfo
 
-import pytz
 from django.utils import timezone
 
 
@@ -10,7 +9,9 @@ class TimezoneMiddleware:
 
     def __call__(self, request):
         if request.user.pk:
-            timezone.activate(pytz.timezone(request.user.timezone))
+            # Must be a zoneinfo zone: since Django 5.0, make_aware() no longer
+            # localizes pytz zones and would silently apply their LMT offset.
+            timezone.activate(zoneinfo.ZoneInfo(request.user.timezone))
         else:
             timezone.deactivate()
 

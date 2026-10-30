@@ -13,6 +13,9 @@ User = get_user_model()
 
 
 class ComplexUserUpdateForm(forms.UserChangeForm):
+    # Edits a Person, not a User; drop the inherited password field, which
+    # since Django 5.1 calls instance.has_usable_password() on init.
+    password = None
 
     profile_picture = dj_forms.ImageField(
         max_length=512, label=_("Profile Picture"), required=False

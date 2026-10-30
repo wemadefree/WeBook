@@ -49,6 +49,20 @@ class ArchiveableMixin(models.Model):
         abstract = True
 
 
+# Callable defaults, so the database is queried when a settings row is created
+# rather than when this module is imported (which breaks migrating a fresh database).
+def default_location_id() -> Optional[int]:
+    return Location.objects.values_list("id", flat=True).first()
+
+
+def default_status_type_id() -> Optional[int]:
+    return StatusType.objects.values_list("id", flat=True).first()
+
+
+def default_arrangement_type_id() -> Optional[int]:
+    return ArrangementType.objects.values_list("id", flat=True).first()
+
+
 class OnlineBookingSettings(models.Model):
     title_format = models.CharField(max_length=255)
 
@@ -64,7 +78,7 @@ class OnlineBookingSettings(models.Model):
         "arrangement.Location",
         on_delete=models.RESTRICT,
         null=True,
-        default=Location.objects.first().id,
+        default=default_location_id,
     )
 
     main_planner = models.ForeignKey(
@@ -75,14 +89,14 @@ class OnlineBookingSettings(models.Model):
         "arrangement.StatusType",
         on_delete=models.RESTRICT,
         null=True,
-        default=StatusType.objects.first().id,
+        default=default_status_type_id,
     )
 
     arrangement_type = models.ForeignKey(
         "arrangement.ArrangementType",
         on_delete=models.RESTRICT,
         null=True,
-        default=ArrangementType.objects.first().id,
+        default=default_arrangement_type_id,
     )
 
     class Unit(models.TextChoices):

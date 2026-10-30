@@ -681,7 +681,7 @@ class PlannerEventInspectorDialogView(LoginRequiredMixin, DialogView, UpdateView
 
             online_booking_settings = OnlineBookingSettings.objects.first()
 
-            context["audienceGroupId"] = online_booking_settings.audience_group.id
+            context["audienceGroupId"] = online_booking_settings.audience_group_id
             context["counties"] = County.objects.all().order_by("name")
             context["city_segments"] = (
                 obj.county.city_segments.all().order_by("name") if obj.county else []
@@ -786,7 +786,7 @@ class PlannerArrangementInformationDialogView(
 
             online_booking_settings = OnlineBookingSettings.objects.first()
 
-            context["audienceGroupId"] = online_booking_settings.audience_group.id
+            context["audienceGroupId"] = online_booking_settings.audience_group_id
             context["counties"] = County.objects.all().order_by("name")
             context["city_segments"] = (
                 arrangement_in_focus.county.city_segments.all().order_by("name")

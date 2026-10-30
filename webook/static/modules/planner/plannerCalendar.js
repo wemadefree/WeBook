@@ -452,7 +452,9 @@ export class PlannerCalendar extends FullCalendarBased {
 
         setTimeout(function(){
             const row = document.evaluate(`//a[contains(@class, 'fc-daygrid-week') or contains(@class, 'fc-timeline-slot-cushion')][contains(.,'${weekNumber}')]`, document).iterateNext();
-            row.scrollIntoView();
+            if (row) {
+                row.scrollIntoView();
+            }
             // scroll up by 100px to account for the header
             // window.scrollBy(0, -100);
         }, 800);
@@ -745,7 +747,9 @@ export class PlannerCalendar extends FullCalendarBased {
                                 const row = document.evaluate(`//a[contains(@class, 'fc-daygrid-week')][contains(.,'${weekNum}')]`, document).iterateNext();
     
                                 setTimeout(function(){
-                                    row.scrollIntoView();
+                                    if (row) {
+                                        row.scrollIntoView();
+                                    }
                                     // scroll up by 100px to account for the header
                                     window.scrollBy(0, -100);
                                 }, 500);

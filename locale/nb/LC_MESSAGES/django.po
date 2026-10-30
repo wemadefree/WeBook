@@ -2166,7 +2166,7 @@ msgstr "Bestillingen er kansellert av en planlegger."
 #: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:55
 #: webook/templates/arrangement/requisitioneer/order_service_form.html:93
 msgid "Cancelled"
-msgstr "Avbryt"
+msgstr "Kansellert"
 
 #: webook/templates/arrangement/planner/components/service_requisitions_table_component.html:81
 msgid "Place order"
@@ -4011,6 +4011,30 @@ msgstr "Tjenestebehandling"
 
 msgid "Tasks Backend"
 msgstr "Bakgrunnsoppgaver"
+
+msgid "No services ordered"
+msgstr "Ingen tjenester bestilt"
+
+msgid "Order"
+msgstr "Bestilling"
+
+msgid "Awaiting processing"
+msgstr "Venter behandling"
+
+msgid "In revision"
+msgstr "Revideres"
+
+msgid "Changed, awaiting confirmation"
+msgstr "Endret, venter bekreftelse"
+
+msgid "Maybe"
+msgstr "Kanskje"
+
+msgid "Confirmed, fully processed"
+msgstr "Bekreftet, ferdig behandlet"
+
+msgid "Confirmed, not yet processed"
+msgstr "Bekreftet, ikke behandlet ennå"
 
 #~ msgid "Ticket Information"
 #~ msgstr "Billettinfo"

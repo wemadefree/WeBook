@@ -398,8 +398,15 @@ export class DialogComplexDiscriminativeRenderer extends DialogBaseRenderer {
         if (this._isRendering === false) {
             this._isRendering = true;
 
-            if (!html)
-                html = await dialog.htmlFabricator(context, dialog);
+            if (!html) {
+                try {
+                    html = await dialog.htmlFabricator(context, dialog);
+                }
+                catch (error) {
+                    this._isRendering = false;
+                    throw error;
+                }
+            }
         
             let span = document.createElement("span");
             span.innerHTML = html;
@@ -407,6 +414,9 @@ export class DialogComplexDiscriminativeRenderer extends DialogBaseRenderer {
             let dialogEl = span.querySelector("#" + dialog.dialogElementId);
 
             if (!dialogEl) {
+                // Typically an error page from the server; reset so the dialog can be opened again
+                this._isRendering = false;
+                toastr.error(window.WEBOOK_MESSAGES?.genericLoadError);
                 throw new Error("Dialog element not found in HTML by id: " + dialog.dialogElementId);
             }
 

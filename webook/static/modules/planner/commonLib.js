@@ -563,6 +563,12 @@ export class FullCalendarBased {
 
     _listenToViewNavigationEvents() {
         document.addEventListener(this._instanceUUID + '_callForFullCalendarViewRender', function(event) {
+            /* The calendar fires this while rendering, before renderNavigationButtons() has created the buttons.
+            renderNavigationButtons() fires it again once they exist. */
+            if (this._navigationButtonElements === undefined) {
+                return;
+            }
+
             for (let i = 0; i < this._navigationButtonElements.children().length > 0; i++) {
                 let childEl = this._navigationButtonElements.children()[i];
 

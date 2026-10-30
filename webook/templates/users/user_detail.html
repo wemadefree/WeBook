@@ -42,11 +42,11 @@
                 <div class="mt-2">
                     <button class="btn wb-large-btn wb-btn-secondary ms-2 border-0 shadow-0"
                         id="planner__todayButton">
-                        I dag
+                        {% trans "Today" %}
                     </button>
                     <button class="btn wb-large-btn wb-btn-secondary border-0 shadow-0"
                         type="button"
-                        title="Gå til dato"
+                        title="{% trans 'Go to date' %}"
                         data-mdb-toggle="tooltip"
                         id="planner__goToDateButton">
                         <i class="fas fa-door"></i>
@@ -335,11 +335,11 @@
 
             document.getElementById('planner__goToDateButton').addEventListener('click', (event) => {
                 Swal.fire({
-                    title: 'Gå til dato',
+                    title: '{% trans "Go to date" %}',
                     html: "<input type='date' id='swalGoToDate' class='form-control'></input>",
                     showCancelButton: true,
-                    confirmButtonText: 'Gå til dato',
-                    cancelButtonText: 'Avbryt',
+                    confirmButtonText: '{% trans "Go to date" %}',
+                    cancelButtonText: '{% trans "Cancel" %}',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         let date = new Date(document.getElementById('swalGoToDate').value);

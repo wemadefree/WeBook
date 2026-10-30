@@ -4000,6 +4000,18 @@ msgstr "Vis"
 msgid "All"
 msgstr "Alle"
 
+msgid "Welcome back"
+msgstr "Velkommen tilbake"
+
+msgid "User information"
+msgstr "Brukerinformasjon"
+
+msgid "Service management"
+msgstr "Tjenestebehandling"
+
+msgid "Tasks Backend"
+msgstr "Bakgrunnsoppgaver"
+
 #~ msgid "Ticket Information"
 #~ msgstr "Billettinfo"
 

@@ -30,6 +30,20 @@
     contextDeleteArrangement: "{% trans 'Delete arrangement' %}",
     contextDeleteActivity: "{% trans 'Delete activity' %}"
   };
+  // Labels for the calendar modules (planner, My page, location and person calendars)
+  window.WEBOOK_I18N = {
+    day: "{% trans 'Day' %}",
+    month: "{% trans 'Month' %}",
+    week: "{% trans 'Week' %}",
+    year: "{% trans 'Year' %}",
+    timeline: "{% trans 'Timeline' %}",
+    grid: "{% trans 'Grid' %}",
+    calendar: "{% trans 'Calendar' %}",
+    weekPrefix: "{% trans 'Week' %}",
+    today: "{% trans 'Today' %}",
+    cancel: "{% trans 'Cancel' %}",
+    yes: "{% trans 'Yes' %}"
+  };
 </script>
 <html lang="{{ CURRENT_LANGUAGE }}">
   <head>
@@ -165,7 +179,7 @@
         <li class="sidenav-item {% if url_name == 'services_dashboard' %}active{% endif %}">
           <a  href="{% url 'arrangement:services_dashboard' %}" 
               class="sidenav-link">
-            <i class="fas fa-calendar-plus fa-fw me-3"></i><span>Tjenestebehandling</span></a
+            <i class="fas fa-calendar-plus fa-fw me-3"></i><span>{% trans "Service management" %}</span></a
           >
 
         </li>
@@ -288,7 +302,7 @@
 
         <li class="sidenav-item">
           <a href="{% url 'celery_haystack:taskresult_list' %}" class="sidenav-link sidenav-link-danger-subtle">
-            <i class="fas fa-tasks"></i>&nbsp; Tasks Backend
+            <i class="fas fa-tasks"></i>&nbsp; {% trans "Tasks Backend" %}
           </a>
         </li>
         {% endif %}

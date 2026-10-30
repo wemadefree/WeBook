@@ -1,0 +1,113 @@
+# Self-contained local stack for testing: own Postgres, Redis and Elasticsearch.
+#
+#   docker compose --env-file /dev/null -f docker-compose.local.yml up --build
+#
+# (--env-file /dev/null stops Compose itself from reading .env for variable substitution.)
+#
+# The repo (including .env) is mounted into the containers, but settings only read
+# .env for variables that are not already set. Everything that connects to an external
+# service is therefore set explicitly below, so a local run can never reach a shared
+# database, Microsoft Graph, Mailgun or Google Cloud.
+name: webook-local
+
+x-webook-env: &webook-env
+  DJANGO_SETTINGS_MODULE: config.settings.local
+  DJANGO_DEBUG: "True"
+  DJANGO_SECRET_KEY: local-dev-only-not-secret
+  DJANGO_ALLOWED_HOSTS: "*"
+  CSRF_TRUSTED_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+  APP_BASE_URL: http://localhost:8080
+  # Database
+  DATABASE_URL: postgres://webook:webook@db:5432/webook
+  DATABASE_ENGINE: django.db.backends.postgresql
+  DATABASE_HOST: db
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: webook
+  DATABASE_USER: webook
+  DATABASE_PASSWORD: webook
+  # Cache, Celery and search
+  USE_REDIS: "True"
+  REDIS_URL: redis://redis:6379
+  CELERY_BROKER_URL: redis://redis:6379/0
+  CELERY_RESULT_BACKEND: django-db
+  ELASTICSEARCH_URL: http://elasticsearch:9200/
+  TASK_BACKEND: local
+  # Login with email/password only
+  ALLOW_EMAIL_LOGIN: "True"
+  ALLOW_SSO: "False"
+  # External services disabled (empty values override .env)
+  AZURE_TENANT_ID: ""
+  AZURE_CLIENT_ID: ""
+  AZURE_CLIENT_SECRET: ""
+  MICROSOFT_CLIENT_ID: ""
+  MICROSOFT_CLIENT_SECRET: ""
+  MAILGUN_API_KEY: ""
+  SENTRY_DSN: ""
+  USE_GCS_STATIC: ""
+  GOOGLE_PROJECT_ID: ""
+  LOG_TO_FILE: ""
+
+services:
+  db:
+    image: postgres:17.10-alpine
+    environment:
+      POSTGRES_DB: webook
+      POSTGRES_USER: webook
+      POSTGRES_PASSWORD: webook
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "webook"]
+      interval: 2s
+      retries: 30
+
+  redis:
+    image: redis:7
+
+  elasticsearch:
+    image: elasticsearch:7.17.25
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health || exit 1"]
+      interval: 5s
+      retries: 30
+
+  webook:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: webook-local
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment: *webook-env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
+
+  celery:
+    image: webook-local
+    pull_policy: never  # built by the webook service
+    entrypoint: []
+    command: ["celery", "-A", "celery_app", "worker", "--loglevel=info"]
+    environment: *webook-env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      webook:
+        condition: service_started
+
+volumes:
+  db-data:
+  es-data:

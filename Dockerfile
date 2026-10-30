@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bullseye
+FROM python:3.10-slim-trixie
 
 WORKDIR /app
 COPY requirements/base.txt ./requirements/base.txt
@@ -13,7 +13,7 @@ ENV DJANGO_SETTINGS_MODULE='config.settings.local'
 
 
 RUN apt update && apt install -y curl
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
 RUN apt install -y nodejs python3-dev libpq-dev gcc
 RUN pip install --no-cache-dir -r requirements/local.txt
 RUN pip install --no-cache-dir -r requirements/production.txt

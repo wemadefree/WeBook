@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Optional
 from django.http import HttpRequest
 from ninja.security.apikey import APIKeyCookie
@@ -14,14 +15,18 @@ class SessionGroupAuth(APIKeyCookie):
         if not self.group_name:
             raise ValueError("group_name must be provided")
 
-        if self.group_name not in self._known_groups:
-            if Group.objects.filter(name=self.group_name).exists() == False:
-                raise ValueError(f"Group {self.group_name} does not exist")
-            self._known_groups[self.group_name] = True
-
         super().__init__()
 
     def authenticate(self, request: HttpRequest, key: Optional[str]) -> Optional[Any]:
+        # Checked on first use rather than in __init__, as routers are instantiated
+        # at import time, before the database is guaranteed to be migrated.
+        if self.group_name not in self._known_groups:
+            if not Group.objects.filter(name=self.group_name).exists():
+                logging.error(
+                    f"Group {self.group_name} does not exist; only superusers will be authorized."
+                )
+            self._known_groups[self.group_name] = True
+
         if request.user.is_authenticated and (
             request.user.groups.filter(name=self.group_name).exists()
             or request.user.is_superuser

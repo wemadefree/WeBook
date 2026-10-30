@@ -42,6 +42,8 @@ from webook.arrangement.views import (
     upload_files_dialog,
     planner_calendar_v2,
     get_specific_arrangement_in_format_view,
+    order_service_dialog_view,
+    inspect_service_order_dialog_view,
 )
 
 planner_urls = [
@@ -223,6 +225,16 @@ planner_urls = [
         route="planner/dialogs/edit_note/<int:pk>",
         view=planner_arrangement_edit_note_dialog_view,
         name="edit_note_dialog",
+    ),
+    path(
+        route="planner/dialogs/order_service/<str:entity_type>/<int:entity_id>",
+        view=order_service_dialog_view,
+        name="order_service_dialog",
+    ),
+    path(
+        route="planner/dialogs/inspect_service_order/<int:pk>",
+        view=inspect_service_order_dialog_view,
+        name="inspect_service_order_dialog",
     ),
     path(
         route="planner/calendar_v2",

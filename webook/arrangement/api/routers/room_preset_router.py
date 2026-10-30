@@ -11,6 +11,7 @@ from webook.arrangement.api.routers.room_router import RoomGetSchema
 from webook.arrangement.models import Arrangement, ArrangementFile, Person, RoomPreset
 from webook.api.crud_router import CrudRouter, Views
 from datetime import datetime
+from django.db.models.query import QuerySet as QuerySet
 
 
 class RoomPresetGetSchema(BaseSchema):
@@ -28,8 +29,8 @@ class RoomPresetRouter(CrudRouter):
         self.non_deferred_fields = ["rooms"]
         super().__init__(*args, **kwargs)
 
-    def get_queryset(self, view: Views = Views.GET):
-        qs = super().get_queryset(view)
+    def get_queryset(self, view: Views = Views.GET, request=None) -> QuerySet:
+        qs = super().get_queryset(view=view, request=request)
         qs = qs.prefetch_related("rooms")
         return qs
 

@@ -1,0 +1,31 @@
+{% load static i18n %}
+{% load custom_tags %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div id="add_person_dialog">
+    <h3>Legg til person </h3>
+    <form method="post" action="">
+        {% csrf_token %}
+
+        <input type="hidden" name="id" value="{{object.id}}">
+
+        {{form}}
+
+        <hr>
+
+        <div class="clearfix">
+            <div class="float-end">
+                <button class="btn wb-btn-secondary cancel-button">
+                    Avbryt
+                </button>
+                <button class="btn wb-btn-main" type="submit">
+                    Lagre utvalg
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

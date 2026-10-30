@@ -18,6 +18,10 @@ from webook.arrangement.api.routers.room_router import room_router
 from webook.arrangement.api.routers.event_serie_router import (
     router as event_serie_router,
 )
+from webook.arrangement.api.routers.service_router import (
+    service_router,
+    service_order_router,
+)
 from webook.arrangement.api.routers.calendar_router import calendar_router
 from webook.api.routers.login_router import login_router
 from webook.arrangement.api.routers.organization_router import organization_router
@@ -30,10 +34,14 @@ from webook.users.api.user_router import router as user_router
 from webook.users.api.group_router import group_router
 from webook.graph_integration.api.graph_router import router as graph_integration_router
 
+from webook.tasks.api.tasks_router import tasks_router
+
 # from webook.users.api.group_router import group_router
 from webook.api.scopes_router import api_scopes_router
 from webook.arrangement.api.routers.report_router import report_router
-
+from webook.arrangement.api.routers.preconfiguration_router import (
+    preconfiguration_router,
+)
 
 from webook.onlinebooking.api import (
     county_router,
@@ -50,7 +58,14 @@ api = NinjaAPI(
     # If django_auth goes first, CSRF will be checked. This messes up if you're using the onlinebooking
     # app.
     auth=[JWTBearer(), django_auth],
-    openapi_extra={"tags": []},
+    openapi_extra={
+        "tags": [
+            {
+                "name": "Tasks Backend",
+                "description": "Background task management and execution. Staged tasks will be executed by the task manager, using the configured Provider.",
+            },
+        ]
+    },
 )
 api.add_router("/login", login_router)
 api.add_router("/service_accounts", service_account_router)
@@ -74,10 +89,16 @@ api.add_router("/arrangement/event_serie", event_serie_router)
 api.add_router("/arrangement/calendar", calendar_router)
 api.add_router("/arrangement/organization", organization_router)
 
+api.add_router("/arrangement/service", service_router)
+api.add_router("/arrangement/preconfiguration", preconfiguration_router)
+api.add_router("/arrangement/service_order", service_order_router)
+
 api.add_router("/arrangement/report", report_router)
 
 api.add_router("/screenshow/display_layout", display_layout_router)
 api.add_router("/screenshow/display_layout_setting", display_layout_setting_router)
+
+api.add_router("/tasks", tasks_router)
 
 api.add_router("/users", user_router)
 api.add_router("/groups", group_router)

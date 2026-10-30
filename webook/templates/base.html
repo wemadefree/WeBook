@@ -162,6 +162,14 @@
           >
         </li>
 
+        <li class="sidenav-item {% if url_name == 'services_dashboard' %}active{% endif %}">
+          <a  href="{% url 'arrangement:services_dashboard' %}" 
+              class="sidenav-link">
+            <i class="fas fa-calendar-plus fa-fw me-3"></i><span>Tjenestebehandling</span></a
+          >
+
+        </li>
+
         <li class="sidenav-item {% if url_name == 'dashboard' %}active{% endif %}">
           <a  href="{% url 'onlinebooking:dashboard' %}" 
               class="sidenav-link">
@@ -229,12 +237,12 @@
             <span>{% trans "Arrangements" %}</span>
           </a>
         </li>
-        <li class="sidenav-item {% if url_name == "servicetype_list" %}active{% endif %}">
+        <!-- <li class="sidenav-item {% if url_name == "servicetype_list" %}active{% endif %}">
           <a  href="{% url 'arrangement:servicetype_list' %}" 
               class="sidenav-link">
             <span>{% trans "Service types" %}</span>
             </a>
-        </li>
+        </li> -->
         <li class="sidenav-item {% if url_name == "organizationtype_list" %}active{% endif %}">
           <a  href="{% url 'arrangement:organizationtype_list' %}"
               class="sidenav-link">
@@ -270,11 +278,13 @@
         </li>
         {% endif %}
         {% if user.is_superuser %}
+        {% if ADMIN_ENABLED %}
         <li class="sidenav-item mb-1">
           <a class="sidenav-link sidenav-link-danger-subtle" href="{% url 'admin:index' %}">
             <i class="fas fa-tools fa-fw me-3"></i><span>{% trans "Django admin panel" %}</span></a
           >
         </li>
+        {% endif %}
 
         <li class="sidenav-item">
           <a href="{% url 'celery_haystack:taskresult_list' %}" class="sidenav-link sidenav-link-danger-subtle">

@@ -1,0 +1,94 @@
+{% include "arrangement/vue/table_component.html" %}
+
+<div id="table-select-wrapper">
+  {% with id=widget.attrs.id %}
+    <div class="row" {% if id %}id="{{ id }}"{% endif %}>
+      <span v-for="item in checkedItems">
+        <input type="hidden" name="{{widget.name}}" :value="item.value">
+      </span>
+
+      <div class="col-3">
+        <div class="wb-bg-secondary p-0">
+          <table class="table table-sm table-striped">
+            <tbody>
+              <tr v-for="checkedItem in checkedItems">
+                <td v-if="checkedItem" class="d-flex" style="justify-content: space-between; align-items:center;">
+                  [[checkedItem.label]]
+
+                  <span>
+                    <i class="fas fa-times text-danger" @click="checkedItem.isSelected = false"></i>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-9">
+        <table-component
+          :data-source="dataSource"
+          :can-search="true">
+        </table-component>
+      </div>
+    </div>
+  {% endwith %}
+</div>
+
+<script>
+    $(document).ready(function () {
+      const app = Vue.createApp({
+        components: {
+          TableComponent,
+        },
+        data() {
+          return {
+            tableData: [
+              {% for x, y, z in widget.optgroups %}
+                {% with instance=y.0 %}
+                    {
+                      "label": "{{instance.label}}",
+                      "value": "{{instance.value.value}}",
+                      "isSelected": {% if instance.selected %}true{%else%}false{% endif %},
+                    },
+                {% endwith %}
+              {% endfor %}
+            ],
+          }
+        },
+        computed: {
+          dataSource() {
+            return {
+              columns: {
+                "label": {
+                  isHtml: false,
+                  friendlyName: "Navn",
+                  isSortable: true,
+                  isSearchable: true
+                },
+                "isSelected": {
+                  isComponent: true,
+                  componentName: "checkbox",
+                  isHtml: false,
+                  friendlyName: "Valgt",
+                  isSortable: true,
+                  isSearchable: true,
+                },
+              },
+              data: this.tableData,
+            }
+
+          },
+          checkedItems() {
+            return this.tableData.filter(x => x.isSelected);
+          },
+        },
+        methods: {
+        },
+        mounted() {
+        },
+        delimiters: [ "[[", "]]" ]
+      });
+
+      app.mount("#{{widget.attrs.id}}")
+    })
+</script>

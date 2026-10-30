@@ -139,8 +139,8 @@ class EventRouter(FileMixinRouter, NotesMixinRouter, CrudRouter):
 
         super().__init__(*args, **kwargs)
 
-    def get_queryset(self, view: Views = Views.GET) -> QuerySet:
-        qs = super().get_queryset(view)
+    def get_queryset(self, view: Views = Views.GET, request=None) -> QuerySet:
+        qs = super().get_queryset(view=view, request=request)
         qs = (
             qs.prefetch_related("rooms")
             .prefetch_related("display_layouts")

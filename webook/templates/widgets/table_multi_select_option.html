@@ -1,0 +1,9 @@
+<tr>
+    <td>
+        <div class="form-check">
+            <input type="checkbox" name="{{option.name}}" @click="superTest()" id="{{option.index}}" value="{{option.value.value}}"
+                {% if option.selected %}checked{% endif %}>
+            <label for="{{option.index}}" >{{option.label}}</label>
+        </div>
+    </td>
+</tr>

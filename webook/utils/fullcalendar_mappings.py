@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Optional
 
+from pytz import timezone
+
 from webook.arrangement.models import Event, Person, Room
 
 
@@ -83,7 +85,7 @@ def map_event_to_fc_activity(event: Event) -> FullCalendarActivity:
     return FullCalendarActivity(
         id="E_" + str(event.id),
         title=event.title,
-        start=event.start.strftime(format),
-        end=event.end.strftime(format),
+        start=event.start.astimezone(timezone("Europe/Oslo")).strftime(format),
+        end=event.end.astimezone(timezone("Europe/Oslo")).strftime(format),
         resource_ids=person_ids + room_ids,
     )

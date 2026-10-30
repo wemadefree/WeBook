@@ -73,8 +73,8 @@ class CreateEventSerieJsonFormView(
     form_class = CreateSerieForm
 
     def form_valid(self, form) -> JsonResponse:
-        form.save(form, user=self.request.user)
-        return super().form_valid(form)
+        serie_id = form.save(form, user=self.request.user)
+        return JsonResponse({"success": True, "serie_id": serie_id})
 
 
 create_event_serie_json_view = CreateEventSerieJsonFormView.as_view()
@@ -91,7 +91,7 @@ class CreateEventJsonFormView(
 
     def form_valid(self, form: CreateEventForm) -> HttpResponse:
         with transaction.atomic():
-            form.save()
+            event_id = form.save()
 
             main_event_is_in_collision = getattr(form, "main_collision", False)
             pre_buffer_event_is_in_collision = getattr(
@@ -127,7 +127,7 @@ class CreateEventJsonFormView(
                     }
                 )
 
-        return JsonResponse({"success": True})
+        return JsonResponse({"success": True, "event_id": event_id})
 
 
 create_event_json_view = CreateEventJsonFormView.as_view()

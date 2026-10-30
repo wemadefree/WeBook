@@ -42,8 +42,8 @@ class CitySegmentRouter(CrudRouter):
 
         self.pre_update_hook = CitySegmentRouter.handle_school_move_on_county_edit
 
-    def get_queryset(self, view: Views = Views.GET) -> QuerySet:
-        qs = super().get_queryset(view)
+    def get_queryset(self, view: Views = Views.GET, request=None) -> QuerySet:
+        qs = super().get_queryset(view=view, request=request)
         qs = qs.select_related("county").prefetch_related("county__city_segments")
         return qs
 

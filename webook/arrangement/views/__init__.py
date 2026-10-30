@@ -159,6 +159,8 @@ from .planner_views import (
     upload_files_dialog,
     planner_calendar_v2,
     get_specific_arrangement_in_format_view,
+    order_service_dialog_view,
+    inspect_service_order_dialog_view,
 )
 from .requisition_views import (
     cancel_service_requisition_form_view,

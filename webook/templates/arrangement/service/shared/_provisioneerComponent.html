@@ -1,0 +1,362 @@
+
+
+<template id="vuec-provisioneer-component">
+    <style>
+        .fc-today
+        {
+            background-color:inherit !important;
+        }
+        .projectionEvent {
+            background-color: white;
+            border: dotted green;
+            color: white;
+        }
+        .projectionEvent .fc-event-time {
+            color: green;
+        }
+        .projectionEvent .fc-event-title-container {
+            color: green;
+        }
+        .resourceHeaderBadge.active {
+            background-color: #231f20;
+            color:white;
+        }
+        .fc-event-intersect {
+            background-color: red;
+        }
+    </style>
+
+    <!-- On top goes the date reel component. We fix this last. -->
+
+    
+    <!-- <div class="text-center w-auto wb-bg-secondary rounded-5 shadow-3 p-3 mb-4">
+        <h4 class="mb-0">[[ provision.event_name ]]</h4>
+        <h6>
+            [[ provision.time_display ]]
+        </h6>
+        <h6><i class="fas fa-bulding"></i>&nbsp;[[ provision.location ]]</h6>
+
+        <hr>
+        <div class="mt-2">
+            <div class="badge badge-light h6" v-for="room in provision.rooms" v-if="provision.rooms.length > 0">
+                [[room]]
+            </div>
+            <div v-else>
+                Ingen rom er definert for denne datoen
+            </div>
+        </div>
+    </div> -->
+
+    <div class="shadow-3 p-3 border rounded-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <button class="btn wb-btn-main mb-2">
+                <i class="fas fa-long-arrow-alt-left"></i>&nbsp; Tilbake til oversikt
+            </button>
+
+            <h4 class="mb-0">[[ provision.event_name ]] - [[ provision.location ]]</h4>
+
+
+            <div class="badge badge-success" v-if="provision.is_complete">
+                <span class="h5 mb-0"><i class="fas fa-check"></i>&nbsp; Ferdigbehandlet</span>
+            </div>
+            <div class="badge badge-warning" v-else>
+                <span class="h5 mb-0"><i class="fas fa-exclamation-triangle"></i>&nbsp; Venter behandling</span>
+            </div>
+        </div>
+        
+    
+        <hr>
+    
+        <div class="row">
+            <div class="col-4">
+
+                <div class="mb-4 mt-3 wb-bg-secondary p-3">
+                    <h6>
+                        [[ provision.time_display ]]
+                    </h6>
+                    <h6>[[ provision.location ]]</h6>
+                </div>
+
+                <div class="form-group">
+                    <h5><i class="fas fa-users"></i>&nbsp; Personell</h5>
+                    <em>
+                        <i class="fas fa-info-circle"></i> Velg hvilke ressurser som skal tildeles denne aktiviteten
+                    </em>
+                    
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <div class="form-outline border-bottom border-dark border-1">
+                                    <i class="fas fa-search trailing"></i>
+                                    <input type="text" id="form1" v-model="searchTerm" class="form-control form-icon-trailing" />
+                                    <label class="form-label" for="form1">Søk...</label>
+                                </div>
+                            </tr>
+                            <tr>
+                                <th class="text-end">
+                                    <em><i class="fas fa-info-circle"></i>&nbsp; Velg ressurser for denne aktiviteten</em>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="resource in visibleItems" 
+                                :class="[{ 'shadow-3': idOfResourceCurrentlyInFocus == resource.id }]">
+    
+                                <th class="d-flex justify-content-between align-middle">
+                                    <div class="form-check">
+                                        <input type="checkbox" 
+                                            class="form-check-input"
+                                            name="selected_personell"
+                                            type="checkbox"
+                                            @click="focusOnResource(resource.value, resource.label)"
+                                            v-model="resource.selected"
+                                            :value="resource.id"
+                                            :id="resource.id">
+                                        
+                                        <label :for="resource.id" class="form-check-label">
+                                            [[resource.name]]
+                                        </label>
+                                    </div>
+    
+                                    <div>
+                                        <button :class="[idOfResourceCurrentlyInFocus == resource.value ? 'btn-success' : 'btn-light', 'btn btn-sm shadow-0 border border-1 ms-4 float-end' ]"
+                                            data-mdb-toggle="tooltip"
+                                            title="Vis kalenderen til denne ressursen på den gitte dagen denne aktiviteten inntreffer"
+                                            type="button"
+                                            @click="focusOnResource(resource.value, resource.label)">
+    
+                                            <i :class="[{ 'text-white': idOfResourceCurrentlyInFocus == resource.value }, 'fa fa-eye']"></i>
+                                        </button>
+                                    </div>
+                                </th>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>
+                                    <nav aria-label="" class="d-flex" style="justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <em>[[totalPages]] sider</em>
+                                        </div>
+                                        <ul class="pagination">
+                                            <li class="page-item" :class="{ disabled: page == 1 }"><a class="page-link" href="javascript:void(0)" @click.stop="page--">Forrige</a></li>
+                                            <li class="page-item" :class="{ active: thisPage == page - 1 }" v-if="(page - 1) > 0"><a class="page-link" href="#">[[ page - 1 ]]</a></li>
+                                            <li class="page-item" class="active"><a href="#" class="page-link" id="">[[page]]</a></li>
+                                            <li class="page-item" :class="{ active: thisPage == page + 1 }" v-if="(page + 1) < totalPages"><a class="page-link" href="#">[[ page + 1 ]]</a></li>
+                                            <li class="page-item" :class="{ disabled: page == totalPages }"><a class="page-link" href="javascript:void(0)" @click.stop="page++">Neste</a></li>
+                                        </ul>
+                                    </nav>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+    
+                    <!-- <em class="float-end">
+                        {{form.selected_personell|length}} tilgjengelige ressurser for denne tjenesten
+                    </em> -->
+                </div>
+            </div>
+            <div class="col-8 ps-5">
+                <div :class="[{ active: idOfResourceCurrentlyInFocus == value[0]}, 'badge', 'badge-light', 'p-2', 'h5', 'ms-1', 'resourceHeaderBadge']" v-for="value in selectedResources.entries()" @click="focusOnResource(value[0], value[1])">
+                    [[ value[1] ]] <i class="fas fa-check text-success ms-2"></i>
+                </div>
+    
+                <div class="d-flex" style="justify-content: space-between">
+                    <h5 class="text-center">
+                        <i class="fas fa-calendar"></i> Forhåndsvisning
+                    </h5>
+                    <h5>
+                        <small class="badge badge-primary"
+                            data-mdb-toggle="tooltip"
+                            title="Kalenderen til denne ressursen blir vist i kontekst av aktiviteten">
+                            <i class="fas fa-eye"></i>&nbsp;
+                            [[nameOfFocusedResource]]
+                        </small>
+                    </h5>
+                </div>
+    
+                <div id="focusCalendar">
+                </div>
+            </div>
+    
+            <div class="mt-5"></div>
+            <h5 class="mt-5 mb-1">Videre beskjed</h5>
+    
+            <div class="row mb-3">
+                <div class="col-6">
+                    <div class="form-group">
+                        <div class="form-outline border border-1">
+                            <textarea class="form-control" name="{{form.freetext_comment.name}}" id="{{form.freetext_comment.id_for_label}}" rows="4" placeholder="En beskjed som vil gå til planleggerene">
+    {{form.freetext_comment.value}}
+                            </textarea>
+                            <label class="form-label" for="{{form.freetext_comment.id_for_label}}"><i class="fas fa-comment"></i> Kommentar til planlegger</label>
+                        </div>
+                        
+                        <em class="small float-end">* Kommentaren vil være synlig for planlegger</em>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group ">
+                        <div class="form-outline border border-1">
+                            <textarea class="form-control" id="{{ form.comment_to_personell.id_for_label }}" name="{{form.comment_to_personell.name}}" rows="4" placeholder="En melding for ressursene tildelt til denne aktiviteten...">
+    {{form.comment_to_personell.value}}
+                            </textarea>
+                            <label class="form-label" for="{{ form.comment_to_personell.id_for_label }}"><i class="fas fa-comment"></i> Kommentar til tildelte</label>
+                        </div>
+                        
+                        <em class="small float-end">* Kommentaren vil være synlig for tildelte</em>
+                    </div>
+                </div>
+            </div>
+    
+            <hr>
+    
+            <div class="form-group d-flex justify-content-center mt-4">
+                <div class="form-check form-switch">
+                    <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        role="switch" 
+                        name="{{form.is_complete.name}}" 
+                        id="{{form.is_complete.id_for_label}}" 
+                        {% if form.is_complete.value %}
+                        checked
+                        {% endif %}
+                        />
+                    <label class="form-check-label h5" for="{{form.is_complete.id_for_label}}">Ferdig tildelt?</label>
+                </div>
+            </div>
+        </div>
+    
+        <div class="mt-2 clearfix">
+            <div class="float-end">
+                <button class="btn wb-btn-secondary cancel-button" d-trigger="close" type="button">Avbryt</button>
+                <button class="btn wb-btn-main" type="submit">Lagre</button>
+            </div>
+        </div>
+    </div>
+</template>
+
+
+<script>
+    const ProvisioneerComponent = {
+        components: {},
+        props: {
+            provision: Object,
+        },
+        data() {
+            return {
+                includeOutlookEvents: false,
+                resources: [],
+                searchTerm: "",
+                page: 1,
+                pageSize: 10,
+                navPageCircumference: 3,
+                resourceFocusCalendar: null,
+                selectedResources: new Map(),
+                idOfResourceCurrentlyInFocus: null,
+                nameOfFocusedResource: "Velg en ressurs",
+                start: "{{ EVENT.start|date:'Y-m-d' }}T00:00",
+                end: "{{ EVENT.start|date:'Y-m-d' }}T23:59",
+            }
+        },
+        computed: {
+            entitiesCount() {
+                return this.resources.length;
+            },
+            totalPages() {
+                return Math.ceil(this.visibleItems.length / this.pageSize)
+            },
+            visibleItems() {
+                let data = this.resources;
+                
+                if (this.searchTerm.length > 2)
+                    data = data.filter(x => x.label.includes(this.searchTerm));
+    
+                return data;
+            },
+            itemsOnPage() {
+                return this.resources.slice((this.page - 1) * this.pageSize, this.page * this.pageSize );
+            },
+            checkedItems() {
+                return this.resources.filter(x => x.selected);
+            },
+        },
+        methods: {
+            getEvents(resourceId) {
+                eventSources.forEach((eventSource) => {
+                    if (Array.isArray(eventSource.internalEventSource.meta) === false)
+                    {
+                        eventSource.remove();
+                    }
+                });
+            },
+            focusOnResource(resourceId, resourceName) {
+                this.idOfResourceCurrentlyInFocus = resourceId;
+                this.nameOfFocusedResource = resourceName;
+
+                let eventSources = this.resourceFocusCalendar.getEventSources();
+
+                eventSources.forEach((eventSource) => {
+                    if (Array.isArray(eventSource.internalEventSource.meta) === false)
+                    {
+                        eventSource.remove();
+                    }
+                });
+
+                const eventSourceFunc = async (times) => {
+                    return await fetch(`/arrangement/service/provisioning/{{SOPR_TOKEN}}/resource/events/${resourceId}?start=${this.start}&end=${this.end}&include_outlook_events=${this.includeOutlookEvents ? 1 : 0}`, {
+                        method: 'GET',
+                        headers: {
+                            "X-CSRFToken": "{{csrf_token}}"
+                        }
+                    }).then(async response => { 
+                        if (response.status !== 200)
+                            throw Error("Failed retrieving events for " + resourceId)
+                            
+                        let data = await response.json();
+
+                        return data;
+                    });
+                }
+
+                this.resourceFocusCalendar.addEventSource( eventSourceFunc );
+            },
+        },
+        async created() {
+            console.log(">> ProvisioneerComponent has been created")
+
+            this.resources = await fetch("/arrangement/service/personell/{{SOPR_TOKEN}}/" + this.provision.provision_id, {
+                method: 'GET'
+            }).then(async response => await response.json())
+
+            this.resourceFocusCalendar = new FullCalendar.Calendar(document.getElementById('focusCalendar'), {
+                initialView: 'dayGridOneDay',
+                headerToolbar: false,
+                views: {
+                    dayGridOneDay: {
+                        type: 'timeGrid',
+                        duration: { days: 1 }
+                    }
+                },
+                eventSources: [
+                    /*[ { title: '[[provision.event_name]]', start: '[[ provision.start ]]', end: '[[ provision.end ]]', classNames: ['projectionEvent'] } ],*/
+                    /*[ { title: '[[provision.event_name]]', start: '{{EVENT.start|date:"Y-m-d H:i"}}', end: '{{EVENT.start|date:"Y-m-d H:i"}}', classNames: ['projectionEvent'] } ], */
+                ],
+                /*initialDate: '{{ EVENT.start | date:"Y-m-d" }}',*/
+                /*initialDate: '[[ provision.start ]]',*/
+                dayHeaderContent: "",
+                allDaySlot: false,
+                schedulerLicenseKey: '{{ FULLCALENDAR_LICENSE_KEY }}',
+                slotMinTime: "07:00:00",
+                slotMaxTime: "22:00:00",
+                slotDuration: "00:30:00",
+                height: "100%",
+                timeFormat: 'H(:mm)'
+            });
+            this.resourceFocusCalendar.render();
+        },
+        delimiters: [ "[[", "]]" ],
+        template: "#vuec-provisioneer-component"
+    }
+</script>

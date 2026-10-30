@@ -6,6 +6,7 @@ from ninja import Router, Schema
 from webook.api.schemas.base_schema import BaseSchema, ModelBaseSchema
 from webook.api.crud_router import CrudRouter, Views
 from webook.arrangement.models import Room
+from django.db.models.query import QuerySet as QuerySet
 
 
 class RoomCreateSchema(BaseSchema):
@@ -33,8 +34,8 @@ class RoomRouter(CrudRouter):
         self.non_deferred_fields = ["location"]
         super().__init__(*args, **kwargs)
 
-    def get_queryset(self, view: Views = Views.GET):
-        qs = super().get_queryset(view)
+    def get_queryset(self, view: Views = Views.GET, request=None) -> QuerySet:
+        qs = super().get_queryset(view=view, request=request)
         qs = qs.select_related("location")
         return qs
 

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block container_classes %}
+container-fluid
+{% endblock %}
+
+{% block content %}
+
+<div>
+    <h3>
+        {{object.name}}
+    </h3>
+
+</div>
+
+<script type="module">
+    import { Dialog, DialogManager, DialogSimpleRenderer, DialogFormInterceptorPlugin } from  "{% static 'modules/planner/dialog_manager/dialogManager.js' %}";
+    import ServicesTable from "{% static 'vue-components/services_table.js' %}";
+    import EditRow from "{% static 'vue-components/service-table/edit-row.js' %}";
+    import CreateRow from "{% static 'vue-components/service-table/create-row.js' %}";
+    import DetailRow from "{% static 'vue-components/service-table/detail-row.js' %}";
+
+    let dialogManager = null;
+
+    const app = Vue.createApp({
+        components: {
+            ServicesTable,
+            EditRow,
+            CreateRow,
+            DetailRow
+        },
+        data() {
+            return {
+                allServices: [],
+            }
+        },
+        methods: {
+            async getServices() {
+                return await fetch("{% url 'arrangement:services_json_list' %}").then(response => response.json());
+            },
+            openCreateServiceDialog() {
+                dialogManager.openDialog("create_service");
+            },
+            openAddEmailDialog(service_id) {
+                console.log(">> openAddEmailDialog")
+                document.dispatchEvent(new CustomEvent(
+                    'serviceDialogsManager.add_email_dialog.trigger',
+                    { detail: { id: service_id } }  
+                ));
+            },
+            saveEmail(serviceId, email) {
+                let formData = new FormData();
+                formData.append("service_id", serviceId);
+                formData.append("email", email);
+
+                fetch("/arrangement/service/add_email/" + serviceId, {
+                    method: 'POST',
+                    headers: {
+                        "X-CSRFToken": "{{csrf_token}}"
+                    },
+                    body: formData
+                }).then(response => console.log(response));
+            }
+        },
+        async mounted() {
+            this.allServices = await this.getServices();
+            console.log(this.allServices);
+        },
+        delimiters: ['[[',']]']
+    })
+    
+    app.mount("#vue_app");
+</script>
+
+{% endblock %}

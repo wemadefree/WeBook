@@ -26,7 +26,6 @@ COPY . .
 RUN rm -rf node_modules && rm -f package-lock.json && npm i
 
 RUN chmod +x ./entrypoint.sh
+
 ENTRYPOINT ["./entrypoint.sh"]
 CMD ["gunicorn", "--preload", "-b", "0.0.0.0:8080", "config.wsgi:application", "--threads", "6", "-w", "6"]
-
-

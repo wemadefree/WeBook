@@ -1,0 +1,28 @@
+<p>
+    Hei,
+</p>
+
+<p>
+    En eller flere aktiviteter du er tildelt til har blitt kansellert.
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Aktivitet</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in EVENTS %}
+            <tr>{{event}}</tr>
+        {% endfor %}    
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>Aktivitet</th>
+        </tr>
+    </tfoot>
+</table>
+
+<p>Med vennlig hilsen,</p>
+<p>Arrangemetnsplanleggeren</p>

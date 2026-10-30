@@ -1,0 +1,453 @@
+{% include "arrangement/vue/popover_component_v2.html" %}
+
+<template id="vuec-service-select-component">
+
+    <div class="input-group">
+        <input type="search" ref="searchInput" class="form-control" style="border-radius: 0;"  v-model="searchTerm" @focus="toggleVisibility()" placeholder="Søk etter tjeneste">
+        <span class="input-group-text" style="background-color: ghostwhite; border-radius: 0;">
+            <i class="fas fa-search"></i>
+        </span>
+    </div>
+
+    <popover-component 
+        ref="popover"
+        :style="'padding: 0; border-radius: 0; margin: 0; transform: none; width: 100%; border: solid 1px #ccc;'"  
+        :is-visible="isVisible"
+        :hide-on-click-outside="true"
+        :excludes="[$refs.searchInput, $refs.preconfigurationsTree, $refs.popover]"
+        @update:is-visible="$emit('update:isVisible', $event)">
+
+        <div v-if="!selectedService" class="p-3">
+            <div class="border-bottom d-flex justify-content-between align-items-center text-uppercase mb-2" style="border-bottom: solid 1px #ccc;">
+                <h6 class="mb-0">
+                    Velg Tjeneste
+                </h6>
+
+                <div class="d-flex align-items-center">
+                    <div class="small text-muted">
+                        (<u>[[ services.length ]]</u> resultater)
+                    </div>
+                    <a href="#" @click="toggleVisibility()" class="ms-2 text-danger">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </div>
+            </div>
+
+            <table class="table table-sm table-hover mb-0">
+                <tbody>
+                    <tr v-for="service in services" :key="service.id" @click="selectService(service)">
+                        <td>
+                            [[service.name]]
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="p-3" v-else>
+            <div class="border-bottom text-uppercase fw-bold mb-2 d-flex justify-content-between align-items-center" style="border-bottom: solid 1px #ccc;">
+                <h6 class="mb-0">[[selectedService ? selectedService.name : 'Ingen']]</h6>
+                <a href="#" @click="toggleVisibility()" class="text-danger">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+
+            <label>
+                <i class="fas fa-cogs"></i>
+                Prekonfigurasjon 
+                <span class="small text-muted">(valgfritt)</span>
+            </label>
+
+            <preconfigurations-tree-component
+                ref="preconfigurationsTree" class="mb-1"
+                v-model="selectedPreconfigurations"
+                :service-id="selectedService ? selectedService.id : null"
+                :selection-enabled="true"
+                :editing-enabled="false">
+            </preconfigurations-tree-component>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <label>
+                        <i class="fas fa-comment"></i>
+                        Kommentar 
+                        <span class="small text-muted">(Vil være synlig for behandler)</span>
+                    </label>
+                </div>
+                <div>
+                    <a href="#" @click="setComment()">
+                        (Sett inn kommentar)
+                    </a>
+                </div>
+            </div>
+
+
+            <textarea v-model="lineDescription" class="form-control" rows="3" placeholder="Skriv kommentar for denne bestillingen...">
+            </textarea>
+            
+            <div class="d-flex justify-content-between mt-2">
+                <button class="btn wb-btn-sm wb-btn-secondary" @click="selectedService = null" v-if="allowGoBackToServiceSelect">
+                    Tilbake
+                </button>
+                <button class="btn wb-btn-sm wb-btn-secondary" @click="cancel()" v-else>
+                    Avbryt
+                </button>
+                <button class="btn wb-btn-sm wb-btn-main" @click="save()">
+                    Lagre
+                </button>
+            </div>
+        </div>
+    </popover-component>
+</template>
+
+<template id="vuec-order-services-component">
+    <div class="d-flex">
+        <!-- <div>
+            <preconfigurations-tree-component
+                v-model="selectedPreconfigurations"
+                :selection-enabled="true"
+                :editing-enabled="false">
+            </preconfigurations-tree-component>
+        </div> -->
+        <div class="ms-3 w-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4>
+                    <i class="fas fa-shopping-cart"></i>&nbsp;
+                    Bestilling
+                </h4>
+            </div>
+
+            <service-select-component class="mt-1" ref="serviceSelector"
+                @update:is-visible="state => isVisible = state" 
+                :is-visible="isVisible"
+                v-model="newOrderLine">
+            </service-select-component>
+            <div class="mt-2">
+                <table class="table table-striped table-sm" v-if="orderLines && orderLines.length > 0">
+                    <tbody>
+                        <tr v-for="orderLine in orderLines" class="align-middle" :key="orderLine.id">
+                            <td>
+                                [[ orderLine.service.name ]]
+                            </td>
+
+                            <td v-if="orderLine.state">
+                                <span class="badge badge-light border me-1" v-if="orderLine.state == 'awaiting'">
+                                    Venter Ja / Nei
+                                </span>
+                                <span class="badge badge-danger border me-1" v-else-if="orderLine.state == 'denied'">
+                                    Avslått
+                                </span>
+                                <span class="badge badge-danger border me-1" v-else-if="orderLine.state == 'maybe'">
+                                    Kanskje
+                                </span>
+                                <span class="badge badge-danger border me-1" v-else-if="orderLine.state == 'in_revision'">
+                                    I revisjon
+                                </span>
+                                <span class="badge badge-danger border me-1" v-else-if="orderLine.state == 'cancelled'">
+                                    Kansellert
+                                </span>
+                                <span class="badge badge-success border me-1" v-else-if="orderLine.state == 'provisioned'">
+                                    Provisjonert
+                                </span>
+                                <span class="badge badge-success border me-1" v-else-if="orderLine.state == 'confirmed'">
+                                    Akseptert
+                                </span>
+                                <span class="badge badge-success border me-1" v-else-if="orderLine.state == 'changed'">
+                                    Endret, venter på aksept
+                                </span>
+                                <span class="badge text-dark border me-1" v-else>
+                                    [[ orderLine.state ]]
+                                </span>
+                            </td>
+                            <td v-else>
+                                <span class="badge text-success border me-1">
+                                    Ny
+                                </span>
+                            </td>
+
+                            <td>
+                                [[ orderLine.description ? orderLine.description.substring(0, 50) : '' ]]
+                                <span v-if="orderLine.description && orderLine.description.length > 50 && !orderLine.showFullDescription">
+                                    ...
+                                    <a href="#" class="text-primary" @click="orderLine.showFullDescription = !orderLine.showFullDescription">
+                                        <i class="fas fa-eye"></i>
+                                        Vis mer
+                                    </a>
+                                </span>
+                                <span v-if="orderLine.description && orderLine.description.length > 50 && orderLine.showFullDescription">
+                                    [[ orderLine.description ]]
+                                    <a href="#" class="text-primary" @click="orderLine.showFullDescription = !orderLine.showFullDescription">
+                                        <i class="fas fa-eye-slash"></i>
+                                        Vis mindre
+                                    </a>
+                                </span>
+                                <span v-if="!orderLine.description">
+                                    Ingen kommentar
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="badge text-dark border me-1" v-for="preconfiguration in orderLine.preconfigurations.filter(preconfiguration => !preconfiguration.parent_id)">
+                                    [[ preconfiguration.text ]]
+                                    <span v-if="preconfiguration.children">
+                                        <span v-for="child in preconfiguration.children.filter(child => child.selected)">
+                                            / [[ child.text ]]
+                                            <span v-for="subChild in child.children.filter(subChild => subChild.selected)">
+                                                / [[ subChild.text ]]
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span v-else-if="preconfiguration.parentsStr">
+                                        <span>
+                                            [[ preconfiguration.parentsStr ]]
+                                        </span>
+                                    </span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <a href="#" class="me-2" @click="edit(orderLine)" class="text-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" @click="removeOrderLine(orderLine)" class="text-danger">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div v-else>
+                    <div class="alert alert-light wb-bg-secondary mb-0">
+                        <h6 class="fw-bold">
+                            <i class="fas fa-info-circle"></i>&nbsp;
+                            Ingen bestillinger lagt til.
+                        </h6>
+
+                        Søk etter en tjeneste for å legge til en ny bestilling for denne tidsplanen.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</template>
+
+<script>
+    let ServiceSelectComponent = {
+        props: {
+            modelValue: {
+                type: Object,
+                default: null
+            },
+            isVisible: {
+                type: Boolean,
+                default: false
+            },
+        },
+        data() {
+            return {
+                selectedPreconfigurations: [],
+                services: [],
+                selectedService: null,
+                lineDescription: null,
+                allowGoBackToServiceSelect: true,
+                searchTerm: null,
+            }
+        },
+        watch: {
+            searchTerm() {
+                if (this.searchTerm) {
+                    this.services = this.services.filter(service => service.name.toLowerCase().includes(this.searchTerm.toLowerCase()));
+                } else {
+                    this.fetchServices();
+                }
+            },
+            selectedPreconfigurations(val) {
+                if (val && val.length > 0) {
+                    this.lastSelected = val[val.length - 1];
+                    if (!this.lineDescription && this.lastSelected && this.lastSelected.message) {
+                        this.lineDescription = this.lastSelected.message;
+                    }
+                }
+            }
+        },
+        methods: {
+            setComment() {
+                if (this.lastSelected) {
+                    if (!this.lastSelected.message) {
+                        toastr.error("Ingen kommentar på valgt prekonfigurasjon");
+                        return;
+                    }
+
+                    this.lineDescription = this.lastSelected.message;
+                }
+            },
+            toggleVisibility() {
+                this.$emit('update:isVisible', !this.isVisible);
+            },
+            cancel() {
+                this.selectedService = null;
+                this.selectedPreconfigurations = [];
+                this.lineDescription = null;
+                this.allowGoBackToServiceSelect = true;
+                this.$emit('update:isVisible', false);
+            },
+            fetchServices() {
+                fetch("/api/arrangement/service/list?page=0&limit=50&is_active=true", {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': "{{ csrf_token }}"                    
+                    },
+                    
+                }).then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error("Network response was not ok");
+                    }
+                }).then((data) => {
+                    this.services = data.data;
+                }).catch((error) => {
+                    console.error("Error fetching data:", error);
+                });
+            },
+            selectService(service) {
+                this.selectedService = service;
+            },
+            save() {
+                this.$emit('update:modelValue', {
+                    key: this.modelValue ? this.modelValue.key : crypto.randomUUID(),
+                    service: this.selectedService,
+                    preconfigurations: this.selectedPreconfigurations,
+                    description: this.lineDescription
+                });
+                this.selectedService = null;
+                this.selectedPreconfigurations = [];
+                this.lineDescription = null;
+                this.allowGoBackToServiceSelect = true;
+            },
+            edit() {
+                this.selectedService = this.modelValue.service;
+                this.lineDescription = this.modelValue.description;
+                this.allowGoBackToServiceSelect = false;
+                this.selectedPreconfigurations = this.modelValue.preconfigurations;
+            }
+        },
+        components: {
+            PreconfigurationsTreeComponent,
+            TableComponent,
+            PopoverComponent,
+        },
+        emits: [
+            'update:isVisible',
+            'update:modelValue',
+            'cancelEdit'
+        ],
+        template: '#vuec-service-select-component',
+        delimiters: ['[[', ']]'],
+        mounted() {
+            this.fetchServices();
+        }
+    }
+
+    let OrderServicesComponent = {
+        props: {
+            modelValue: {
+                type: Array,
+                default: () => []
+            }
+        },
+        methods: {
+
+        },
+        components: {
+            PreconfigurationsTreeComponent,
+            TableComponent,
+            ServiceSelectComponent,
+        },
+        emits: [],
+        template: "",
+        delimiters: ['[[', ']]'],
+        data() {
+            return {
+                newOrderLine: null,
+                orderLines: [],
+                isVisible: false,
+                editingFlag: false,
+            }
+        },
+        watch: {
+            modelValue: function (val) {
+                this.orderLines = val || [];
+            },
+            newOrderLine: function (val) {
+                if (this.editingFlag) {
+                    this.editingFlag = false;
+                    return;
+                }
+
+                if (val) {
+                    if (this.orderLines.find(line => line.key == val.key)) {
+                        this.orderLines = this.orderLines.map(line => {
+                            if (line.key == val.key) {
+                                return val;
+                            }
+                            return line;
+                        });
+                    } else {
+                        this.orderLines.push(val);
+                        this.$emit('update:modelValue', this.orderLines);
+                    }
+
+                    this.newOrderLine = null;
+                    this.isVisible = false;
+                }
+            },
+            orderLines: function (val) {
+                this.$emit('update:modelValue', val);
+            }
+        },
+        methods: {
+            removeOrderLine(orderLine) {
+                if (orderLine.state) {
+                    Swal.fire({
+                        title: "Er du sikker?",
+                        text: "Denne handlingen vil markere bestillingen som kansellert. Behandlere vil få beskjed om dette. Handlingen går først i effekt etter lagring.",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Ja, kanseller",
+                        cancelButtonText: "Avbryt",
+                        // input: "textarea",
+                        // inputPlaceholder: "Videre informasjon om kanselleringen for tjenestebehandler (valgfritt)",
+                    }).then((result) => {
+                        if (!result.isConfirmed) {
+                            return;
+                        }
+                        else {
+                            this.orderLines = this.orderLines.filter(line => line !== orderLine);
+
+                            toastr.success("Bestillingen er markert for kansellering. Forandring vil bli realisert etter lagring.");
+                        }
+                    });
+
+                    return;
+                }
+
+                this.orderLines = this.orderLines.filter(line => line !== orderLine);
+            },
+            edit(orderLine) {
+                this.editingFlag = true;
+                this.newOrderLine = orderLine;
+                this.isVisible = true; 
+
+                this.$nextTick(() => {
+                    this.$refs.serviceSelector.edit();
+                });
+            }
+        },
+        mounted() {
+            this.orderLines = this.modelValue || [];
+        },
+        template: '#vuec-order-services-component',
+    }
+</script>

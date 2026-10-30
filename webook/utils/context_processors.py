@@ -20,4 +20,5 @@ def settings_context(_request):
         "URL_TO_ONLINE_BOOKING_APP": settings.URL_TO_ONLINE_BOOKING_APP,
         "ALERT_TEXT_ALL_USERS": settings.ALERT_TEXT_ALL_USERS,
         "ALERT_TEXT_SUPER_USER": settings.ALERT_TEXT_SUPER_USER,
+        "ADMIN_ENABLED": settings.ADMIN_ENABLED,
     }

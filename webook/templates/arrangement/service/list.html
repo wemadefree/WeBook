@@ -1,0 +1,42 @@
+
+{% extends "base.html" %}
+
+{% block container_classes %}
+container-fluid
+{% endblock %}
+
+
+{% block content %}
+
+{% include "arrangement/service/services_dash.html"  %}
+
+
+<div id="vueApp">
+    <services-dash></services-dash>
+</div>
+
+<script>
+    $(document).ready(function () {
+        let app = Vue.createApp({
+            el: '#vueApp',
+            components: {
+                ServicesDash
+            },
+
+            mounted() {
+    
+            },
+            methods: {
+                fetchServices() {
+                },
+                showServiceDetails(service) {
+                }
+            },
+            delimiters: ['[[', ']]'],
+        });
+        app.mount('#vueApp');
+    })
+
+</script>
+
+{% endblock %}

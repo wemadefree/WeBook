@@ -150,9 +150,11 @@ class ToggleUserActiveStateView(
 
         return JsonResponse(
             {
-                "message": "User " + "activated"
-                if user.is_active
-                else "deactivated" + " successfully"
+                "message": (
+                    "User " + "activated"
+                    if user.is_active
+                    else "deactivated" + " successfully"
+                )
             }
         )
 
@@ -283,6 +285,7 @@ class UserAdminDetailView(UserAdminAuthorizationMixin, UserUpdateView):
         user.profile_picture = form.cleaned_data["profile_picture"]
         user.timezone = form.cleaned_data["timezone"]
         user.is_user_admin = form.cleaned_data["is_user_admin"]
+        user.is_service_admin = form.cleaned_data["is_service_admin"]
         selected_role = form.cleaned_data["user_role"]
         group = Group.objects.get(name=selected_role)
         if group is not None:
@@ -311,6 +314,7 @@ class UserAdminDetailView(UserAdminAuthorizationMixin, UserUpdateView):
                 initial.update({"user_role": "readonly"})
 
             initial.update({"is_user_admin": user.is_user_admin})
+            initial.update({"is_service_admin": user.is_service_admin})
 
             if user.person is not None:
                 person_object = user.person

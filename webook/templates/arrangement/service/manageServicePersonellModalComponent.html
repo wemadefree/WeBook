@@ -1,0 +1,156 @@
+<template id="vuec-manage-service-personell-modal-component-template">
+    <mdb-modal-component :is-visible="isVisible" :title="modalTitle || 'Administrer Personale'" @close="$emit('close')">
+        <template #modal-body>
+            <div>
+                <person-select-component 
+                    v-model="personell" 
+                    :show-badges="true">
+                </person-select-component>
+            </div>
+
+            <!-- <table class="table table-sm">
+                <tbody>
+                    <tr v-for="person in personell" :key="person.id">
+                        <td>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    [[ person.full_name ]]
+                                </div>
+                                <div>
+                                    <button class="btn wb-btn-danger btn-sm">
+                                        <i class="fas fa-times"></i>
+                                        Fjern
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table> -->
+        </template>
+
+        <template #modal-footer>
+            <button type="button" class="btn wb-btn-secondary" @click="$emit('close')">
+                <i class="fas fa-times"></i>
+                Lukk
+            </button>
+
+            <button type="button" class="btn wb-btn-main" @click="save()">
+                <i class="fas fa-save"></i>
+                Lagre
+            </button>
+        </template>
+    </mdb-modal-component>
+</template>
+
+<script>
+    let ManageServicePersonellModalComponent = {
+        components: {
+            MdbModalComponent,
+            PersonSelectComponent,
+        },
+        props: {
+            isVisible: {
+                title: 'Visible',
+                type: Boolean,
+                default: false
+            },
+            serviceId: {
+                title: 'Service ID',
+                type: Number,
+                default: null
+            },
+            modalTitle: {
+                title: 'Modal Title',
+                type: String,
+                default: null
+            }
+        },
+        data() {
+            return {
+                personell: [],
+                selectedPersons: [],
+            }
+        },
+        emits: [
+            'close'
+        ],
+        watch: {
+            serviceId: function (val) {
+                console.log("Service ID changed", val);
+                this.loadData();
+            },
+            selectedPersons: function (val) {
+                console.log("selected persons", val);
+            }
+        },
+        methods: {
+            loadData() {
+                fetch("/api/arrangement/service/personell/list?id=" + this.serviceId)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Personell data", data);
+                        this.personell = data.data;
+                    });
+            },
+            async save() {
+                const existingPersonell = await fetch("/api/arrangement/service/personell/list?id=" + this.serviceId)
+                    .then(response => response.json())
+                    .then(data => {
+                        return data.data;
+                    });
+
+                console.log("existingPersonell", existingPersonell);
+
+                const existingPersonellIds = existingPersonell.map(person => person.id);
+                const selectedPersonIds = this.personell.map(person => person.id);
+
+                const newPersonell = this.personell.filter(person => !existingPersonellIds.includes(person.id));
+                const removedPersonell = existingPersonell.filter(person => !selectedPersonIds.includes(person.id));
+
+                console.log("newPersonell", newPersonell);
+                console.log("removedPersonell", removedPersonell);
+
+                for (const newPerson of newPersonell) {
+                    await fetch(`/api/arrangement/service/personell/add?id=${this.serviceId}&related_id=${newPerson.id}`, {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            service_id: this.serviceId,
+                            person_id: newPerson.id
+                        })
+                    }).catch(error => {
+                        console.error("Error adding personell:", error);
+                    });
+                }
+
+                for (const removedPerson of removedPersonell) {
+                    await fetch(`/api/arrangement/service/personell/remove?id=${this.serviceId}&related_id=${removedPerson.id}`, {
+                        method: "DELETE",
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            service_id: this.serviceId,
+                            person_id: removedPerson.id
+                        })
+                    }).catch(error => {
+                        console.error("Error removing personell:", error);
+                    });
+                }
+
+                toastr.success("Personell oppdatert");
+                this.$emit('close');
+            }
+        },
+        template: "#vuec-manage-service-personell-modal-component-template",
+        delimiters: ['[[', ']]'],
+        mounted() {
+            this.loadData();
+        }
+    }
+</script>

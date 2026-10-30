@@ -83,6 +83,12 @@
 
                                     <h5 class="mt-3">Brukeradministrator</h5>
                                     {{ form.is_user_admin|as_crispy_field }}
+
+                                    <h5 class="mt-3">Tjenesteadministrator</h5>
+
+                                    {{object}}
+
+                                    {{ form.is_service_admin|as_crispy_field }}
                                 </div>
                         </div>
                         <div

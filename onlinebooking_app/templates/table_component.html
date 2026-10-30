@@ -568,7 +568,7 @@
                 else if (this.dataSource instanceof Function)
                     return this.visibleItems.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage);
 
-                throw new Error("Data source is not an array, and is not an instance of APITableDataSource");
+                throw new Error("(2) Data source is not an array, and is not an instance of APITableDataSource");
             },
             visibleColumns() {
                 let columns = {};

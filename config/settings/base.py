@@ -125,6 +125,7 @@ LOCAL_APPS = [
     "webook.onlinebooking.apps.OnlinebookingConfig",
     "webook.graph_integration.apps.GraphIntegrationConfig",
     "webook.celery_haystack.apps.CeleryHaystackConfig",
+    "webook.tasks.apps.TaskConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -205,6 +206,26 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
     "npm.finders.NpmFinder",
 ]
+
+if env("USE_GCS_STATIC", default=False) and env("GS_STATIC_BUCKET_NAME", default=None):
+    GS_QUERYSTRING_AUTH = env.bool("GS_QUERYSTRING_AUTH", default=False)
+    GS_STATIC_BUCKET_NAME = env("GS_STATIC_BUCKET_NAME", default=None)
+    GS_UPLOADS_BUCKET_NAME = env("GS_UPLOADS_BUCKET_NAME", default=None)
+    STATIC_URL = env("/static/", default="/static/")
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+            "OPTIONS": {
+                "bucket_name": GS_UPLOADS_BUCKET_NAME,
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+            "OPTIONS": {
+                "bucket_name": GS_STATIC_BUCKET_NAME,
+            },
+        },
+    }
 
 # MEDIA
 # ------------------------------------------------------------------------------
@@ -438,7 +459,7 @@ USER_DEFAULT_TIMEZONE = env(
     "USER_DEFAULT_TIMEZONE",
     default=TIME_ZONE,
 )
-HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
+# HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
 
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
@@ -464,6 +485,11 @@ HAYSTACK_SIGNAL_PROCESSOR = (
     "webook.celery_haystack.queued_signal_processor.QueuedSignalProcessor"
 )
 
+TASK_BACKEND = env(
+    "TASK_BACKEND",
+    default="local",
+)
+
 AZURE_TENANT_ID = env("AZURE_TENANT_ID", default=None)
 AZURE_CLIENT_ID = env("AZURE_CLIENT_ID", default=None)
 AZURE_CLIENT_SECRET = env("AZURE_CLIENT_SECRET", default=None)
@@ -475,3 +501,10 @@ ALERT_TEXT_SUPER_USER = env("ALERT_TEXT_SUPER_USER", default=None)
 ALERT_TEXT_ALL_USERS = env("ALERT_TEXT_ALL_USERS", default=None)
 
 ADMIN_ENABLED = env("ADMIN_ENABLED", default=False)
+APP_BASE_URL = env("APP_BASE_URL", default="http://localhost:8000")
+
+GOOGLE_PROJECT_ID = env("GOOGLE_PROJECT_ID", default=None)
+GOOGLE_CLOUD_TASK_QUEUE_NAME = env(
+    "GOOGLE_CLOUD_TASK_QUEUE_NAME", default="webook-queue"
+)
+GOOGLE_PROJECT_LOCATION = env("GOOGLE_PROJECT_LOCATION", default="europe-west1")

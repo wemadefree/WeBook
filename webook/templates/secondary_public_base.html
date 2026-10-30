@@ -1,0 +1,106 @@
+{% load static i18n %}<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{% block title %}{{ APP_TITLE }}{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <script src="{% static 'vue/dist/vue.global.js' %}"></script>
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
+
+    {% block css %}
+
+    <script
+    src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+
+    <!-- Third-party CSS libraries go here -->
+    <link href="{{ ASSET_SERVER_URL }}mdb/css/mdb.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'fullcalendar-scheduler/main.min.css' %}">
+    <!-- This file stores project-specific CSS -->
+    <link href="{% static 'css/project.css' %}" rel="stylesheet">
+    
+    {% endblock %}
+
+  </head>
+
+  <body>
+
+    {% if request.user.is_authenticated %}
+    <div class="bg-white p-2">
+      <div class="d-flex justify-content-between align-items-middle">
+        <button class="btn wb-btn-secondary">Alle bestillinger</button>
+
+
+        <button class="btn wb-btn-main">Tilbake til planleggeren</button>
+      </div>
+    </div>
+    {% endif %}
+
+    {% block header %}
+    <div class="bg-white p-2 p-5 pt-4 pb-4">
+      <div class="d-flex" style="justify-content: space-between; align-items: center;">
+        <div>
+          <h3>Tjenestebestillinger </h3>
+          <div class="d-flex">
+            <button class="btn wb-btn-secondary"><i class="fas fa-arrow-down"></i> AV Tekniker</button>
+            <h5><button class="btn wb-btn-secondary ms-4">
+              <span class="badge badge-info">0</span>
+              Ventende bestillinger
+            </button>
+          </h5>
+            <h5 class="ms-4">
+              <button class="btn wb-btn-secondary">
+                <span class="badge badge-info">0</span>
+                Historiske bestillinger
+              </button>
+            </h5>
+          </div>
+        </div>
+        <div>
+          <button class="btn wb-btn-main btn-lg"><i class="fas fa-backward"></i>&nbsp; Tilbake til planlegger</button>
+        </div>
+      </div>
+    </div>
+    {% endblock %}
+
+    <div class="container-fluid p-5">
+        {% block content %}
+            <p>Flexible booking and event management solution. This text is inherited on other pages!</p>
+        {% endblock content %}
+    </div>
+
+    {% block modal %}{% endblock modal %}
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    {% block javascript %}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+
+      <!-- Your stuff: Third-party javascript libraries go here -->
+      <script src="{{ ASSET_SERVER_URL }}mdb/js/mdb.min.js"></script>
+      <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script src="{% static 'js/bootbox.min.js' %}"></script>
+      <script src="{% static 'js/bootbox.locales.min.js' %}"></script>
+      <script src="https://kit.fontawesome.com/db5ee7e46d.js" crossorigin="anonymous"></script>
+      <script src="{% static 'fullcalendar-scheduler/main.min.js' %}"></script>
+      <script src="{% static 'fullcalendar-scheduler/locales-all.min.js' %}"></script>
+      <script src="{% static 'modules/planner/dialog_manager/dialog.js' %}"></script>
+      <!-- place project specific Javascript in this file -->
+      <script src="{% static 'js/project.js' %}"></script>
+
+    {% endblock javascript %}
+  </body>
+</html>

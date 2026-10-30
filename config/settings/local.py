@@ -4,7 +4,7 @@ from .base import env
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = True
+DEBUG = env.bool("DJANGO_DEBUG", default=False)
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env(
     "DJANGO_SECRET_KEY",
@@ -21,11 +21,12 @@ ALLOWED_HOSTS = env.list(
     ],
 )
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost",
-]
-
-
+CSRF_TRUSTED_ORIGINS = env.list(
+    "CSRF_TRUSTED_ORIGINS",
+    default=[
+        "http://localhost",
+    ]
+)
 # CACHES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#caches
@@ -91,4 +92,4 @@ else:
     # Use console backend if no mailgun credentials are provided.
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-ADMIN_ENABLED = True
+ADMIN_ENABLED = env("ADMIN_ENABLED", default=False)

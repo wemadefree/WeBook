@@ -17,6 +17,7 @@ from webook.arrangement.models import (
     Person,
     Service,
     ServiceEmail,
+    ServiceNotification,
     ServiceOrder,
     ServiceOrderChangeSummary,
     ServiceOrderChangeSummaryType,
@@ -106,7 +107,7 @@ def _assert_affectable(service_order: ServiceOrder) -> ServiceOrder:
 
 
 def _resolve_service_order(
-    service_order_or_token: Union[ServiceOrder, str]
+    service_order_or_token: Union[ServiceOrder, str],
 ) -> ServiceOrder:
     """Internal helper function to centralize the handling of the ambigous service_order_or_token
     parameter that repeats on some functions. In practice this function resolves the given parameter,
@@ -137,14 +138,15 @@ def _get_planner_recipients(service_order: ServiceOrder) -> List[Person]:
     recipients: List[str] = []
     arrangement: Arrangement = service_order.arrangement
 
-    if arrangement.responsible.user_set.exists():
-        recipients.append(arrangement.responsible.user_set.first().person)
+    # TODO: Notification System.
+    # if arrangement.responsible.user_set.exists():
+    #     recipients.append(arrangement.responsible.user_set.first().person)
 
     return list(set(recipients))
 
 
 def confirm_service_order(service_order_or_token: Union[ServiceOrder, str]) -> None:
-    """Confirm a given service order, moving it into the final CONFIRMED state"""
+    """Confirm a given service order, moving it into the final PROVISIONED state"""
     service_order: ServiceOrder = _assert_affectable(
         _resolve_service_order(service_order_or_token)
     )
@@ -155,17 +157,17 @@ def confirm_service_order(service_order_or_token: Union[ServiceOrder, str]) -> N
     ):
         change_summary.has_been_processed = True
         # Send notifications to planners
-        for planner in planners_to_notify:
-            notification = Notification()
-            notification.to_person = planner
-            notification.title = (
-                f"Endringer på bestilling #{service_order.id} er bekreftet"
-            )
-            notification.message = "Koordinator har evaluert endringene gjort på tider aktuelle for bestillingen og bekreftet disse."
-            notification.source = "Tjenestebestilling"
-            notification.icon_background_class = "text-success"
-            notification.icon_class = "fa-check"
-            notification.save()
+        # for planner in planners_to_notify:
+        #     notification =6 Notification()
+        #     notification.to_person = planner
+        #     notification.title = (
+        #         f"Endringer på bestilling #{service_order.id} er bekreftet"
+        #     )
+        #     notification.message = "Koordinator har evaluert endringene gjort på tider aktuelle for bestillingen og bekreftet disse."
+        #     notification.source = "Tjenestebestilling"
+        #     notification.icon_background_class = "text-success"
+        #     notification.icon_class = "fa-check"
+        #     notification.save()
 
         change_summary.save()
 
@@ -174,18 +176,26 @@ def confirm_service_order(service_order_or_token: Union[ServiceOrder, str]) -> N
     if not all(map(lambda provision: provision.is_complete, provisions)):
         raise Exception("All activities have yet to be provisioned")
 
-    if service_order.state != States.CHANGED:
-        for planner in planners_to_notify:
-            notification = Notification()
-            notification.to_person = planner
-            notification.title = f"Bestilling ${service_order.id} er ferdigbehandlet"
-            notification.message = "Koordinator har behandlet og bekreftet bestillingen"
-            notification.source = "Tjenestebestilling"
-            notification.icon_background_class = "text-success"
-            notification.icon_class = "fa-check"
-            notification.save()
+    # if service_order.state != States.CHANGED:
+    #     for planner in planners_to_notify:
+    #         notification = Notification()
+    #         notification.to_person = planner
+    #         notification.title = f"Bestilling ${service_order.id} er ferdigbehandlet"
+    #         notification.message = "Koordinator har behandlet og bekreftet bestillingen"
+    #         notification.source = "Tjenestebestilling"
+    #         notification.icon_background_class = "text-success"
+    #         notification.icon_class = "fa-check"
+    #         notification.save()
 
-    service_order.state = States.CONFIRMED
+    for provision in service_order.provisions.all():
+        personell = provision.selected_personell.all()
+        if personell.exists():
+            event = provision.for_event
+            for person in personell:
+                event.people.add(person)
+            event.save()
+
+    service_order.state = States.PROVISIONED
     service_order.save()
 
 
@@ -213,6 +223,11 @@ def open_service_order_for_revisioning(service_order: ServiceOrder) -> None:
         return
 
     service_order.state = States.IN_REVISION
+
+    for provision in service_order.provisions.all():
+        for person in provision.selected_personell.all():
+            provision.for_event.people.remove(person)
+        provision.for_event.save()
 
     service_order.save()
 
@@ -242,46 +257,58 @@ def cancel_service_order(service_order: ServiceOrder) -> None:
             else:
                 personell[person] = [provision.for_event]
 
-    for person, events in personell.items():
-        email = person.personal_email
-        if person.user_set.exists():
-            email = person.user_set.first().email
+    notification = ServiceNotification()
+    notification.service = service_order.service
+    notification.service_order = service_order
+    notification.content = f"Ordre #{service_order.id} har blitt kansellert."
+    notification.save()
 
-        if email:
-            notification = Notification()
-            notification.to_person = person
-            notification.title = f"Ordre ${service_order.id} har blitt kansellert"
-            notification.message = (
-                f"Ordre ${service_order.id} som du var tildelt til har blitt kansellert"
-            )
-            notification.source = "Tjenestebestilling"
-            notification.icon_background_class = "text-danger"
-            notification.icon_class = "fa-times"
-            notification.save()
+    # remove all persons from events
+    for provision in service_order.provisions.all():
+        for person in provision.selected_personell.all():
+            provision.for_event.people.remove(person)
+        provision.for_event.save()
 
-            __MAILING_SERVICE.send(
-                routine_key=__ROUTINES.NOTIFY_ORDER_CANCELLED_TO_ASSIGNED,
-                subject="Aktiviteter kansellert",
-                recipients=[email],
-                context={
-                    "SERVICE_NAME": service_order.service.name,
-                    "ORDER_ID": service_order.id,
-                    "EVENTS": events,
-                },
-                is_html=True,
-            )
+    # for person, events in personell.items():
+    #     email = person.personal_email
+    #     if person.user_set.exists():
+    #         email = person.user_set.first().email
+
+    #     if email:
+    #         notification = Notification()
+    #         notification.to_person = person
+    #         notification.title = f"Ordre ${service_order.id} har blitt kansellert"
+    #         notification.message = (
+    #             f"Ordre ${service_order.id} som du var tildelt til har blitt kansellert"
+    #         )
+    #         notification.source = "Tjenestebestilling"
+    #         notification.icon_background_class = "text-danger"
+    #         notification.icon_class = "fa-times"
+    #         notification.save()
+
+    #         __MAILING_SERVICE.send(
+    #             routine_key=__ROUTINES.NOTIFY_ORDER_CANCELLED_TO_ASSIGNED,
+    #             subject="Aktiviteter kansellert",
+    #             recipients=[email],
+    #             context={
+    #                 "SERVICE_NAME": service_order.service.name,
+    #                 "ORDER_ID": service_order.id,
+    #                 "EVENTS": events,
+    #             },
+    #             is_html=True,
+    #         )
 
     # Notify service responsibles
-    __MAILING_SERVICE.send(
-        routine_key=__ROUTINES.NOTIFY_ORDER_CANCELLED_TO_SERVICE_OWNERS,
-        subject="Bestilling kansellert",
-        recipients=list(service_order.service.emails.all()),
-        context={
-            "SERVICE_NAME": service_order.service.name,
-            "ORDER_ID": service_order.id,
-        },
-        is_html=True,
-    )
+    # __MAILING_SERVICE.send(
+    #     routine_key=__ROUTINES.NOTIFY_ORDER_CANCELLED_TO_SERVICE_OWNERS,
+    #     subject="Bestilling kansellert",
+    #     recipients=list(service_order.service.emails.all()),
+    #     context={
+    #         "SERVICE_NAME": service_order.service.name,
+    #         "ORDER_ID": service_order.id,
+    #     },
+    #     is_html=True,
+    # )
 
 
 def deny_service_order(service_order_or_token: Union[ServiceOrder, str]) -> None:
@@ -378,8 +405,17 @@ def add_event_to_service_order(service_order: ServiceOrder, event: Event):
     )
     sop.save()
 
-    if service_order.state not in [States.CONFIRMED, States.CHANGED]:
+    if service_order.state not in [
+        # States.CONFIRMED,
+        States.PROVISIONED,
+        States.CHANGED,
+    ]:
         return  # Only trigger the change process if the service order is confirmed
+
+    for provision in service_order.provisions.all():
+        for person in provision.selected_personell.all():
+            provision.for_event.people.remove(person)
+        provision.for_event.save()
 
     change_summary, created_now = _get_change_summary(service_order)
     change_summary.add_lines({"provision_id": sop.id}, change_type=ChangeType.NEW)
@@ -397,7 +433,11 @@ def remove_provision_from_service_order(
         cancel_service_order(service_order)
         return
 
-    if service_order.state not in [States.CONFIRMED, States.CHANGED]:
+    if service_order.state not in [
+        # States.CONFIRMED,
+        States.PROVISIONED,
+        States.CHANGED,
+    ]:
         return  # Only trigger the change process if the service order is confirmed
 
     change_summary, created_now = _get_change_summary(service_order)
@@ -407,6 +447,12 @@ def remove_provision_from_service_order(
     _notify_coordinators_of_times_changed(service_order)
 
     change_summary.check_self()
+
+    notification = ServiceNotification()
+    notification.service = service_order.service
+    notification.service_order = service_order
+    notification.content = f"Ordre #{service_order.id} - En eller flere aktiviteter har blitt fjernet av planlegger."
+    notification.save()
 
 
 def log_provision_changed(
@@ -468,11 +514,12 @@ def generate_changelog_of_serie_events_in_order(service_order: ServiceOrder):
     When an edit is made to the events in a service order, and a change summary processing flow is active
     the new edit will be folded into the existing change summary.
     """
-    if service_order.state not in [States.CONFIRMED, States.CHANGED]:
+    if service_order.state not in [States.PROVISIONED, States.CHANGED]:
         return
 
     events = (
-        service_order.associated_manifest.series.last().events.all()
+        # service_order.associated_manifest.series.last().events.all()
+        service_order.events.all()
         if service_order.associated_manifest
         else [p.for_event for p in service_order.provisons.all()]
     )
@@ -567,6 +614,14 @@ def generate_changelog_of_serie_events_in_order(service_order: ServiceOrder):
             service_order.save()
             change_summary.archive()
         return
+
+    notification = ServiceNotification()
+    notification.service = service_order.service
+    notification.service_order = service_order
+    notification.content = (
+        f"Ordre #{service_order.id} er endret og må gjennomgås på nytt."
+    )
+    notification.save()
 
     change_summary.original_state_of_service_order = service_order.state
     service_order.state = States.CHANGED

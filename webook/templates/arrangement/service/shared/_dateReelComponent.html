@@ -1,0 +1,56 @@
+<template id="vuec-datereel-nav-component">
+    <div class=" border w-80 shadow-2 rounded-2" style="width: 78.5vw;">
+        <div class="d-flex justify-content-center wb-bg-secondary align-items-center pt-2 pb-2 border-bottom">
+            <div class="fw-bolder btn wb-btn-main me-5"
+                 @click="$emit('focusOnProvision', provisions[provisions.indexOf(provisions.find(p => p.time_display === selectedDate)) - 1])">
+                <-- Forrige dato
+            </div>
+            <h5 class="text-center fw-light mb-0 h3 text-dark">Tildeling</h5>
+            <div class="fw-bolder btn wb-btn-main ms-5"
+                 @click="$emit('focusOnProvision', provisions[provisions.indexOf(provisions.find(p => p.time_display === selectedDate)) + 1])">
+                Neste dato -->
+            </div>
+        </div>
+        <div style=" overflow-x: scroll; white-space: nowrap;">
+            <div class="d-flex date-reel-grid">
+
+                <div v-for="provision in provisions" :class="['p-2 border-start border-end border-bottom date-reel-grid-item', { 'active': provision.time_display == selectedDate }]"
+                        @click="$emit('focusOnProvision', provision)">
+                    <div class="text-center text-success h5" v-if="provision.is_complete">
+                        <i class="fas fa-check text-center"></i>
+                    </div>
+                    <div class="text-center text-warning h5" v-else>
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    [[provision.time_display]]
+                </div>
+            </div>
+
+            <div class="p-2">
+
+            </div>
+        </div>
+    </div>
+
+</template>
+
+
+<script>
+    const DateReelComponent = {
+        components: {},
+        props: {
+            provisions: Array,
+            selectedDate: String
+        },
+        data() {
+            return {}
+        },
+        methods: {},
+        created() {
+            console.log("dates", this.dates)
+            console.log("provisions", this.provisions)
+        },
+        delimiters: [ "[[", "]]" ],
+        template: "#vuec-datereel-nav-component"
+    }
+</script>

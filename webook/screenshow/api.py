@@ -1,10 +1,8 @@
 from typing import List, Optional
 from datetime import datetime
 
-from ninja import NinjaAPI
-
 from webook.api.schemas.base_schema import BaseSchema
-from webook.api.crud_router import CrudRouter
+from webook.api.crud_router import CrudRouter, Views
 from webook.arrangement.api.routers.room_preset_router import RoomPresetGetSchema
 from webook.arrangement.api.routers.room_router import RoomGetSchema
 from webook.screenshow.models import (
@@ -16,21 +14,24 @@ from webook.screenshow.models import (
 
 
 class ScreenResourceGetSchema(BaseSchema):
+    id: int
+    slug: str
     screen_model: str
     items_shown: int
-    room: Optional[RoomGetSchema]
+    room_id: Optional[int] = None
+    room: Optional[RoomGetSchema] = None
     status: int
-    folder_path: Optional[str]
-    generated_name: Optional[str]
+    folder_path: Optional[str] = None
+    generated_name: Optional[str] = None
 
 
 class ScreenResourceCreateSchema(BaseSchema):
     screen_model: str
     items_shown: int
-    room_id: Optional[int]
+    room_id: Optional[int] = None
     status: int
-    folder_path: Optional[str]
-    generated_name: Optional[str]
+    folder_path: Optional[str] = None
+    generated_name: Optional[str] = None
 
 
 class ScreenGroupGetSchema(BaseSchema):
@@ -85,6 +86,7 @@ class DisplayLayoutGetSchema(BaseSchema):
 screen_resource_router = CrudRouter(
     model=ScreenResource,
     tags=["screenResource"],
+    views=[Views.GET, Views.LIST],
     create_schema=ScreenResourceCreateSchema,
     get_schema=ScreenResourceGetSchema,
     update_schema=ScreenResourceCreateSchema,
@@ -114,14 +116,3 @@ display_layout_router = CrudRouter(
     update_schema=DisplayLayoutSettingCreateSchema,
 )
 
-
-def register_routers(api: NinjaAPI):
-    api.add_router("screenResource", screen_resource_router)
-    api.add_router("screenGroup", screen_group_router)
-    api.add_router("displayLayoutSetting", display_layout_setting_router)
-    api.add_router("displayLayout", display_layout_router)
-
-    api.set_tag_doc("screenResource", ScreenResource.__doc__)
-    api.set_tag_doc("screenGroup", ScreenGroup.__doc__)
-    api.set_tag_doc("displayLayoutSetting", DisplayLayoutSetting.__doc__)
-    api.set_tag_doc("displayLayout", DisplayLayout.__doc__)

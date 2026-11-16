@@ -31,11 +31,7 @@ location_router = CrudRouter(
 
 
 @location_router.get("/{id}/rooms", response=List[RoomGetSchema], by_alias=True)
-def get_rooms(request, id: int):
+def get_location_rooms(request, id: int):
     location = get_object_or_404(Location, pk=id)
     return location.rooms.all()
 
-
-@location_router.get("/tree", response=List[LocationGetSchema], by_alias=True)
-def get_tree(request):
-    return [item.as_node() for item in Location.objects.all()]

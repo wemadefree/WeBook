@@ -37,7 +37,7 @@ class ScreenResource(TimeStampedModel):
 
     def __str__(self):
         """Return screen resource name"""
-        return self.name
+        return self.screen_model
 
 
 class ScreenGroup(TimeStampedModel):
